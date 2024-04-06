@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+INCLUDE_SLOW=true bin/test
+
+echo "[ bin/ci ] Analyzing Ruby gems for"
+echo "[ bin/ci ] security vulnerabilities"
+bundle exec bundle audit check --update
+
+echo "[ bin/ci ] Done"

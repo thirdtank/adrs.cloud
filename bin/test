@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+RACK_ENV=test
+export RACK_ENV
+echo "[ bin/test ] Not implemented"
+exit 1
+

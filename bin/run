@@ -1,0 +1,10 @@
+#!/bin/sh
+
+PORT="${PORT:-6502}"
+RACK_ENV=development
+
+export PORT
+export RACK_ENV
+
+set -e 
+bundle exec rackup --port "${PORT}" --host 0.0.0.0 --env "${RACK_ENV}"
