@@ -1,12 +1,12 @@
 FROM ruby:3.3
 
+SHELL [ "/bin/bash", "-o", "pipefail", "-c" ]
+
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -y update
 
-
-RUN echo "gem: --no-document" >> ~/.gemrc && \
-    gem update --system && \
-    gem install bundler
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
 
 RUN apt-get -y install lsb-release && \
     sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
@@ -14,6 +14,9 @@ RUN apt-get -y install lsb-release && \
     apt-get update && \
     apt-get -y install postgresql-client-16
 
+RUN echo "gem: --no-document" >> ~/.gemrc && \
+    gem update --system && \
+    gem install bundler
 
 ENV EDITOR=vim
 RUN apt-get install -y vim && \

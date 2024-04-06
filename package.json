@@ -1,0 +1,8 @@
+{
+  "name": "adrpg",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "melange-cli": "^1.0.0-RC4",
+    "melange-css": "^1.0.0-RC4"
+  }
+}

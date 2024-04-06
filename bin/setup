@@ -6,6 +6,9 @@ def setup
   # bundle check indicates we need to
   system! "bundle check --no-color || bundle install --no-color --quiet"
 
+  log "Installing Node Modules"
+  system! "npm --no-color --no-progress install"
+
   log "Ensuring tmp dir exists"
   system! "mkdir -p tmp"
 

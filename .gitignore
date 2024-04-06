@@ -1,2 +1,4 @@
 # Never checkin tmp
 /tmp
+# This should never be checked in
+/node_modules
