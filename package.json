@@ -4,5 +4,9 @@
   "dependencies": {
     "melange-cli": "^1.0.0-RC4",
     "melange-css": "^1.0.0-RC4"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "esbuild": "^0.20.2"
   }
 }

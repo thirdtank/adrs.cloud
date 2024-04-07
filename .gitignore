@@ -2,3 +2,5 @@
 /tmp
 # This should never be checked in
 /node_modules
+# This contains generated code, so should not be checked in
+/app/public/css

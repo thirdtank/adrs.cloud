@@ -7,4 +7,19 @@ export PORT
 export RACK_ENV
 
 set -e 
-bundle exec rackup --port "${PORT}" --host 0.0.0.0 --env "${RACK_ENV}"
+if [ -f tmp/pidfile ]; then
+  echo "[ $0 ] pidfile found"
+  pid=$(cat tmp/pidfile)
+  echo "[ $0 ] Attempting to kill PID '${pid}'"
+  kill "${pid}"
+  if timeout 5 tail --pid="${pid}" -f /dev/null; then
+    echo "[ $0 ] PID '${pid}' stopped. Restarting server"
+  else
+    echo "[ $0 ] PID '${pid}' has not stopped. Something is wrong. Aborting"
+    exit 1
+  fi
+
+else
+  echo "[ $0 ] No pidfile-Starting up"
+fi
+bundle exec rackup --port "${PORT}" --host 0.0.0.0 --env "${RACK_ENV}" --pid tmp/pidfile
