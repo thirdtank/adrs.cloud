@@ -1,0 +1,269 @@
+#!/usr/bin/env ruby
+
+require_relative "bin_kit"
+require "optparse"
+require "sequel"
+require "uri"
+require "fileutils"
+require "date"
+
+def parse_options
+  options = {}
+  OptionParser.new do |parser|
+    parser.banner = %{Usage: #{$0} [options] «command»
+
+COMMANDS
+
+  create        - create the database if it doesn't exist
+  drop          - drop the database if it exists
+  migrate       - apply any outstanding migrations
+  rebuild       - drops, then creates the db, then runs migrations
+  status        - report on the status of the database and its migrations
+  new-migration - creates a new migration file. Arguments are the name/description of the migration
+
+OPTIONS
+}
+    parser.on("--app-env=ENV","Env for the app. Must be development, test, or production") do |value|
+      options[:app_env] = value
+    end
+
+  end.parse!
+  options
+end
+
+options = parse_options
+
+if ENV["RACK_ENV"]
+  log "RACK_ENV is defined in the environment - it should not be. Use --app-env"
+  exit 1
+end
+
+if options[:app_env].to_s.strip == ""
+  log "--app-env is required"
+  exit 1
+end
+if ARGV[0].to_s.strip == ""
+  log "You must provide a command"
+  exit 1
+end
+
+class Command
+  def self.from_string(string, database_url:, args:)
+    database_uri = URI(database_url)
+    case string
+    when "create"        then Create.new(database_uri: database_uri, args: args)
+    when "drop"          then Drop.new(database_uri: database_uri, args: args)
+    when "migrate"       then Migrate.new(database_uri: database_uri, args: args)
+    when "new-migration" then NewMigration.new(database_uri: database_uri, args: args)
+    when "status"        then Status.new(database_uri: database_uri, args: args)
+    when "rebuild"       then Rebuild.new(database_uri: database_uri, args: args)
+    else
+      nil
+    end
+  end
+
+  def initialize(database_uri:, args:)
+    @database_uri  = database_uri
+    @database_name = @database_uri.path.gsub(/^\//,"")
+    @args          = args
+  end
+
+  class Rebuild < Command
+    def call
+      Drop.new(database_uri: @database_uri, args: @args).call
+      Create.new(database_uri: @database_uri, args: @args).call
+      Migrate.new(database_uri: @database_uri, args: @args).call
+    end
+  end
+
+  class Create < Command
+    def call
+      connection = Sequel.connect(@database_uri.to_s)
+      puts "Database already exists"
+      connection.disconnect
+      return
+    rescue Sequel::DatabaseConnectionError
+      uri_no_database = URI(@database_uri.to_s)
+      uri_no_database.path = ""
+      begin
+        connection = Sequel.connect(uri_no_database.to_s)
+        puts "#{@database_name} does not exit. Creating..."
+        connection.run("CREATE DATABASE \"#{@database_name}\"")
+        connection.disconnect
+      rescue => ex
+        puts ex.message
+      end
+    end
+  end
+
+  class Drop < Command
+    def call
+      uri_no_database = URI(@database_uri.to_s)
+      uri_no_database.path = ""
+      connection = Sequel.connect(@database_uri.to_s)
+      puts "Database exists. Dropping..."
+      connection.disconnect
+      connection = Sequel.connect(uri_no_database.to_s)
+      connection.run("DROP DATABASE \"#{@database_name}\"")
+      connection.disconnect
+      return
+    rescue Sequel::DatabaseConnectionError
+      begin
+        connection = Sequel.connect(uri_no_database.to_s)
+        puts "#{@database_name} does not exit."
+        connection.disconnect
+      rescue => ex
+        puts ex.message
+      end
+    end
+  end
+
+  class Migrate < Command
+    TABLE_SQL = [
+      %{
+        CREATE TABLE IF NOT EXISTS brut_migrations (
+	        id BIGSERIAL PRIMARY KEY,
+          identifier text not null,
+          name text not null,
+          created_at timestamp with time zone not null
+        )
+      },
+      %{
+        COMMENT ON TABLE brut_migrations
+        IS 'Tracks which migrations have been applied to the database'
+      },
+      %{
+        COMMENT ON COLUMN brut_migrations.identifier
+        IS 'Unique identifier for this migration, ideally one that, when sorted, indicates the order in which migrations  have been applied (although this is not required)'
+      },
+      %{
+        COMMENT ON COLUMN brut_migrations.created_at
+        IS 'When this row was created in the database'
+      },
+      %{
+        COMMENT ON COLUMN brut_migrations.name
+        IS 'A human-readable name for the migration, provided when it was created'
+      },
+      %{
+        CREATE UNIQUE INDEX IF NOT EXISTS
+          brut_migrations_unique_id_and_name
+        ON
+          brut_migrations
+        (
+          identifier,
+          lower(name)
+        )
+      },
+      %{
+        COMMENT ON INDEX brut_migrations_unique_id_and_name
+        IS 'Ensures that no migration has the same name or identifier'
+      }
+    ]
+    def call
+      migrations_dir = PROJECT_ROOT / "app" / "db" / "migrations"
+      if !migrations_dir.exist?
+        puts "#{migrations_dir} doesn't exist"
+        return
+      end
+      connection = Sequel.connect(@database_uri.to_s)
+      begin
+        TABLE_SQL.each do |sql|
+          puts "Running SQL:\n#{sql}\n"
+          connection.run(sql)
+        end
+        Dir["#{migrations_dir}/*.sql"].each do |file|
+          file = Pathname(file)
+          basename = file.basename.to_s.gsub(/#{Regexp.escape(file.extname)}$/,"")
+          identifier,name = basename.split(/_/)
+          if identifier && name
+            rows = connection.fetch("SELECT count(*) AS count FROM brut_migrations WHERE identifier = ? and name = ?",identifier,name).all
+            if rows.empty? || rows.first[:count] == 0
+              puts "#{identifier}_#{name} has not been run"
+              connection.transaction do
+                sql = File.read(file)
+                puts "Running SQL:\n#{sql}\n"
+                connection.run(sql)
+                puts "Remembering migration"
+                result = connection["INSERT INTO brut_migrations(identifier,name,created_at) VALUES(?,?,now())",identifier,name].insert
+                puts "Got #{result}"
+              end
+            else
+              puts "#{identifier}_#{name} has been run"
+            end
+          else
+            raise "#{file} is not named according to convention"
+          end
+        end
+      ensure
+        connection.disconnect
+      end
+    end
+  end
+
+  class NewMigration < Command
+    def call
+      if @args.length == 0
+        puts "You must provide a name"
+      end
+      migrations_dir = PROJECT_ROOT / "app" / "db" / "migrations"
+      if !migrations_dir.exist?
+        FileUtils.mkdir_p migrations_dir
+      end
+      name = @args.join(" ").gsub(/[^\w\d\-]/,"-")
+      date = DateTime.now.strftime("%Y-%m-%dT%H:%M:%S")
+      file_name = migrations_dir / "#{date}_#{name}.sql"
+      File.open(file_name,"w") do |file|
+        file.puts "-- Put your SQL here"
+      end
+      puts "#{file_name} created"
+    end
+  end
+
+  class Status < Command
+    def call
+      connection = Sequel.connect(@database_uri.to_s)
+      puts "Database Server is Up"
+      puts "Database #{@database_name} exists"
+      if connection.table_exists?("brut_migrations")
+        migrations_run = connection["select identifier,name,created_at from brut_migrations order by identifier"].all
+        if migrations_run.empty?
+          puts "No Migrations have been run"
+        else
+          puts "These migrations have been run\n\n"
+          migrations_run.each do |row|
+            row => { identifier:, name: }
+            puts "  #{identifier} - #{name}"
+          end
+          puts
+        end
+      else
+        puts "No Migrations have been run"
+      end
+    rescue Sequel::DatabaseConnectionError
+      uri_no_database = URI(@database_uri.to_s)
+      uri_no_database.path = ""
+      begin
+        connection = Sequel.connect(uri_no_database.to_s)
+        puts "Database Server is Up"
+        puts "Database #{@database_name} does not exist"
+      rescue => ex
+        puts ex.message
+      end
+    rescue => ex
+      puts ex.class
+      puts ex.message
+    end
+  end
+end
+
+ENV["RACK_ENV"] = options[:app_env]
+
+require_relative "../app/unix_environment_bootstrap"
+
+command = Command.from_string(ARGV[0],database_url: ENV["DATABASE_URL"], args: ARGV[1..-1])
+if !command
+  log "'#{ARGV[0]}' is not a supported command"
+  exit 1
+end
+command.call
+

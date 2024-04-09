@@ -1,3 +1,4 @@
+require_relative "unix_environment_bootstrap"
 require "sinatra/base"
 
 module MyHelpers

@@ -14,3 +14,12 @@ gem "rack-unreloader"
 
 # Audit our dependencies
 gem "bundler-audit"
+
+# We use Sequel to access the database
+gem "sequel"
+
+# We use Postgres
+gem "pg"
+
+# Dotenv manages the UNIX environment for dev and test
+gem "dotenv", groups: [:development, :test]

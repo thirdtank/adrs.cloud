@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require_relative "bin_kit"
+
 def setup
   log "Installing gems"
   # Only do bundle install if the much-faster
@@ -30,29 +32,6 @@ def help
   log "     # show this help"
   log ""
 end
-
-# start of helpers
-
-# We don't want the setup method to have to do all this error
-# checking, and we also want to explicitly log what we are
-# executing. Thus, we use this method instead of Kernel#system
-def system!(*args)
-  log "Executing #{args}"
-  if system(*args)
-    log "#{args} succeeded"
-  else
-    log "#{args} failed"
-    abort
-  end
-end
-
-# It's helpful to know what messages came from this
-# script, so we'll use log instead of `puts`
-def log(message)
-  puts "[ bin/setup ] #{message}"
-end
-
-# end of helpers
 
 if ARGV[0] == "help"
   help
