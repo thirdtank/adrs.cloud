@@ -1,6 +1,15 @@
 require_relative "unix_environment_bootstrap"
 require "sinatra/base"
 
+DB = Sequel.connect(ENV.fetch("DATABASE_URL"))
+Sequel::Model.db = DB
+
+at_exit do
+  DB.disconnect
+end
+
+require_relative "data_models/account"
+
 module MyHelpers
   def button(size: :normal, color: :gray, label:)
     %{
@@ -53,6 +62,8 @@ end
 class Views::Login < Views::BaseView
 end
 class Views::SignUp < Views::BaseView
+end
+class Views::Adrs < Views::BaseView
 end
 
 class FormSubmission::BaseFormSubmission
@@ -209,49 +220,29 @@ class Action::SignUp
     if validation_result.invalid?
       return validation_result
     end
+    if Account[email: form_submission.email.to_s]
+      return ValidationResult::Invalid.new({ email: "is taken" })
+    end
 
-    true
+    Account.create(email: form_submission.email,
+                   created_at: DateTime.now)
+
   end
 end
 
 class Action::Login
 
-  DATABAS = {
-    Email.new("pat@example.com") => "qwertyuiop",
-    Email.new("chris@example.com") => "1qaz2wsx",
-  }
-
-
-  def validate(form_submission)
-    password = DATABAS[form_submission.email]
-    if password
-      if password == form_submission.password
-        ValidationResult::Valid
-      else
-        ValidationResult::Invalid.new({ email: "No account with this email and password" })
-      end
+  def call(form_submission)
+    account = Account[email: form_submission.email.to_s]
+    if account
+      account
     else
       ValidationResult::Invalid.new({ email: "No account with this email and password" })
     end
   end
-
-  def call(form_submission)
-    validation_result = validate(form_submission)
-    if validation_result.invalid?
-      return validation_result
-    end
-
-    true
-  end
 end
 
 
-#
-# A form submission is strings, and it must conform to a protocol based on the form
-#
-# That form submission is then coerced into types so it can be passed to the business logic.
-#
-#
 class AdrApp < Sinatra::Base
   enable :sessions
 
@@ -272,7 +263,7 @@ class AdrApp < Sinatra::Base
     when ValidationResult::Invalid
       erb :login, scope: Views::Login.new(content: login, errors: result.errors)
     else
-      session["user"] = login.email
+      session["user_id"] = result.external_id
       redirect to("/adrs")
     end
   end
@@ -290,7 +281,8 @@ class AdrApp < Sinatra::Base
     when ValidationResult::Invalid
       erb :'sign-up', scope: Views::SignUp.new(content: sign_up, errors: result.errors)
     else
-      session["user"] = sign_up.email
+      puts result.inspect
+      session["user_id"] = result.external_id
       redirect to("/adrs")
     end
   end
@@ -301,10 +293,12 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs" do
-    if session["user"].nil?
+    account = Account[external_id: session["user_id"]]
+    if !account
       redirect to("/login")
-    else
-      erb :adrs
+      return
     end
+    adrs = Views::Adrs.new(content: account.adrs)
+    erb :adrs, scope: adrs
   end
 end
