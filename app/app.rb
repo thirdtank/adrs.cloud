@@ -9,6 +9,7 @@ at_exit do
 end
 
 require_relative "data_models/account"
+require_relative "data_models/adr"
 
 module MyHelpers
   def button(size: :normal, color: :gray, label:)
@@ -245,6 +246,7 @@ end
 
 class AdrApp < Sinatra::Base
   enable :sessions
+  set :session_secret, ENV.fetch("SESSION_SECRET")
 
   get "/" do
     redirect to("/static/index.html")

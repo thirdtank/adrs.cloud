@@ -1,2 +1,7 @@
 <h1>ADRS</h1>
-Hi <%= @account.email %>
+<ol>
+  <% content.each do |adr| %>
+    <li><%= adr.title %></li>
+  <% end %>
+</ol>
+<a href="/adrs/new">Add a new one!</a>
