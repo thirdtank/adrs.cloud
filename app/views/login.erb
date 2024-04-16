@@ -6,7 +6,7 @@
   <% if errors? %>
     <aside class="pa-2 br-3 ba bc-red-500 bg-red-800 red-300"><%= errors %></aside>
   <% end %>
-  <form action="/login" method="post"
+  <form action="/auth/login" method="post"
     class="flex flex-column items-center gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns mw-8 w-100 w-70-m w-50-ns">
     <%= input_email(name: :email,autofocus: true, value: content.email, required: true) %>
     <%= input_password(name: :password, value: content.password, required: true) %>
@@ -15,7 +15,7 @@
     </div>
   </form>
   <nav class="tc mv-4">
-    <a class="        dib ph-3 pv-2 br-3 purple-400 hover-bg-purple-700" href="/sign-up">Sign Up Instead</a>
-    <a class="        dib ph-3 pv-2 br-3 purple-400 hover-bg-purple-700" href="/forgot-password">Forgot Password</a>
+    <a class="        dib ph-3 pv-2 br-3 purple-400 hover-bg-purple-700" href="/auth/sign-up">Sign Up Instead</a>
+    <a class="        dib ph-3 pv-2 br-3 purple-400 hover-bg-purple-700" href="/auth/forgot-password">Forgot Password</a>
   </nav>
 </section>

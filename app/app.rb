@@ -1,5 +1,6 @@
 require_relative "unix_environment_bootstrap"
 require "sinatra/base"
+require "sinatra/namespace"
 
 DB = Sequel.connect(ENV.fetch("DATABASE_URL"))
 Sequel::Model.db = DB
@@ -20,6 +21,10 @@ module MyHelpers
     }.strip
   end
 
+  def input_text(name:,autofocus: false, value: nil, required: false)
+    text_field(type: :text, name: name, autofocus: autofocus, label: name, value: value, required: required)
+  end
+
   def input_email(name:,autofocus: false, value: nil, required: false)
     text_field(type: :email, name: name, autofocus: autofocus, label: name, value: value, required: required)
   end
@@ -38,6 +43,19 @@ module MyHelpers
 </label>
     }
   end
+  def textarea(name:, label:, value: false, required: false, inner_label: false)
+    %{
+      <label class="flex flex-column gap-1 w-100">
+        <div class="textarea-container">
+          #{ inner_label ? "<div class=\"inner-label\">#{inner_label}</div>" : '' }
+          <textarea #{required ? 'required' : '' } rows="3" name="#{name}" class="textarea">#{ value ? value : "" }</textarea>
+        </div>
+        <div class="text-field-label">
+          <span class="f-1">#{ label }</span>
+        </div>
+      </label>
+    }
+  end
 end
 module FormSubmission
 end
@@ -49,11 +67,15 @@ module Views
 
     attr_reader :content, :errors
 
-    def initialize(content: {}, errors: [])
+    def initialize(content: {}, errors: [], default_scope:)
       @content = content
       @errors  = errors
+      @_default_scope = default_scope
     end
     def errors? = !@errors.empty?
+    def erb(...)
+      @_default_scope.erb(...)
+    end
   end
 end
 
@@ -65,6 +87,24 @@ end
 class Views::SignUp < Views::BaseView
 end
 class Views::Adrs < Views::BaseView
+  def adrs = @content
+  def adr_path(adr) = "/adrs/#{adr.external_id}"
+  def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
+end
+class Views::Adrs::New < Views::BaseView
+  def adr = @content
+  def adr_textarea(name:, prefix:, label:)
+    textarea(name: name, label: label, inner_label: prefix, value: adr.send(name))
+  end
+  def title = "Draft New ADR"
+  def action_label = "Draft ADR"
+end
+class Views::Adrs::Edit < Views::Adrs::New
+  def title = "Edit ADR"
+  def action_label = "Update Draft"
+end
+class Views::Adrs::Get < Views::BaseView
+  def adr = @content
 end
 
 class FormSubmission::BaseFormSubmission
@@ -110,11 +150,10 @@ class FormSubmission::BaseFormSubmission
 
     define_method "#{name}=" do |raw_val|
       wrapper = if raw_val.nil?
-                  MissingValue.new
+                  self.class.attributes[name.to_s][:required] ? MissingValue.new : ConformingValue.new(nil)
                 else
-                  raw_val = raw_val.strip
                   if raw_val == ""
-                    MissingValue.new
+                    self.class.attributes[name.to_s][:required] ? MissingValue.new : ConformingValue.new(nil)
                   else
                     begin
                       ConformingValue.new(type.new(raw_val))
@@ -184,6 +223,32 @@ class FormSubmission::Login < FormSubmission::BaseFormSubmission
   attribute :password, :required, String
 end
 
+class FormSubmission::DraftAdr < FormSubmission::BaseFormSubmission
+  attribute :title, :required, String
+  attribute :context, :required, String
+  attribute :facing , :required, String
+  attribute :decision , :required, String
+  attribute :neglected , :required, String
+  attribute :achieve , :required, String
+  attribute :accepting , :required, String
+  attribute :because , :required, String
+  attribute :external_id, :optional, String
+
+  def self.from_adr(adr)
+    self.new(
+      external_id: adr.external_id,
+      title: adr.title,
+      context: adr.context,
+      facing: adr.facing,
+      decision: adr.decision,
+      neglected: adr.neglected,
+      achieve: adr.achieve,
+      accepting: adr.accepting,
+      because: adr.because
+    )
+  end
+end
+
 module Action
 end
 
@@ -243,64 +308,186 @@ class Action::Login
   end
 end
 
+class Action::DraftAdr
+  def call(form_submission:, account:)
+    if form_submission.title.to_s.strip == ""
+      return ValidationResult::Invalid.new({ title: "may not be blank" })
+    end
+    if form_submission.external_id
+      adr = Adr[external_id: form_submission.external_id, account_id: account.id]
+      if !adr
+        raise "account does not have an ADR with that ID"
+      end
+    else
+      adr = Adr.new
+    end
+    adr.update(account_id: account.id,
+               title: form_submission.title,
+               context: form_submission.context,
+               facing: form_submission.facing,
+               decision: form_submission.decision,
+               neglected: form_submission.neglected,
+               achieve: form_submission.achieve,
+               accepting: form_submission.accepting,
+               because: form_submission.because,
+              )
+  end
+end
 
 class AdrApp < Sinatra::Base
+
+  register Sinatra::Namespace
+
   enable :sessions
   set :session_secret, ENV.fetch("SESSION_SECRET")
+
+  before do
+    if request.path_info !~ /^\/auth\//
+      @account = Account[external_id: session["user_id"]]
+      if !@account
+        redirect to("/auth/login")
+        return
+      end
+    end
+  end
 
   get "/" do
     redirect to("/static/index.html")
   end
 
-  get "/login" do
-    erb :login, scope: Views::Login.new(content: FormSubmission::Login.new)
-  end
+  namespace "/auth" do
 
-  post "/login" do
-    login = FormSubmission::Login.new(params)
-    login.must_conform!
-    action = Action::Login.new
-    result = action.call(login)
-    case result
-    when ValidationResult::Invalid
-      erb :login, scope: Views::Login.new(content: login, errors: result.errors)
-    else
-      session["user_id"] = result.external_id
-      redirect to("/adrs")
+    get "/login" do
+      erb :login, scope: Views::Login.new(content: FormSubmission::Login.new, default_scope: self)
     end
-  end
 
-  get "/sign-up" do
-    erb :'sign-up', scope: Views::SignUp.new(content: FormSubmission::SignUp.new)
-  end
-
-  post "/sign-up" do
-    sign_up = FormSubmission::SignUp.new(params)
-    sign_up.must_conform!
-    action = Action::SignUp.new
-    result = action.call(sign_up)
-    case result
-    when ValidationResult::Invalid
-      erb :'sign-up', scope: Views::SignUp.new(content: sign_up, errors: result.errors)
-    else
-      puts result.inspect
-      session["user_id"] = result.external_id
-      redirect to("/adrs")
+    post "/login" do
+      login = FormSubmission::Login.new(params)
+      login.must_conform!
+      action = Action::Login.new
+      result = action.call(login)
+      case result
+      when ValidationResult::Invalid
+        erb :login, scope: Views::Login.new(content: login, errors: result.errors, default_scope: self)
+      else
+        session["user_id"] = result.external_id
+        redirect to("/adrs")
+      end
     end
-  end
 
-  get "/logout" do
-    session["user"] = nil
-    redirect to("/login")
+    get "/sign-up" do
+      erb :'sign-up', scope: Views::SignUp.new(content: FormSubmission::SignUp.new, default_scope: self)
+    end
+
+    post "/sign-up" do
+      sign_up = FormSubmission::SignUp.new(params)
+      sign_up.must_conform!
+      action = Action::SignUp.new
+      result = action.call(sign_up)
+      case result
+      when ValidationResult::Invalid
+        erb :'sign-up', scope: Views::SignUp.new(content: sign_up, errors: result.errors, default_scope: self)
+      else
+        puts result.inspect
+        session["user_id"] = result.external_id
+        redirect to("/adrs")
+      end
+    end
+
+    get "/logout" do
+      session["user_id"] = nil
+      redirect to("/auth/login")
+    end
   end
 
   get "/adrs" do
-    account = Account[external_id: session["user_id"]]
-    if !account
-      redirect to("/login")
-      return
-    end
-    adrs = Views::Adrs.new(content: account.adrs)
+    adrs = Views::Adrs.new(content: @account.adrs, default_scope: self)
     erb :adrs, scope: adrs
   end
+
+  get "/adrs/new" do
+    erb :'adrs/new', scope: Views::Adrs::New.new(content: FormSubmission::DraftAdr.new, default_scope: self)
+  end
+
+  get "/adrs/:id" do
+    erb :'adrs/get', scope: Views::Adrs::Get.new(content: Adr[account_id: @account.id, external_id: params[:id]], default_scope: self)
+  end
+
+  get "/adrs/:id/edit" do
+    erb :'adrs/new', scope: Views::Adrs::Edit.new(content: FormSubmission::DraftAdr.from_adr(Adr[account_id: @account.id, external_id: params[:id]]), default_scope: self)
+  end
+
+  post "/adrs" do
+    draft_adr = FormSubmission::DraftAdr.new(params)
+    draft_adr.must_conform!
+    action = Action::DraftAdr.new
+    result = action.call(form_submission: draft_adr, account: @account)
+    case result
+    when ValidationResult::Invalid
+      erb :'adrs/new', scope: Views::Adrs::New.new(content: draft_adr, errors: result.errors, default_scope: self)
+    else
+      redirect to("/adrs")
+    end
+  end
 end
+
+#
+# A view is represented by a class that responds to #content  This method provides access
+#   to all content the view needs to render itself.
+#
+# A form submission's data is populated into a FormSubmission instance.  The purpose of this
+#   class is to mimic the form's requirements and coerce the strings from the request into
+#   typed values.  This process must succeed for eveyr single valid submission the user could make.
+#   For example, if a field is required, the browser will require it.  Thus, submission when it's
+#   missing is an error, not a validation problem.
+#
+#   In a sense the form describes what's coming in.
+#
+#   OK - WHY.  Isn't this confusing?  This means there are two levels of validation happening: one for the
+#   conformance of the form and a second for the user-level valditations. Potentially two type coercions
+#   are happening as well.
+#
+#   What if we instead stick to HTML?  Coerce only the types provided?
+#
+#   How much of a problem is it to get a form submitted without stuff the front end requires?
+#
+# Let's take this over - what needs to happen when a form is submitted:
+#
+#   - Validations - did the user make an expected mistake?
+#   - If data is good, initiate actions
+#     - If further validations reveal problem, go back to the user
+#     - If there is an unrecoverable error, go back to the user
+#     - Otherwise, send them somehwere to indicate they are done
+#
+# Thinking about this as HTTP/HTML:
+#
+# * get - returns content, possibly dynamically rendered
+# * post - processes a form submission
+#
+# What about PATCH, DELETE, and PUT?
+#
+# These seem largely useless and magnets for debate and confusion - what if we ignore them?
+#
+# What would this buy us?
+#
+# * It would simplify possible interactions to just gets and posts, making it much easier to decide where logic
+#   would go: fetching data is a get and submitting info is a post.
+# * Symmetry with HTML - no need for _method hack
+# * No need for JSON parsing by default - always a formdata or whatever
+#
+# What about APIs?
+#
+# * These could still use the normal HTTP verbs.
+# * These can use content types as usual
+# * Would not conflate the API with the web app
+#
+# How could commonalities be leveraged?
+#
+# * each get route would be associated with a View and a Query
+# * each post route would be associated with an Action, a Form, and routes for valid/not valid
+#
+# e.g.
+#
+# get "/adrs", Views::AdrIndex, Query::Adrs
+#
+# post "/adrs", Action::NewAdr, Form::Adr

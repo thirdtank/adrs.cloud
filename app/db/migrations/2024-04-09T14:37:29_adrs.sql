@@ -2,6 +2,13 @@ CREATE TABLE adrs (
   id BIGSERIAL PRIMARY KEY,
   external_id citext NOT NULL UNIQUE,
   title text NOT NULL,
+  context text NOT NULL,
+  facing text NOT NULL,
+  decision text NOT NULL,
+  neglected text NOT NULL,
+  achieve text NOT NULL,
+  accepting text NOT NULL,
+  because text NULL,
   account_id BIGINT NOT NULL REFERENCES accounts(id)
 );
 

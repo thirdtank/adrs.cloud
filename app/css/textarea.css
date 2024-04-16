@@ -1,0 +1,36 @@
+.textarea-container {
+  background-color: white;
+  box-shadow: inset 0 0 calc(1.25 * var(--mg-sp-1)) calc(0.25 * var(--mg-sp-1)) var(--mg-gray-400);
+  border-style: solid;
+  border-width: thin;
+  border-color: var(--mg-gray-400);
+  border-radius: var(--mg-bw-2);
+  padding: calc(1.25 * var(--mg-sp-1));
+}
+
+.textarea-container .inner-label {
+  padding-left: calc(var(--mg-sp-3) - (1.25 * var(--mg-sp-1)));
+  padding-top: calc(var(--mg-sp-3) - (1.25 * var(--mg-sp-1)));
+  padding-bottom: calc(-1 * (var(--mg-sp-3) - (1.25 * var(--mg-sp-1))));
+  font-weight: 600;
+}
+
+.textarea-container:has(.textarea:focus) {
+  outline-color: var(--mg-purple-600);
+  outline-style: solid;
+  outline-width: 2px;
+  box-shadow: inset 0 0 calc(1.25 * var(--mg-sp-1)) calc(0.25 * var(--mg-sp-1)) var(--mg-gray-300);
+}
+
+.textarea {
+  width: 100%;
+  border-style: none;
+  border-width: 0;
+  font-size: var(--mg-fs-2);
+  background-color: white;
+  padding: calc(var(--mg-sp-3) - (1.25 * var(--mg-sp-1)));
+}
+.textarea:focus {
+  outline-width: 0;
+  outline-style: none;
+}

@@ -1,0 +1,56 @@
+<div class="flex items-start justify-between gap-4 w-100">
+  <form action="/adrs" method="post" class="flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-50">
+    <% if adr.external_id %>
+      <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+    <% end %>
+    <%= input_text(name: "title", autofocus: true, required: true, value: adr.title) %>
+    <div class="flex items-center gap-2 justify-between">
+      <div class="w-100">
+        <%= adr_textarea(name: "context", label: "Use case or user story", prefix: "In the context of") %>
+      </div>
+      <span class="f-7">⤵</span>
+    </div>
+    <div class="flex items-center gap-2 justify-between">
+      <span class="f-7">&larrpl;</span>
+      <div class="w-100">
+        <%= adr_textarea(name: "facing", label: "Concern or issue", prefix: "Facing") %>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 justify-between">
+      <div class="w-100">
+        <%= adr_textarea(name: "decision", label: "Bulk of what was decided or option chosen", prefix: "We decided") %>
+      </div>
+      <span class="f-7">⤵</span>
+    </div>
+    <div class="flex items-center gap-2 justify-between">
+      <span class="f-7">&larrpl;</span>
+      <div class="w-100">
+        <%= adr_textarea(name: "neglected", label: "Options considered but not chosen", prefix: "And neglected") %>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 justify-between">
+      <div class="w-100">
+        <%= adr_textarea(name: "achieve", label: "System qualities or desired consequences", prefix: "To achieve") %>
+      </div>
+      <span class="f-7">⤵</span>
+    </div>
+    <div class="flex items-center gap-2 justify-between">
+      <span class="f-7">&larrpl;</span>
+      <div class="w-100">
+        <%= adr_textarea(name: "accepting", label: "Downside, trade-offs, or understood consequences", prefix: "Accepting") %>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 justify-between">
+      <div class="w-100">
+        <%= adr_textarea(name: "because", label: "Additional rationale or context", prefix: "because") %>
+      </div>
+      <span class="f-7">⤵</span>
+    </div>
+    <div class="mt-2 tr">
+    <%= button(color: "blue", label: action_label) %>
+    </div>
+  </form>
+  <div class="w-50">
+    <h3>ADR</h3>
+  </div>
+</div>

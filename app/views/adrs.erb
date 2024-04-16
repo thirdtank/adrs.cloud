@@ -1,7 +1,15 @@
 <h1>ADRS</h1>
 <ol>
-  <% content.each do |adr| %>
-    <li><%= adr.title %></li>
+  <% adrs.each do |adr| %>
+    <li>
+      <p class="p">
+      <%= adr.title %>
+      </p>
+      <nav class="flex items-baseline gap-2 mv-2">
+      <a class="blue-400" href="<%= adr_path(adr) %>">View</a>
+      <a class="blue-400" href="<%= edit_adr_path(adr) %>">Edit</a>
+      </nav>
+    </li>
   <% end %>
 </ol>
 <a href="/adrs/new">Add a new one!</a>
