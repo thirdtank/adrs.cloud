@@ -13,6 +13,7 @@ require_relative "data_models/account"
 require_relative "data_models/adr"
 
 module MyHelpers
+
   def button(size: :normal, color: :gray, label:)
     %{
       <button class="button button--size--#{size} button--color--#{color}">
@@ -43,6 +44,54 @@ module MyHelpers
 </label>
     }
   end
+
+  def form_field(form:, input:, autofocus: false, label: :derive, value: nil, default_type: "text", inner_label: false)
+    input = input.to_s
+    type = case form.class.inputs[input].type.name
+           when Email.name
+             "email"
+           else
+             default_type
+           end
+    name = input
+    required = form.class.inputs[input].required?
+    label = if label == :derive
+              input.to_s
+            else
+              label
+            end
+    pattern = if form.class.inputs[input].type.respond_to?(:pattern)
+                "pattern='#{ form.class.inputs[input].type.pattern }'"
+              else
+                nil
+              end
+    if type != "textarea"
+      if inner_label
+        raise "inner_label is only valid for a textarea"
+      end
+    %{
+<label class="flex flex-column gap-1 w-100">
+<input type="#{ type }" name="#{ name }" value="#{ value }" class="text-field" #{ autofocus ? "autofocus" : "" } #{required ? "required" : "" } #{pattern}>
+  <div class="text-field-label">
+  #{ label }
+  </div>
+</label>
+    }
+    else
+    %{
+      <label class="flex flex-column gap-1 w-100">
+        <div class="textarea-container">
+          #{ inner_label ? "<div class=\"inner-label\">#{inner_label}</div>" : '' }
+          <textarea #{required ? 'required' : '' } rows="3" name="#{name}" class="textarea">#{ value ? value : "" }</textarea>
+        </div>
+        <div class="text-field-label">
+          <span class="f-1">#{ label }</span>
+        </div>
+      </label>
+    }
+    end
+  end
+
   def textarea(name:, label:, value: false, required: false, inner_label: false)
     %{
       <label class="flex flex-column gap-1 w-100">
@@ -60,14 +109,67 @@ end
 module FormSubmission
 end
 
+module Component
+  class BaseComponent
+    include MyHelpers
 
-module Views
-  class BaseView
+    def template_name = underscore(self.class.name).gsub(/^component\//,"")
+    def binding_scope = binding
+
+  private
+    def underscore(string)
+      return string.to_s.dup unless /[A-Z-]|::/.match?(string)
+      word = string.to_s.gsub("::", "/")
+      word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
+      word.tr!("-", "_")
+      word.downcase!
+      word
+    end
+  end
+end
+
+module Component
+  module Adrs
+  end
+end
+class Component::Adrs::Form < Component::BaseComponent
+  def initialize(adr, action_label)
+    @adr = adr
+    @action_label = action_label
+  end
+  def adr = @adr
+  def action_label = @action_label
+  def adr_textarea(name:, prefix:, label:)
+    form_field(form: self.adr,
+               input: name,
+               label: label,
+               value: adr.send(name),
+               default_type: "textarea",
+               inner_label: prefix)
+  end
+end
+
+class Component::TextField < Component::BaseComponent
+  def blah
+  %{
+<label class="flex flex-column gap-1 w-100">
+<input type="#{ type }" name="#{ name }" value="#{ value }" class="text-field" #{ autofocus ? "autofocus" : "" } #{required ? "required" : "" } #{pattern}>
+  <div class="text-field-label">
+  #{ label }
+  </div>
+</label>
+  }
+  end
+end
+
+module Page
+  class BasePage
     include MyHelpers
 
     attr_reader :content, :errors
+    attr_accessor :component_proc
 
-    def initialize(content: {}, errors: [], default_scope:)
+    def initialize(content: {}, errors: [], default_scope: nil)
       @content = content
       @errors  = errors
       @_default_scope = default_scope
@@ -76,38 +178,77 @@ module Views
     def erb(...)
       @_default_scope.erb(...)
     end
+
+    def binding_scope = binding
+
+    def template_name = underscore(self.class.name).gsub(/^page\//,"")
+    def layout = "default"
+
+  private
+    def underscore(string)
+      return string.to_s.dup unless /[A-Z-]|::/.match?(string)
+      word = string.to_s.gsub("::", "/")
+      word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
+      word.tr!("-", "_")
+      word.downcase!
+      word
+    end
   end
 end
 
 module Content
 end
 
-class Views::Login < Views::BaseView
+class Page::Login < Page::BasePage
 end
-class Views::SignUp < Views::BaseView
+class Page::SignUp < Page::BasePage
 end
-class Views::Adrs < Views::BaseView
+class Page::Adrs < Page::BasePage
   def adrs = @content
   def adr_path(adr) = "/adrs/#{adr.external_id}"
   def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
 end
-class Views::Adrs::New < Views::BaseView
+class Page::Adrs::New < Page::BasePage
   def adr = @content
   def adr_textarea(name:, prefix:, label:)
-    textarea(name: name, label: label, inner_label: prefix, value: adr.send(name))
+    form_field(form: self.adr,
+               input: name,
+               label: label,
+               value: adr.send(name),
+               default_type: "textarea",
+               inner_label: prefix)
   end
-  def title = "Draft New ADR"
-  def action_label = "Draft ADR"
 end
-class Views::Adrs::Edit < Views::Adrs::New
-  def title = "Edit ADR"
-  def action_label = "Update Draft"
+class Page::Adrs::Edit < Page::Adrs::New
 end
-class Views::Adrs::Get < Views::BaseView
+class Page::Adrs::Get < Page::BasePage
   def adr = @content
 end
 
-class FormSubmission::BaseFormSubmission
+class Email
+  REGEXP = /^[^@]+@[^@]+\.[^@]+$/
+
+  def self.pattern
+    REGEXP.source
+  end
+
+  def initialize(string)
+    string = string.to_s.strip
+    if string =~ REGEXP
+      @email = string
+    else
+      raise ArgumentError.new("'#{string}' is not an email address")
+    end
+  end
+
+  def to_s = @email
+  def eql?(other)
+    other.to_s == self.to_s
+  end
+  def hash = self.to_s.hash
+end
+
+class FormSubmission::BaseForm
   class ConformingValue
     attr_reader :value
     def initialize(value)
@@ -132,13 +273,25 @@ class FormSubmission::BaseFormSubmission
     def error = exception.message
   end
 
-  def self.attribute(name,required,type,default: nil)
-    @attributes ||= {}
-    @attributes[name.to_s] = {
-      required: required == :required,
-      type: type,
-      default: default
-    }
+  class Input
+    attr_reader :name, :type
+    def initialize(name, type, options)
+      @name = name
+      @type = type
+      @required = options.key?(:required) ? options[:required] : true
+    end
+
+    def required? = !!@required
+  end
+
+  def self.input(name,type=String,options={})
+    if options.nil? && type.kind_of?(Hash)
+      options = type
+      type = String
+    end
+
+    @inputs ||= {}
+    @inputs[name.to_s] = Input.new(name.to_s,type,options)
 
     define_method name do
       self.send("_wrapped_#{name}").value
@@ -150,10 +303,10 @@ class FormSubmission::BaseFormSubmission
 
     define_method "#{name}=" do |raw_val|
       wrapper = if raw_val.nil?
-                  self.class.attributes[name.to_s][:required] ? MissingValue.new : ConformingValue.new(nil)
+                  self.class.inputs[name.to_s].required? ? MissingValue.new : ConformingValue.new(nil)
                 else
                   if raw_val == ""
-                    self.class.attributes[name.to_s][:required] ? MissingValue.new : ConformingValue.new(nil)
+                    self.class.inputs[name.to_s].required? ? MissingValue.new : ConformingValue.new(nil)
                   else
                     begin
                       ConformingValue.new(type.new(raw_val))
@@ -166,20 +319,20 @@ class FormSubmission::BaseFormSubmission
     end
   end
 
-  def self.attributes
-    @attributes || {}
+  def self.inputs
+    @inputs || {}
   end
 
-  def initialize(attributes={})
-    @new = attributes.keys.empty?
-    self.class.attributes.each do |(attr,metadata)|
-      val = attributes[attr.to_s] || attributes[attr.to_sym]
+  def initialize(inputs={})
+    @new = inputs.keys.empty?
+    self.class.inputs.each do |(attr,metadata)|
+      val = inputs[attr.to_s] || inputs[attr.to_sym]
       self.send("#{attr}=",val)
     end
   end
 
-  def must_conform!
-    errors = self.class.attributes.map { |(attr)|
+  def validate!
+    errors = self.class.inputs.map { |(attr)|
       [ attr, self.send("_wrapped_#{attr}") ]
     }.reject { |(_,wrapped_value)|
       wrapped_value.conforming?
@@ -195,44 +348,27 @@ class FormSubmission::BaseFormSubmission
 
 end
 
-class Email
-  def initialize(string)
-    string = string.to_s.strip
-    if string =~ /^[^@]+@[^@]+\.[^@]+$/
-      @email = string
-    else
-      raise ArgumentError.new("'#{string}' is not an email address")
-    end
-  end
-
-  def to_s = @email
-  def eql?(other)
-    other.to_s == self.to_s
-  end
-  def hash = self.to_s.hash
+class FormSubmission::Login < FormSubmission::BaseForm
+  input :email, Email
+  input :password
 end
 
-class FormSubmission::SignUp < FormSubmission::BaseFormSubmission
-  attribute :email, :required, Email
-  attribute :password, :required, String
-  attribute :password_confirmation, :required, String
+class FormSubmission::SignUp < FormSubmission::BaseForm
+  input :email, Email
+  input :password
+  input :password_confirmation
 end
 
-class FormSubmission::Login < FormSubmission::BaseFormSubmission
-  attribute :email, :required, Email
-  attribute :password, :required, String
-end
-
-class FormSubmission::DraftAdr < FormSubmission::BaseFormSubmission
-  attribute :title, :required, String
-  attribute :context, :required, String
-  attribute :facing , :required, String
-  attribute :decision , :required, String
-  attribute :neglected , :required, String
-  attribute :achieve , :required, String
-  attribute :accepting , :required, String
-  attribute :because , :required, String
-  attribute :external_id, :optional, String
+class FormSubmission::DraftAdr < FormSubmission::BaseForm
+  input :title
+  input :context
+  input :facing
+  input :decision
+  input :neglected
+  input :achieve
+  input :accepting
+  input :because
+  input :external_id, String, { required: false }
 
   def self.from_adr(adr)
     self.new(
@@ -340,6 +476,9 @@ class AdrApp < Sinatra::Base
 
   enable :sessions
   set :session_secret, ENV.fetch("SESSION_SECRET")
+  set :components, Proc.new { root + "/components" }
+  set :pages,      Proc.new { root + "/pages" }
+  set :layouts,    Proc.new { root + "/layouts" }
 
   before do
     if request.path_info !~ /^\/auth\//
@@ -351,6 +490,33 @@ class AdrApp < Sinatra::Base
     end
   end
 
+  def page(page_instance)
+    layout_erb_file = Pathname(settings.layouts) / "#{page_instance.layout}.layout.erb"
+    layout_template = ERB.new(File.read(layout_erb_file))
+
+    erb_file = Pathname(settings.pages) / "#{page_instance.template_name}.page.erb"
+    template = ERB.new(File.read(erb_file))
+
+    template_binding = page_instance.binding_scope do
+      scope = page_instance.binding_scope
+      scope.local_variable_set(:components,Components.new(settings.components))
+      template.result(scope)
+    end
+    layout_template.result(template_binding)
+  end
+
+  class Components
+    def initialize(components_path)
+      @components_path = components_path
+    end
+    def render(component_instance)
+      erb_file = Pathname(@components_path) / "#{component_instance.template_name}.component.erb"
+    template = ERB.new(File.read(erb_file))
+
+    template.result(component_instance.binding_scope)
+    end
+  end
+
   get "/" do
     redirect to("/static/index.html")
   end
@@ -358,17 +524,17 @@ class AdrApp < Sinatra::Base
   namespace "/auth" do
 
     get "/login" do
-      erb :login, scope: Views::Login.new(content: FormSubmission::Login.new, default_scope: self)
+      page Page::Login.new(content: FormSubmission::Login.new)
     end
 
     post "/login" do
       login = FormSubmission::Login.new(params)
-      login.must_conform!
+      login.validate!
       action = Action::Login.new
       result = action.call(login)
       case result
       when ValidationResult::Invalid
-        erb :login, scope: Views::Login.new(content: login, errors: result.errors, default_scope: self)
+        page Page::Login.new(content: login, errors: result.errors)
       else
         session["user_id"] = result.external_id
         redirect to("/adrs")
@@ -376,17 +542,17 @@ class AdrApp < Sinatra::Base
     end
 
     get "/sign-up" do
-      erb :'sign-up', scope: Views::SignUp.new(content: FormSubmission::SignUp.new, default_scope: self)
+      page Page::SignUp.new(content: FormSubmission::SignUp.new)
     end
 
     post "/sign-up" do
       sign_up = FormSubmission::SignUp.new(params)
-      sign_up.must_conform!
+      sign_up.validate!
       action = Action::SignUp.new
       result = action.call(sign_up)
       case result
       when ValidationResult::Invalid
-        erb :'sign-up', scope: Views::SignUp.new(content: sign_up, errors: result.errors, default_scope: self)
+        page Page::SignUp.new(content: sign_up, errors: result.errors)
       else
         puts result.inspect
         session["user_id"] = result.external_id
@@ -401,30 +567,62 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs" do
-    adrs = Views::Adrs.new(content: @account.adrs, default_scope: self)
-    erb :adrs, scope: adrs
+    page Page::Adrs.new(content: @account.adrs)
   end
 
   get "/adrs/new" do
-    erb :'adrs/new', scope: Views::Adrs::New.new(content: FormSubmission::DraftAdr.new, default_scope: self)
+    page Page::Adrs::New.new(content: FormSubmission::DraftAdr.new)
   end
 
   get "/adrs/:id" do
-    erb :'adrs/get', scope: Views::Adrs::Get.new(content: Adr[account_id: @account.id, external_id: params[:id]], default_scope: self)
+    page Page::Adrs::Get.new(content: Adr[account_id: @account.id, external_id: params[:id]])
   end
 
   get "/adrs/:id/edit" do
-    erb :'adrs/new', scope: Views::Adrs::Edit.new(content: FormSubmission::DraftAdr.from_adr(Adr[account_id: @account.id, external_id: params[:id]]), default_scope: self)
+    page Page::Adrs::Edit.new(content: FormSubmission::DraftAdr.from_adr(Adr[account_id: @account.id, external_id: params[:id]]))
   end
 
+  #
+  # A POST from a browser/web page is going to be form data, which is a hash of keys to strings or hashes of the same.
+  #
+  # Declare your form as all the values that are allowed:
+  #
+  # value «name», «type», «options»
+  #
+  #   - «name» is required
+  #   - «type» can be omitted and, if so, will be assumed to be a String.
+  #     - String - value is a string
+  #     - :boolean - value is a boolean
+  #     - Date - value is a Date
+  #     - Time - value is a timestamp
+  #     - Email - value is an email address
+  #     - File - value is a file
+  #     - Numeric - value is a number
+  #     - Url - value is a URL
+  #     - Time - value is a time
+  #   - «options» can be omitted, but respects the following values:
+  #     - required: true/false (default true)
+  #     - min/max: min/max range of allowed values
+  #     - allowed_values: array of allowed values
+  #     - minlength/maxlength: min/max length
+  #     - pattern: Regexp that it must match
+  #
+  # It is cosidered a programmer error if a form is submitted that does not conform to the constraints
+  #
+  # This metadata can be used to create <input> fields
+  #
+  # A GET from a browser/web page is a request for possibly dynamic HTML.  The HTML's dynamic info is considered "content".
+  # 
   post "/adrs" do
+    puts params["test"]
+    puts params[:test]
     draft_adr = FormSubmission::DraftAdr.new(params)
-    draft_adr.must_conform!
+    draft_adr.validate!
     action = Action::DraftAdr.new
     result = action.call(form_submission: draft_adr, account: @account)
     case result
     when ValidationResult::Invalid
-      erb :'adrs/new', scope: Views::Adrs::New.new(content: draft_adr, errors: result.errors, default_scope: self)
+      erb :'adrs/new', scope: Page::Adrs::New.new(content: draft_adr, errors: result.errors, default_scope: self)
     else
       redirect to("/adrs")
     end
@@ -483,11 +681,11 @@ end
 #
 # How could commonalities be leveraged?
 #
-# * each get route would be associated with a View and a Query
+# * each get route would be associated with a Page and a Query
 # * each post route would be associated with an Action, a Form, and routes for valid/not valid
 #
 # e.g.
 #
-# get "/adrs", Views::AdrIndex, Query::Adrs
+# get "/adrs", Page::AdrIndex, Query::Adrs
 #
 # post "/adrs", Action::NewAdr, Form::Adr

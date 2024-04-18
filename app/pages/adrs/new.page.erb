@@ -1,10 +1,10 @@
 <header>
   <h1 class="tc ma-0 mt-3 ttu tracked-tight f-7">ADRpg</h1>
-  <h2 class="tc mt-0 f-5 fw-5"><%= title %></h2>
+  <h2 class="tc mt-0 f-5 fw-5">Draft New ADR</h2>
 </header>
 <section class="pa-3">
   <% if errors? %>
     <aside class="pa-2 br-3 ba bc-red-500 bg-red-800 red-300"><%= errors %></aside>
   <% end %>
-  <%= erb :'adrs/form', scope: self %>
+  <%= components.render Component::Adrs::Form.new(adr, "Save Draft") %>
 </section>
