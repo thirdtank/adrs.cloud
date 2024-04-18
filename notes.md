@@ -50,3 +50,16 @@ Cycle:
                                       Render Result
 
 ```
+
+
+# View Layer
+
+By default, a route maps to a Page.  A Page has a layout.  A Page is the object that is used to dynamically render HTML.  Any
+partial HTML is managed by a *component*. The page's template is derived from its name: `Page::Foo::Bar` would expect
+`app/pages/foo/bar.page.erb` to exist.
+
+A *Component* is HTML that has no layout.  It is encapsulated from the page. It's template is derived from its name:
+`Component::Foo::Bar` would expect that `app/components/foo/bar.component.erb` exist.
+
+A component can render other components
+

@@ -6,5 +6,5 @@
   <% if errors? %>
     <aside class="pa-2 br-3 ba bc-red-500 bg-red-800 red-300"><%= errors %></aside>
   <% end %>
-  <%= components.render Component::Adrs::Form.new(adr, "Update Draft") %>
+  <%= component Component::Adrs::Form.new(adr, "Update Draft") %>
 </section>

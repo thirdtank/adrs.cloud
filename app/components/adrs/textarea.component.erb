@@ -1,0 +1,16 @@
+<label class="flex flex-column gap-1 w-100">
+  <div class="textarea-container">
+    <% if prefix %>
+    <div class="inner-label"><%= prefix %></div>
+    <% end %>
+    <%= form_field(form: adr,
+         input: name,
+         label: label,
+         value: adr.send(name),
+         default_type: "textarea",
+         inner_label: prefix) %>
+  </div>
+  <div class="text-field-label">
+    <span class="f-1"><%= label %></span>
+  </div>
+</label>

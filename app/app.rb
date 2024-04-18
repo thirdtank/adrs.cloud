@@ -78,17 +78,7 @@ module MyHelpers
 </label>
     }
     else
-    %{
-      <label class="flex flex-column gap-1 w-100">
-        <div class="textarea-container">
-          #{ inner_label ? "<div class=\"inner-label\">#{inner_label}</div>" : '' }
-          <textarea #{required ? 'required' : '' } rows="3" name="#{name}" class="textarea">#{ value ? value : "" }</textarea>
-        </div>
-        <div class="text-field-label">
-          <span class="f-1">#{ label }</span>
-        </div>
-      </label>
-    }
+    %{<textarea #{required ? 'required' : '' } rows="3" name="#{name}" class="textarea">#{ value ? value : "" }</textarea>}
     end
   end
 
@@ -112,9 +102,23 @@ end
 module Component
   class BaseComponent
     include MyHelpers
+    attr_writer :component_locator
+
+    def initialize
+      @component_locator = NullTemplateLocator.new
+    end
 
     def template_name = underscore(self.class.name).gsub(/^component\//,"")
     def binding_scope = binding
+
+    def component(component_instance)
+      component_instance.component_locator = @component_locator
+      erb_file = @component_locator.locate(component_instance.template_name)
+      template = ERB.new(File.read(erb_file))
+
+      scope = component_instance.binding_scope
+      template.result(scope)
+    end
 
   private
     def underscore(string)
@@ -140,12 +144,17 @@ class Component::Adrs::Form < Component::BaseComponent
   def adr = @adr
   def action_label = @action_label
   def adr_textarea(name:, prefix:, label:)
-    form_field(form: self.adr,
-               input: name,
-               label: label,
-               value: adr.send(name),
-               default_type: "textarea",
-               inner_label: prefix)
+    component(Component::Adrs::Textarea.new(adr, name, prefix, label))
+  end
+end
+
+class Component::Adrs::Textarea < Component::BaseComponent
+  attr_reader :adr, :name, :prefix, :label
+  def initialize(adr, name, prefix, label)
+    @adr = adr
+    @name = name
+    @prefix = prefix
+    @label = label
   end
 end
 
@@ -162,17 +171,33 @@ class Component::TextField < Component::BaseComponent
   end
 end
 
+class TemplateLocator
+  def initialize(path:, extension:)
+    @path = Pathname(path)
+    @extension = extension
+  end
+
+  def locate(base_name)
+    @path / "#{base_name}.#{@extension}"
+  end
+end
+
+class NullTemplateLocator
+  def locate(base_name) = "SOMETHING IS WRONG NO LOCATOR WAS SET UP"
+end
+
 module Page
   class BasePage
     include MyHelpers
 
     attr_reader :content, :errors
-    attr_accessor :component_proc
+    attr_writer :component_locator
 
     def initialize(content: {}, errors: [], default_scope: nil)
       @content = content
       @errors  = errors
       @_default_scope = default_scope
+      @component_locator = NullTemplateLocator.new
     end
     def errors? = !@errors.empty?
     def erb(...)
@@ -183,6 +208,15 @@ module Page
 
     def template_name = underscore(self.class.name).gsub(/^page\//,"")
     def layout = "default"
+
+    def component(component_instance)
+      component_instance.component_locator = @component_locator
+      erb_file = @component_locator.locate(component_instance.template_name)
+      template = ERB.new(File.read(erb_file))
+
+      scope = component_instance.binding_scope
+      template.result(scope)
+    end
 
   private
     def underscore(string)
@@ -210,14 +244,6 @@ class Page::Adrs < Page::BasePage
 end
 class Page::Adrs::New < Page::BasePage
   def adr = @content
-  def adr_textarea(name:, prefix:, label:)
-    form_field(form: self.adr,
-               input: name,
-               label: label,
-               value: adr.send(name),
-               default_type: "textarea",
-               inner_label: prefix)
-  end
 end
 class Page::Adrs::Edit < Page::Adrs::New
 end
@@ -491,30 +517,22 @@ class AdrApp < Sinatra::Base
   end
 
   def page(page_instance)
-    layout_erb_file = Pathname(settings.layouts) / "#{page_instance.layout}.layout.erb"
+    layout_locator    = TemplateLocator.new(path: settings.layouts,    extension: "layout.erb")
+    page_locator      = TemplateLocator.new(path: settings.pages,      extension: "page.erb")
+    component_locator = TemplateLocator.new(path: settings.components, extension: "component.erb")
+
+    page_instance.component_locator = component_locator
+    layout_erb_file = layout_locator.locate(page_instance.layout)
     layout_template = ERB.new(File.read(layout_erb_file))
 
-    erb_file = Pathname(settings.pages) / "#{page_instance.template_name}.page.erb"
+    erb_file = page_locator.locate(page_instance.template_name)
     template = ERB.new(File.read(erb_file))
 
     template_binding = page_instance.binding_scope do
       scope = page_instance.binding_scope
-      scope.local_variable_set(:components,Components.new(settings.components))
       template.result(scope)
     end
     layout_template.result(template_binding)
-  end
-
-  class Components
-    def initialize(components_path)
-      @components_path = components_path
-    end
-    def render(component_instance)
-      erb_file = Pathname(@components_path) / "#{component_instance.template_name}.component.erb"
-    template = ERB.new(File.read(erb_file))
-
-    template.result(component_instance.binding_scope)
-    end
   end
 
   get "/" do
