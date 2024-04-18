@@ -9,7 +9,8 @@ at_exit do
   DB.disconnect
 end
 
-require_relative "view/view"
+require_relative "view/components/base_component"
+require_relative "view/pages/base_page"
 require_relative "data_models/account"
 require_relative "data_models/adr"
 
@@ -77,9 +78,8 @@ end
 class Email
   REGEXP = /^[^@]+@[^@]+\.[^@]+$/
 
-  def self.pattern
-    REGEXP.source
-  end
+  def self.pattern = REGEXP.source
+  def self.input_type = "email"
 
   def initialize(string)
     string = string.to_s.strip

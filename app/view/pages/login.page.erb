@@ -8,8 +8,8 @@
   <% end %>
   <form action="/auth/login" method="post"
     class="flex flex-column items-center gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns mw-8 w-100 w-70-m w-50-ns">
-    <%= form_field(form: content, input: :email, value: content.email, autofocus: true) %>
-    <%= form_field(form: content, input: :password, default_type: "password") %>
+    <%= text_field(form: content, input: :email, autofocus: true) %>
+    <%= text_field(form: content, input: :password, type: "password") %>
     <input type="text" name="_wholeform" class="dn">
     <div class="mt-2">
       <%= button(color: "purple", label: "Log In") %>

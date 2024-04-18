@@ -11,5 +11,8 @@ require "dotenv"
 Dotenv.load(PROJECT_ROOT / ".env.#{PROJECT_ENV}", PROJECT_ROOT / ".env.#{PROJECT_ENV}.local")
 
 require_relative "brut/base_component"
+require_relative "brut/input"
+require_relative "brut/input/textfield"
+require_relative "brut/input/textarea"
 require_relative "brut/base_page"
 require_relative "brut/sinatra_helpers"

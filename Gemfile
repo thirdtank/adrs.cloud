@@ -23,3 +23,6 @@ gem "pg"
 
 # Dotenv manages the UNIX environment for dev and test
 gem "dotenv", groups: [:development, :test]
+
+# We use REXML for some basic XML sanitization
+gem "rexml"

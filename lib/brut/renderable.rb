@@ -11,11 +11,7 @@ class Brut::Renderable
 
   def component(component_instance)
     component_instance.component_locator = @component_locator
-    erb_file = @component_locator.locate(component_instance.template_name)
-    template = ERB.new(File.read(erb_file))
-
-    scope = component_instance.binding_scope
-    template.result(scope)
+    component_instance.render
   end
 
 private
