@@ -32,4 +32,4 @@ if [ -f tmp/pidfile ]; then
 else
   echo "[ $0 ] No pidfile-Starting up"
 fi
-bundle exec rackup --port "${PORT}" --host 0.0.0.0 --env "${RACK_ENV}" --pid tmp/pidfile
+bin/rackup --port "${PORT}" --host 0.0.0.0 --env "${RACK_ENV}" --pid tmp/pidfile

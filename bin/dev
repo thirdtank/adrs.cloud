@@ -9,7 +9,7 @@ killgroup() {
   kill 0
 }
 
-SHELL=/bin/bash npx chokidar --initial -p "app/**/*" -c "bin/run" &
+SHELL=/bin/bash npx chokidar --initial -p "app/**/*" "lib/**/*" -c "bin/run" &
 SHELL=/bin/bash npx chokidar --initial -p "app/css/*" -c "bin/build" &
 wait
 

@@ -1,4 +1,4 @@
-require_relative "unix_environment_bootstrap"
+require "brut"
 require "sinatra/base"
 require "sinatra/namespace"
 
@@ -9,134 +9,19 @@ at_exit do
   DB.disconnect
 end
 
+require_relative "view/view"
 require_relative "data_models/account"
 require_relative "data_models/adr"
 
-module MyHelpers
-
-  def button(size: :normal, color: :gray, label:)
-    %{
-      <button class="button button--size--#{size} button--color--#{color}">
-      #{label}
-      </button>
-    }.strip
-  end
-
-  def input_text(name:,autofocus: false, value: nil, required: false)
-    text_field(type: :text, name: name, autofocus: autofocus, label: name, value: value, required: required)
-  end
-
-  def input_email(name:,autofocus: false, value: nil, required: false)
-    text_field(type: :email, name: name, autofocus: autofocus, label: name, value: value, required: required)
-  end
-
-  def input_password(name:, value: nil, required: false)
-    text_field(type: :password, name: name, autofocus: false, label: name, value: value, required: required)
-  end
-
-  def text_field(type:, name:, autofocus:, label:, value:, required:)
-    %{
-<label class="flex flex-column gap-1 w-100">
-<input type="#{ type }" name="#{ name }" value="#{ value }" class="text-field" #{ autofocus ? "autofocus" : "" } #{required ? "required" : "" }>
-  <div class="text-field-label">
-  #{ label }
-  </div>
-</label>
-    }
-  end
-
-  def form_field(form:, input:, autofocus: false, label: :derive, value: nil, default_type: "text", inner_label: false)
-    input = input.to_s
-    type = case form.class.inputs[input].type.name
-           when Email.name
-             "email"
-           else
-             default_type
-           end
-    name = input
-    required = form.class.inputs[input].required?
-    label = if label == :derive
-              input.to_s
-            else
-              label
-            end
-    pattern = if form.class.inputs[input].type.respond_to?(:pattern)
-                "pattern='#{ form.class.inputs[input].type.pattern }'"
-              else
-                nil
-              end
-    if type != "textarea"
-      if inner_label
-        raise "inner_label is only valid for a textarea"
-      end
-    %{
-<label class="flex flex-column gap-1 w-100">
-<input type="#{ type }" name="#{ name }" value="#{ value }" class="text-field" #{ autofocus ? "autofocus" : "" } #{required ? "required" : "" } #{pattern}>
-  <div class="text-field-label">
-  #{ label }
-  </div>
-</label>
-    }
-    else
-    %{<textarea #{required ? 'required' : '' } rows="3" name="#{name}" class="textarea">#{ value ? value : "" }</textarea>}
-    end
-  end
-
-  def textarea(name:, label:, value: false, required: false, inner_label: false)
-    %{
-      <label class="flex flex-column gap-1 w-100">
-        <div class="textarea-container">
-          #{ inner_label ? "<div class=\"inner-label\">#{inner_label}</div>" : '' }
-          <textarea #{required ? 'required' : '' } rows="3" name="#{name}" class="textarea">#{ value ? value : "" }</textarea>
-        </div>
-        <div class="text-field-label">
-          <span class="f-1">#{ label }</span>
-        </div>
-      </label>
-    }
-  end
-end
 module FormSubmission
 end
 
-module Component
-  class BaseComponent
-    include MyHelpers
-    attr_writer :component_locator
-
-    def initialize
-      @component_locator = NullTemplateLocator.new
-    end
-
-    def template_name = underscore(self.class.name).gsub(/^component\//,"")
-    def binding_scope = binding
-
-    def component(component_instance)
-      component_instance.component_locator = @component_locator
-      erb_file = @component_locator.locate(component_instance.template_name)
-      template = ERB.new(File.read(erb_file))
-
-      scope = component_instance.binding_scope
-      template.result(scope)
-    end
-
-  private
-    def underscore(string)
-      return string.to_s.dup unless /[A-Z-]|::/.match?(string)
-      word = string.to_s.gsub("::", "/")
-      word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
-      word.tr!("-", "_")
-      word.downcase!
-      word
-    end
-  end
-end
-
-module Component
+module Components
   module Adrs
   end
 end
-class Component::Adrs::Form < Component::BaseComponent
+
+class Components::Adrs::Form < Components::BaseComponent
   def initialize(adr, action_label)
     @adr = adr
     @action_label = action_label
@@ -144,11 +29,11 @@ class Component::Adrs::Form < Component::BaseComponent
   def adr = @adr
   def action_label = @action_label
   def adr_textarea(name:, prefix:, label:)
-    component(Component::Adrs::Textarea.new(adr, name, prefix, label))
+    component(Components::Adrs::Textarea.new(adr, name, prefix, label))
   end
 end
 
-class Component::Adrs::Textarea < Component::BaseComponent
+class Components::Adrs::Textarea < Components::BaseComponent
   attr_reader :adr, :name, :prefix, :label
   def initialize(adr, name, prefix, label)
     @adr = adr
@@ -158,7 +43,7 @@ class Component::Adrs::Textarea < Component::BaseComponent
   end
 end
 
-class Component::TextField < Component::BaseComponent
+class Components::TextField < Components::BaseComponent
   def blah
   %{
 <label class="flex flex-column gap-1 w-100">
@@ -171,83 +56,21 @@ class Component::TextField < Component::BaseComponent
   end
 end
 
-class TemplateLocator
-  def initialize(path:, extension:)
-    @path = Pathname(path)
-    @extension = extension
-  end
-
-  def locate(base_name)
-    @path / "#{base_name}.#{@extension}"
-  end
+class Pages::Login < Pages::BasePage
 end
-
-class NullTemplateLocator
-  def locate(base_name) = "SOMETHING IS WRONG NO LOCATOR WAS SET UP"
+class Pages::SignUp < Pages::BasePage
 end
-
-module Page
-  class BasePage
-    include MyHelpers
-
-    attr_reader :content, :errors
-    attr_writer :component_locator
-
-    def initialize(content: {}, errors: [], default_scope: nil)
-      @content = content
-      @errors  = errors
-      @_default_scope = default_scope
-      @component_locator = NullTemplateLocator.new
-    end
-    def errors? = !@errors.empty?
-    def erb(...)
-      @_default_scope.erb(...)
-    end
-
-    def binding_scope = binding
-
-    def template_name = underscore(self.class.name).gsub(/^page\//,"")
-    def layout = "default"
-
-    def component(component_instance)
-      component_instance.component_locator = @component_locator
-      erb_file = @component_locator.locate(component_instance.template_name)
-      template = ERB.new(File.read(erb_file))
-
-      scope = component_instance.binding_scope
-      template.result(scope)
-    end
-
-  private
-    def underscore(string)
-      return string.to_s.dup unless /[A-Z-]|::/.match?(string)
-      word = string.to_s.gsub("::", "/")
-      word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
-      word.tr!("-", "_")
-      word.downcase!
-      word
-    end
-  end
-end
-
-module Content
-end
-
-class Page::Login < Page::BasePage
-end
-class Page::SignUp < Page::BasePage
-end
-class Page::Adrs < Page::BasePage
+class Pages::Adrs < Pages::BasePage
   def adrs = @content
   def adr_path(adr) = "/adrs/#{adr.external_id}"
   def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
 end
-class Page::Adrs::New < Page::BasePage
+class Pages::Adrs::New < Pages::BasePage
   def adr = @content
 end
-class Page::Adrs::Edit < Page::Adrs::New
+class Pages::Adrs::Edit < Pages::Adrs::New
 end
-class Page::Adrs::Get < Page::BasePage
+class Pages::Adrs::Get < Pages::BasePage
   def adr = @content
 end
 
@@ -502,9 +325,7 @@ class AdrApp < Sinatra::Base
 
   enable :sessions
   set :session_secret, ENV.fetch("SESSION_SECRET")
-  set :components, Proc.new { root + "/components" }
-  set :pages,      Proc.new { root + "/pages" }
-  set :layouts,    Proc.new { root + "/layouts" }
+  include Brut::SinatraHelpers
 
   before do
     if request.path_info !~ /^\/auth\//
@@ -516,25 +337,6 @@ class AdrApp < Sinatra::Base
     end
   end
 
-  def page(page_instance)
-    layout_locator    = TemplateLocator.new(path: settings.layouts,    extension: "layout.erb")
-    page_locator      = TemplateLocator.new(path: settings.pages,      extension: "page.erb")
-    component_locator = TemplateLocator.new(path: settings.components, extension: "component.erb")
-
-    page_instance.component_locator = component_locator
-    layout_erb_file = layout_locator.locate(page_instance.layout)
-    layout_template = ERB.new(File.read(layout_erb_file))
-
-    erb_file = page_locator.locate(page_instance.template_name)
-    template = ERB.new(File.read(erb_file))
-
-    template_binding = page_instance.binding_scope do
-      scope = page_instance.binding_scope
-      template.result(scope)
-    end
-    layout_template.result(template_binding)
-  end
-
   get "/" do
     redirect to("/static/index.html")
   end
@@ -542,7 +344,7 @@ class AdrApp < Sinatra::Base
   namespace "/auth" do
 
     get "/login" do
-      page Page::Login.new(content: FormSubmission::Login.new)
+      page Pages::Login.new(content: FormSubmission::Login.new)
     end
 
     post "/login" do
@@ -552,7 +354,7 @@ class AdrApp < Sinatra::Base
       result = action.call(login)
       case result
       when ValidationResult::Invalid
-        page Page::Login.new(content: login, errors: result.errors)
+        page Pages::Login.new(content: login, errors: result.errors)
       else
         session["user_id"] = result.external_id
         redirect to("/adrs")
@@ -560,7 +362,7 @@ class AdrApp < Sinatra::Base
     end
 
     get "/sign-up" do
-      page Page::SignUp.new(content: FormSubmission::SignUp.new)
+      page Pages::SignUp.new(content: FormSubmission::SignUp.new)
     end
 
     post "/sign-up" do
@@ -570,7 +372,7 @@ class AdrApp < Sinatra::Base
       result = action.call(sign_up)
       case result
       when ValidationResult::Invalid
-        page Page::SignUp.new(content: sign_up, errors: result.errors)
+        page Pages::SignUp.new(content: sign_up, errors: result.errors)
       else
         puts result.inspect
         session["user_id"] = result.external_id
@@ -585,19 +387,19 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs" do
-    page Page::Adrs.new(content: @account.adrs)
+    page Pages::Adrs.new(content: @account.adrs)
   end
 
   get "/adrs/new" do
-    page Page::Adrs::New.new(content: FormSubmission::DraftAdr.new)
+    page Pages::Adrs::New.new(content: FormSubmission::DraftAdr.new)
   end
 
   get "/adrs/:id" do
-    page Page::Adrs::Get.new(content: Adr[account_id: @account.id, external_id: params[:id]])
+    page Pages::Adrs::Get.new(content: Adr[account_id: @account.id, external_id: params[:id]])
   end
 
   get "/adrs/:id/edit" do
-    page Page::Adrs::Edit.new(content: FormSubmission::DraftAdr.from_adr(Adr[account_id: @account.id, external_id: params[:id]]))
+    page Pages::Adrs::Edit.new(content: FormSubmission::DraftAdr.from_adr(Adr[account_id: @account.id, external_id: params[:id]]))
   end
 
   #
@@ -640,7 +442,7 @@ class AdrApp < Sinatra::Base
     result = action.call(form_submission: draft_adr, account: @account)
     case result
     when ValidationResult::Invalid
-      erb :'adrs/new', scope: Page::Adrs::New.new(content: draft_adr, errors: result.errors, default_scope: self)
+      erb :'adrs/new', scope: Pages::Adrs::New.new(content: draft_adr, errors: result.errors, default_scope: self)
     else
       redirect to("/adrs")
     end
@@ -704,6 +506,6 @@ end
 #
 # e.g.
 #
-# get "/adrs", Page::AdrIndex, Query::Adrs
+# get "/adrs", Pages::AdrIndex, Query::Adrs
 #
 # post "/adrs", Action::NewAdr, Form::Adr

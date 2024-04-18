@@ -63,3 +63,8 @@ A *Component* is HTML that has no layout.  It is encapsulated from the page. It'
 
 A component can render other components
 
+## Conventions
+
+* Components must extend `Brut::BaseComponent`
+* Pages must extend `Brut::BasePage`
+* Components and Pages can be injected with info before being used
