@@ -87,3 +87,9 @@ X Allow drafts to omit some data
 * Replace & Refine
 * Tags
 * Confirm reject or publish
+
+# Framework Next Steps
+
+* Asset hashing
+* Seed data sucks
+* Testing?
