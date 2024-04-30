@@ -68,3 +68,22 @@ A component can render other components
 * Components must extend `Brut::BaseComponent`
 * Pages must extend `Brut::BasePage`
 * Components and Pages can be injected with info before being used
+
+### Notes
+
+* Everything is ultimately an object/class, that's good
+* "helpers" is nebulous - I don't want too many, but some are needed
+* Error states are unexplored but need to be sorted
+* Routes and route helpers are a bit odd - need to consider URL escaping and what not
+
+# App Next Steps
+
+X Publish a draft
+X Clean up the listing page
+X Form needs better graphics for arrows
+X Allow drafts to omit some data
+* Style form errors
+* Better dates
+* Replace & Refine
+* Tags
+* Confirm reject or publish

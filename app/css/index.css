@@ -1,5 +1,8 @@
 @import "melange-css/melange.css";
 @import "textarea.css";
+:root {
+  --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
+}
 /** Buttons appear to be above the screen, pressable into it */
 .button {
   border-style: solid;
@@ -35,7 +38,38 @@
   filter: grayscale(80%); 
   color: var(--mg-gray-300);
 }
+
+.button span:has(svg) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.button--size--large span:has(svg) {
+  width: var(--mg-sp-4);
+}
+
+.button--size--normal span:has(svg) {
+  width: calc(1.5 * var(--mg-sp-3));
+}
+
+.button--size--small span:has(svg) {
+  width: calc(1.5 * var(--mg-sp-2));
+}
+
+.button--size--tiny span:has(svg) {
+  width: calc(1.5 * var(--mg-sp-1));
+}
+
 /** Sizing */
+.button.button--size--large {
+  padding-left: var(--mg-sp-4);
+  padding-right: var(--mg-sp-4);
+  padding-top: var(--mg-sp-3);
+  padding-bottom: var(--mg-sp-3);
+  font-size: var(--mg-fs-4);
+}
 .button.button--size--normal {
   padding: var(--mg-sp-3);
   font-size: var(--mg-fs-3);
@@ -145,4 +179,10 @@
   display: flex;
 }
 
-
+.rendered-markdown p {
+  line-height: var(--mg-lh-copy);
+  max-width: var(--mg-tw-wide);
+}
+.bg-red-600-a20 {
+  background-color: rgb(from var(--mg-red-600) r g b / 20%);
+}

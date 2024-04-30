@@ -2,17 +2,45 @@ require_relative "null_template_locator"
 
 class Brut::Renderable
   attr_writer :component_locator
+  attr_writer :svg_locator
 
   def initialize
     @component_locator = Brut::NullTemplateLocator.new
+    @svg_locator       = Brut::NullTemplateLocator.new
   end
 
   def binding_scope = binding
 
   def component(component_instance)
     component_instance.component_locator = @component_locator
+    component_instance.svg_locator       = @svg_locator
     component_instance.render
   end
+
+  def svg(svg)
+    svg_file = @svg_locator.locate(svg)
+    File.read(svg_file)
+  end
+
+  def input_component_for(form_submission, input_name, html_input_type: :derive, html_attributes: {})
+    default_html_attributes = {}
+    input = form_submission[input_name]
+    input_type = if html_input_type == :derive
+                   input.html_input_type
+                 else
+                   html_input_type
+                 end
+    default_html_attributes["required"] = input.required?
+    default_html_attributes["pattern"]  = input.pattern
+    default_html_attributes["value"]    = form_submission.send(input_name)
+    default_html_attributes["type"]     = input_type
+    default_html_attributes["name"]     = input_name
+    if input.minlength
+      default_html_attributes["minlength"] = input.minlength
+    end
+    Brut::Input::TextField.new(default_html_attributes.merge(html_attributes))
+  end
+
 
 private
   def underscore(string)

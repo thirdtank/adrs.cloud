@@ -7,4 +7,14 @@
     <aside class="pa-2 br-3 ba bc-red-500 bg-red-800 red-300"><%= errors %></aside>
   <% end %>
   <%= component Components::Adrs::Form.new(adr, "Update Draft") %>
+  <div class="w-50 mh-auto flex justify-end mt-4 gap-3 items-center">
+    <form action="/rejected_adrs" method="POST">
+      <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+      <%= component(Button.new(size: "small", color: "red", label: "Reject", icon: "recycle-bin-line-icon")) %>
+    </form>
+    <form action="/accepted_adrs" method="POST">
+      <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+      <%= component(Button.new(size: "large", color: "green", label: "Accept", icon: "quality-badge-checkmark-icon")) %>
+    </form>
+  </div>
 </section>

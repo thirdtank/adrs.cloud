@@ -26,3 +26,6 @@ gem "dotenv", groups: [:development, :test]
 
 # We use REXML for some basic XML sanitization
 gem "rexml"
+
+# Redcarpet parses and renders Markdown
+gem "redcarpet"

@@ -1,18 +1,15 @@
 require_relative "../input"
 require_relative "../base_component"
 class Brut::Input::TextField < Brut::BaseComponent
-  def initialize(attributes: {}, form:, input:, type:)
+  def initialize(attributes)
     @sanitized_attributes = attributes.map { |key,value|
         [
           key.to_s.gsub(/[\s\"\'>\/=]/,"-"),
           value
         ]
-    }.to_h.merge({
-      "required" => form.class.inputs[input].required?,
-      "name" => input,
-      "value" => form.send(input),
-    })
-    @type = type
+    }.select { |key,value|
+      !value.nil?
+    }.to_h
   end
 
   def render
@@ -25,8 +22,6 @@ class Brut::Input::TextField < Brut::BaseComponent
         REXML::Attribute.new(key,value).to_string
       end
     }.join(" ")
-    %{
-      <input type="#{@type}" #{attribute_string}>
-    }
+    "<input #{attribute_string}>"
   end
 end

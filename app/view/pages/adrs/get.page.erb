@@ -1,19 +1,38 @@
-<article class="measure-wide mh-auto pa-3 bg-white black ba bc-gray-600 br-2 mv-3 shadow-3">
-  <h2 class="tc lh-title fs-5"><%= adr.title %></h2>
-  <h3>In the context of</h3>
-  <p class="p ml-2"><%= adr.context %></p>
-  <h3>Facing</h3>
-  <p class="p ml-2"><%= adr.facing %></p>
-  <div class="ba pa-2 br-3 bc-yellow-600 bg-yellow-800 yellow-100">
-  <h3 class="tc fs-6 ma-1">We decided</h3>
-  <p class="p ml-2"><%= adr.decision %></p>
+<article class="measure-wide mh-auto pt-3 ph-0 bg-white black ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
+  <% if !adr.accepted? && !adr.rejected?%>
+    <aside class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
+    DRAFT
+    </aside>
+  <% end %>
+  <h2 class="tc lh-title fs-5 mt-1"><%= adr.title %></h2>
+  <div class="tc f-1">
+    <% if adr.accepted? %>
+    <h3 class="lh-title fs-4 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-800 bg-green-200">
+    Accepted <time class="fw-6" datetime="<%= adr.created_at %>"><%= adr.accepted_at %></time>
+    </h3>
+    <% end %>
+    <% if adr.rejected? %>
+    <h3 class="lh-title fs-4 fw-5 pa-2 mh-3 ba br-2 bc-red-200 red-800 bg-red-200">
+    Rejected <time class="fw-6" datetime="<%= adr.created_at %>"><%= adr.rejected_at %></time>
+    </h3>
+    <% end %>
+    Created <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
   </div>
-  <h3>Neglecting</h3>
-  <p class="p ml-2"><%= adr.neglected %></p>
-  <h3>To Achieve</h3>
-  <p class="p ml-2"><%= adr.achieve %></p>
-  <h3>Accepting</h3>
-  <p class="p ml-2"><%= adr.accepting %></p>
-  <h3>Because</h3>
-  <p class="p ml-2"><%= adr.because %></p>
+  <section class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:context) %></section>
+  <section class="rendered-markdown ph-3"><%= markdown(:facing) %></section>
+  <div class="bt bb <%= adr.accepted_at.nil? ? 'bc-yellow-600 bg-yellow-800 yellow-100' : 'bc-green-600 bg-green-800 green-200' %>">
+    <section class="rendered-markdown ph-3 fw-5"><%= markdown(:decision) %></section>
+  </div>
+  <section class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:neglected) %></section>
+  <section class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:achieve) %></section>
+  <section class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:accepting) %></section>
+  <section class="rendered-markdown ph-3"><%= markdown(:because) %></section>
+  <nav class="pa-3 flex justify-between items-baseline gap-2 bg-gray-800 bt bc-gray-700">
+    <a class="f-3 fw-5 blue-400" href="/adrs">&larr; Back</a>
+    <% if adr.accepted_at.nil? && adr.rejected_at.nil? %>
+    <div class="flex justify-end gap-3 items-baseline">
+      <a class="f-3 fw-5 blue-400" href="<%= edit_adr_path(adr) %>">Edit</a>
+    </div>
+    <% end %>
+  </nav>
 </article>

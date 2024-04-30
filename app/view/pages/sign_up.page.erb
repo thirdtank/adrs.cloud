@@ -8,12 +8,12 @@
   <% end %>
   <form action="/auth/sign-up" method="post"
     class="flex flex-column items-center gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns mw-8 w-100 w-70-m w-50-ns">
-    <%= text_field(form: content, input: :email, autofocus: true) %>
-    <%= text_field(form: content, input: :password, type: "password") %>
-    <%= text_field(form: content, input: :password_confirmation, type: "password") %>
+    <%= component(TextField.new(label: "Email", input: input_component_for(content, :email, html_attributes: { autofocus: true, class: "text-field" }))) %>
+    <%= component(TextField.new(label: "Password", input: input_component_for(content, :password, html_input_type: "password", html_attributes: { class: "text-field" }))) %>
+    <%= component(TextField.new(label: "Confirm Password", input: input_component_for(content, :password_confirmation, html_input_type: "password", html_attributes: { class: "text-field" }))) %>
 
     <div class="mt-2">
-      <%= button(color: "purple", label: "Sign Up") %>
+      <%= component(Button.new(color: "purple", label: "Sign Up", icon: "plus-round-line-icon")) %>
     </div>
   </form>
   <nav class="tc mv-4">

@@ -26,6 +26,9 @@ OPTIONS
     parser.on("--app-env=ENV","Env for the app. Must be development, test, or production") do |value|
       options[:app_env] = value
     end
+    parser.on("--[no-]seeds", "If set, will load seed data when migrating or rebuilding the database") do |value|
+      options[:load_seeds] = value
+    end
 
   end.parse!
   options
@@ -48,31 +51,32 @@ if ARGV[0].to_s.strip == ""
 end
 
 class Command
-  def self.from_string(string, database_url:, args:)
+  def self.from_string(string, database_url:, args:, options:)
     database_uri = URI(database_url)
     case string
-    when "create"        then Create.new(database_uri: database_uri, args: args)
-    when "drop"          then Drop.new(database_uri: database_uri, args: args)
-    when "migrate"       then Migrate.new(database_uri: database_uri, args: args)
-    when "new-migration" then NewMigration.new(database_uri: database_uri, args: args)
-    when "status"        then Status.new(database_uri: database_uri, args: args)
-    when "rebuild"       then Rebuild.new(database_uri: database_uri, args: args)
+    when "create"        then Create.new(database_uri: database_uri, args: args, options: options)
+    when "drop"          then Drop.new(database_uri: database_uri, args: args, options: options)
+    when "migrate"       then Migrate.new(database_uri: database_uri, args: args, options: options)
+    when "new-migration" then NewMigration.new(database_uri: database_uri, args: args, options: options)
+    when "status"        then Status.new(database_uri: database_uri, args: args, options: options)
+    when "rebuild"       then Rebuild.new(database_uri: database_uri, args: args, options: options)
     else
       nil
     end
   end
 
-  def initialize(database_uri:, args:)
+  def initialize(database_uri:, args:, options:)
     @database_uri  = database_uri
     @database_name = @database_uri.path.gsub(/^\//,"")
     @args          = args
+    @options       = options
   end
 
   class Rebuild < Command
     def call
-      Drop.new(database_uri: @database_uri, args: @args).call
-      Create.new(database_uri: @database_uri, args: @args).call
-      Migrate.new(database_uri: @database_uri, args: @args).call
+      Drop.new(database_uri: @database_uri, args: @args, options: @options).call
+      Create.new(database_uri: @database_uri, args: @args, options: @options).call
+      Migrate.new(database_uri: @database_uri, args: @args, options: @options).call
     end
   end
 
@@ -161,6 +165,7 @@ class Command
     ]
     def call
       migrations_dir = PROJECT_ROOT / "app" / "db" / "migrations"
+      seeds_dir = PROJECT_ROOT / "app" / "db" / "seed"
       if !migrations_dir.exist?
         puts "#{migrations_dir} doesn't exist"
         return
@@ -185,7 +190,6 @@ class Command
                 connection.run(sql)
                 puts "Remembering migration"
                 result = connection["INSERT INTO brut_migrations(identifier,name,created_at) VALUES(?,?,now())",identifier,name].insert
-                puts "Got #{result}"
               end
             else
               puts "#{identifier}_#{name} has been run"
@@ -193,6 +197,22 @@ class Command
           else
             raise "#{file} is not named according to convention"
           end
+        end
+        if seeds_dir.exist?
+          if @options[:load_seeds]
+            puts "Loading seeds"
+            connection.transaction do
+              Dir["#{seeds_dir}/*.sql"].each do |file|
+                puts "Loading #{file}..."
+                sql = File.read(file)
+                connection.run(sql)
+              end
+            end
+          else
+            puts "Not loading seeds"
+          end
+        else
+          puts "#{seeds_dir} doesn't exist"
         end
       ensure
         connection.disconnect
@@ -258,9 +278,9 @@ end
 
 ENV["RACK_ENV"] = options[:app_env]
 
-require_relative "../app/unix_environment_bootstrap"
+require_relative "../lib/brut"
 
-command = Command.from_string(ARGV[0],database_url: ENV["DATABASE_URL"], args: ARGV[1..-1])
+command = Command.from_string(ARGV[0],database_url: ENV["DATABASE_URL"], args: ARGV[1..-1],options: options)
 if !command
   log "'#{ARGV[0]}' is not a supported command"
   exit 1

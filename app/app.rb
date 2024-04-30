@@ -44,26 +44,17 @@ class Components::Adrs::Textarea < Components::BaseComponent
   end
 end
 
-class Components::TextField < Components::BaseComponent
-  def blah
-  %{
-<label class="flex flex-column gap-1 w-100">
-<input type="#{ type }" name="#{ name }" value="#{ value }" class="text-field" #{ autofocus ? "autofocus" : "" } #{required ? "required" : "" } #{pattern}>
-  <div class="text-field-label">
-  #{ label }
-  </div>
-</label>
-  }
-  end
-end
-
 class Pages::Login < Pages::BasePage
 end
 class Pages::SignUp < Pages::BasePage
 end
 class Pages::Adrs < Pages::BasePage
-  def adrs = @content
-  def adr_path(adr) = "/adrs/#{adr.external_id}"
+
+  def accepted_adrs = @content.select(&:accepted?).sort_by(&:accepted_at)
+  def draft_adrs    = @content.reject(&:accepted?).reject(&:rejected?).sort_by(&:created_at)
+  def rejected_adrs = @content.select(&:rejected?).sort_by(&:rejected_at)
+
+  def adr_path(adr)      = "/adrs/#{adr.external_id}"
   def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
 end
 class Pages::Adrs::New < Pages::BasePage
@@ -71,8 +62,50 @@ class Pages::Adrs::New < Pages::BasePage
 end
 class Pages::Adrs::Edit < Pages::Adrs::New
 end
+
 class Pages::Adrs::Get < Pages::BasePage
+  class Markdown < Redcarpet::Render::HTML
+    def header(text,header_level)
+      super.header(text,header_level.to_i + 3)
+    end
+  end
+  def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
+
+  def initialize(...)
+    super(...)
+    @markdown = Redcarpet::Markdown.new(
+      Redcarpet::Render::HTML.new(
+        filter_html: true,
+        no_images: true,
+        no_styles: true,
+        safe_links_only: true,
+        link_attributes: { class: "blue-400" },
+      ),
+      fenced_code_blocks: true,
+      autolink: true,
+      quote: true,
+    )
+  end
+
   def adr = @content
+
+  def markdown(field)
+    value = "**#{field_text(field)}** #{adr.send(field)}"
+    @markdown.render(value)
+  end
+
+  def field_text(field)
+    case field
+    when :context   then "In the context of"
+    when :facing    then "Facing"
+    when :decision  then "We decided"
+    when :neglected then "Neglecting"
+    when :achieve   then "To achieve"
+    when :accepting then "Accepting"
+    when :because   then "Because"
+    else raise ArgumentError.new("No such field '#{field}'")
+    end
+  end
 end
 
 class Email
@@ -97,127 +130,35 @@ class Email
   def hash = self.to_s.hash
 end
 
-class FormSubmission::BaseForm
-  class ConformingValue
-    attr_reader :value
-    def initialize(value)
-      @value = value
-    end
-    def conforming? = true
-  end
-
-  class MissingValue
-    def value = nil
-    def conforming? = false
-    def error = "missing"
-  end
-
-  class NonconfirmingValue
-    attr_reader :value, :exception
-    def initialize(value,exception)
-      @value = value
-      @exception = exception
-    end
-    def conforming? = false
-    def error = exception.message
-  end
-
-  class Input
-    attr_reader :name, :type
-    def initialize(name, type, options)
-      @name = name
-      @type = type
-      @required = options.key?(:required) ? options[:required] : true
-    end
-
-    def required? = !!@required
-  end
-
-  def self.input(name,type=String,options={})
-    if options.nil? && type.kind_of?(Hash)
-      options = type
-      type = String
-    end
-
-    @inputs ||= {}
-    @inputs[name.to_s] = Input.new(name.to_s,type,options)
-
-    define_method name do
-      self.send("_wrapped_#{name}").value
-    end
-
-    define_method "_wrapped_#{name}" do
-      instance_variable_get("@#{name}")
-    end
-
-    define_method "#{name}=" do |raw_val|
-      wrapper = if raw_val.nil?
-                  self.class.inputs[name.to_s].required? ? MissingValue.new : ConformingValue.new(nil)
-                else
-                  if raw_val == ""
-                    self.class.inputs[name.to_s].required? ? MissingValue.new : ConformingValue.new(nil)
-                  else
-                    begin
-                      ConformingValue.new(type.new(raw_val))
-                    rescue => ex
-                      NonconfirmingValue.new(raw_val,ex)
-                    end
-                  end
-                end
-      instance_variable_set("@#{name}",wrapper)
-    end
-  end
-
-  def self.inputs
-    @inputs || {}
-  end
-
-  def initialize(inputs={})
-    @new = inputs.keys.empty?
-    self.class.inputs.each do |(attr,metadata)|
-      val = inputs[attr.to_s] || inputs[attr.to_sym]
-      self.send("#{attr}=",val)
-    end
-  end
-
-  def validate!
-    errors = self.class.inputs.map { |(attr)|
-      [ attr, self.send("_wrapped_#{attr}") ]
-    }.reject { |(_,wrapped_value)|
-      wrapped_value.conforming?
-    }.map { |(attr,wrapped_value)|
-      "#{attr} is #{wrapped_value.error}"
-    }
-    if errors.any?
-      raise errors.join(",")
-    end
-  end
-
-  def new? = @new
-
-end
-
-class FormSubmission::Login < FormSubmission::BaseForm
+class FormSubmission::Login < Brut::FormSubmission::BaseForm
   input :email, Email
   input :password
 end
 
-class FormSubmission::SignUp < FormSubmission::BaseForm
+class FormSubmission::SignUp < Brut::FormSubmission::BaseForm
   input :email, Email
-  input :password
-  input :password_confirmation
+  input :password, { minlength: 8 }
+  input :password_confirmation, { minlength: 8 }
 end
 
-class FormSubmission::DraftAdr < FormSubmission::BaseForm
+class FormSubmission::AcceptedAdr < Brut::FormSubmission::BaseForm
+  input :external_id
+end
+
+class FormSubmission::RejectedAdr < Brut::FormSubmission::BaseForm
+  input :external_id
+end
+
+class FormSubmission::DraftAdr < Brut::FormSubmission::BaseForm
   input :title
-  input :context
-  input :facing
-  input :decision
-  input :neglected
-  input :achieve
-  input :accepting
-  input :because
-  input :external_id, String, { required: false }
+  input :context, required: false
+  input :facing, required: false
+  input :decision, required: false
+  input :neglected, required: false
+  input :achieve, required: false
+  input :accepting, required: false
+  input :because, required: false
+  input :external_id, { required: false }
 
   def self.from_adr(adr)
     self.new(
@@ -241,7 +182,11 @@ module ValidationResult
   class Valid
     def self.invalid? = false
     def self.valid?   = true
+
+    def self.raise_on_error!
+    end
   end
+
   class Invalid
     def invalid? = true
     def valid?   = false
@@ -251,39 +196,38 @@ module ValidationResult
     def initialize(errors)
       @errors = errors
     end
+
+    def raise_on_error!
+      raise @errors.inspect
+    end
   end
 end
 
 class Action::SignUp
 
-  def validate(form_submission)
-    if form_submission.password != form_submission.password_confirmation
-      ValidationResult::Invalid.new({ password: "must match confirmatoin" })
-    elsif form_submission.password.length < 8
-      ValidationResult::Invalid.new({ password: "must be at least 8 characters" })
-    else
-      ValidationResult::Valid
+  class ServerSideValidator
+    def validate(form_submission:)
+      if form_submission.password != form_submission.password_confirmation
+        { password: "must match confirmatoin" }
+      else
+        if Account[email: form_submission.email.to_s]
+          { email: "is taken" }
+        else
+          {}
+        end
+      end
     end
   end
 
-  def call(form_submission)
-    validation_result = validate(form_submission)
-    if validation_result.invalid?
-      return validation_result
-    end
-    if Account[email: form_submission.email.to_s]
-      return ValidationResult::Invalid.new({ email: "is taken" })
-    end
-
+  def call(form_submission:)
     Account.create(email: form_submission.email,
                    created_at: DateTime.now)
-
   end
 end
 
 class Action::Login
 
-  def call(form_submission)
+  def call(form_submission:)
     account = Account[email: form_submission.email.to_s]
     if account
       account
@@ -293,18 +237,170 @@ class Action::Login
   end
 end
 
-class Action::DraftAdr
-  def call(form_submission:, account:)
-    if form_submission.title.to_s.strip == ""
-      return ValidationResult::Invalid.new({ title: "may not be blank" })
+module Brut::Actions
+end
+
+class Brut::Actions::BaseAction
+end
+
+class Brut::Actions::NullValidator
+  def validate(*)
+    {}
+  end
+end
+
+class Brut::Actions::ClientSideFormSubmissionValidator
+  def validate(form_submission:, **rest)
+    if form_submission.valid?
+      {}
+    else
+      form_submission.validation_errors
     end
+  end
+end
+
+#
+# A form submission has three steps:
+#
+# 1 - re-validate the client-side requirements
+# 2 - perform any server-side validations
+# 3 - perform the action
+class Brut::Actions::FormSubmission < Brut::Actions::BaseAction
+  def initialize(client_side_validator: :default, server_side_validator: :default, action:)
+    if client_side_validator == :default
+      client_side_validator = Brut::Actions::ClientSideFormSubmissionValidator.new
+    end
+    if server_side_validator == :default
+      server_side_validator = begin
+                                action.class.const_get("ServerSideValidator").new
+                              rescue NameError
+                                Brut::Actions::NullValidator.new
+                              end
+    end
+    @client_side_validator = client_side_validator
+    @server_side_validator = server_side_validator
+    @action                = action
+  end
+
+  def call(form_submission:, **rest)
+    validation_errors = @client_side_validator.validate(form_submission:form_submission,**rest)
+    if validation_errors.any?
+      return ValidationResult::Invalid.new(validation_errors)
+    end
+    validation_errors = @server_side_validator.validate(form_submission:form_submission,**rest)
+    if validation_errors.any?
+      return ValidationResult::Invalid.new(validation_errors)
+    end
+    @action.call(form_submission: form_submission, **rest)
+  end
+end
+
+module Brut::Validations
+end
+class Brut::Validations::BaseValidator
+  def self.validate(attribute,options)
+    @@validations ||= {}
+    @@validations[attribute] = options
+  end
+
+  def validate(object)
+    @@validations.map { |attribute,options|
+      value = object.send(attribute)
+      errors = options.map { |option, option_value|
+        case option
+        when :required
+          if option_value == true
+            if value.to_s.strip == ""
+              "is required"
+            else
+              nil
+            end
+          end
+        when :minlength
+          if value.respond_to?(:length) || value.nil?
+            if value.nil? || value.length < option_value
+              "must be at least '#{option_value}' long"
+            else
+              nil
+            end
+          else
+            raise "'#{attribute}''s value (a '#{value.class}') does not respond to 'length' - :minlength cannot be used as a validation"
+          end
+        else
+          raise "'#{option}' is not a recognized validation option"
+        end
+      }.compact
+
+      if errors.any?
+        [ attribute, errors ]
+      else
+        nil
+      end
+    }.compact.to_h
+  end
+
+end
+
+class Action::AcceptAdr < Brut::Actions::BaseAction
+  class ServerSideValidator 
+    class AcceptedAdrValidator < Brut::Validations::BaseValidator
+      validate :context   , required: true , minlength: 10
+      validate :facing    , required: true , minlength: 10
+      validate :decision  , required: true , minlength: 10
+      validate :neglected , required: true , minlength: 10
+      validate :achieve   , required: true , minlength: 10
+      validate :accepting , required: true , minlength: 10
+      validate :because   , required: true , minlength: 10
+    end
+
+    def validate(form_submission:,account:)
+      adr = Adr[external_id: form_submission.external_id, account_id: account.id]
+      if !adr
+        raise "account does not have an ADR with that ID"
+      end
+      AcceptedAdrValidator.new.validate(adr)
+    end
+  end
+
+  def call(form_submission:, account:)
+    if !adr.accepted?
+      adr.update(accepted_at: Time.now)
+    end
+    ValidationResult::Valid
+  end
+
+end
+
+class Action::RejectAdr < Brut::Actions::BaseAction
+
+  def call(form_submission:, account:)
+    adr = Adr[external_id: form_submission.external_id, account_id: account.id]
+    if adr.accepted?
+      raise "Accepted ADR may not be rejected"
+    end
+    adr.update(rejected_at: Time.now)
+  end
+
+end
+
+class Action::DraftAdr < Brut::Actions::BaseAction
+  class ServerSideValidator
+    def validate(form_submission:,account:)
+      if form_submission.title.to_s.strip !~ /\s+/
+        return { title: "must be at least two words" }
+      end
+      {}
+    end
+  end
+
+  def call(form_submission:, account:)
     if form_submission.external_id
       adr = Adr[external_id: form_submission.external_id, account_id: account.id]
       if !adr
         raise "account does not have an ADR with that ID"
       end
     else
-      adr = Adr.new
+      adr = Adr.new(created_at: Time.now)
     end
     adr.update(account_id: account.id,
                title: form_submission.title,
@@ -328,7 +424,7 @@ class AdrApp < Sinatra::Base
   include Brut::SinatraHelpers
 
   before do
-    if request.path_info !~ /^\/auth\//
+    if request.path_info !~ /^\/auth\// && request.path_info != "/"
       @account = Account[external_id: session["user_id"]]
       if !@account
         redirect to("/auth/login")
@@ -349,13 +445,12 @@ class AdrApp < Sinatra::Base
 
     post "/login" do
       login = FormSubmission::Login.new(params)
-      login.validate!
-      action = Action::Login.new
-      result = action.call(login)
+      result = process_form form_submission: login,
+                            action: Action::Login.new
       case result
-      when ValidationResult::Invalid
-        page Pages::Login.new(content: login, errors: result.errors)
-      else
+      in errors:
+        page Pages::Login.new(content: login, errors: errors)
+      in Account
         session["user_id"] = result.external_id
         redirect to("/adrs")
       end
@@ -367,14 +462,12 @@ class AdrApp < Sinatra::Base
 
     post "/sign-up" do
       sign_up = FormSubmission::SignUp.new(params)
-      sign_up.validate!
-      action = Action::SignUp.new
-      result = action.call(sign_up)
+      result = process_form form_submission: sign_up,
+                            action: Action::SignUp.new
       case result
       when ValidationResult::Invalid
         page Pages::SignUp.new(content: sign_up, errors: result.errors)
       else
-        puts result.inspect
         session["user_id"] = result.external_id
         redirect to("/adrs")
       end
@@ -402,110 +495,39 @@ class AdrApp < Sinatra::Base
     page Pages::Adrs::Edit.new(content: FormSubmission::DraftAdr.from_adr(Adr[account_id: @account.id, external_id: params[:id]]))
   end
 
-  #
-  # A POST from a browser/web page is going to be form data, which is a hash of keys to strings or hashes of the same.
-  #
-  # Declare your form as all the values that are allowed:
-  #
-  # value «name», «type», «options»
-  #
-  #   - «name» is required
-  #   - «type» can be omitted and, if so, will be assumed to be a String.
-  #     - String - value is a string
-  #     - :boolean - value is a boolean
-  #     - Date - value is a Date
-  #     - Time - value is a timestamp
-  #     - Email - value is an email address
-  #     - File - value is a file
-  #     - Numeric - value is a number
-  #     - Url - value is a URL
-  #     - Time - value is a time
-  #   - «options» can be omitted, but respects the following values:
-  #     - required: true/false (default true)
-  #     - min/max: min/max range of allowed values
-  #     - allowed_values: array of allowed values
-  #     - minlength/maxlength: min/max length
-  #     - pattern: Regexp that it must match
-  #
-  # It is cosidered a programmer error if a form is submitted that does not conform to the constraints
-  #
-  # This metadata can be used to create <input> fields
-  #
-  # A GET from a browser/web page is a request for possibly dynamic HTML.  The HTML's dynamic info is considered "content".
-  # 
   post "/adrs" do
-    puts params["test"]
-    puts params[:test]
     draft_adr = FormSubmission::DraftAdr.new(params)
-    draft_adr.validate!
-    action = Action::DraftAdr.new
-    result = action.call(form_submission: draft_adr, account: @account)
+    result = process_form form_submission: draft_adr,
+                          action: Action::DraftAdr.new,
+                          account: @account
     case result
-    when ValidationResult::Invalid
-      erb :'adrs/new', scope: Pages::Adrs::New.new(content: draft_adr, errors: result.errors, default_scope: self)
+    in errors:
+      page Pages::Adrs::New.new(content: draft_adr, errors: errors)
     else
       redirect to("/adrs")
     end
   end
-end
 
-#
-# A view is represented by a class that responds to #content  This method provides access
-#   to all content the view needs to render itself.
-#
-# A form submission's data is populated into a FormSubmission instance.  The purpose of this
-#   class is to mimic the form's requirements and coerce the strings from the request into
-#   typed values.  This process must succeed for eveyr single valid submission the user could make.
-#   For example, if a field is required, the browser will require it.  Thus, submission when it's
-#   missing is an error, not a validation problem.
-#
-#   In a sense the form describes what's coming in.
-#
-#   OK - WHY.  Isn't this confusing?  This means there are two levels of validation happening: one for the
-#   conformance of the form and a second for the user-level valditations. Potentially two type coercions
-#   are happening as well.
-#
-#   What if we instead stick to HTML?  Coerce only the types provided?
-#
-#   How much of a problem is it to get a form submitted without stuff the front end requires?
-#
-# Let's take this over - what needs to happen when a form is submitted:
-#
-#   - Validations - did the user make an expected mistake?
-#   - If data is good, initiate actions
-#     - If further validations reveal problem, go back to the user
-#     - If there is an unrecoverable error, go back to the user
-#     - Otherwise, send them somehwere to indicate they are done
-#
-# Thinking about this as HTTP/HTML:
-#
-# * get - returns content, possibly dynamically rendered
-# * post - processes a form submission
-#
-# What about PATCH, DELETE, and PUT?
-#
-# These seem largely useless and magnets for debate and confusion - what if we ignore them?
-#
-# What would this buy us?
-#
-# * It would simplify possible interactions to just gets and posts, making it much easier to decide where logic
-#   would go: fetching data is a get and submitting info is a post.
-# * Symmetry with HTML - no need for _method hack
-# * No need for JSON parsing by default - always a formdata or whatever
-#
-# What about APIs?
-#
-# * These could still use the normal HTTP verbs.
-# * These can use content types as usual
-# * Would not conflate the API with the web app
-#
-# How could commonalities be leveraged?
-#
-# * each get route would be associated with a Page and a Query
-# * each post route would be associated with an Action, a Form, and routes for valid/not valid
-#
-# e.g.
-#
-# get "/adrs", Pages::AdrIndex, Query::Adrs
-#
-# post "/adrs", Action::NewAdr, Form::Adr
+  post "/accepted_adrs" do
+    accepted_adr = FormSubmission::AcceptedAdr.new(params)
+    result = process_form form_submission: accepted_adr,
+                          action: Action::AcceptAdr.new,
+                          account: @account
+    case result
+    when ValidationResult::Invalid
+      page Pages::Adrs::Edit.new(
+        content: FormSubmission::DraftAdr.from_adr(Adr[account_id: @account.id, external_id: accepted_adr.external_id]),
+        errors: result.errors
+      )
+    else
+      redirect to("/adrs/#{accepted_adr.external_id}")
+    end
+  end
+  post "/rejected_adrs" do
+    rejected_adr = FormSubmission::RejectedAdr.new(params)
+    process_form form_submission: rejected_adr,
+                 action: Action::RejectAdr.new,
+                 account: @account
+    redirect to("/adrs")
+  end
+end
