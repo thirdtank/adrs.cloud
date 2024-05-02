@@ -1,5 +1,3 @@
-require_relative "template_locator"
-
 module Brut::SinatraHelpers
   def self.included(sinatra_app)
     sinatra_app.set :components, Proc.new { root + "/view/components" }
@@ -9,10 +7,10 @@ module Brut::SinatraHelpers
   end
 
   def page(page_instance)
-    page_instance.layout_locator    = Brut::TemplateLocator.new(path: settings.layouts,    extension: "layout.erb")
-    page_instance.page_locator      = Brut::TemplateLocator.new(path: settings.pages,      extension: "page.erb")
-    page_instance.component_locator = Brut::TemplateLocator.new(path: settings.components, extension: "component.erb")
-    page_instance.svg_locator       = Brut::TemplateLocator.new(path: settings.svgs,       extension: "svg")
+    page_instance.layout_locator    = Brut::Renderable::TemplateLocator.new(path: settings.layouts,    extension: "layout.erb")
+    page_instance.page_locator      = Brut::Renderable::TemplateLocator.new(path: settings.pages,      extension: "page.erb")
+    page_instance.component_locator = Brut::Renderable::TemplateLocator.new(path: settings.components, extension: "component.erb")
+    page_instance.svg_locator       = Brut::Renderable::TemplateLocator.new(path: settings.svgs,       extension: "svg")
 
     page_instance.render
   end

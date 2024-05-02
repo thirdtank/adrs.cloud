@@ -1,6 +1,4 @@
-require_relative "base_component"
-
-class Button < Brut::BaseComponent
+class Components::Button < AppComponent
   attr_reader :size, :color, :label, :icon
   def initialize(size: :normal, color: "gray", label:, icon: false)
     @size  = size

@@ -1,7 +1,5 @@
-require_relative "renderable"
-require_relative "null_template_locator"
-
-class Brut::BasePage < Brut::Renderable
+require "erb"
+class Brut::Page < Brut::Renderable
   attr_reader :content, :errors
   attr_writer :page_locator, :layout_locator
 
@@ -9,8 +7,8 @@ class Brut::BasePage < Brut::Renderable
     super()
     @content        = content
     @errors         = errors
-    @page_locator   = Brut::NullTemplateLocator.new
-    @layout_locator = Brut::NullTemplateLocator.new
+    @page_locator   = NullTemplateLocator.new
+    @layout_locator = NullTemplateLocator.new
   end
   def errors? = !@errors.empty?
 

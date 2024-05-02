@@ -1,12 +1,25 @@
-require_relative "null_template_locator"
-
 class Brut::Renderable
+  class NullTemplateLocator
+    def locate(base_name) = "SOMETHING IS WRONG NO LOCATOR WAS SET UP"
+  end
+
+  class TemplateLocator
+    def initialize(path:, extension:)
+      @path = Pathname(path)
+      @extension = extension
+    end
+
+    def locate(base_name)
+      @path / "#{base_name}.#{@extension}"
+    end
+  end
+
   attr_writer :component_locator
   attr_writer :svg_locator
 
   def initialize
-    @component_locator = Brut::NullTemplateLocator.new
-    @svg_locator       = Brut::NullTemplateLocator.new
+    @component_locator = NullTemplateLocator.new
+    @svg_locator       = NullTemplateLocator.new
   end
 
   def binding_scope = binding
@@ -38,7 +51,7 @@ class Brut::Renderable
     if input.minlength
       default_html_attributes["minlength"] = input.minlength
     end
-    Brut::Input::TextField.new(default_html_attributes.merge(html_attributes))
+    Brut::Components::Inputs::TextField.new(default_html_attributes.merge(html_attributes))
   end
 
 

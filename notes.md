@@ -93,3 +93,7 @@ X Allow drafts to omit some data
 * Asset hashing
 * Seed data sucks
 * Testing?
+
+* File Layout
+  - models have to be "naked" e.g. Account, etc.
+  - this means that having other things not be naked is potentiall problematic.

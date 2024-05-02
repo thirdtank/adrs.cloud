@@ -1,18 +1,13 @@
-require_relative "../input"
-require_relative "../base_component"
-
-class Brut::Input::Textarea < Brut::BaseComponent
-  def initialize(attributes: {}, form:, input:)
+class Brut::Components::Inputs::TextField < Brut::Components::Input
+  def initialize(attributes)
     @sanitized_attributes = attributes.map { |key,value|
         [
           key.to_s.gsub(/[\s\"\'>\/=]/,"-"),
           value
         ]
-    }.to_h.merge({
-      "required" => form.class.inputs[input].required?,
-      "name" => input,
-    })
-    @value = form.send(input)
+    }.select { |key,value|
+      !value.nil?
+    }.to_h
   end
 
   def render
@@ -25,8 +20,6 @@ class Brut::Input::Textarea < Brut::BaseComponent
         REXML::Attribute.new(key,value).to_string
       end
     }.join(" ")
-    %{
-      <textarea #{attribute_string}>#{ @value }</textarea>
-    }
+    "<input #{attribute_string}>"
   end
 end

@@ -1,0 +1,45 @@
+class Pages::Adrs::Get < AppPage
+  class Markdown < Redcarpet::Render::HTML
+    def header(text,header_level)
+      super.header(text,header_level.to_i + 3)
+    end
+  end
+  def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
+
+  def initialize(...)
+    super(...)
+    @markdown = Redcarpet::Markdown.new(
+      Redcarpet::Render::HTML.new(
+        filter_html: true,
+        no_images: true,
+        no_styles: true,
+        safe_links_only: true,
+        link_attributes: { class: "blue-400" },
+      ),
+      fenced_code_blocks: true,
+      autolink: true,
+      quote: true,
+    )
+  end
+
+  def adr = @content
+
+  def markdown(field)
+    value = "**#{field_text(field)}** #{adr.send(field)}"
+    @markdown.render(value)
+  end
+
+  def field_text(field)
+    case field
+    when :context   then "In the context of"
+    when :facing    then "Facing"
+    when :decision  then "We decided"
+    when :neglected then "Neglecting"
+    when :achieve   then "To achieve"
+    when :accepting then "Accepting"
+    when :because   then "Because"
+    else raise ArgumentError.new("No such field '#{field}'")
+    end
+  end
+end
+

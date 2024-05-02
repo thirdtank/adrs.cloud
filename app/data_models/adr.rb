@@ -1,4 +1,4 @@
-class Adr < Sequel::Model
+class DataModel::Adr < AppDataModel
   many_to_one :account
 
   def self.create(...)

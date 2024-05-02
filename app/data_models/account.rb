@@ -1,4 +1,4 @@
-class Account < Sequel::Model
+class DataModel::Account < AppDataModel
   raise_on_save_falure = true
 
   one_to_many :adrs
