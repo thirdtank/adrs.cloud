@@ -76,6 +76,31 @@ A component can render other components
 * Error states are unexplored but need to be sorted
 * Routes and route helpers are a bit odd - need to consider URL escaping and what not
 
+### Ergonomics
+
+Ideally, you want a line of code in your app to render:
+
+```html
+<div> <!-- <--- start of your app's custom component -->
+  <input type="..."> <!-- HTML input rendered by Brut -->
+</div> <!-- <--- end of your app's custom component -->
+```
+
+And there should be some behavior, namely:
+
+* if the field is for a form submission field, the HTML input should match
+  appropriately.
+* if the field is in error, it should do *something* to indicate there is an error,
+  including setting validations on it via HTML5 constraint API
+
+THUS: there must be some known relationship between form submissions, forms/inputs, errors, and wrapping components
+
+Now, because validation can come from the server-side, there must be a relationship with what is returned from an action and the
+form submission.  Perhaps:
+
+- Actions return a form submission with errors -> validation error, use the returned object
+- Actions return anythning else -> whatever else
+
 # App Next Steps
 
 X Publish a draft

@@ -18,9 +18,11 @@ class Brut::Page < Brut::Renderable
   def render
     layout_erb_file = @layout_locator.locate(self.layout)
     layout_template = ERB.new(File.read(layout_erb_file))
+    layout_template.location = [ layout_erb_file.to_s, 1 ]
 
     erb_file = @page_locator.locate(self.template_name)
     template = ERB.new(File.read(erb_file))
+    template.location = [ erb_file.to_s, 1 ]
 
     template_binding = self.binding_scope do
       scope = self.binding_scope

@@ -158,12 +158,12 @@
   padding-bottom: calc(1.75 * var(--mg-sp-2));
   font-size: var(--mg-fs-2);
 }
-.field-has-error .text-field-label,
-.text-field-label.text-field-label--hidden {
-  display: none;
+
+label:has(input[data-invalid]) .text-field-label {
+  display:none;
 }
 
-.text-field-error-label {
+label:has(input[data-invalid]) .text-field-error-label {
   color: var(--mg-red-300);
   background-color: var(--mg-red-700);
   border-top-right-radius: 999px;
@@ -173,10 +173,11 @@
   font-weight: 500;
   font-size: var(--mg-fs-2);
   padding: var(--mg-sp-2);
-  display: none;
-}
-.field-has-error .text-field-error-label {
   display: flex;
+}
+
+label:not(:has(input[data-invalid])) .text-field-error-label {
+  display:none;
 }
 
 .rendered-markdown p {

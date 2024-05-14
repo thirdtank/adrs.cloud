@@ -54,6 +54,28 @@ class Brut::Renderable
     Brut::Components::Inputs::TextField.new(default_html_attributes.merge(html_attributes))
   end
 
+  def html_input_for(form,input_name,html_attributes: {})
+    input = form[input_name]
+    default_html_attributes = {}
+    default_html_attributes["required"] = input.required
+    default_html_attributes["pattern"]  = input.pattern
+    default_html_attributes["value"]    = input.value
+    default_html_attributes["type"]     = input.type
+    default_html_attributes["name"]     = input.name
+    if input.minlength
+      default_html_attributes["minlength"] = input.minlength
+    end
+    if !form.new? && !input.valid?
+      default_html_attributes["data-invalid"] = true
+      input.validity_state.each do |constraint,violated|
+        if violated
+          default_html_attributes["data-#{constraint}"] = true
+        end
+      end
+    end
+    Brut::Components::Inputs::TextField.new(default_html_attributes.merge(html_attributes))
+  end
+
 
 private
   def underscore(string)

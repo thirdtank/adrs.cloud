@@ -1,4 +1,11 @@
 <label class="flex flex-column gap-1 w-100">
   <%= component(input) %>
+  <div class="text-field-error-label">
+    <% error.each do |key, violation, message| %>
+      <% if violation %>
+        <%= message %>
+      <% end %>
+    <% end %>
+  </div>
   <div class="text-field-label"><%= label %></div>
 </label>

@@ -15,6 +15,12 @@ require_relative "data_models/app_data_model"
 require_relative "actions/app_action"
 require_relative "view/form_submissions/app_form_submission"
 
+class SignUp < Brut::Form
+  input :email
+  input :password, minlength: 8
+  input :password_confirmation, type: "password"
+end
+
 class AdrApp < Sinatra::Base
 
   register Sinatra::Namespace
@@ -57,20 +63,28 @@ class AdrApp < Sinatra::Base
     end
 
     get "/sign-up" do
-      page Pages::SignUp.new(content: FormSubmissions::SignUp.new)
+      page Pages::SignUp.new(content: SignUp.new)
     end
 
     post "/sign-up" do
-      sign_up = FormSubmissions::SignUp.new(params)
-      result = process_form form_submission: sign_up,
-                            action: Actions::SignUp.new
-      case result
-      in errors:
-        page Pages::SignUp.new(content: sign_up, errors: errors)
-      in DataModel::Account
-        session["user_id"] = result.external_id
-        redirect to("/adrs")
+      sign_up = SignUp.new(params)
+      if sign_up.valid?
+        if sign_up.password != sign_up.password_confirmation
+          sign_up["password_confirmation"].set_custom_validity("must match password")
+        end
       end
+      if sign_up.valid?
+        raise "WELP"
+      else
+        page Pages::SignUp.new(content: sign_up)
+      end
+      #case result
+      #in errors:
+      #  page Pages::SignUp.new(content: sign_up, errors: errors)
+      #in DataModel::Account
+      #  session["user_id"] = result.external_id
+      #  redirect to("/adrs")
+      #end
     end
 
     get "/logout" do
@@ -84,7 +98,7 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs/new" do
-    page Pages::Adrs::New.new(content: FormSubmission::Adr::Draft.new)
+    page Pages::Adrs::New.new(content: FormSubmissions::Adrs::Draft.new)
   end
 
   get "/adrs/:id" do

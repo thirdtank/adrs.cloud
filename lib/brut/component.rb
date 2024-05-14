@@ -8,6 +8,7 @@ class Brut::Component < Brut::Renderable
   def render
     erb_file = @component_locator.locate(self.template_name)
     template = ERB.new(File.read(erb_file))
+    template.location = [ erb_file.to_s, 1 ]
 
     scope = self.binding_scope
     template.result(scope)

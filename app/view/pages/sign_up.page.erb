@@ -3,17 +3,29 @@
   <h2 class="tc mt-0 f-5 fw-5">Sign Up</h2>
 </header>
 <section class="pa-3">
-  <% if errors? %>
-    <aside class="pa-2 br-3 ba bc-red-500 bg-red-800 red-300"><%= errors %></aside>
+  <% if !content.new? && !content.valid? %>
+    <aside class="pa-2 br-3 ba bc-red-500 bg-red-800 red-300">
+    <% content.elements.each do |input| %>
+      <% if !input.valid? %>
+        <%= input.name %> - <%= CGI.escape_html(input.validity_state.inspect) %>
+      <% end %>
+    <% end %>
+    </aside>
   <% end %>
-  <form action="/auth/sign-up" method="post"
-    class="flex flex-column items-center gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns mw-8 w-100 w-70-m w-50-ns">
-    <%= component(TextField.new(label: "Email", input: input_component_for(content, :email, html_attributes: { autofocus: true, class: "text-field" }))) %>
-    <%= component(TextField.new(label: "Password", input: input_component_for(content, :password, html_input_type: "password", html_attributes: { class: "text-field" }))) %>
-    <%= component(TextField.new(label: "Confirm Password", input: input_component_for(content, :password_confirmation, html_input_type: "password", html_attributes: { class: "text-field" }))) %>
+  <form action="/auth/sign-up" method="post" class="flex flex-column items-center gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns mw-8 w-100 w-70-m w-50-ns">
+    <%= component(Components::TextField.new(label: "Email",
+                                            form: content,
+                                            name: "email",
+                                            autofocus: true)) %>
+    <%= component(Components::TextField.new(label: "Password",
+                                            form: content,
+                                            name: "password")) %>
+    <%= component(Components::TextField.new(label: "Confirm Password",
+                                            form: content,
+                                            name: "password_confirmation")) %>
 
     <div class="mt-2">
-      <%= component(Button.new(color: "purple", label: "Sign Up", icon: "plus-round-line-icon")) %>
+      <%= component(Components::Button.new(color: "purple", label: "Sign Up", icon: "plus-round-line-icon")) %>
     </div>
   </form>
   <nav class="tc mv-4">
@@ -21,3 +33,10 @@
     <a class="        dib ph-3 pv-2 br-3 purple-400 hover-bg-purple-700" href="/auth/forgot-password">Forgot Password</a>
   </nav>
 </section>
+<script>
+document.querySelectorAll("form input").forEach( (element) => {
+    element.addEventListener("invalid", (event) => {
+        event.target.dataset["invalid"] = true
+    })
+})
+</script>
