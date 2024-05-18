@@ -1,4 +1,4 @@
-<button class="flex items-center justify-around gap-2 button button--size--<%= size %> button--color--<%= color %>">
+<button <%= formaction %> <%= disabled %> class="flex items-center justify-around gap-2 button button--size--<%= size %> button--color--<%= color %>">
   <% if icon %>
     <span aria-hidden="true">
       <%= svg(icon) %>

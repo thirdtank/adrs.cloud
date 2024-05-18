@@ -4,25 +4,21 @@ class Brut::Actions::Validators::DataObjectValidator < Brut::Actions::Validator
     @@validations[attribute] = options
   end
 
-  def validate(object)
-    @@validations.map { |attribute,options|
-      value = object.send(attribute)
-      errors = options.map { |option, option_value|
+  def validate(form:, **rest)
+    @@validations.each do |attribute,options|
+      value = form.send(attribute)
+      errors = options.each do |option, option_value|
         case option
         when :required
           if option_value == true
             if value.to_s.strip == ""
-              "is required"
-            else
-              nil
+              form.server_side_constraint_violation(input_name: attribute, key: :required)
             end
           end
         when :minlength
           if value.respond_to?(:length) || value.nil?
             if value.nil? || value.length < option_value
-              "must be at least '#{option_value}' long"
-            else
-              nil
+              form.server_side_constraint_violation(input_name: attribute, key: :too_short, context: option_value)
             end
           else
             raise "'#{attribute}''s value (a '#{value.class}') does not respond to 'length' - :minlength cannot be used as a validation"
@@ -30,14 +26,8 @@ class Brut::Actions::Validators::DataObjectValidator < Brut::Actions::Validator
         else
           raise "'#{option}' is not a recognized validation option"
         end
-      }.compact
-
-      if errors.any?
-        [ attribute, errors ]
-      else
-        nil
       end
-    }.compact.to_h
+    end
   end
 
 end

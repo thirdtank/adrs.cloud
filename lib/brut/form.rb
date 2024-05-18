@@ -77,9 +77,9 @@ class Brut::Forms::Constraint
 
   attr_reader :key, :context
 
-  def initialize(key:,context:)
+  def initialize(key:,context:, server_side: :based_on_key)
     @key = key.to_s
-    @client_side = CLIENT_SIDE_KEYS.include?(@key)
+    @client_side = CLIENT_SIDE_KEYS.include?(@key) && server_side != true
     @context = context
   end
 
@@ -114,10 +114,9 @@ class Brut::Forms::ValidityState
   def valid? = @constraint_violations.empty?
 
   # Set a server-side constraint violation. This is essentially arbitrary and dependent
-  # on your use-case.  Do note that if you pass in key: that is considered client-side the
-  # constraint violation created will also be considered client-side.
+  # on your use-case.
   def server_side_constraint_violation(key:,context:)
-    @constraint_violations << Brut::Forms::Constraint.new(key: key, context: context)
+    @constraint_violations << Brut::Forms::Constraint.new(key: key, context: context, server_side: true)
   end
 
   def each(&block)

@@ -32,6 +32,8 @@ class Brut::Components::Inputs::Textarea < Brut::Components::Input
     @value = value
   end
 
+  def sanitized_attributes = @sanitized_attributes
+
   def render
     attribute_string = @sanitized_attributes.map { |key,value|
       if value == true

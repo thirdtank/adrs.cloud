@@ -64,8 +64,10 @@
       <%= svg("arrow-bottom-direction-icon") %>
     </span>
   </div>
-  <div class="mt-2 flex flex-column gap-3 items-center justify-between">
+  <div class="mt-2 flex gap-3 items-center justify-center">
+    <%= reject_button %>
     <%= component(Components::Button.new(size: "normal", color: "blue", label: action_label, icon: "edit-list-icon")) %>
-    <a href="/adrs" class="red-300">Nevermind</a>
+    <%= accept_button %>
   </div>
+  <a href="/adrs" class="red-300"><span role="none">&larr;</span> Nevermind</a>
 </form>

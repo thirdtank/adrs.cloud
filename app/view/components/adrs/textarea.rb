@@ -10,5 +10,8 @@ class Components::Adrs::Textarea < AppComponent
     )
     @constraint_violations = form[input_name].validity_state
   end
+
+  def invalid? = @input_component.sanitized_attributes.key?("data-invalid")
+
 end
 

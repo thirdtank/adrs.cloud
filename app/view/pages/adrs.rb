@@ -6,4 +6,5 @@ class Pages::Adrs < AppPage
 
   def adr_path(adr)      = "/adrs/#{adr.external_id}"
   def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
+
 end

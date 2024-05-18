@@ -1,5 +1,5 @@
 <label class="flex flex-column gap-1 w-100">
-  <div class="textarea-container">
+  <div class="textarea-container" <%= invalid? ? 'data-invalid' : '' %>>
     <% if prefix %>
       <div class="inner-label"><%= prefix %></div>
     <% end %>

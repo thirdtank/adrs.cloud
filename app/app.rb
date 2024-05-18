@@ -13,7 +13,6 @@ require_relative "view/components/app_component"
 require_relative "view/pages/app_page"
 require_relative "data_models/app_data_model"
 require_relative "actions/app_action"
-require_relative "view/form_submissions/app_form_submission"
 require_relative "view/forms/app_form"
 
 class AdrApp < Sinatra::Base
@@ -93,7 +92,7 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs/:id/edit" do
-    page Pages::Adrs::Edit.new(content: FormSubmissions::Adrs::Draft.from_adr(DataModel::Adr[account_id: @account.id, external_id: params[:id]]))
+    page Pages::Adrs::Edit.new(content: Forms::Adrs::Draft.from_adr(DataModel::Adr[account_id: @account.id, external_id: params[:id]]))
   end
 
   post "/adrs" do
@@ -110,23 +109,20 @@ class AdrApp < Sinatra::Base
   end
 
   post "/accepted_adrs" do
-    accepted_adr = FormSubmissions::Adrs::Accepted.new(params)
-    result = process_form form_submission: accepted_adr,
+    draft_adr = Forms::Adrs::Draft.new(params)
+    result = process_form form: draft_adr,
                           action: Actions::Adrs::Accept.new,
                           account: @account
     case result
-    in errors:
-      page Pages::Adrs::Edit.new(
-        content: FormSubmissions::Adrs::Draft.from_adr(Adr[account_id: @account.id, external_id: accepted_adr.external_id]),
-        errors: errors
-      )
-    else
-      redirect to("/adrs/#{accepted_adr.external_id}")
+    in Forms::Adrs::Draft if result.invalid?
+      page Pages::Adrs::Edit.new(content: draft_adr, errors: [ "ADR cannot be accepted" ])
+    in DataModel::Adr
+      redirect to("/adrs/#{result.external_id}")
     end
   end
   post "/rejected_adrs" do
-    rejected_adr = FormSubmissions::Adrs::Rejected.new(params)
-    process_form form_submission: rejected_adr,
+    draft_adr = Forms::Adrs::Draft.new(params)
+    process_form form: draft_adr,
                  action: Actions::Adrs::Reject.new,
                  account: @account
     redirect to("/adrs")
