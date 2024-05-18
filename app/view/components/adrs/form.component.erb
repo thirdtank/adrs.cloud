@@ -4,7 +4,10 @@
   <% end %>
   <%= component Components::TextField.new(
         label: "Title",
-        input: input_component_for(adr, :title, html_attributes: { class: "text-field" })) %>
+        form: adr,
+        input_name: "title",
+        placeholder: "e.g. We Should Write Tests",
+        autofocus: true) %>
   <div class="flex items-center gap-2 justify-between">
     <div class="w-100">
       <%= adr_textarea(name: "context", label: "Use case or user story", prefix: "In the context of") %>

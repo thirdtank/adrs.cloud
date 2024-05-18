@@ -1,20 +1,18 @@
 <label class="flex flex-column gap-1 w-100">
   <div class="textarea-container">
     <% if prefix %>
-    <div class="inner-label"><%= prefix %></div>
+      <div class="inner-label"><%= prefix %></div>
     <% end %>
-    <%=
-      component(
-        Brut::Components::Inputs::Textarea.new(
-          form: adr,
-          input: name,
-          attributes: {
-            rows: 3,
-            class: "textarea"
-          }
-        )
-      )
-    %>
+    <%= component(input_component) %>
+  </div>
+  <div class="text-field-error-label">
+    <span data-constraint-violation-messages>
+    </span>
+    <% constraint_violations.map { |constraint| %>
+      <% if !constraint.client_side? %>
+        <%= constraint.to_s %> - <%= constraint.context %>
+      <% end %>
+    <% }.compact.join(", ") %>
   </div>
   <div class="text-field-label">
     <span class="f-1"><%= label %></span>

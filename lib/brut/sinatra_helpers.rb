@@ -15,8 +15,8 @@ module Brut::SinatraHelpers
     page_instance.render
   end
 
-  def process_form(form_submission:, action:, **rest)
+  def process_form(form:, action:, **rest)
     action = Brut::Actions::FormSubmission.new(action: action)
-    action.call(form_submission: form_submission, **rest)
+    action.call(form: form, **rest)
   end
 end

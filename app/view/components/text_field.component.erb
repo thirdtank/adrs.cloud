@@ -1,11 +1,13 @@
 <label class="flex flex-column gap-1 w-100">
-  <%= component(input) %>
+  <%= component(input_component) %>
   <div class="text-field-error-label">
-    <% error.each do |key, violation, message| %>
-      <% if violation %>
-        <%= message %>
+    <span data-constraint-violation-messages>
+    </span>
+    <% constraint_violations.map { |constraint| %>
+      <% if !constraint.client_side? %>
+        <%= constraint.to_s %> - <%= constraint.context %>
       <% end %>
-    <% end %>
+    <% }.compact.join(", ") %>
   </div>
   <div class="text-field-label"><%= label %></div>
 </label>

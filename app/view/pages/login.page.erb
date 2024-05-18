@@ -8,8 +8,14 @@
   <% end %>
   <form action="/auth/login" method="post"
     class="flex flex-column items-center gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns mw-8 w-100 w-70-m w-50-ns">
-    <%= component(Components::TextField.new(label: "Email", input: input_component_for(content, :email, html_attributes: { autofocus: true, class: "text-field" }))) %>
-    <%= component(Components::TextField.new(label: "Password", input: input_component_for(content, :password, html_input_type: "password", html_attributes: { class: "text-field" }))) %>
+    <%= component(Components::TextField.new(label: "Email",
+                                            form: content,
+                                            input_name: "email",
+                                            placeholder: "e.g. pat@example.com",
+                                            autofocus: true)) %>
+    <%= component(Components::TextField.new(label: "Password",
+                                            form: content,
+                                            input_name: "password")) %>
     <div class="mt-2">
       <%= component(Components::Button.new(color: "purple", label: "Log In", icon: "enter-icon")) %>
     </div>
@@ -19,3 +25,38 @@
     <a class="        dib ph-3 pv-2 br-3 purple-400 hover-bg-purple-700" href="/auth/forgot-password">Forgot Password</a>
   </nav>
 </section>
+<script>
+const VALIDITY_STATE_ATTRIBUTES = {
+  badInput: "Wrong type of data",
+  customError: "custom error",
+  patternMismatch: "Isn't in the right format",
+  rangeOverflow: "Is too big",
+  rangeUnderflow: "Is too small",
+  stepMismatch: "Is not a valid value in the range",
+  tooLong: "Is too long",
+  tooShort: "Is too short",
+  typeMismatch: "Is of the wrong type",
+  valueMissing: "Is required",
+}
+const updateValidity = (element) => {
+  if (element.validity.valid) {
+    return
+  }
+  const errorLabel = element.parentNode.querySelector("[data-constraint-violation-messages]")
+  if (!errorLabel) {
+    console.warn("No error label!??!?!")
+    return
+  }
+  const errors = Object.keys(VALIDITY_STATE_ATTRIBUTES).filter( (attribute) => element.validity[attribute] )
+  errorLabel.textContent = errors.map( (key) => VALIDITY_STATE_ATTRIBUTES[key] ).join(", ")
+}
+document.querySelectorAll("form").forEach( (form) => {
+  Array.from(form.elements).forEach( (formElement) => {
+    formElement.addEventListener("invalid", (event) =>{
+      form.dataset["submitted"] = true
+      updateValidity(event.target)
+    })
+    formElement.addEventListener("input", (event) => updateValidity(event.target) )
+  })
+})
+</script>

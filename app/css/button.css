@@ -1,0 +1,123 @@
+/** Buttons appear to be above the screen, pressable into it */
+.button {
+  border-style: solid;
+  border-width: 1px;
+  border-radius: var(--mg-bw-3);
+  box-shadow: calc(0.25 * var(--mg-sp-1))
+              calc(0.25 * var(--mg-sp-1))
+              calc(0.5 * var(--mg-sp-1))
+              0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/** When pressed or disabled, they are at the same level as the screen */
+.button:active, .button:disabled {
+  /* Make it appear to "press in" to the screen */
+  transform: translateX(calc(0.25 * var(--mg-sp-1)))
+             translateY(calc(0.25 * var(--mg-sp-1)));
+  /* Remove the shadow since it's no longer above the screen */
+  box-shadow: none;
+  /* Button bar styles remove some borders, but if it's pressed into the screen, it should
+   * have its borders back
+   */
+  z-index: 1;
+}
+
+/** When disabled, gray it out, as well as the SVGs that are in there */
+.button:disabled {
+  cursor: not-allowed;
+}
+.button:disabled,
+.button:disabled svg path {
+  filter: grayscale(80%); 
+  color: var(--mg-gray-300);
+}
+
+.button span:has(svg) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.button--size--large span:has(svg) {
+  width: var(--mg-sp-4);
+}
+
+.button--size--normal span:has(svg) {
+  width: calc(1.5 * var(--mg-sp-3));
+}
+
+.button--size--small span:has(svg) {
+  width: calc(1.5 * var(--mg-sp-2));
+}
+
+.button--size--tiny span:has(svg) {
+  width: calc(1.5 * var(--mg-sp-1));
+}
+
+/** Sizing */
+.button.button--size--large {
+  padding-left: var(--mg-sp-4);
+  padding-right: var(--mg-sp-4);
+  padding-top: var(--mg-sp-3);
+  padding-bottom: var(--mg-sp-3);
+  font-size: var(--mg-fs-4);
+}
+.button.button--size--normal {
+  padding: var(--mg-sp-3);
+  font-size: var(--mg-fs-3);
+}
+
+.button.button--size--small {
+  padding-left: var(--mg-sp-3);
+  padding-right: var(--mg-sp-3);
+  padding-top: var(--mg-sp-2);
+  padding-bottom: var(--mg-sp-2);
+  font-size: var(--mg-fs-2);
+}
+
+.button.button--size--tiny {
+  padding-left: var(--mg-sp-2);
+  padding-right: var(--mg-sp-2);
+  padding-top: var(--mg-sp-1);
+  padding-bottom: var(--mg-sp-1);
+  font-size: var(--mg-fs-1);
+}
+/** Colors */
+.button.button--color--red {
+  background-color: var(--mg-red-800);
+  border-color: var(--mg-red-700);
+  color: var(--mg-red-200);
+}
+.button.button--color--orange {
+  background-color: var(--mg-orange-800);
+  border-color: var(--mg-orange-700);
+  color: var(--mg-orange-200);
+}
+.button.button--color--yellow {
+  background-color: var(--mg-yellow-800);
+  border-color: var(--mg-yellow-700);
+  color: var(--mg-yellow-200);
+}
+.button.button--color--green {
+  background-color: var(--mg-green-800);
+  border-color: var(--mg-green-700);
+  color: var(--mg-green-200);
+}
+.button.button--color--blue {
+  background-color: var(--mg-blue-800);
+  border-color: var(--mg-blue-700);
+  color: var(--mg-blue-200);
+}
+.button.button--color--purple {
+  background-color: var(--mg-purple-800);
+  border-color: var(--mg-purple-700);
+  color: var(--mg-purple-200);
+}
+.button.button--color--gray {
+  background-color: var(--mg-gray-800);
+  border-color: var(--mg-gray-700);
+  color: var(--mg-gray-200);
+}

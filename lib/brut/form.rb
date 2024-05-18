@@ -1,83 +1,25 @@
+require "forwardable"
+
+# Brut Forms
+#
+# Brut's form handling mirrors HTML and the browser as much as it can, but accomodates the notion of server-side validation and
+# processing.  Brut attempts to rely as much on standard APIs as possible.
+#
+# At a high level, the form and its inputs are declared server side in a Brut::Form subclass, which is used to render HTML
+# that includes constraint validations.  These validations are used by the browser to prevent submission of invalid data.  You
+# can use CSS and server-rendered HTML to control how errors are presented, using standard web APIs.
+#
+# When the form is submitted to the server, the client side validations are re-checked. If they pass, any optional server-side
+# validations are run.  If either client or server validations fail, the form object contains information on the failures. This
+# can be used to re-render the form to show the user the errrors.
+#
+# When the validations all pass, the form is handed off to A Brut::Action subclass you provide.
+
 module Brut::Forms
   autoload(:ConformingValue, "brut/forms/conforming_value")
   autoload(:MissingValue, "brut/forms/missing_value")
   autoload(:NonConformingValue, "brut/forms/non_conforming_value")
   autoload(:InputDefinition, "brut/forms/input_definition")
-end
-
-# Mirrors a web browser's ValidityState API. Captures the overall state
-# of validity of an input.
-class Brut::Forms::ValidityState
-  ATTRIBUTES = [
-    :bad_input,
-    :custom_error,
-    :pattern_mismatch,
-    :range_overflow,
-    :range_underflow,
-    :step_mismatch,
-    :too_long,
-    :too_short,
-    :type_mismatch,
-    :value_missing
-  ]
-
-  ATTRIBUTES.each do |attribute|
-    define_method(attribute) do
-      self.instance_variable_get("@#{attribute}")
-    end
-    define_method("#{attribute}?") do
-      !!self.instance_variable_get("@#{attribute}")
-    end
-  end
-
-  def custom_error=(message)
-    @custom_error = message
-    if message.to_s.strip == ""
-      @custom_error = false
-    end
-    puts "Custom error is now '#{@custom_error}'"
-    self.update_validity!
-  end
-
-  def initialize(errors={})
-    unknown_attributes = errors.keys.select { |key| !ATTRIBUTES.include?(key) }
-    if unknown_attributes.any?
-      raise ArgumentError.new("#{self.class} does not recognize these attributes given to its constructor: #{unknown_attributes.join(', ')}")
-    end
-    errors.each do |key,value|
-      self.instance_variable_set("@#{key}",value || false)
-    end
-    self.update_validity!
-  end
-
-  # Returns true if there are no validation errors
-  def valid? = !!@valid
-
-  def each(&block)
-    ATTRIBUTES.each do |attribute|
-      message = if attribute.to_s == "custom_error"
-                  self.custom_error
-                else
-                  attribute.to_s.gsub(/_/," ")
-                end
-      block.call(attribute,self.send("#{attribute}?"),message)
-    end
-  end
-
-private
-
-  def update_validity!
-    @valid = true
-    ATTRIBUTES.each do |key|
-      puts "Checking '#{key}'"
-      value = self.send(key)
-      puts "value is '#{value}'"
-      if value
-        puts "This shit is invalid"
-        @valid = false
-      end
-    end
-  end
 end
 
 module Brut::FussyTypeEnforcment
@@ -112,13 +54,84 @@ module Brut::FussyTypeEnforcment
     else
       raise ArgumentError.new("Use of type! with a #{type_descriptor.class} (#{type_descriptor}) is not supported")
     end
-
-
     value
   end
 end
-# An Input represents an HTMLInput
-class Brut::Forms::Input
+
+# A constrating, which is a wrapper for a key that represents a type of error, along with context about
+# the error.  A constraint knows if it s a client side constraint or not.
+class Brut::Forms::Constraint
+
+  CLIENT_SIDE_KEYS = [
+    "bad_input",
+    "custom_error",
+    "pattern_mismatch",
+    "range_overflow",
+    "range_underflow",
+    "step_mismatch",
+    "too_long",
+    "too_short",
+    "type_mismatch",
+    "value_missing",
+  ]
+
+  attr_reader :key, :context
+
+  def initialize(key:,context:)
+    @key = key.to_s
+    @client_side = CLIENT_SIDE_KEYS.include?(@key)
+    @context = context
+  end
+
+  def client_side? = @client_side
+  def to_s = @key
+end
+
+# Mirrors a web browser's ValidityState API. Captures the overall state
+# of validity of an input.  This can accomodate server-side constraint violations
+# that are essentially arbitrary.  This means that an instance of this class should
+# fully capture all constraint violations for a given field.  You can 
+# iterate over all the violations with #each, which will yield one `Constraint` for
+# each failure.  You can query the constraint to determine if it is a client side constraint or not.
+class Brut::Forms::ValidityState
+  include Enumerable
+
+  # Creates a validity state with the given errors.
+  #
+  # ::constraint_violations - an array of symbols or strings that represent the keys of each constraint violation.
+  #                           These keys are used to render human-readable strings
+  def initialize(constraint_violations={})
+    @constraint_violations = constraint_violations.map { |key,value|
+      if value
+        Brut::Forms::Constraint.new(key: key, context: value)
+      else
+        nil
+      end
+    }.compact
+  end
+
+  # Returns true if there are no validation errors
+  def valid? = @constraint_violations.empty?
+
+  # Set a server-side constraint violation. This is essentially arbitrary and dependent
+  # on your use-case.  Do note that if you pass in key: that is considered client-side the
+  # constraint violation created will also be considered client-side.
+  def server_side_constraint_violation(key:,context:)
+    @constraint_violations << Brut::Forms::Constraint.new(key: key, context: context)
+  end
+
+  def each(&block)
+    @constraint_violations.each do |constraint|
+      block.call(constraint)
+    end
+  end
+
+end
+
+# An InputDefinition captures metadata used to create an Input. Think of this
+# as a template for creating inputs.  An Input has state, such as values and thus validity.
+# An InputDefinition is immutable and defines inputs.
+class Brut::Forms::InputDefinition
   include Brut::FussyTypeEnforcment
   attr_reader :max,
               :maxlength,
@@ -128,9 +141,7 @@ class Brut::Forms::Input
               :pattern,
               :required,
               :step,
-              :type,
-              :value,
-              :validity_state
+              :type
 
   INPUT_TYPES_TO_CLASS = {
     "checkbox"       => String,
@@ -153,6 +164,8 @@ class Brut::Forms::Input
     "week"           => String,
   }
 
+  # Create an InputDefinition. This should very closely mirror
+  # the attributes used in an <INPUT> element in HTML.
   def initialize(
     max: nil,
     maxlength: nil,
@@ -169,6 +182,8 @@ class Brut::Forms::Input
              case name
              when "email" then "email"
              when "password" then "password"
+             else
+               "text"
              end
            else
              type
@@ -188,18 +203,47 @@ class Brut::Forms::Input
     if @pattern.nil? && type == "email"
       @pattern = /^[^@]+@[^@]+\.[^@]+$/.source
     end
-    @validity_state = Brut::Forms::ValidityState.new
-    @value = nil
   end
 
+  # Create an Input based on this defitition, initializing it with the given value.
+  def make_input(value:)
+    Brut::Forms::Input.new(input_definition: self, value: value)
+  end
+end
+
+# An Input is a stateful object representing a specific input and its value
+# during the course of a form submission process. In particular, it wraps a value
+# and a ValidityState. These are mutable, whereas the wrapped InputDefinition is not.
+class Brut::Forms::Input
+
+  extend Forwardable
+
+  attr_reader :value, :validity_state
+
+  def initialize(input_definition:, value:)
+    @input_definition = input_definition
+    @validity_state = Brut::Forms::ValidityState.new
+    self.value=(value)
+  end
+
+  def_delegators :"@input_definition", :max,
+                                       :maxlength,
+                                       :min,
+                                       :minlength,
+                                       :name,
+                                       :pattern,
+                                       :required,
+                                       :step,
+                                       :type
+
   def value=(new_value)
-    missing = if @required
+    missing = if self.required
                 new_value.nil? || (new_value.kind_of?(String) && new_value.strip == "")
               else
                 false
               end
-    too_short = if @minlength && !missing
-                  new_value.length < @minlength
+    too_short = if self.minlength && !missing
+                  new_value.length < self.minlength
                 else
                   false
                 end
@@ -210,20 +254,17 @@ class Brut::Forms::Input
     @value = new_value
   end
 
-  def set_custom_validity(error_message)
-    @validity_state.custom_error = error_message
-  end
-
-  def dup
-    duplicate = super
-    duplicate.instance_variable_set("@validity_state",Brut::Forms::ValidityState.new)
-    duplicate.instance_variable_set("@value",nil)
-    duplicate
+  # Set a server-side constraint violation on this input.  This is essentially arbitrary, but note
+  # that `key` should not be a key used for client-side validations.
+  def server_side_constraint_violation(key,context=true)
+    @validity_state.server_side_constraint_violation(key: key, context: context)
   end
 
   def valid? = @validity_state.valid?
-
 end
+
+
+
 
 # A Form is a server-side representation of an HTML form, with the ability 
 # to be enhanced with server-side logic and information.
@@ -237,14 +278,20 @@ end
 #
 # The easiest way to create a Form is to subclass it for your use-case, and
 # call the class method `input` for each input in the form.
+#
+# If you do this, your form will have accessors for each input that return the
+# value of that form input. You can access the Input via []
 class Brut::Form
   def self.input(name,attributes={})
-    input = Brut::Forms::Input.new(**(attributes.merge(name: name)))
-    @inputs ||= {}
-    @inputs[input.name] = input
+    input_definition = Brut::Forms::InputDefinition.new(**(attributes.merge(name: name)))
+    @input_definitions ||= {}
+    @input_definitions[input_definition.name] = input_definition
+    define_method name do
+      self[name].value
+    end
   end
 
-  def self.inputs = @inputs
+  def self.input_definitions = @input_definitions
 
   # Create an instance of this form, optionally initialized with
   # the given values for its params.
@@ -252,22 +299,15 @@ class Brut::Form
     @new = params.nil?
     params ||= {}
     unknown_params = params.keys.map(&:to_s).reject { |key|
-      self.class.inputs.key?(key)
+      self.class.input_definitions.key?(key)
     }
     if unknown_params.any?
       puts "Ignoring params: #{unknown_params}"
     end
-    @inputs = self.class.inputs.map { |name,input|
-      dup_input = input.dup
-      puts "Setting value of #{name} to #{params[name] || params[name.to_sym]}"
-      dup_input.value = params[name] || params[name.to_sym]
-      self.class.define_method name do
-        dup_input.value
-      end
-      [ name, dup_input ]
+    @inputs = self.class.input_definitions.map { |name,input_definition|
+      input = input_definition.make_input(value: params[name] || params[name.to_sym])
+      [ name, input ]
     }.to_h
-    puts @inputs.inspect
-    puts @inputs["email"].value
   end
 
   # Returns true if this form represents a new, empty, untouched form. This is
@@ -278,7 +318,12 @@ class Brut::Form
   def elements = @inputs.values
   def [](input_name) = @inputs.fetch(input_name.to_s)
 
-  def valid? = self.elements.all?(&:valid?)
+  def valid?   = self.elements.all?(&:valid?)
+  def invalid? = !self.valid?
 
+  # Set a server-side constraint violation on a given input's name.
+  def server_side_constraint_violation(input_name:, key:, context:nil)
+    self[input_name].server_side_constraint_violation(key,context)
+  end
 
 end

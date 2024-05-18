@@ -1,14 +1,26 @@
-class Brut::Components::Inputs::Textarea < Brut::Components::Input
+class Brut::Components::Inputs::TextField < Brut::Components::Input
   def self.for_form_input(form:, input_name:, html_attributes: {})
     default_html_attributes = {}
     input = form[input_name]
     default_html_attributes["required"] = input.required
+    default_html_attributes["pattern"]  = input.pattern
+    default_html_attributes["value"]    = input.value
+    default_html_attributes["type"]     = input.type
     default_html_attributes["name"]     = input.name
+    if input.max
+      default_html_attributes["max"] = input.max
+    end
     if input.maxlength
       default_html_attributes["maxlength"] = input.maxlength
     end
+    if input.min
+      default_html_attributes["min"] = input.min
+    end
     if input.minlength
       default_html_attributes["minlength"] = input.minlength
+    end
+    if input.step
+      default_html_attributes["step"] = input.step
     end
     if !form.new? && !input.valid?
       default_html_attributes["data-invalid"] = true
@@ -18,9 +30,9 @@ class Brut::Components::Inputs::Textarea < Brut::Components::Input
         end
       end
     end
-    Brut::Components::Inputs::Textarea.new(default_html_attributes.merge(html_attributes), input.value)
+    Brut::Components::Inputs::TextField.new(default_html_attributes.merge(html_attributes))
   end
-  def initialize(attributes, value)
+  def initialize(attributes)
     @sanitized_attributes = attributes.map { |key,value|
         [
           key.to_s.gsub(/[\s\"\'>\/=]/,"-"),
@@ -29,7 +41,6 @@ class Brut::Components::Inputs::Textarea < Brut::Components::Input
     }.select { |key,value|
       !value.nil?
     }.to_h
-    @value = value
   end
 
   def render
@@ -42,8 +53,6 @@ class Brut::Components::Inputs::Textarea < Brut::Components::Input
         REXML::Attribute.new(key,value).to_string
       end
     }.join(" ")
-    %{
-      <textarea #{attribute_string}>#{ @value }</textarea>
-    }
+    "<input #{attribute_string}>"
   end
 end

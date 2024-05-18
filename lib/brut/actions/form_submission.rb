@@ -1,9 +1,6 @@
 class Brut::Actions::FormSubmission < Brut::Action
 
-  def initialize(client_side_validator: :default, server_side_validator: :default, action:)
-    if client_side_validator == :default
-      client_side_validator = Brut::Actions::Validators::ClientSideFormSubmissionValidator.new
-    end
+  def initialize(server_side_validator: :default, action:)
     if server_side_validator == :default
       server_side_validator = begin
                                 action.class.const_get("ServerSideValidator").new
@@ -11,20 +8,18 @@ class Brut::Actions::FormSubmission < Brut::Action
                                 Brut::Actions::NullValidator.new
                               end
     end
-    @client_side_validator = client_side_validator
     @server_side_validator = server_side_validator
     @action                = action
   end
 
-  def call(form_submission:, **rest)
-    validation_errors = @client_side_validator.validate(form_submission:form_submission,**rest)
-    if validation_errors.any?
-      return { errors: validation_errors }
+  def call(form:, **rest)
+    if form.invalid?
+      return form
     end
-    validation_errors = @server_side_validator.validate(form_submission:form_submission,**rest)
-    if validation_errors.any?
-      return { errors: validation_errors }
+    @server_side_validator.validate(form:form,**rest)
+    if form.invalid?
+      return form
     end
-    @action.call(form_submission: form_submission, **rest)
+    @action.call(form: form, **rest)
   end
 end

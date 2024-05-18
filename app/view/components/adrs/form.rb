@@ -6,7 +6,7 @@ class Components::Adrs::Form < AppComponent
   def adr = @adr
   def action_label = @action_label
   def adr_textarea(name:, prefix:, label:)
-    component(Components::Adrs::Textarea.new(adr, name, prefix, label))
+    component(Components::Adrs::Textarea.new(form: adr, input_name: name, prefix: prefix, label: label))
   end
 end
 

@@ -1,6 +1,6 @@
 class Actions::Login
-  def call(form_submission:)
-    account = DataModel::Account[email: form_submission.email.to_s]
+  def call(form:)
+    account = DataModel::Account[email: form.email.to_s]
     if account
       account
     else

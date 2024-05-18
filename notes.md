@@ -122,3 +122,11 @@ X Allow drafts to omit some data
 * File Layout
   - models have to be "naked" e.g. Account, etc.
   - this means that having other things not be naked is potentiall problematic.
+
+
+## Forms
+
+* A new form has validation errors
+  - server-rendered errors should not be rendered
+  - CSS selectors will assume the `<form>` has an attribute indicating it's been submitted
+    and that attribute won't be there
