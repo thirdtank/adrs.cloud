@@ -2,10 +2,10 @@ class Actions::Login
   def call(form:)
     account = DataModel::Account[email: form.email.to_s]
     if account
-      account
-    else
-      { errors: { email: "No account with this email and password" } }
+      return account
     end
+    form.server_side_constraint_violation(input_name: :email, key: :no_account)
+    form
   end
 end
 

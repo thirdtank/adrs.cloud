@@ -118,7 +118,8 @@ X Style form errors
 * Asset hashing
 * Seed data sucks
 * Testing?
-* How to manage JavaScript?
-* Form Validation JS/Web Components?
 * Things are verbose - is there a way to simplify w/out turning it into PHP/Rails?
 * Using pattern matching is potentially annoying when there is a match error - the exception has no useful info in it.
+* Subclass provided web components?
+* i18n/messages for error keys
+* concept of "general" error?

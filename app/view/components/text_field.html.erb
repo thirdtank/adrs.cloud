@@ -1,8 +1,8 @@
 <label class="flex flex-column gap-1 w-100">
   <%= component(input_component) %>
   <div class="text-field-error-label">
-    <span data-constraint-violation-messages>
-    </span>
+    <brut-constraint-violation-messages>
+    </brut-constraint-violation-messages>
     <% constraint_violations.map { |constraint| %>
       <% if !constraint.client_side? %>
         <%= constraint.to_s %> - <%= constraint.context %>

@@ -48,8 +48,8 @@ class AdrApp < Sinatra::Base
       result = process_form form: login,
                             action: Actions::Login.new
       case result
-      in errors:
-        page Pages::Login.new(content: login, errors: errors)
+      in Forms::Login if result.invalid?
+        page Pages::Login.new(content: login)
       in DataModel::Account
         session["user_id"] = result.external_id
         redirect to("/adrs")

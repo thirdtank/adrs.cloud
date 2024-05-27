@@ -1,5 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+
 mkdir -p app/public/css
+mkdir -p app/public/js
 npx esbuild --sourcemap --bundle app/css/index.css --outfile=app/public/css/styles.css
+echo "${SCRIPT_DIR}/../lib"
+NODE_PATH="${SCRIPT_DIR}/../lib/" npx esbuild --sourcemap --bundle app/js/index.js --outfile=app/public/js/app.js

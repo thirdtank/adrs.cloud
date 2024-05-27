@@ -4,3 +4,5 @@
 /node_modules
 # This contains generated code, so should not be checked in
 /app/public/css
+# This contains generated code, so should not be checked in
+/app/public/js

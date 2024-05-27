@@ -1,3 +1,4 @@
+<brut-form>
 <form action="/adrs" method="post" class="flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-50">
   <% if adr.external_id %>
     <input type="hidden" name="external_id" value="<%= adr.external_id %>">
@@ -71,3 +72,4 @@
   </div>
   <a href="/adrs" class="red-300"><span role="none">&larr;</span> Nevermind</a>
 </form>
+</brut-form>
