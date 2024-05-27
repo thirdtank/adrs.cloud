@@ -20,7 +20,6 @@ module Brut
   autoload(:Components, "brut/component")
   autoload(:Page, "brut/page")
   autoload(:SinatraHelpers, "brut/sinatra_helpers")
-  autoload(:FormSubmission, "brut/form_submission")
   autoload(:Form, "brut/form")
   autoload(:Action, "brut/action")
   autoload(:Actions, "brut/action")

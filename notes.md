@@ -107,26 +107,18 @@ X Publish a draft
 X Clean up the listing page
 X Form needs better graphics for arrows
 X Allow drafts to omit some data
-* Style form errors
-* Better dates
+X Style form errors
 * Replace & Refine
 * Tags
 * Confirm reject or publish
 
 # Framework Next Steps
 
+* Better dates/timezones
 * Asset hashing
 * Seed data sucks
 * Testing?
-
-* File Layout
-  - models have to be "naked" e.g. Account, etc.
-  - this means that having other things not be naked is potentiall problematic.
-
-
-## Forms
-
-* A new form has validation errors
-  - server-rendered errors should not be rendered
-  - CSS selectors will assume the `<form>` has an attribute indicating it's been submitted
-    and that attribute won't be there
+* How to manage JavaScript?
+* Form Validation JS/Web Components?
+* Things are verbose - is there a way to simplify w/out turning it into PHP/Rails?
+* Using pattern matching is potentially annoying when there is a match error - the exception has no useful info in it.

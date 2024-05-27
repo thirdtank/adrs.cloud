@@ -6,59 +6,6 @@ class that has a method and that method does something.  What if that's how we m
 Brut (French for "raw") is an attempt to do just that.  It's goal is to reflect back the parts of the web and HTTP used to build
 an app in the structure of the code. It aims to be simple, which is not always easy.
 
-Here is how you might create a login form:
-
-```ruby
-get "/login" do
-  page Pages::Login.new(content: FormSubmissions::Login.new)
-end
-
-post "/login" do
-  login = FormSubmissions::Login.new(params)
-  result = process_form form_submission: login,
-                        action: Actions::Login.new
-  case result
-  in errors:
-    page Pages::Login.new(content: login, errors: errors)
-  in DataModel::Account
-    session["user_id"] = result.external_id
-    redirect to("/adrs")
-  end
-end
-```
-
-There's no resourceful stuff here. Our app renders web pages, and those are fetched via an HTTP GET.  Usually, a `GET` returns a
-page, so that's what we do: we make an object that is a `Page`.  Pages have dynamic content, so your page can have `content:`.
-
-In the case of logging in, we'll be submitting a form, so our content is a form submission, initially empty.
-
-When the user logs in, they aren't submitting a resource for examination - they are posting an encoded form to our server.  Our
-form submission will grab whatever parameters are relevant.
-
-Now, it's 2024.  HTML forms have validations.  We can assume those are being used.  Our form submission is made up of inputs—just
-like an actual form. Those inputs have validations and we can use those inputs to both generate some HTML as well as re-validate
-client-side validations on the server.  Cool.
-
-But, we don't want to just validate form inputs. We have to do more server-side stuff, too.  That's why there's an action.
-Remember how `<FORM>` takes an action?  This is that action!
-
-Here's our action:
-
-```ruby
-class Actions::Login
-  def call(form_submission:)
-    account = DataModel::Account[email: form_submission.email.to_s]
-    if account
-      account
-    else
-      { errors: { email: "No account with this email and password" } }
-    end
-  end
-end
-```
-
-`call` can contain anything.  In this case, our login isn't very secure, but this is just an example. We find an `ACCOUNT` row in
-our database based on the form submissions `email` input.  If we get one, cool. If not, we return an error hash.
 
 ## Concepts
 
