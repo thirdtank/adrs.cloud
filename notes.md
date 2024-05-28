@@ -110,7 +110,7 @@ X Allow drafts to omit some data
 X Style form errors
 * Replace & Refine
 * Tags
-* Confirm reject or publish
+X Confirm reject or publish
 
 # Framework Next Steps
 
