@@ -3,8 +3,15 @@
 set -e 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
 
+echo "[ bin/build ] removing app/public/css"
 mkdir -p app/public/css
+echo "[ bin/build ] removing app/public/js"
 mkdir -p app/public/js
+echo "[ bin/build ] building CSS"
 npx esbuild --sourcemap --bundle app/css/index.css --outfile=app/public/css/styles.css
-echo "${SCRIPT_DIR}/../lib"
+echo "[ bin/build ] building JS"
 NODE_PATH="${SCRIPT_DIR}/../lib/" npx esbuild --sourcemap --bundle app/js/index.js --outfile=app/public/js/app.js
+echo "[ bin/build ] removing jsdocs/"
+rm -rf jsdocs
+echo "[ bin/build ] Building JSDoc"
+npx jsdoc -c jsdoc.config.json -d jsdocs lib/brut-js/*.js
