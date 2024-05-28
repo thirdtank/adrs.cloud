@@ -1,5 +1,4 @@
 class Components::Adrs::Form < AppComponent
-  attr_reader :additional_actions
   def initialize(adr, action_label)
     @adr = adr
     @action_label = action_label
@@ -18,7 +17,7 @@ class Components::Adrs::Form < AppComponent
 
   def accept_button
     if @adr.external_id
-      component(Components::Button.new(formaction: "/accepted_adrs", size: "small", color: "green", label: "Accept", icon: "quality-badge-checkmark-icon"))
+      component(Components::Button.new(formaction: "/accepted_adrs", size: "small", color: "green", label: "Accept", icon: "quality-badge-checkmark-icon", confirm: "You won't be able to change this ADR after you accept it"))
     end
   end
 end

@@ -6,6 +6,11 @@
   --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
 }
 
+::backdrop {
+  background-color: black;
+  opacity: 0.5;
+}
+
 .rendered-markdown p {
   line-height: var(--mg-lh-copy);
   max-width: var(--mg-tw-wide);

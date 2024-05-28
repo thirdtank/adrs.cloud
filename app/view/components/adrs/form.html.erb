@@ -72,4 +72,15 @@
   </div>
   <a href="/adrs" class="red-300"><span role="none">&larr;</span> Nevermind</a>
 </form>
+<brut-confirmation-dialog show-warnings>
+  <dialog class="bn br-2 shadow-4 bg-red-900 h-40vh w-40vw pos-absolute top-1 left-1 right-1 pa-3">
+  <div class="flex flex-column h-100 items-center justify-between gap-3 bg-purple">
+    <h1 class="f-3 fw-7"></h1>
+    <nav class="flex justify-between w-100 items-center gap-3">
+      <%= component(Components::Button.new(size: "normal", color: "orange", label: "Nevermind", value: "cancel", icon: "close-line-icon")) %>
+      <%= component(Components::Button.new(size: "normal", color: "green", label: "Accept ADR", value: "ok", icon: "quality-badge-checkmark-icon")) %>
+    </nav>
+  </div>
+  </dialog>
+</brut-confirmation-dialog>
 </brut-form>
