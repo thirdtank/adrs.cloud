@@ -1,16 +1,14 @@
 require "erb"
 class Brut::Page < Brut::Renderable
-  attr_reader :content, :errors
+  attr_reader :content
   attr_writer :page_locator, :layout_locator
 
-  def initialize(content: {}, errors: [])
+  def initialize(content: {})
     super()
     @content        = content
-    @errors         = errors
     @page_locator   = NullTemplateLocator.new
     @layout_locator = NullTemplateLocator.new
   end
-  def errors? = !@errors.empty?
 
   def template_name = underscore(self.class.name).gsub(/^pages\//,"")
   def layout = "default"

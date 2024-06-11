@@ -1,5 +1,5 @@
 class Actions::Adrs::Accept < AppAction
-  class ServerSideValidator < Brut::Actions::Validators::DataObjectValidator
+  class AcceptedAdrValidator < Brut::Actions::Validators::DataObjectValidator
     validate :context   , required: true , minlength: 10
     validate :facing    , required: true , minlength: 10
     validate :decision  , required: true , minlength: 10
@@ -9,8 +9,22 @@ class Actions::Adrs::Accept < AppAction
     validate :because   , required: true , minlength: 10
   end
 
-  def call(form:, account:)
+  def check(form:, account:)
+    result = self.check_result
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
+    if !adr
+      raise "This account cannot access this ADR"
+    end
+    result.save_context(adr: adr)
+    validator = AcceptedAdrValidator.new
+    validator.validate(form,result)
+    result
+  end
+
+  def call(form:, account:)
+    result = self.check(form: form, account: account)
+    return result if !result.can_call?
+    adr = result[:adr]
     if !adr.accepted?
       adr.update(title: form.title,
                  context: form.context,
@@ -23,6 +37,6 @@ class Actions::Adrs::Accept < AppAction
                  accepted_at: Time.now,
                 )
     end
-    adr
+    result
   end
 end

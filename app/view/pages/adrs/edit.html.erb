@@ -1,14 +1,36 @@
 <header>
   <h1 class="tc ma-0 mt-3 ttu tracked-tight f-7">ADRpg</h1>
   <h2 class="tc mt-0 f-5 fw-5">Edit ADR</h2>
+  <% if !adr.refines_adr.nil? %>
+    <h3 class="mt-1 fw-4 f-2 i flex items-center justify-center gap-2">
+      <span class="w-2 gray-300">
+      <%= svg("adjust-control-icon") %>
+      </span>
+      <span>
+      Refines “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+      </span>
+    </h3>
+  <% end %>
+  <% if !adr.proposed_to_replace_adr.nil? %>
+    <h3 class="mt-1 fw-4 f-2 i flex items-center justify-center gap-2">
+      <span class="w-2 gray-300">
+      <%= svg("change-icon") %>
+      </span>
+      <span>
+      Proposed Replacement for “<a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>”
+      </span>
+    </h3>
+  <% end %>
 </header>
 <section class="pa-3">
-  <% if errors? %>
-    <aside class="pa-2 w-50 mh-auto mv-3 br-3 ba bc-red-500 bg-red-800 red-300"><%= errors.join(",") %></aside>
+  <% if error_message %>
+    <aside class="pa-3 br-3 w-50 mh-auto ba bc-red-500 bg-red-800 red-300">
+      <%= error_message %>
+    </aside>
   <% end %>
   <%= 
     component Components::Adrs::Form.new(
-      adr,
+      form,
       "Update Draft",
     ) 
   %>

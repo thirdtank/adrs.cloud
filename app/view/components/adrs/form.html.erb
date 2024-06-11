@@ -1,11 +1,11 @@
 <brut-form>
 <form action="/adrs" method="post" class="flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-50">
-  <% if adr.external_id %>
-    <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+  <% if form.external_id %>
+    <input type="hidden" name="external_id" value="<%= form.external_id %>">
   <% end %>
   <%= component Components::TextField.new(
         label: "Title",
-        form: adr,
+        form: form,
         input_name: "title",
         placeholder: "e.g. We Should Write Tests",
         autofocus: true) %>
@@ -60,6 +60,8 @@
   <div class="flex items-center gap-2 justify-between">
     <%= adr_textarea(name: "because", label: "Additional rationale or context", prefix: "because") %>
   </div>
+  <input type="hidden" name="refines_adr_external_id" value="<%= form.refines_adr_external_id %>">
+  <input type="hidden" name="replaced_adr_external_id" value="<%= form.replaced_adr_external_id %>">
   <div class="flex flex-column items-center justify-between">
     <span class="w-4">
       <%= svg("arrow-bottom-direction-icon") %>

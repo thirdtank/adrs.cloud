@@ -41,15 +41,6 @@ if ENV["RACK_ENV"] && ENV["RACK_ENV"].to_s != ""
   exit 1
 end
 
-if options[:app_env].to_s.strip == ""
-  log "--app-env is required"
-  exit 1
-end
-if ARGV[0].to_s.strip == ""
-  log "You must provide a command"
-  exit 1
-end
-
 class Command
   def self.from_string(string, database_url:, args:, options:)
     database_uri = URI(database_url)
@@ -223,7 +214,7 @@ class Command
   class NewMigration < Command
     def call
       if @args.length == 0
-        puts "You must provide a name"
+        raise "You must provide a name"
       end
       migrations_dir = PROJECT_ROOT / "app" / "db" / "migrations"
       if !migrations_dir.exist?
@@ -275,6 +266,17 @@ class Command
     end
   end
 end
+
+if ARGV[0].to_s.strip == ""
+  log "You must provide a command"
+  exit 1
+end
+
+if options[:app_env].to_s.strip == ""
+  log "--app-env is required"
+  exit 1
+end
+
 
 ENV["RACK_ENV"] = options[:app_env]
 

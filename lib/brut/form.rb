@@ -295,7 +295,7 @@ class Brut::Form
   # Create an instance of this form, optionally initialized with
   # the given values for its params.
   def initialize(params = nil)
-    @new = params.nil?
+    @new = params_empty?(params)
     params ||= {}
     unknown_params = params.keys.map(&:to_s).reject { |key|
       self.class.input_definitions.key?(key)
@@ -324,5 +324,9 @@ class Brut::Form
   def server_side_constraint_violation(input_name:, key:, context:nil)
     self[input_name].server_side_constraint_violation(key,context)
   end
+
+private
+
+  def params_empty?(params) = params.nil? || params.empty?
 
 end

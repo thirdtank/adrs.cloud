@@ -50,8 +50,8 @@ class AdrApp < Sinatra::Base
       case result
       in Forms::Login if result.invalid?
         page Pages::Login.new(content: login)
-      in DataModel::Account
-        session["user_id"] = result.external_id
+      in account:
+        session["user_id"] = account.external_id
         redirect to("/adrs")
       end
     end
@@ -67,8 +67,8 @@ class AdrApp < Sinatra::Base
       case result
       in Forms::SignUp if result.invalid?
         page Pages::SignUp.new(content: sign_up)
-      in DataModel::Account
-        session["user_id"] = result.external_id
+      in account:
+        session["user_id"] = account.external_id
         redirect to("/adrs")
       end
     end
@@ -92,7 +92,7 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs/:id/edit" do
-    page Pages::Adrs::Edit.new(content: Forms::Adrs::Draft.from_adr(DataModel::Adr[account_id: @account.id, external_id: params[:id]]))
+    page Pages::Adrs::Edit.new(adr: DataModel::Adr[account_id: @account.id, external_id: params[:id]])
   end
 
   post "/adrs" do
@@ -109,22 +109,33 @@ class AdrApp < Sinatra::Base
   end
 
   post "/accepted_adrs" do
-    draft_adr = Forms::Adrs::Draft.new(params)
-    result = process_form form: draft_adr,
+    form = Forms::Adrs::Draft.new(params)
+    result = process_form form: form,
                           action: Actions::Adrs::Accept.new,
                           account: @account
     case result
     in Forms::Adrs::Draft if result.invalid?
-      page Pages::Adrs::Edit.new(content: draft_adr, errors: [ "ADR cannot be accepted" ])
-    in DataModel::Adr
-      redirect to("/adrs/#{result.external_id}")
+      page Pages::Adrs::Edit.new(adr: DataModel::Adr[account_id: @account.id, external_id: form.external_id],
+                                 error_message: "ADR could not be accepted",
+                                 form: form)
+    in adr:
+      redirect to("/adrs/#{adr.external_id}")
     end
   end
+
   post "/rejected_adrs" do
     draft_adr = Forms::Adrs::Draft.new(params)
     process_form form: draft_adr,
                  action: Actions::Adrs::Reject.new,
                  account: @account
     redirect to("/adrs")
+  end
+
+  post "/replaced_adrs" do
+    page Pages::Adrs::Replace.new(form: Forms::Adrs::Draft.new(params), account: @account)
+  end
+
+  post "/refined_adrs" do
+    page Pages::Adrs::Refine.new(form: Forms::Adrs::Draft.new(params), account: @account)
   end
 end

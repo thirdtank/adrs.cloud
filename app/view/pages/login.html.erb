@@ -3,9 +3,6 @@
   <h2 class="tc mt-0 f-5 fw-5">Log In</h2>
 </header>
 <section class="pa-3">
-  <% if errors? %>
-    <aside class="pa-2 br-3 ba bc-red-500 bg-red-800 red-300"><%= errors %></aside>
-  <% end %>
   <brut-form>
   <form action="/auth/login" method="post"
     class="flex flex-column items-center gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns mw-8 w-100 w-70-m w-50-ns">

@@ -17,6 +17,20 @@ module Brut::SinatraHelpers
 
   def process_form(form:, action:, **rest)
     action = Brut::Actions::FormSubmission.new(action: action)
-    action.call(form: form, **rest)
+    result = action.call(form: form, **rest)
+    case result
+    in Brut::Actions::CheckResult if !result.can_call?
+      result.each_violation do |object,field,key,context|
+        if object == form
+          form.server_side_constraint_violation(input_name: field, key: key, context: context)
+        end
+      end
+      if form.valid?
+        raise "WTF: Form is valid??!?!?"
+      end
+      form
+    else
+      result
+    end
   end
 end

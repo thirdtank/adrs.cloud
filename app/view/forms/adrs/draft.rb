@@ -8,6 +8,12 @@ class Forms::Adrs::Draft < AppForm
   input :accepting, required: false
   input :because, required: false
   input :external_id, required: false
+  input :refines_adr_external_id, required: false
+  input :replaced_adr_external_id, required: false
+
+  def params_empty?(params)
+    params.nil? || params.except(:refines_adr_external_id,:replaced_adr_external_id).empty?
+  end
 
   def self.from_adr(adr)
     self.new(
@@ -19,7 +25,8 @@ class Forms::Adrs::Draft < AppForm
       neglected: adr.neglected,
       achieve: adr.achieve,
       accepting: adr.accepting,
-      because: adr.because
+      because: adr.because,
+      refines_adr_external_id: adr.refines_adr&.external_id,
     )
   end
 end

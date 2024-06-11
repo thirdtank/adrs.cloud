@@ -112,6 +112,51 @@ X Style form errors
 * Tags
 X Confirm reject or publish
 
+## Replace & Refine
+
+### Replace
+
+1 - Find an accepted ADR
+2 - click "replace"
+    - replaced ADR must be accpeted and not replaced by another ADR
+3 - See an unsaved draft ADR, page knows which ADR is being replaced
+4 - When draft is saved, populate `proposed_adr_replacements` with the new draft and the accepted ADR
+    - replaced ADR must be accpeted and not replaced by another ADR
+5 - When accepted, set `replaced_by_adr_id` on the original ADR
+    - Original ADR must be accepted and not replaced by another ADR
+
+### Refine
+
+1 - Find an accepted and not replaced ADR
+2 - click "refine"
+    - replaced ADR must be accpeted and not replaced by another ADR
+3 - See an unsaved draft ADR, page knows which ADR is being refined
+4 - When draft is saved, populate `refines_adr_id` on the new draft with the original ADR's id
+    - replaced ADR must be accpeted and not replaced by another ADR
+5 - When accepted, save (`refines_adr_id` is already set)
+    - Original ADR must be accepted and not replaced by another ADR
+
+## Common Framework needs
+
+* global error i.e. if the ADR was replaced during a refine, notify that.
+* some notion of "what actions can be performed on this" to drive the UI
+
+
+- do not conflate "form action" with "user action".
+- that said, a form action should/does map to one user action. The app.rb adapts one to the other
+- could Action have some notion of "is allowed?"
+
+  ```ruby
+  def analyze(form:, account:)
+    adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
+    if adr.accepted?
+      NotAllowed.new(reason: :already_accepted)
+    else
+      Allowed
+    end
+  end
+  ```
+
 # Framework Next Steps
 
 * Better dates/timezones
@@ -123,3 +168,44 @@ X Confirm reject or publish
 * Subclass provided web components?
 * i18n/messages for error keys
 * concept of "general" error?
+* CSRF
+
+
+## Overall architecture is confusing
+
+
+Form submissions:
+
+* input: key/value pairs
+* trigger: POST from web browser
+* outputs:
+  - client-side validations fail -> should not have been submitted, but if so, page re-rendered with errors
+  - server-side validations fail -> page is re-rendered with errors
+  - all good -> action is triggered
+
+Action:
+
+* input: anything
+* trigger: anything
+* outputs:
+  - constraint violations - should not have been called
+  - exception - can be retried
+  - anythnign else - it did whatever it was supposed to do
+
+
+Form Submission -> Action pipeline
+
+* input key/value pairs
+* trigger: POST from web browser
+* server-side validations -> uses the action's `check` methoed
+* action -> triggered
+
+How to unify the constraint violations?  Concepts:
+
+* validtity state -> set of fixed key names for specific errors
+* general errors not applicable to a field of an object
+* arbitreary field-related errors not covered by validtity state
+
+What about ValidityState as the core concept?  It can bake-in the client-side stuff, but also allow for arbitrary keys.
+
+Then, errors would be a map of object fields to ValidityState?
