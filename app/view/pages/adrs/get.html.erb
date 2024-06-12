@@ -1,5 +1,5 @@
 <article class="measure-wide mh-auto pt-3 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
-  <% if !adr.accepted? && !adr.rejected?%>
+  <% if draft? %>
     <aside class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
     DRAFT
     </aside>
@@ -52,11 +52,11 @@
   <section class="rendered-markdown ph-3"><%= markdown(:because) %></section>
   <nav class="pa-3 flex justify-between items-baseline gap-2 bg-gray-800 bt bc-gray-700">
     <a class="f-2 fw-5 blue-400" href="/adrs">&larr; Back</a>
-    <% if adr.accepted_at.nil? && adr.rejected_at.nil? %>
-    <div class="flex justify-end gap-3 items-baseline">
-      <a class="f-2 fw-5 blue-400" href="<%= edit_adr_path(adr) %>">Edit</a>
-    </div>
-    <% elsif adr.accepted? && !adr.replaced? %>
+    <% if editable? %>
+      <div class="flex justify-end gap-3 items-baseline">
+        <a class="f-2 fw-5 blue-400" href="<%= edit_adr_path(adr) %>">Edit</a>
+      </div>
+    <% elsif accepted_and_in_effect? %>
       <div class="flex justify-end gap-3 items-center">
         <form action="/replaced_adrs" method="post">
           <input type="hidden" name="replaced_adr_external_id" value="<%= adr.external_id %>">
@@ -69,42 +69,15 @@
       </div>
     <% end %>
   </nav>
-    <% if adr.refines? %>
-      <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-blue-800 blue-300 bg-blue-900 flex items-center gap-3">
-        <div class="w-2">
-          <%= svg("adjust-control-icon") %>
-        </div>
-        <div class="tl">
-          Refines “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
-        </div>
-      </h3>
-    <% end %>
-  <% if DataModel::Adr.where(refines_adr_id: adr.id).any? %>
-    <section class="pa-2">
-    <h4 class="f-3 fw-6">Refined By</h4>
-    <table class="collapse w-100 mh-auto">
-      <thead>
-        <tr>
-          <th class="tl pa-2 fw-6 bb">
-            Title
-          </th>
-          <th class="tl pa-2 fw-6 bb">
-            Status
-          </th>
-          <th class="tl pa-2 fw-6 bb">
-            Date
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-    <% DataModel::Adr.where(refines_adr_id: adr.id).each do |refining_adr| %>
-      <tr>
-        <td class="pa-2"><a href="<%= adr_path(refining_adr) %>"><%= refining_adr.title %></a></td>
-        <td class="pa-2"><%= refining_adr.accepted? ? "Accepted" : "Draft" %></td>
-        <td class="pa-2"><%= refining_adr.accepted_at %></td>
-      </tr>
-    <% end %>
-      </tbody>
-    </table>
+  <% if adr.refines? %>
+    <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-blue-800 blue-300 bg-blue-900 flex items-center gap-3">
+      <div class="w-2">
+        <%= svg("adjust-control-icon") %>
+      </div>
+      <div class="tl">
+        Refines “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+      </div>
+    </h3>
   <% end %>
+  <%= component(Components::Adrs::GetRefinements.new(refined_by_adrs: refined_by_adrs)) %>
 </article>

@@ -30,6 +30,17 @@ class Pages::Adrs::Get < AppPage
     @markdown.render(value)
   end
 
+  def refined_by_adrs
+    adr.refined_by_adrs.reject(&:rejected?).reject(&:replaced?)
+  end
+
+  def editable? = !adr.accepted? && !adr.rejected?
+  def draft? = self.editable?
+
+  def accepted_and_in_effect? = adr.accepted? && !adr.replaced?
+
+private
+
   def field_text(field)
     case field
     when :context   then "In the context of"

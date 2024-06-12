@@ -1,0 +1,45 @@
+<% if refined_by_adrs.any? %>
+  <section class="pa-2">
+    <h4 class="f-3 fw-6 mt-2 mb-1">Refinements</h4>
+    <table class="collapse w-100 mh-auto">
+      <thead>
+        <tr>
+          <th class="tl pv-2 pr-2 ttu fw-4 bb">
+            Title
+          </th>
+          <th class="tl pv-2 pr-2 ttu fw-4 bb">
+            Status
+          </th>
+          <th class="tl pv-2 pr-2 ttu fw-4 bb">
+            Date
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% refined_by_adrs.each do |refining_adr| %>
+          <tr>
+            <td class="pv-2 pr-2"><a href="<%= adr_path(refining_adr) %>"><%= refining_adr.title %></a></td>
+            <td class="pv-2 pr-2">
+              <% if refining_adr.accepted? %>
+                Accepted
+              <% elsif refining_adr.rejected? %>
+                Rejected
+              <% else %>
+                Draft
+              <% end %>
+            </td>
+            <td class="pv-2 pr-2">
+              <% if refining_adr.accepted? %>
+                <%= refining_adr.accepted_at %>
+              <% elsif refining_adr.rejected? %>
+                <%= refining_adr.rejected_at %>
+              <% else %>
+                <%= refining_adr.created_at %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+<% end %>

@@ -25,17 +25,24 @@ class Actions::Adrs::Accept < AppAction
     result = self.check(form: form, account: account)
     return result if !result.can_call?
     adr = result[:adr]
-    if !adr.accepted?
-      adr.update(title: form.title,
-                 context: form.context,
-                 facing: form.facing,
-                 decision: form.decision,
-                 neglected: form.neglected,
-                 achieve: form.achieve,
-                 accepting: form.accepting,
-                 because: form.because,
-                 accepted_at: Time.now,
-                )
+    AppDataModel.transaction do
+      if !adr.accepted?
+        adr.update(title: form.title,
+                   context: form.context,
+                   facing: form.facing,
+                   decision: form.decision,
+                   neglected: form.neglected,
+                   achieve: form.achieve,
+                   accepting: form.accepting,
+                   because: form.because,
+                   accepted_at: Time.now,
+                  )
+      end
+      if !adr.proposed_to_replace_adr.nil?
+        if adr.proposed_to_replace_adr.accepted?
+          adr.proposed_to_replace_adr.update(replaced_by_adr_id: adr.id)
+        end
+      end
     end
     result
   end

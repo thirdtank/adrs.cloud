@@ -12,6 +12,8 @@ class DataModel::Adr < AppDataModel
   many_to_one :replaced_by_adr, class: "DataModel::Adr"
   one_to_one :replaced_adr, class: "DataModel::Adr", key: :replaced_by_adr_id
 
+  one_to_many :refined_by_adrs, class: "DataModel::Adr", key: :refines_adr_id
+
   def self.create(...)
     super(...)
     id = self.db["select currval('adrs_id_seq')"]

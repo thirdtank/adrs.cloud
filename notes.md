@@ -108,7 +108,7 @@ X Clean up the listing page
 X Form needs better graphics for arrows
 X Allow drafts to omit some data
 X Style form errors
-* Replace & Refine
+X Replace & Refine
 * Tags
 X Confirm reject or publish
 
