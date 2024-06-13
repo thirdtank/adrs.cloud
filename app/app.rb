@@ -9,6 +9,7 @@ at_exit do
   DB.disconnect
 end
 
+require_relative "view/app_view_helpers"
 require_relative "view/components/app_component"
 require_relative "view/pages/app_page"
 require_relative "data_models/app_data_model"

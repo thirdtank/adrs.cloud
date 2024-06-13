@@ -1,3 +1,40 @@
+# Brut TODO
+
+## Basic stuff to make it even usable for me
+
+* i18n
+* Autoload of App
+* CSRF on forms
+* Testing
+* Sessions / Secure Cookies
+* Asset Pipeline
+  - hashing of assets
+  - rewrite CSS with hashed values?
+* Routing
+  - idea is to unify routes and pages
+* AJAX?
+* Logging / observability
+  - ideally no string-based logging, but just use
+    otel + a local receiver that dumps the stuff as a log
+
+## Stuff for Polish
+
+* Improved CLI/scaffolding
+* Improvement to seeds
+* How to deploy/run in prod?
+
+## Anti-TODO
+
+Brut will not have:
+
+* Mailers
+* Job API
+* Storage
+* Websockets
+* Caching
+
+
+
 # brut notes
 
 ## Database
@@ -112,50 +149,7 @@ X Replace & Refine
 * Tags
 X Confirm reject or publish
 
-## Replace & Refine
 
-### Replace
-
-1 - Find an accepted ADR
-2 - click "replace"
-    - replaced ADR must be accpeted and not replaced by another ADR
-3 - See an unsaved draft ADR, page knows which ADR is being replaced
-4 - When draft is saved, populate `proposed_adr_replacements` with the new draft and the accepted ADR
-    - replaced ADR must be accpeted and not replaced by another ADR
-5 - When accepted, set `replaced_by_adr_id` on the original ADR
-    - Original ADR must be accepted and not replaced by another ADR
-
-### Refine
-
-1 - Find an accepted and not replaced ADR
-2 - click "refine"
-    - replaced ADR must be accpeted and not replaced by another ADR
-3 - See an unsaved draft ADR, page knows which ADR is being refined
-4 - When draft is saved, populate `refines_adr_id` on the new draft with the original ADR's id
-    - replaced ADR must be accpeted and not replaced by another ADR
-5 - When accepted, save (`refines_adr_id` is already set)
-    - Original ADR must be accepted and not replaced by another ADR
-
-## Common Framework needs
-
-* global error i.e. if the ADR was replaced during a refine, notify that.
-* some notion of "what actions can be performed on this" to drive the UI
-
-
-- do not conflate "form action" with "user action".
-- that said, a form action should/does map to one user action. The app.rb adapts one to the other
-- could Action have some notion of "is allowed?"
-
-  ```ruby
-  def analyze(form:, account:)
-    adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
-    if adr.accepted?
-      NotAllowed.new(reason: :already_accepted)
-    else
-      Allowed
-    end
-  end
-  ```
 
 # Framework Next Steps
 
@@ -170,42 +164,103 @@ X Confirm reject or publish
 * concept of "general" error?
 * CSRF
 
+## Overall Architecture
 
-## Overall architecture is confusing
+You are building a web app. That means that a browser is fetching information via GET requests, and sending information via POST
+requests from a form.  We'll discuss AJAX later, but the basic concept of what you are building is a browser issueing GET and
+POST requests.
 
+## GET
 
-Form submissions:
+A GET request is almost invaraible to render a page.  This page is HTML.  It may be filled with dynamic content. Thus, dynamic
+HTML is managed by an HTML template (in ERB) and an instance of a class that represents that page.  The page's class exists
+entirely to support the logic and dynamic needed in the template.  The HTML template is executed with the instance of the page as
+its context, thus public methods of that page may be called in the template.
 
-* input: key/value pairs
-* trigger: POST from web browser
-* outputs:
-  - client-side validations fail -> should not have been submitted, but if so, page re-rendered with errors
-  - server-side validations fail -> page is re-rendered with errors
-  - all good -> action is triggered
+## POST
 
-Action:
+A POST request is a form submission.  A form submission presumably triggers some server-side action, and it's likely that the
+triggering of the action depends on the validity of the data in the form, as well as its validity in context of the rest of the
+application's data.
 
-* input: anything
-* trigger: anything
-* outputs:
-  - constraint violations - should not have been called
-  - exception - can be retried
-  - anythnign else - it did whatever it was supposed to do
+To receive a post, you should:
 
+* Define your form as a subclass of `Brut::Form`.  A `Brut::Form`, like an HTML form, has inputs. Each input has constraints
+that must be satisfied for the form to be submitted.  `Brut::Form` allows declaring these constraints, and they match what is
+available in a web browser.
+* Your form subclass can be used to render the HTML. This HTML will use HTML5 constraint validations on the form, preventing its
+submission if the constraints are violated.
+* When the form is submitted, a `Brut::Action` is configured to recognize the form submission as a trigger to a domain action.
+* Before this action is triggered, the form's constraints are re-validated server-side, to account for the ability to circumvent
+client-side validations.
+* The action's `call` method then called. If it returns a `Brut::Actions::CheckResult`, that indicates that server-side
+constraints have been violated.  Otherwise, it indicates the action completed normally.  The resulting object is
+action-dependent.
 
-Form Submission -> Action pipeline
+With this context, Brut provides form definition and validation, and will trigger your logic only when constraints have been met.
 
-* input key/value pairs
-* trigger: POST from web browser
-* server-side validations -> uses the action's `check` methoed
-* action -> triggered
+## Views
 
-How to unify the constraint violations?  Concepts:
+As mentioned, the view layer is  based around a web page. A web page is ERB HTML and a class that serves as the context for the
+ERB.
 
-* validtity state -> set of fixed key names for specific errors
-* general errors not applicable to a field of an object
-* arbitreary field-related errors not covered by validtity state
+HTML fragments are managed with components.  A component is just like a view—it's HTML and a class.  The only difference is that
+a Page has a layout, whereas a component does not.  Further, a component is self-contained and does not have access to the view
+it is contained within.
 
-What about ValidityState as the core concept?  It can bake-in the client-side stuff, but also allow for arbitrary keys.
+### "Helpers"
 
-Then, errors would be a map of object fields to ValidityState?
+In Rails, helpers are methods in a global namespace provided by the framework or by you as part of your app.  That said, it's
+handy to have access to such methods.  There are several places where they live and can be brought in:
+
+* `Brut::Page` and `Brut::Renderable` provide a few
+* Your app will have `AppPage` and `AppComponent` where you can place methods to be available to every page or component.
+* Brut provides some useful methods as modules you can include
+* Your invidiaul page and component classes can implement the needed methods, or bring in their own.
+
+This may not feel very easy, but it is much simpler as you will be able to clearly understand where methods are coming from and
+have control over them.
+
+Of note, Brut is not trying to create an abstraction layer across HTML, so you will not find complex mehtods to generate HTML
+form elements.
+
+## Database
+
+Currently, Brut uses Sequel to manage database access.  You are encouraged to create Sequel Models, but to treat them as simple
+repositories.  If you want a ton of logic on them, by our guest, but we are not responsible for your mess.
+
+The schema itself is managed outside Sequel using SQL DDL statements.
+
+## Actions
+
+All web apps have a natural "impedence mismatch" between what a browser sends to the server - essentially a bunch of strings -
+and what the domain logic needs in order to do its job (usually richer types).  Brut does not provide a way to convert an HTTP
+POST into a set of rich objects. This is somewhat complicated to do generally.
+
+That said, Brut will convert POST field values to their types as specified in the form object. For example, if you  have
+specified that a field is a number, you will  be given that value as a Numeric, not a string.
+
+Beyond this, the seam between the web/HTTP part and your logic is an `Action` that has two methods: `check` and `call`.  `check`
+will determine if `call` should be expected to succeed.  Essentially, `check` would perform any server-side validations, however
+these can be as complex as needed based on your use case.
+
+It is assumed that `call` invokes `check`, however `check` may be invoked any number of times on its own.
+
+`check` must return a `Brut::Actions::CheckResult`, which encompasses all the information needed to explain to the user why
+`call` should not be invoked.
+
+`call`, however, can return anything.  Because `call` is expected to call `check`, it can return a `Brut::Actions::CheckResult`, indicating the invocation should not have been called and that the user must take action.  `call` can return anything else depending on what it is doing.  You are encouraged to return the direct object that makes the  most sense.  Callers of your action are encouraged to use pattern matching to detect what was returned.
+
+While such a pattern may feel like it goes against OO principles - shouldn't there be only one type of a return value? - it ends
+up preventing you from having to create unneeded abstractions *or* to use exceptions for control flow.
+
+Note that the way you implement your action is up to you. You can use the Action concept for any dependent classes, or you can
+use other patterns. You do you.
+
+---
+
+Page v Components
+
+Issue is that they are basically the same thing, just one has a layout
+
+what if - top level is component, and page is a refinement of that?

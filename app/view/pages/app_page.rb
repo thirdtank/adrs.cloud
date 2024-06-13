@@ -1,4 +1,5 @@
 class AppPage < Brut::Page
+  include AppViewHelpers
 end
 module Pages
 end

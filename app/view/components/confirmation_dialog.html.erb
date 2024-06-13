@@ -1,0 +1,11 @@
+<brut-confirmation-dialog show-warnings>
+  <dialog class="ba bw-2 bc-gray-600 br-2 shadow-4 bg-red-900 pa-3">
+  <div class="flex flex-column items-center justify-between gap-3 bg-purple">
+    <h1 class="f-4 fw-5"></h1>
+    <nav class="flex justify-between w-100 items-center gap-3">
+      <%= component(Components::Button.new(size: "small", color: "orange", label: "Nevermind", value: "cancel", icon: "close-line-icon")) %>
+      <%= component(Components::Button.new(size: "normal", color: "blue", label: "", value: "ok" )) %>
+    </nav>
+  </div>
+  </dialog>
+</brut-confirmation-dialog>

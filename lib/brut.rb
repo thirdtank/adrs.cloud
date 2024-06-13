@@ -15,7 +15,6 @@ Dotenv.load(PROJECT_ROOT / ".env.#{PROJECT_ENV}", PROJECT_ROOT / ".env.#{PROJECT
 # * singluar thing is a class, the base class of others  being used, e.g. the base page is called Brut::Page
 #   (e.g. and not Brut::Pages::Base).
 module Brut
-  autoload(:Renderable, "brut/renderable")
   autoload(:Component, "brut/component")
   autoload(:Components, "brut/component")
   autoload(:Page, "brut/page")

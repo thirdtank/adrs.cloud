@@ -1,7 +1,7 @@
 <% if confirmation_message %>
 <brut-confirm message="<%= confirmation_message %>" show-warnings="<%= label %>" dialog-id="<%= confirm_dialog %>">
 <% end %>
-<button <%= formaction %> <%= disabled %> <%= value %> class="flex items-center justify-around gap-2 button button--size--<%= size %> button--color--<%= color %>">
+<button <%= formaction %> <%= disabled %> <%= value %> class="flex items-center justify-around gap-2 button button--size--<%= size %> button--color--<%= color %>" aria-label="<%= label %>">
   <% if icon %>
     <span aria-hidden="true">
       <%= svg(icon) %>

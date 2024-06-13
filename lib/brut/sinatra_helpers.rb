@@ -7,10 +7,10 @@ module Brut::SinatraHelpers
   end
 
   def page(page_instance)
-    page_instance.layout_locator    = Brut::Renderable::TemplateLocator.new(path: settings.layouts,    extension: "html.erb")
-    page_instance.page_locator      = Brut::Renderable::TemplateLocator.new(path: settings.pages,      extension: "html.erb")
-    page_instance.component_locator = Brut::Renderable::TemplateLocator.new(path: settings.components, extension: "html.erb")
-    page_instance.svg_locator       = Brut::Renderable::TemplateLocator.new(path: settings.svgs,       extension: "svg")
+    page_instance.layout_locator    = Brut::Component::TemplateLocator.new(path: settings.layouts,    extension: "html.erb")
+    page_instance.page_locator      = Brut::Component::TemplateLocator.new(path: settings.pages,      extension: "html.erb")
+    page_instance.component_locator = Brut::Component::TemplateLocator.new(path: settings.components, extension: "html.erb")
+    page_instance.svg_locator       = Brut::Component::TemplateLocator.new(path: settings.svgs,       extension: "svg")
 
     page_instance.render
   end

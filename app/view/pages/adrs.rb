@@ -6,8 +6,4 @@ class Pages::Adrs < AppPage
   }
   def draft_adrs    = @content.reject(&:accepted?).reject(&:rejected?).sort_by(&:created_at)
   def rejected_adrs = @content.select(&:rejected?).sort_by(&:rejected_at)
-
-  def adr_path(adr)      = "/adrs/#{adr.external_id}"
-  def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
-
 end

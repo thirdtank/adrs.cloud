@@ -6,5 +6,4 @@ class Pages::Adrs::Edit < AppPage
     @error_message = error_message
   end
 
-  def adr_path(adr) = "/adrs/#{adr.external_id}"
 end

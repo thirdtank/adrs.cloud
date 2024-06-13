@@ -11,13 +11,13 @@ class Components::Adrs::Form < AppComponent
 
   def reject_button
     if @form.external_id
-      component(Components::Button.new(formaction: "/rejected_adrs", size: "small", color: "red", label: "Reject", icon: "recycle-bin-line-icon"))
+      component(Components::Button.new(formaction: "/rejected_adrs", size: "small", color: "red", label: "Reject ADR", icon: "recycle-bin-line-icon", confirm: "You can't bring this back other than re-creating it by hand"))
     end
   end
 
   def accept_button
     if @form.external_id
-      component(Components::Button.new(formaction: "/accepted_adrs", size: "small", color: "green", label: "Accept", icon: "quality-badge-checkmark-icon", confirm: "You won't be able to change this ADR after you accept it"))
+      component(Components::Button.new(formaction: "/accepted_adrs", size: "small", color: "green", label: "Accept ADR", icon: "quality-badge-checkmark-icon", confirm: "You won't be able to change this ADR after you accept it"))
     end
   end
 end
