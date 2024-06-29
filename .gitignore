@@ -8,3 +8,5 @@
 /app/public/js
 # Don't want to check in the generated JSDocs dir
 /jsdocs
+# This is generated per environment
+/app/config/asset_metadata.json

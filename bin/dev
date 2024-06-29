@@ -2,14 +2,5 @@
 
 set -e
 
-trap killgroup SIGINT
-
-killgroup() {
-  echo "Killing everything..."
-  kill 0
-}
-
-SHELL=/bin/bash npx chokidar --initial -p "app/**/*" "lib/**/*" -c "bin/run" &
-SHELL=/bin/bash npx chokidar --initial -p "app/css/*" "app/js/**/*" "lib/brut-js/**/*" -c "bin/build" &
-wait
+RACK_ENV=development SHELL=/bin/bash npx chokidar --initial -p "app/src/**/*" "lib/**/*" -c "bin/build-and-run"
 

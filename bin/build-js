@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+BRUT_PATH = File.join(File.dirname($0),"..","lib")
+$: << BRUT_PATH
+
+require "bundler"
+Bundler.setup
+
+require_relative "bin_kit"
+require "brut"
+require "fileutils"
+require "json"
+
+js_path = PROJECT_ROOT / "app" / "public" / "js"
+js_bundle = js_path / "app.js"
+js_bundle_source = PROJECT_ROOT / "app" / "src" / "view" /  "js" / "index.js"
+tmp_path = PROJECT_ROOT / "tmp"
+metafile = tmp_path / "build-js-meta.json"
+config_dir = PROJECT_ROOT / "app" / "config"
+asset_metadata_file = config_dir / "asset_metadata.json"
+
+log "Ensuring JS output path '#{js_path}' exists"
+FileUtils.mkdir_p js_path
+
+log "Ensuring tmp path '#{tmp_path}' exists"
+FileUtils.mkdir_p tmp_path
+
+name_with_hash_regexp = /app\/public\/(?<path>.+)\/(?<name>.+)\-(?<hash>.+)\.js/
+
+command = "npx esbuild --metafile=#{metafile} --entry-names=[name]-[hash] --sourcemap --bundle #{js_bundle_source} --outfile=#{js_bundle}"
+env_for_command = {
+  "NODE_PATH" => (PROJECT_ROOT / "lib").to_s, # Not needed once Brut is properly bundled
+}
+log "Building JS bundle '#{js_bundle}' with '#{command}'"
+system!(env_for_command,command)
+
+if !File.exist?(metafile)
+  log "'#{metafile}' was not generated - cannot continue"
+  exit 1
+end
+
+log "Parsing metafile '#{metafile}'"
+metafile_contents = JSON.parse(File.read(metafile))
+
+metadata = metafile_contents["outputs"].keys.map { |key|
+  match_data = key.match(name_with_hash_regexp)
+  if match_data
+    path = match_data[:path]
+    name = match_data[:name]
+    hash = match_data[:hash]
+
+    [ "/#{path}/#{name}.js", "/#{path}/#{name}-#{hash}.js" ]
+  else
+    nil
+  end
+}.compact.to_h
+
+log "Ensuring config dir '#{config_dir}' existsa"
+FileUtils.mkdir_p config_dir
+log "Reading asset metadata file '#{asset_metadata_file}'"
+asset_metadata = if File.exist?(asset_metadata_file)
+                   JSON.parse(File.read(asset_metadata_file))
+                 else
+                   log "'#{asset_metadata_file}' does not exist - creating it"
+                   { "asset_metadata" => {} }
+                 end
+asset_metadata["asset_metadata"][".js"] = metadata
+
+log "Writing updated asset metadata file '#{asset_metadata_file}'"
+File.open(asset_metadata_file,"w") do |file|
+  file.puts asset_metadata.to_json
+end

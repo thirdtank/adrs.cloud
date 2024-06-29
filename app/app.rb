@@ -9,12 +9,14 @@ at_exit do
   DB.disconnect
 end
 
-require_relative "view/app_view_helpers"
-require_relative "view/components/app_component"
-require_relative "view/pages/app_page"
-require_relative "data_models/app_data_model"
-require_relative "actions/app_action"
-require_relative "view/forms/app_form"
+$: << File.join(PROJECT_ROOT,"app","src")
+
+require "view/app_view_helpers"
+require "view/components/app_component"
+require "view/pages/app_page"
+require "data_models/app_data_model"
+require "actions/app_action"
+require "view/forms/app_form"
 
 class AdrApp < Sinatra::Base
 
@@ -41,6 +43,8 @@ class AdrApp < Sinatra::Base
   namespace "/auth" do
 
     get "/login" do
+
+      SemanticLogger["get /login"].info("Getting login page")
       page Pages::Login.new(content: Forms::Login.new)
     end
 

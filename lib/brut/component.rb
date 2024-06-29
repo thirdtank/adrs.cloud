@@ -1,3 +1,5 @@
+require "json"
+
 module Brut::Components
   autoload(:Input,"brut/components/input")
   autoload(:Inputs,"brut/components/input")
@@ -23,6 +25,32 @@ class Brut::Component
     end
   end
 
+  class NullAssetPathResolver
+    def resolve(path) = path
+  end
+
+  class AssetPathResolver
+    def initialize(metadata_file:)
+      @metadata = JSON.parse(File.read(metadata_file))["asset_metadata"]
+      if @metadata.nil?
+        raise "Asset metadata file '#{metadata_file}' is corrupted. There is no top-level 'asset_metadata' key"
+      end
+    end
+
+    def resolve(path)
+      extension = File.extname(path)
+      if @metadata[extension]
+        if @metadata[extension][path]
+          @metadata[extension][path]
+        else
+          raise "Asset metadata does not have a mapping for '#{path}'"
+        end
+      else
+        raise "Asset metadata has not been set up for files with extension '#{extension}'"
+      end
+    end
+  end
+
   # The component locator is used to locate the HTML/ERB of a component
   # used in the rendering if this component.  Rather than create one
   # out of the ether, new components are expected to be given
@@ -33,9 +61,14 @@ class Brut::Component
   # the `component_locator`
   attr_writer :svg_locator
 
+  # To resolve the actual name of assets—accounting for hashing—a resolver
+  # is used to encapsulate that logic
+  attr_writer :asset_path_resolver
+
   def initialize
-    @component_locator = NullTemplateLocator.new
-    @svg_locator       = NullTemplateLocator.new
+    @component_locator   = NullTemplateLocator.new
+    @svg_locator         = NullTemplateLocator.new
+    @asset_path_resolver = NullAssetPathResolver.new
   end
 
   # The core method of a component. This is expected to return
@@ -57,14 +90,17 @@ class Brut::Component
   # This is a separate module to distinguish the public
   # interface of this class (`render`) from these helper methods
   # that are useful to subclasses and their templates.
+  #
+  # This is not intended to be extracted or used outside this class!
   module Helpers
 
     # Render a component. This is the primary way in which
     # view re-use happens.  The component instance will be able to locate its
     # HTML template and render itself.
     def component(component_instance)
-      component_instance.component_locator = @component_locator
-      component_instance.svg_locator       = @svg_locator
+      component_instance.component_locator   = @component_locator
+      component_instance.svg_locator         = @svg_locator
+      component_instance.asset_path_resolver = @asset_path_resolver
       component_instance.render
     end
 
@@ -73,6 +109,10 @@ class Brut::Component
       svg_file = @svg_locator.locate(svg)
       File.read(svg_file)
     end
+
+    # Given a public path to an asset—the value you'd use in HTML—return
+    # the same value, but with any content hashes that are part of the filename.
+    def asset_path(path) = @asset_path_resolver.resolve(path)
   end
   include Helpers
 

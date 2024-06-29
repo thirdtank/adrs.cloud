@@ -1,0 +1,372 @@
+2024-06-13 19:45:34.721922 I [63660:2480] Brut -- Logging set up
+2024-06-13 19:45:36.501167 I [63736:2480] Brut -- Logging set up
+2024-06-13 19:45:50.174334 I [63736:puma srv tp 001] get /login -- Getting login page
+2024-06-13 19:46:55.917270 I [63756:2480] Brut -- Logging set up
+2024-06-13 19:47:44.248565 I [63772:2480] Brut -- Logging set up
+2024-06-13 19:48:04.766405 I [63791:2480] Brut -- Logging set up
+2024-06-13 19:48:06.999358 I [63791:puma srv tp 001] SinatraHelpers -- Processing form -- {:form=>Forms::Login, :action=>Actions::Login}
+2024-06-13 19:50:00.310540 I [63811:2480] Brut -- Logging set up
+2024-06-13 19:57:17.194437 I [63834:2840] Brut -- Logging set up
+2024-06-13 20:02:58.847145 I [64040:2840] Brut -- Logging set up
+2024-06-13 20:03:00.620291 I [64117:2840] Brut -- Logging set up
+2024-06-13 20:03:15.958779 I [64117:puma srv tp 001] SinatraHelpers -- Processing form -- {:form=>Forms::Adrs::Draft, :action=>Actions::Adrs::Draft}
+2024-06-13 20:07:13.378126 I [64140:2840] Brut -- Logging set up
+2024-06-13 20:07:15.147944 I [64222:2840] Brut -- Logging set up
+2024-06-13 20:11:04.800148 I [64242:2840] Brut -- Logging set up
+2024-06-13 20:13:32.773298 I [64258:2320] Brut -- Logging set up
+2024-06-13 20:15:37.165599 I [64258:2320] foo -- blah
+2024-06-13 20:16:11.986819 I [64318:2140] Brut -- Logging set up
+2024-06-13 20:16:12.039169 I [64318:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:16:12.041222 I [64318:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:16:12.439835 I [64318:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:16:13.758709 I [64394:2140] Brut -- Logging set up
+2024-06-13 20:16:13.799887 I [64394:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:16:13.801633 I [64394:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:17:18.314415 I [64394:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:17:19.676374 I [64414:2140] Brut -- Logging set up
+2024-06-13 20:17:19.720082 I [64414:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:17:19.721831 I [64414:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:19:17.439893 I [64414:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:20:43.284749 I [64494:2140] Brut -- Logging set up
+2024-06-13 20:20:43.325009 I [64494:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:20:43.326972 I [64494:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:20:43.719958 I [64494:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:20:45.053653 I [64570:2140] Brut -- Logging set up
+2024-06-13 20:20:45.089452 I [64570:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:20:45.091305 I [64570:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:24:11.925699 I [64570:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:24:13.447889 I [64657:2140] Brut -- Logging set up
+2024-06-13 20:24:13.488896 I [64657:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:24:13.490828 I [64657:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:24:13.897354 I [64657:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:24:15.223169 I [64732:2140] Brut -- Logging set up
+2024-06-13 20:24:15.263170 I [64732:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:24:15.264947 I [64732:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:24:21.254853 I [64732:puma srv tp 001] puma -- 192.168.65.1 - - [13/Jun/2024:20:24:21 +0000] "GET /adrs HTTP/1.1" 200 5598 0.0372
+
+2024-06-13 20:24:21.294548 I [64732:puma srv tp 001] puma -- 192.168.65.1 - - [13/Jun/2024:20:24:21 +0000] "GET /css/styles.css HTTP/1.1" 200 270353 0.0029
+
+2024-06-13 20:24:21.302167 I [64732:puma srv tp 002] puma -- 192.168.65.1 - - [13/Jun/2024:20:24:21 +0000] "GET /js/app.js HTTP/1.1" 200 20221 0.0031
+
+2024-06-13 20:30:02.335332 I [64732:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:30:03.989752 I [64802:2140] Brut -- Logging set up
+2024-06-13 20:30:04.038287 I [64802:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:30:04.040408 I [64802:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:30:04.442140 I [64802:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:30:05.759399 I [64878:2140] Brut -- Logging set up
+2024-06-13 20:30:05.800303 I [64878:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:30:05.802025 I [64878:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:30:12.568499 I [64878:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:54:53.118275 I [64946:2140] Brut -- Logging set up
+2024-06-13 20:54:53.161118 I [64946:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:54:53.163403 I [64946:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:54:53.529224 I [64946:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:54:54.848596 I [65022:2140] Brut -- Logging set up
+2024-06-13 20:54:54.884144 I [65022:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:54:54.885855 I [65022:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:55:45.348790 I [65022:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-13 20:55:46.678619 I [65043:2140] Brut -- Logging set up
+2024-06-13 20:55:46.713556 I [65043:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-13 20:55:46.715314 I [65043:2140] puma -- Use Ctrl-C to stop
+2024-06-13 20:55:50.235449 I [65043:puma srv tp 001] SinatraHelpers -- Processing form -- {:form=>Forms::Adrs::Draft, :action=>Actions::Adrs::Draft, :params=>{"title"=>"This is a test ADR OH YEAH", "context"=>"some stuff", "facing"=>"", "decision"=>"", "neglected"=>"", "achieve"=>"", "accepting"=>"", "because"=>"", "external_id"=>nil, "refines_adr_external_id"=>"", "replaced_adr_external_id"=>""}}
+2024-06-13 20:56:07.466297 I [65043:puma srv tp 002] SinatraHelpers -- Processing form -- {:form=>Forms::Adrs::Draft, :action=>Actions::Adrs::Draft, :params=>{"title"=>"This is a test ADR OH YEAH", "context"=>"some stuff", "facing"=>"asdfasdfasdf", "decision"=>"", "neglected"=>"", "achieve"=>"", "accepting"=>"", "because"=>"", "external_id"=>"adadr_02a2fb09a6003e6d11f0794b94ae20a8", "refines_adr_external_id"=>"", "replaced_adr_external_id"=>""}}
+2024-06-24 21:18:26.427748 I [65043:puma srv tp 001] get /login -- Getting login page
+2024-06-24 21:18:26.558709 I [65043:puma srv tp 001] get /login -- Getting login page
+2024-06-28 14:37:07.121659 I [65043:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 14:54:39.293609 I [65212:2140] Brut -- Logging set up
+2024-06-28 14:54:39.346822 I [65212:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 14:54:39.348653 I [65212:2140] puma -- Use Ctrl-C to stop
+2024-06-28 14:54:39.704658 I [65212:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 14:54:41.021030 I [65288:2140] Brut -- Logging set up
+2024-06-28 14:54:41.062651 I [65288:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 14:54:41.064412 I [65288:2140] puma -- Use Ctrl-C to stop
+2024-06-28 14:54:47.743227 I [65288:puma srv tp 001] get /login -- Getting login page
+2024-06-28 14:54:47.891168 I [65288:puma srv tp 001] get /login -- Getting login page
+2024-06-28 14:54:50.887144 I [65288:puma srv tp 002] SinatraHelpers -- Processing form -- {:form=>Forms::Login, :action=>Actions::Login, :params=>{"email"=>"davec@naildrivin5.com", "password"=>"asdfasdfads"}}
+2024-06-28 14:57:38.692376 I [65288:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 14:57:40.045323 I [65308:2140] Brut -- Logging set up
+2024-06-28 14:57:40.082541 I [65308:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 14:57:40.084503 I [65308:2140] puma -- Use Ctrl-C to stop
+2024-06-28 14:58:09.533075 I [65308:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 14:58:10.856366 I [65324:2140] Brut -- Logging set up
+2024-06-28 14:58:10.895876 I [65324:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 14:58:10.897729 I [65324:2140] puma -- Use Ctrl-C to stop
+2024-06-28 14:58:24.976403 I [65324:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 14:58:26.300001 I [65340:2140] Brut -- Logging set up
+2024-06-28 14:58:26.334855 I [65340:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 14:58:26.336576 I [65340:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:01:50.397285 I [65340:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:01:51.736476 I [65356:2140] Brut -- Logging set up
+2024-06-28 15:01:51.775413 I [65356:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:01:51.777371 I [65356:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:03:07.658173 I [65356:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:03:08.979604 I [65372:2140] Brut -- Logging set up
+2024-06-28 15:03:09.015361 I [65372:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:03:09.017103 I [65372:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:04:01.292961 I [65372:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:04:02.616835 I [65388:2140] Brut -- Logging set up
+2024-06-28 15:04:02.657172 I [65388:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:04:02.658982 I [65388:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:04:44.572484 I [65388:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:04:45.897497 I [65404:2140] Brut -- Logging set up
+2024-06-28 15:04:45.932912 I [65404:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:04:45.934725 I [65404:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:04:59.459144 I [65404:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:07:27.716437 I [65471:2140] Brut -- Logging set up
+2024-06-28 15:07:27.759903 I [65471:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:07:27.762122 I [65471:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:07:28.166980 I [65471:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:07:29.497639 I [65547:2140] Brut -- Logging set up
+2024-06-28 15:07:29.540783 I [65547:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:07:29.542631 I [65547:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:07:54.053353 I [65547:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:07:55.431438 I [65563:2140] Brut -- Logging set up
+2024-06-28 15:07:55.475991 I [65563:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:07:55.477957 I [65563:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:08:14.563119 I [65563:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:08:15.896800 I [65579:2140] Brut -- Logging set up
+2024-06-28 15:08:15.931967 I [65579:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:08:15.933690 I [65579:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:08:27.336190 I [65579:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:16:43.563233 I [835:2140] Brut -- Logging set up
+2024-06-28 15:16:43.615481 I [835:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:16:43.618671 I [835:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:16:43.986852 I [835:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:16:45.358644 I [911:2140] Brut -- Logging set up
+2024-06-28 15:16:45.401085 I [911:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:16:45.403000 I [911:2140] puma -- Use Ctrl-C to stop
+2024-06-28 15:17:03.648594 I [911:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-28 15:17:04.979560 I [931:2140] Brut -- Logging set up
+2024-06-28 15:17:05.021061 I [931:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-28 15:17:05.022945 I [931:2140] puma -- Use Ctrl-C to stop
+2024-06-29 17:25:42.365222 I [931:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 17:25:43.818984 I [952:2140] Brut -- Logging set up
+2024-06-29 17:25:43.875222 I [952:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 17:25:43.877572 I [952:2140] puma -- Use Ctrl-C to stop
+2024-06-29 17:40:02.447246 I [952:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 17:42:12.965043 I [979:2020] Brut -- Logging set up
+2024-06-29 17:42:17.968960 I [1000:2020] Brut -- Logging set up
+2024-06-29 17:42:43.882251 I [1021:2020] Brut -- Logging set up
+2024-06-29 17:43:44.011544 I [1052:2020] Brut -- Logging set up
+2024-06-29 17:48:20.578214 I [1085:1260] Brut -- Logging set up
+2024-06-29 17:50:01.780757 I [1109:1260] Brut -- Logging set up
+2024-06-29 17:56:33.266088 I [1135:1260] Brut -- Logging set up
+2024-06-29 17:56:48.335631 I [1157:1260] Brut -- Logging set up
+2024-06-29 18:06:15.467255 I [1179:1260] Brut -- Logging set up
+2024-06-29 18:06:51.925977 I [1202:1260] Brut -- Logging set up
+2024-06-29 18:07:09.948178 I [1226:1260] Brut -- Logging set up
+2024-06-29 18:10:01.399853 I [1304:2140] Brut -- Logging set up
+2024-06-29 18:10:01.450807 I [1304:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:10:01.452697 I [1304:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:10:01.843189 I [1304:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:10:03.160364 I [1381:2140] Brut -- Logging set up
+2024-06-29 18:10:03.200711 I [1381:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:10:03.202366 I [1381:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:10:32.987550 I [1381:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:10:34.350625 I [1400:2140] Brut -- Logging set up
+2024-06-29 18:10:34.387540 I [1400:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:10:34.389614 I [1400:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:11:02.791060 I [1400:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:11:04.153544 I [1416:2140] Brut -- Logging set up
+2024-06-29 18:11:04.196231 I [1416:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:11:04.198189 I [1416:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:12:22.308408 I [1416:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:12:23.646252 I [1435:2140] Brut -- Logging set up
+2024-06-29 18:12:23.681922 I [1435:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:12:23.683661 I [1435:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:12:28.406281 I [1435:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:12:32.400798 I [1499:2140] Brut -- Logging set up
+2024-06-29 18:12:32.441953 I [1499:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:12:32.443632 I [1499:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:12:52.039553 I [1499:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:12:54.761566 I [1563:2140] Brut -- Logging set up
+2024-06-29 18:12:54.805589 I [1563:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:12:54.807603 I [1563:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:12:56.689088 I [1563:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:13:38.112044 I [1635:1260] Brut -- Logging set up
+2024-06-29 18:13:38.289135 I [1638:2140] Brut -- Logging set up
+2024-06-29 18:13:38.327617 I [1638:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:13:38.329382 I [1638:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:13:38.853837 I [1638:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:13:40.179849 I [1717:2140] Brut -- Logging set up
+2024-06-29 18:13:40.214799 I [1717:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:13:40.216573 I [1717:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:15:42.919138 I [1717:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:15:55.192468 I [1781:1260] Brut -- Logging set up
+2024-06-29 18:15:55.370743 I [1783:2140] Brut -- Logging set up
+2024-06-29 18:15:55.408678 I [1783:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:15:55.410357 I [1783:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:15:55.501748 I [1807:1260] Brut -- Logging set up
+2024-06-29 18:15:55.848147 I [1783:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:15:57.171722 I [1841:2140] Brut -- Logging set up
+2024-06-29 18:15:57.211572 I [1841:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:15:57.213258 I [1841:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:17:28.942882 I [1841:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:17:33.876497 I [1902:1260] Brut -- Logging set up
+2024-06-29 18:17:34.052004 I [1905:2140] Brut -- Logging set up
+2024-06-29 18:17:34.090125 I [1905:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:17:34.091862 I [1905:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:17:34.186774 I [1928:1260] Brut -- Logging set up
+2024-06-29 18:17:34.531585 I [1905:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:17:35.867499 I [1944:2140] Brut -- Logging set up
+2024-06-29 18:17:35.901816 I [1944:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:17:35.903439 I [1944:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:17:39.836265 I [1944:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:17:52.976430 I [2005:1260] Brut -- Logging set up
+2024-06-29 18:17:53.148336 I [2008:2140] Brut -- Logging set up
+2024-06-29 18:17:53.192364 I [2008:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:17:53.194120 I [2008:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:17:53.286114 I [2031:1260] Brut -- Logging set up
+2024-06-29 18:17:53.919160 I [2008:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 18:17:55.236929 I [2090:2140] Brut -- Logging set up
+2024-06-29 18:17:55.271410 I [2090:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 18:17:55.273049 I [2090:2140] puma -- Use Ctrl-C to stop
+2024-06-29 18:18:24.419599 I [2090:puma srv tp 001] SinatraHelpers -- Processing form -- {:form=>Forms::Adrs::Draft, :action=>Actions::Adrs::Reject, :params=>{"title"=>"This is a test ADR OH YEAH", "context"=>"some stuff", "facing"=>"asdfasdfasdf", "decision"=>"", "neglected"=>"", "achieve"=>"", "accepting"=>"", "because"=>"", "external_id"=>"adadr_02a2fb09a6003e6d11f0794b94ae20a8", "refines_adr_external_id"=>"", "replaced_adr_external_id"=>""}}
+2024-06-29 18:18:38.092652 I [2090:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:14:18.683427 I [2156:1260] Brut -- Logging set up
+2024-06-29 19:14:18.883169 I [2157:2140] Brut -- Logging set up
+2024-06-29 19:14:18.925686 I [2157:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:14:18.927818 I [2157:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:14:19.020111 I [2181:1260] Brut -- Logging set up
+2024-06-29 19:14:19.611741 I [2157:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:14:20.924478 I [2240:2140] Brut -- Logging set up
+2024-06-29 19:14:20.959224 I [2240:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:14:20.961611 I [2240:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:14:50.623662 I [2240:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:14:50.836552 I [2263:1260] Brut -- Logging set up
+2024-06-29 19:14:51.147732 I [2286:1260] Brut -- Logging set up
+2024-06-29 19:14:51.952558 I [2332:2140] Brut -- Logging set up
+2024-06-29 19:14:51.990472 I [2332:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:14:51.993155 I [2332:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:14:52.041464 I [2335:2140] Brut -- Logging set up
+2024-06-29 19:15:06.865171 I [2332:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:15:13.427579 I [2406:1260] Brut -- Logging set up
+2024-06-29 19:15:13.598167 I [2409:2140] Brut -- Logging set up
+2024-06-29 19:15:13.643260 I [2409:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:15:13.644936 I [2409:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:15:13.736620 I [2432:1260] Brut -- Logging set up
+2024-06-29 19:15:14.368205 I [2409:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:15:15.697616 I [2491:2140] Brut -- Logging set up
+2024-06-29 19:15:15.738502 I [2491:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:15:15.740214 I [2491:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:16:01.485117 I [2491:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:16:01.645153 I [2509:1260] Brut -- Logging set up
+2024-06-29 19:16:02.019697 I [2538:1260] Brut -- Logging set up
+2024-06-29 19:16:02.669173 I [2573:2140] Brut -- Logging set up
+2024-06-29 19:16:02.734429 I [2573:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:16:02.736576 I [2573:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:16:02.876321 I [2588:2140] Brut -- Logging set up
+2024-06-29 19:16:03.039969 I [2594:2140] Brut -- Logging set up
+2024-06-29 19:16:55.090265 I [2573:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:17:21.601254 I [2612:2140] Brut -- Logging set up
+2024-06-29 19:17:21.644431 I [2612:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:17:21.646074 I [2612:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:17:31.064623 I [2612:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:17:31.064862 I [2612:2140] puma -- === puma shutdown: 2024-06-29 19:17:31 +0000 ===
+2024-06-29 19:17:31.064870 I [2612:2140] puma -- - Goodbye!
+2024-06-29 19:19:25.970604 I [2626:2140] Brut -- Logging set up
+2024-06-29 19:19:26.014442 I [2626:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:19:26.016068 I [2626:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:19:59.882095 I [2626:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:19:59.882252 I [2626:2140] puma -- === puma shutdown: 2024-06-29 19:19:59 +0000 ===
+2024-06-29 19:19:59.882257 I [2626:2140] puma -- - Goodbye!
+2024-06-29 19:20:07.063398 I [2650:1260] Brut -- Logging set up
+2024-06-29 19:20:07.359872 I [2672:1260] Brut -- Logging set up
+2024-06-29 19:20:10.981569 I [2719:2140] Brut -- Logging set up
+2024-06-29 19:20:11.024466 I [2719:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:20:11.026133 I [2719:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:21:11.681947 I [2719:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:21:11.682266 I [2719:2140] puma -- === puma shutdown: 2024-06-29 19:21:11 +0000 ===
+2024-06-29 19:21:11.682273 I [2719:2140] puma -- - Goodbye!
+2024-06-29 19:27:14.355694 I [2736:2140] Brut -- Logging set up
+2024-06-29 19:27:14.373574 I [2736:2140] puma -- ! Unable to load application: LoadError: cannot load such file -- view/app_view_helpers
+2024-06-29 19:27:30.197619 I [2743:2140] Brut -- Logging set up
+2024-06-29 19:27:30.252057 I [2743:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:27:30.253792 I [2743:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:27:37.119472 I [2743:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:27:37.119632 I [2743:2140] puma -- === puma shutdown: 2024-06-29 19:27:37 +0000 ===
+2024-06-29 19:27:37.119638 I [2743:2140] puma -- - Goodbye!
+2024-06-29 19:27:59.917145 I [2758:2140] Brut -- Logging set up
+2024-06-29 19:27:59.974745 I [2758:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:27:59.976707 I [2758:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:28:05.882139 I [2758:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:28:05.882293 I [2758:2140] puma -- === puma shutdown: 2024-06-29 19:28:05 +0000 ===
+2024-06-29 19:28:05.882301 I [2758:2140] puma -- - Goodbye!
+2024-06-29 19:29:43.240054 I [2777:1260] Brut -- Logging set up
+2024-06-29 19:30:02.942831 I [2798:1260] Brut -- Logging set up
+2024-06-29 19:31:10.621640 I [2821:1260] Brut -- Logging set up
+2024-06-29 19:31:55.435323 I [2851:1260] Brut -- Logging set up
+2024-06-29 19:31:58.434095 I [2879:2140] Brut -- Logging set up
+2024-06-29 19:31:58.478993 I [2879:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:31:58.480775 I [2879:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:32:49.772503 I [2879:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:32:49.772905 I [2879:2140] puma -- === puma shutdown: 2024-06-29 19:32:49 +0000 ===
+2024-06-29 19:32:49.772917 I [2879:2140] puma -- - Goodbye!
+2024-06-29 19:32:50.864070 I [2896:2140] Brut -- Logging set up
+2024-06-29 19:32:50.911454 I [2896:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:32:50.913211 I [2896:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:33:01.172912 I [2896:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:33:01.173143 I [2896:2140] puma -- === puma shutdown: 2024-06-29 19:33:01 +0000 ===
+2024-06-29 19:33:01.173156 I [2896:2140] puma -- - Goodbye!
+2024-06-29 19:35:41.138949 I [2919:2140] Brut -- Logging set up
+2024-06-29 19:35:41.184809 I [2919:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:35:41.186732 I [2919:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:35:44.128439 I [2919:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:35:44.128862 I [2919:2140] puma -- === puma shutdown: 2024-06-29 19:35:44 +0000 ===
+2024-06-29 19:35:44.128877 I [2919:2140] puma -- - Goodbye!
+2024-06-29 19:35:50.340297 I [2934:1260] Brut -- Logging set up
+2024-06-29 19:35:50.633897 I [2956:1260] Brut -- Logging set up
+2024-06-29 19:35:51.485737 I [3003:2140] Brut -- Logging set up
+2024-06-29 19:35:51.536108 I [3003:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:35:51.537894 I [3003:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:35:55.691642 I [3003:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:35:55.692023 I [3003:2140] puma -- === puma shutdown: 2024-06-29 19:35:55 +0000 ===
+2024-06-29 19:35:55.692037 I [3003:2140] puma -- - Goodbye!
+2024-06-29 19:36:00.442832 I [3042:1260] Brut -- Logging set up
+2024-06-29 19:36:00.731662 I [3065:1260] Brut -- Logging set up
+2024-06-29 19:36:01.533176 I [3118:1260] Brut -- Logging set up
+2024-06-29 19:36:01.691902 I [3112:2140] Brut -- Logging set up
+2024-06-29 19:36:01.742375 I [3112:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:36:01.744798 I [3112:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:36:01.898198 I [3145:1260] Brut -- Logging set up
+2024-06-29 19:36:02.557478 I [3112:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:36:02.661042 I [3200:1260] Brut -- Logging set up
+2024-06-29 19:36:03.024877 I [3227:1260] Brut -- Logging set up
+2024-06-29 19:36:03.898763 I [3281:1260] Brut -- Logging set up
+2024-06-29 19:36:03.989871 I [3272:2140] Brut -- Logging set up
+2024-06-29 19:36:04.056780 I [3272:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:36:04.059798 I [3272:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:36:04.122237 I [3275:2140] Brut -- Logging set up
+2024-06-29 19:36:04.309292 I [3315:1260] Brut -- Logging set up
+2024-06-29 19:36:04.873173 I [3272:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:36:05.059885 I [3370:1260] Brut -- Logging set up
+2024-06-29 19:36:05.382334 I [3393:1260] Brut -- Logging set up
+2024-06-29 19:36:06.186282 I [3447:1260] Brut -- Logging set up
+2024-06-29 19:36:06.233790 I [3438:2140] Brut -- Logging set up
+2024-06-29 19:36:06.280578 I [3438:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:36:06.282797 I [3438:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:36:06.322336 I [3441:2140] Brut -- Logging set up
+2024-06-29 19:36:06.531912 I [3482:1260] Brut -- Logging set up
+2024-06-29 19:36:07.004975 I [3438:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:36:07.005081 I [3438:2140] puma -- === puma shutdown: 2024-06-29 19:36:07 +0000 ===
+2024-06-29 19:36:07.005085 I [3438:2140] puma -- - Goodbye!
+2024-06-29 19:36:41.695211 I [3556:1260] Brut -- Logging set up
+2024-06-29 19:36:41.985257 I [3579:1260] Brut -- Logging set up
+2024-06-29 19:36:42.777122 I [3626:2140] Brut -- Logging set up
+2024-06-29 19:36:42.814299 I [3626:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:36:42.816095 I [3626:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:37:03.006464 I [3645:1260] Brut -- Logging set up
+2024-06-29 19:37:03.370802 I [3667:1260] Brut -- Logging set up
+2024-06-29 19:37:04.109020 I [3626:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:37:05.460628 I [3717:2140] Brut -- Logging set up
+2024-06-29 19:37:05.503091 I [3717:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:37:05.505282 I [3717:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:37:12.068936 I [3736:1260] Brut -- Logging set up
+2024-06-29 19:37:12.445349 I [3759:1260] Brut -- Logging set up
+2024-06-29 19:37:13.089752 I [3717:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:37:14.468493 I [3809:2140] Brut -- Logging set up
+2024-06-29 19:37:14.518478 I [3809:2140] puma -- * Listening on http://0.0.0.0:6502
+2024-06-29 19:37:14.520870 I [3809:2140] puma -- Use Ctrl-C to stop
+2024-06-29 19:37:20.158653 I [3809:2140] puma -- - Gracefully stopping, waiting for requests to finish
+2024-06-29 19:37:20.159015 I [3809:2140] puma -- === puma shutdown: 2024-06-29 19:37:20 +0000 ===
+2024-06-29 19:37:20.159029 I [3809:2140] puma -- - Goodbye!

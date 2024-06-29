@@ -29,3 +29,7 @@ gem "rexml"
 
 # Redcarpet parses and renders Markdown
 gem "redcarpet"
+
+# We log using the semantic_logger gem for more flexibility
+# with what goes in logs and how they work
+gem "semantic_logger"

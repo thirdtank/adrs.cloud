@@ -281,6 +281,9 @@ end
 # If you do this, your form will have accessors for each input that return the
 # value of that form input. You can access the Input via []
 class Brut::Form
+
+  include SemanticLogger::Loggable
+
   def self.input(name,attributes={})
     input_definition = Brut::Forms::InputDefinition.new(**(attributes.merge(name: name)))
     @input_definitions ||= {}
@@ -301,7 +304,7 @@ class Brut::Form
       self.class.input_definitions.key?(key)
     }
     if unknown_params.any?
-      puts "Ignoring params: #{unknown_params}"
+      logger.warn "Ignoring unknown params", keys: unknown_params.keys
     end
     @inputs = self.class.input_definitions.map { |name,input_definition|
       input = input_definition.make_input(value: params[name] || params[name.to_sym])
@@ -323,6 +326,10 @@ class Brut::Form
   # Set a server-side constraint violation on a given input's name.
   def server_side_constraint_violation(input_name:, key:, context:nil)
     self[input_name].server_side_constraint_violation(key,context)
+  end
+
+  def to_h
+    @inputs.map { |name,input| [ name, input.value ] }.to_h
   end
 
 private
