@@ -1,0 +1,20 @@
+2024-06-30 22:37:06.945304 I [11581:2140] Brut -- Logging set up
+2024-06-30 22:37:06.945359 I [11581:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:07.497920 I [11592:2140] Brut -- Logging set up
+2024-06-30 22:37:07.497963 I [11592:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:07.868871 I [11603:2140] Brut -- Logging set up
+2024-06-30 22:37:07.868910 I [11603:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:08.355381 I [11614:2140] Brut -- Logging set up
+2024-06-30 22:37:08.355422 I [11614:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:08.755105 I [11625:2140] Brut -- Logging set up
+2024-06-30 22:37:08.755143 I [11625:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:09.623652 I [11636:2140] Brut -- Logging set up
+2024-06-30 22:37:09.623690 I [11636:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:10.554883 I [11647:2140] Brut -- Logging set up
+2024-06-30 22:37:10.554915 I [11647:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:11.506495 I [11658:2140] Brut -- Logging set up
+2024-06-30 22:37:11.506532 I [11658:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:12.432794 I [11669:2140] Brut -- Logging set up
+2024-06-30 22:37:12.432832 I [11669:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"
+2024-06-30 22:37:13.377250 I [11680:2140] Brut -- Logging set up
+2024-06-30 22:37:13.377286 I [11680:2140] puma -- ! Unable to load application: KeyError: key not found: "DATABASE_URL"

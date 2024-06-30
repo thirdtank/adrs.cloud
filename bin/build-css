@@ -11,19 +11,13 @@ require "brut"
 require "fileutils"
 require "json"
 
-css_path = PROJECT_ROOT / "app" / "public" / "css"
-css_bundle = css_path / "styles.css"
-css_bundle_source = PROJECT_ROOT / "app" / "src" / "view" / "css" / "index.css"
-tmp_path = PROJECT_ROOT / "tmp"
-metafile = tmp_path / "build-css-meta.json"
-config_dir = PROJECT_ROOT / "app" / "config"
-asset_metadata_file = config_dir / "asset_metadata.json"
+app = Brut::App.new
+app.configure_only!
 
-log "Ensuring CSS output path '#{css_path}' exists"
-FileUtils.mkdir_p css_path
-
-log "Ensuring tmp path '#{tmp_path}' exists"
-FileUtils.mkdir_p tmp_path
+css_bundle = Brut.container.css_bundle_output_dir / "styles.css"
+css_bundle_source = Brut.container.front_end_src_dir / "css" / "index.css"
+metafile = Brut.container.tmp_dir / "build-css-meta.json"
+asset_metadata_file = Brut.container.asset_metadata_file
 
 name_with_hash_regexp = /app\/public\/(?<path>.+)\/(?<name>.+)\-(?<hash>.+)\.css/
 
@@ -52,8 +46,6 @@ metadata = metafile_contents["outputs"].keys.map { |key|
   end
 }.compact.to_h
 
-log "Ensuring config dir '#{config_dir}' existsa"
-FileUtils.mkdir_p config_dir
 log "Reading asset metadata file '#{asset_metadata_file}'"
 asset_metadata = if File.exist?(asset_metadata_file)
                    JSON.parse(File.read(asset_metadata_file))

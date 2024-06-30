@@ -11,25 +11,19 @@ require "brut"
 require "fileutils"
 require "json"
 
-js_path = PROJECT_ROOT / "app" / "public" / "js"
-js_bundle = js_path / "app.js"
-js_bundle_source = PROJECT_ROOT / "app" / "src" / "view" /  "js" / "index.js"
-tmp_path = PROJECT_ROOT / "tmp"
-metafile = tmp_path / "build-js-meta.json"
-config_dir = PROJECT_ROOT / "app" / "config"
-asset_metadata_file = config_dir / "asset_metadata.json"
+app = Brut::App.new
+app.configure_only!
 
-log "Ensuring JS output path '#{js_path}' exists"
-FileUtils.mkdir_p js_path
-
-log "Ensuring tmp path '#{tmp_path}' exists"
-FileUtils.mkdir_p tmp_path
+js_bundle = Brut.container.js_bundle_output_dir / "app.js"
+js_bundle_source = Brut.container.front_end_src_dir /  "js" / "index.js"
+metafile = Brut.container.tmp_dir / "build-js-meta.json"
+asset_metadata_file = Brut.container.asset_metadata_file
 
 name_with_hash_regexp = /app\/public\/(?<path>.+)\/(?<name>.+)\-(?<hash>.+)\.js/
 
 command = "npx esbuild --metafile=#{metafile} --entry-names=[name]-[hash] --sourcemap --bundle #{js_bundle_source} --outfile=#{js_bundle}"
 env_for_command = {
-  "NODE_PATH" => (PROJECT_ROOT / "lib").to_s, # Not needed once Brut is properly bundled
+  "NODE_PATH" => (Brut.container.project_root / "lib").to_s, # Not needed once Brut is properly bundled
 }
 log "Building JS bundle '#{js_bundle}' with '#{command}'"
 system!(env_for_command,command)
@@ -55,8 +49,6 @@ metadata = metafile_contents["outputs"].keys.map { |key|
   end
 }.compact.to_h
 
-log "Ensuring config dir '#{config_dir}' existsa"
-FileUtils.mkdir_p config_dir
 log "Reading asset metadata file '#{asset_metadata_file}'"
 asset_metadata = if File.exist?(asset_metadata_file)
                    JSON.parse(File.read(asset_metadata_file))

@@ -155,8 +155,8 @@ class Command
       }
     ]
     def call
-      migrations_dir = PROJECT_ROOT / "app" / "db" / "migrations"
-      seeds_dir = PROJECT_ROOT / "app" / "db" / "seed"
+      migrations_dir = Brut.container.project_root / "app" / "db" / "migrations"
+      seeds_dir = Brut.container.project_root / "app" / "db" / "seed"
       if !migrations_dir.exist?
         puts "#{migrations_dir} doesn't exist"
         return
@@ -216,7 +216,7 @@ class Command
       if @args.length == 0
         raise "You must provide a name"
       end
-      migrations_dir = PROJECT_ROOT / "app" / "db" / "migrations"
+      migrations_dir = Brut.container.project_root / "app" / "db" / "migrations"
       if !migrations_dir.exist?
         FileUtils.mkdir_p migrations_dir
       end

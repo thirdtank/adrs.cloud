@@ -10,12 +10,24 @@
 ## Framework
 
 * How to deploy
-* Asset hashing
-* Centralize configuration and boot-up sequence
-  - requiring the framework's rubygem should not perform any
-    action
+  - Assume a docker-based set up
+  - Use multi-stage build to end up with only prod gems and generated assets
+X Asset hashing
+X Centralize configuration and boot-up sequence
 
 # Docs/Notes
+
+## Deployment
+
+* Process is generally:
+  1. Get source code
+  2. Bring in third party deps
+  3. Generate any code needing generating
+  4. Run any database migrations
+  5. Start up the app
+
+* Assumed to be using Docker
+* Framework support for deployment/docker will be somewhat abstracted
 
 
 ## Asset Pipeline

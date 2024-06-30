@@ -2,21 +2,16 @@ require "brut"
 require "sinatra/base"
 require "sinatra/namespace"
 
-DB = Sequel.connect(ENV.fetch("DATABASE_URL"))
-Sequel::Model.db = DB
+Brut::App.new.start!
 
-at_exit do
-  DB.disconnect
-end
+$: << File.join(Brut.container.project_root,"app","src")
 
-$: << File.join(PROJECT_ROOT,"app","src")
-
-require "view/app_view_helpers"
-require "view/components/app_component"
-require "view/pages/app_page"
-require "data_models/app_data_model"
-require "actions/app_action"
-require "view/forms/app_form"
+require "front_end/app_view_helpers"
+require "front_end/components/app_component"
+require "front_end/pages/app_page"
+require "back_end/data_models/app_data_model"
+require "back_end/actions/app_action"
+require "front_end/forms/app_form"
 
 class AdrApp < Sinatra::Base
 
