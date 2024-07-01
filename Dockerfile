@@ -41,7 +41,7 @@ ENV RACK_ENV="production" \
     BUNDLE_WITHOUT="development"
 
 # Throw-away build stage to reduce size of final image
-# FROM base AS build
+FROM base AS build
 
 RUN apt-get update --quiet --yes && \
     apt-get install --no-install-recommends --quiet --yes \
@@ -68,10 +68,10 @@ RUN npm clean-install
 # Build all assets
 RUN bin/build && rm -rf node_modules
 
-# FROM base
+FROM base
 # Copy built artifacts: gems, application
-#COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
-#COPY --from=build /brut-app /brut-app
+COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --from=build /brut-app /brut-app
 
 # For security, set directories that will be written to be owned by non-root
 RUN groupadd --system --gid 1000 brut && \
