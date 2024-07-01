@@ -1,8 +1,15 @@
 require_relative "project_environment"
 require "pathname"
+
+# Exists to hold configuration for the Brut framework.
+# This is a wrapper around a series of calls to Brut.container.store
+# but is a class and thus invokable, so that the configuration can
+# be controlled.
 class Brut::Config
-  def initialize
-  end
+
+  # Set up all the default Brut configuration. It is not adviable to 
+  # run a Brut-powered app without having called this.  By default, this
+  # is called from Brut::App.
   def configure!
     Brut.container do |c|
 
@@ -58,8 +65,7 @@ class Brut::Config
         String,
         "URL connection string for the primary database"
       ) do
-        Sequel.connect(ENV.fetch(
-          "DATABASE_URL"))
+        Sequel.connect(ENV.fetch("DATABASE_URL"))
       end
 
       c.store_required_path(
@@ -95,6 +101,27 @@ class Brut::Config
         "Path to where layout classes and templates are stored"
       ) do |front_end_src_dir|
         front_end_src_dir / "layouts"
+      end
+
+      c.store_required_path(
+        "back_end_src_dir",
+        "Path to the root of the back end layer for the app"
+      ) do |project_root|
+        project_root / "app" / "src" / "back_end"
+      end
+
+      c.store_ensured_path(
+        "migrations_dir",
+        "Path to the DB migrations",
+      ) do |back_end_src_dir|
+        back_end_src_dir / "db" / "migrations"
+      end
+
+      c.store_ensured_path(
+        "db_seeds_dir",
+        "Path to the seed data for the DB",
+      ) do |back_end_src_dir|
+        back_end_src_dir / "db" / "seed"
       end
 
       c.store_ensured_path(

@@ -1,6 +1,13 @@
 #!/usr/bin/env ruby
 
+BRUT_PATH = File.join(File.dirname($0),"..","lib")
+$: << BRUT_PATH
+
+require "bundler"
+Bundler.setup
+
 require_relative "bin_kit"
+require "brut"
 require "optparse"
 require "sequel"
 require "uri"
@@ -36,11 +43,6 @@ end
 
 options = parse_options
 
-if ENV["RACK_ENV"] && ENV["RACK_ENV"].to_s != ""
-  log "RACK_ENV is defined in the environment as '#{ENV['RACK_ENV']}' - it should not be. Use --app-env"
-  exit 1
-end
-
 class Command
   def self.from_string(string, database_url:, args:, options:)
     database_uri = URI(database_url)
@@ -54,6 +56,9 @@ class Command
     else
       nil
     end
+  rescue ArgumentError => ex
+    puts "Problem parsing '#{database_uri}': #{ex.message}"
+    raise
   end
 
   def initialize(database_uri:, args:, options:)
@@ -155,8 +160,8 @@ class Command
       }
     ]
     def call
-      migrations_dir = Brut.container.project_root / "app" / "db" / "migrations"
-      seeds_dir = Brut.container.project_root / "app" / "db" / "seed"
+      migrations_dir = Brut.container.migrations_dir
+      seeds_dir = Brut.container.db_seeds_dir
       if !migrations_dir.exist?
         puts "#{migrations_dir} doesn't exist"
         return
@@ -216,10 +221,7 @@ class Command
       if @args.length == 0
         raise "You must provide a name"
       end
-      migrations_dir = Brut.container.project_root / "app" / "db" / "migrations"
-      if !migrations_dir.exist?
-        FileUtils.mkdir_p migrations_dir
-      end
+      migrations_dir = Brut.container.migrations_dir
       name = @args.join(" ").gsub(/[^\w\d\-]/,"-")
       date = DateTime.now.strftime("%Y-%m-%dT%H:%M:%S")
       file_name = migrations_dir / "#{date}_#{name}.sql"
@@ -280,7 +282,8 @@ end
 
 ENV["RACK_ENV"] = options[:app_env]
 
-require_relative "../lib/brut"
+app = Brut::App.new
+app.configure_only!
 
 command = Command.from_string(ARGV[0],database_url: ENV["DATABASE_URL"], args: ARGV[1..-1],options: options)
 if !command

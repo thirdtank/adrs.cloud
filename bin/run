@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PORT="${PORT:-6502}"
-RACK_ENV=development
+RACK_ENV="${RACK_ENV:-development}"
 
 export PORT
 export RACK_ENV

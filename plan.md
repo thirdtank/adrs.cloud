@@ -29,6 +29,23 @@ X Centralize configuration and boot-up sequence
 * Assumed to be using Docker
 * Framework support for deployment/docker will be somewhat abstracted
 
+## Testing
+
+* It must be easy to write tests
+* Testing library must be simple
+* Test results must be useful
+* Tests must not be a DSL
+* It must be possible to organize tests as follows:
+  - Class
+  - Method
+  - Test cases per method
+* Mocks and Stubs must be possible
+* Tests must be taggable for arbitrary organization
+
+## Documentation
+
+* YARD
+
 
 ## Asset Pipeline
 

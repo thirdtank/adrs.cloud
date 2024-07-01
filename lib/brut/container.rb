@@ -110,7 +110,6 @@ class Brut::Container
     end
   end
 
-
 private
 
   def fetch_value(name)
