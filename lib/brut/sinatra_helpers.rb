@@ -4,7 +4,7 @@ module Brut::SinatraHelpers
   end
 
   def page(page_instance)
-    page_instance.render
+    page_instance.render(csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"]))
   end
 
   def process_form(form:, action:, **rest)

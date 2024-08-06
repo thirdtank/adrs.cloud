@@ -62,6 +62,7 @@ DEPENDENCIES
   omniauth
   pg
   puma
+  rack-protection
   rackup
   redcarpet
   rexml

@@ -18,7 +18,7 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
 
   # Overrides component's render to add the concept of a layout.
   # A layout is an HTML/ERB file that will contain this page's contents.
-  def render
+  def render(csrf_token: nil)
     layout_erb_file = self.layout_locator.locate(self.layout)
     layout_template = ERB.new(File.read(layout_erb_file))
     layout_template.location = [ layout_erb_file.to_s, 1 ]
@@ -29,6 +29,7 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
 
     template_binding = self.binding_scope do
       scope = self.binding_scope
+      scope.local_variable_set(:csrf_token, csrf_token)
       template.result(scope)
     end
     layout_template.result(template_binding)

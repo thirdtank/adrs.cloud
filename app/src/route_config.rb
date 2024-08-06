@@ -15,9 +15,11 @@ class AdrApp < Sinatra::Base
   enable :sessions
   set :session_secret, ENV.fetch("SESSION_SECRET")
 
+  use Rack::Protection::AuthenticityToken
+
   set :public_folder, Brut.container.public_root_dir
 
-  #use OmniAuth::Strategies::Developer
+  use OmniAuth::Strategies::Developer
 
   include Brut::SinatraHelpers
 
@@ -25,17 +27,30 @@ class AdrApp < Sinatra::Base
     if request.path_info !~ /^\/auth\// && request.path_info != "/"
       @account = DataModel::Account[external_id: session["user_id"]]
       if !@account
-        redirect to("/auth/login")
+        redirect to("/")
         return
       end
     end
   end
 
   get "/" do
-    redirect to("/static/index.html")
+    page Pages::Home.new
   end
 
-  namespace "/auth" do
+  get "/auth/developer/callback" do
+    login = Forms::Login.new(email: params[:email], password: "foobardoesnotmatter")
+    result = process_form form: login,
+      action: Actions::Login.new
+    case result
+    in Forms::Login if result.invalid?
+      redirect to("/")
+    in account:
+      session["user_id"] = account.external_id
+      redirect to("/adrs")
+    end
+  end
+
+  namespace "/athn" do
 
     get "/login" do
 
@@ -75,7 +90,7 @@ class AdrApp < Sinatra::Base
 
     get "/logout" do
       session["user_id"] = nil
-      redirect to("/auth/login")
+      redirect to("/athn/login")
     end
   end
 

@@ -55,7 +55,7 @@ class Brut::FrontEnd::Component
   # This implementation uses the associated template for the component
   # and sends it through ERB using this component as
   # the binding.
-  def render
+  def render(csrf_token: nil)
     erb_file = self.component_locator.locate(self.template_name)
     template = ERB.new(File.read(erb_file))
     template.location = [ erb_file.to_s, 1 ]

@@ -25,7 +25,9 @@ gem "pg"
 gem "dotenv", groups: [:development, :test]
 
 # Omniauth handles user login et. al.
-#gem "omniauth"
+gem "omniauth"
+
+gem "rack-protection"
 
 # We use REXML for some basic XML sanitization
 gem "rexml"
