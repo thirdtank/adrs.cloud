@@ -80,8 +80,6 @@ RUN groupadd --system --gid 1000 brut && \
 USER 1000:1000
 
 ENTRYPOINT ["/brut-app/bin/docker-entrypoint"]
-EXPOSE 6502
-CMD [ "bundle", "exec", "./bin/run" ]
 
 
 # vim: ft=Dockerfile

@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+require_relative "../bin/brut_cli"
+require "optparse"
+
+def parse_options
+  options = {}
+  OptionParser.new do |parser|
+    parser.banner = %{Usage: #{$0} [options]}
+    parser.on("--platform=PLATFORM","Override default platform. Can be any Docker platform") do |value|
+      options[:platform] = value
+    end
+
+  end.parse!
+  options
+end
+
+options = parse_options
+
+app = App.new
+app.configure_only!
+
+version = begin
+            git_guess = %{git rev-parse --short HEAD}
+            stdout, stderr, status = Open3.capture3(git_guess)
+            if status.success?
+              stdout.strip
+            else
+              raise "Attempt to use git via command '#{git_guess}' to figure out the version failed: #{stdout}#{stderr}"
+            end
+          end
+
+platform = options[:platform] || "linux/amd64"
+
+log "Changing to #{ROOT_DIR}"
+FileUtils.chdir ROOT_DIR do
+  {
+    "web" => "bin/run",
+    "release" => "bin/release",
+  }.each do |name,command|
+    dockerfile = "deploy/Dockerfile.#{name}"
+    log "Creating '#{dockerfile}' for '#{name}' that will use command '#{command}'"
+    File.open(dockerfile,"w") do |file|
+      file.puts "# DO NOT EDIT - THIS IS GENERATED"
+      file.puts File.read("deploy/Dockerfile")
+      file.puts
+      file.puts "# Added by #{$0}"
+      file.puts %{CMD [ "bundle", "exec", "#{command}" ]}
+    end
+    image_name = %{#{Brut.container.app_organization}/#{Brut.container.app_id}:#{version}-#{name}}
+    log "Creating docker image with name '#{image_name}' and platform '#{platform}'"
+    command = %{docker build --build-arg DOCKER_CMD='./bin/run' --file #{ROOT_DIR}/#{dockerfile} --platform #{platform} --tag #{image_name} .}
+    system!(command)
+  end
+end

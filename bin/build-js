@@ -1,18 +1,8 @@
 #!/usr/bin/env ruby
 
-BRUT_PATH = File.join(File.dirname($0),"..","lib")
-$: << BRUT_PATH
-
-require "bundler"
-Bundler.setup
-
-require_relative "bin_kit"
-require "brut"
+require_relative "brut_cli"
 require "fileutils"
 require "json"
-
-app = Brut::App.new
-app.configure_only!
 
 js_bundle = Brut.container.js_bundle_output_dir / "app.js"
 js_bundle_source = Brut.container.front_end_src_dir /  "js" / "index.js"

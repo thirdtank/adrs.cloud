@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+bundle exec ./bin/db create --app-env=production
+bundle exec ./bin/db migrate --app-env=production

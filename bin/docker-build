@@ -1,3 +1,0 @@
-#!/bin/bash -e
-#docker build --platform linux/amd64 --tag davetron5000/adr:1.0 .
-docker build --tag davetron5000/adr:1.0 .

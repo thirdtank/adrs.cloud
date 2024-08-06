@@ -1,10 +1,5 @@
-require "brut"
 require "sinatra/base"
 require "sinatra/namespace"
-
-Brut::App.new.start!
-
-$: << File.join(Brut.container.project_root,"app","src")
 
 require "front_end/app_view_helpers"
 require "front_end/components/app_component"
@@ -19,6 +14,11 @@ class AdrApp < Sinatra::Base
 
   enable :sessions
   set :session_secret, ENV.fetch("SESSION_SECRET")
+
+  set :public_folder, Brut.container.public_root_dir
+
+  #use OmniAuth::Strategies::Developer
+
   include Brut::SinatraHelpers
 
   before do

@@ -2,6 +2,7 @@
 
 ## App
 
+* Actual auth
 * Tags
 * Search by tag
 * Search by keyword
@@ -14,6 +15,7 @@
   - Use multi-stage build to end up with only prod gems and generated assets
 X Asset hashing
 X Centralize configuration and boot-up sequence
+* Ensure that assets built for prod/dev/test can never overlap
 
 # Docs/Notes
 
@@ -28,6 +30,13 @@ X Centralize configuration and boot-up sequence
 
 * Assumed to be using Docker
 * Framework support for deployment/docker will be somewhat abstracted
+
+* TODO
+  - Create abstractions around building/pushing the docker image
+  - How to codify the concept of "release phase"
+  - How to avoid fucking up the dev env?
+  - How to keep dev/prod parity wrt versioning of ruby, node, PG, etc?
+  - Separate all the production stuff?  Maybe `/deploy` is the root of all this?
 
 ## Testing
 

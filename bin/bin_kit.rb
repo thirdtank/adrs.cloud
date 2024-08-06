@@ -1,3 +1,6 @@
+require "pathname"
+require "fileutils"
+
 # We don't want the setup method to have to do all this error
 # checking, and we also want to explicitly log what we are
 # executing. Thus, we use this method instead of Kernel#system
@@ -16,3 +19,5 @@ end
 def log(message)
   puts "[ bin/setup ] #{message}"
 end
+
+ROOT_DIR = ((Pathname(__dir__) / ".." ).expand_path)

@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # The app runs on Sinatra
-gem "sinatra"
+gem "sinatra", require: false
 
 # We need the namespace contrib
 gem "sinatra-contrib"
@@ -23,6 +23,9 @@ gem "pg"
 
 # Dotenv manages the UNIX environment for dev and test
 gem "dotenv", groups: [:development, :test]
+
+# Omniauth handles user login et. al.
+#gem "omniauth"
 
 # We use REXML for some basic XML sanitization
 gem "rexml"

@@ -1,18 +1,12 @@
 #!/usr/bin/env ruby
 
-BRUT_PATH = File.join(File.dirname($0),"..","lib")
-$: << BRUT_PATH
-
-require "bundler"
-Bundler.setup
-
-require_relative "bin_kit"
-require "brut"
 require "optparse"
 require "sequel"
 require "uri"
 require "fileutils"
 require "date"
+
+require_relative "bin_kit"
 
 def parse_options
   options = {}
@@ -281,9 +275,7 @@ end
 
 
 ENV["RACK_ENV"] = options[:app_env]
-
-app = Brut::App.new
-app.configure_only!
+require_relative "brut_cli"
 
 command = Command.from_string(ARGV[0],database_url: ENV["DATABASE_URL"], args: ARGV[1..-1],options: options)
 if !command

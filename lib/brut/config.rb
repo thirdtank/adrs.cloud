@@ -7,16 +7,49 @@ require "pathname"
 # be controlled.
 class Brut::Config
 
+  class DockerPathComponent
+    PATH_REGEXP = /\A[a-z0-9]+(-|_)?[a-z0-9]+\z/
+    def initialize(string)
+      if string.match?(PATH_REGEXP)
+        @string = string
+      else
+        raise ArgumentError.new("Value must be only lower case letters, digits, and may have at most one underscore: '#{string}'")
+      end
+    end
+
+    def to_str = @string
+    def to_s = self.to_str
+  end
+
+  class AppId < DockerPathComponent
+  end
+
+  class AppOrganizationName < DockerPathComponent
+  end
+
   # Set up all the default Brut configuration. It is not adviable to 
   # run a Brut-powered app without having called this.  By default, this
   # is called from Brut::App.
-  def configure!
+  def configure!(app_id:, app_organization:)
+
+    app_id           = AppId.new(app_id)
+    app_organization = AppOrganizationName.new(app_organization)
+
     Brut.container do |c|
 
-      c.store_required_path(
-        "project_root",
-        "Root of the entire project's source code checkout",
-        (Pathname(__dir__) / ".." / "..").expand_path)
+      c.store(
+        "app_id",
+        AppId,
+        "Id to be used for the app when other processes need it. Should be the name of that app in letters and digits.",
+        app_id
+      )
+
+      c.store(
+        "app_organization",
+        AppOrganizationName,
+        "Id for the organization that owns or manages the app. This is used when the app must be referenced in systems with a hierarchy such as Docker or GitHub",
+        app_organization
+      )
 
       c.store_ensured_path(
         "tmp_dir",
@@ -39,17 +72,24 @@ class Brut::Config
       end
 
       c.store_ensured_path(
+        "public_root_dir",
+        "Path to the root of all public files"
+      ) do |project_root|
+        project_root / "app" / "public"
+      end
+
+      c.store_ensured_path(
         "css_bundle_output_dir",
         "Path where bundled CSS is written for use in web pages"
-      ) do |project_root|
-        project_root / "app" / "public" / "css"
+      ) do |public_root_dir|
+        public_root_dir / "css"
       end
 
       c.store_ensured_path(
         "js_bundle_output_dir",
         "Path where bundled JS is written for use in web pages"
-      ) do |project_root|
-        project_root / "app" / "public" / "js"
+      ) do |public_root_dir|
+        public_root_dir / "js"
       end
 
       c.store(
