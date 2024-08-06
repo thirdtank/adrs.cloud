@@ -19,7 +19,10 @@ class AdrApp < Sinatra::Base
 
   set :public_folder, Brut.container.public_root_dir
 
-  use OmniAuth::Strategies::Developer
+  use OmniAuth::Builder do
+    provider :github, ENV.fetch("GITHUB_CLIENT_ID"), ENV.fetch("GITHUB_CLIENT_SECRET"), scope: "read:user,user:email"
+    provider :developer
+  end
 
   include Brut::SinatraHelpers
 
@@ -37,60 +40,32 @@ class AdrApp < Sinatra::Base
     page Pages::Home.new
   end
 
+  get "/logout" do
+    session.delete("user_id")
+    page Pages::Home.new(info: "You have logged out")
+  end
+
   get "/auth/developer/callback" do
-    login = Forms::Login.new(email: params[:email], password: "foobardoesnotmatter")
-    result = process_form form: login,
-      action: Actions::Login.new
+    action = Actions::DevOnlyAuth.new
+    result = action.call(params[:email])
     case result
-    in Forms::Login if result.invalid?
-      redirect to("/")
     in account:
       session["user_id"] = account.external_id
       redirect to("/adrs")
+    in error:
+      page Pages::Home.new(error: error)
     end
   end
 
-  namespace "/athn" do
-
-    get "/login" do
-
-      SemanticLogger["get /login"].info("Getting login page")
-      page Pages::Login.new(content: Forms::Login.new)
-    end
-
-    post "/login" do
-      login = Forms::Login.new(params)
-      result = process_form form: login,
-                            action: Actions::Login.new
-      case result
-      in Forms::Login if result.invalid?
-        page Pages::Login.new(content: login)
-      in account:
-        session["user_id"] = account.external_id
-        redirect to("/adrs")
-      end
-    end
-
-    get "/sign-up" do
-      page Pages::SignUp.new(content: Forms::SignUp.new)
-    end
-
-    post "/sign-up" do
-      sign_up = Forms::SignUp.new(params)
-      result = process_form form: sign_up,
-                            action: Actions::SignUp.new
-      case result
-      in Forms::SignUp if result.invalid?
-        page Pages::SignUp.new(content: sign_up)
-      in account:
-        session["user_id"] = account.external_id
-        redirect to("/adrs")
-      end
-    end
-
-    get "/logout" do
-      session["user_id"] = nil
-      redirect to("/athn/login")
+  get "/auth/github/callback" do
+    action = Actions::GitHubAuth.new
+    result = action.call(env["omniauth.auth"])
+    case result
+    in account:
+      session["user_id"] = account.external_id
+      redirect to("/adrs")
+    in error:
+      page Pages::Home.new(error: error)
     end
   end
 

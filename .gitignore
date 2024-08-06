@@ -12,3 +12,6 @@
 /app/config/asset_metadata.json
 # Don't check in logs
 /logs
+
+# This contains actual secrets and should not be checked in
+/.env.development.local

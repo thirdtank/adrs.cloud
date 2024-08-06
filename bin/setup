@@ -14,6 +14,80 @@ def setup
   log "Ensuring tmp dir exists"
   system! "mkdir -p tmp"
 
+  dot_env = ROOT_DIR / ".env.development"
+  if !File.exist?(dot_env)
+    raise "Problem: '#{dot_env}' does not exist"
+  end
+
+  previous_comment = ""
+  dot_env_need_local = {}
+  File.read(dot_env).split(/\n/).each do |line|
+    if line =~ /^#(.*)$/
+      previous_comment << line
+    elsif line =~ /^LOCAL:([^=]+)$/
+      dot_env_need_local[$1] = previous_comment
+      previous_comment = ""
+    elsif line =~ /^([^=])+/
+      previous_comment = ""
+    end
+  end
+  dot_env_local = ROOT_DIR / ".env.development.local"
+  log "Ensuring '#{dot_env_local}' exists"
+  if !File.exist?(dot_env_local)
+    log "Creating '#{dot_env_local}'"
+    FileUtils.touch dot_env_local
+  end
+  local_contents = File.read(dot_env_local).split(/\n/).map { |line|
+    if line =~ /^([^=]+)=(.*)$/
+      var = $1
+      val = $2
+      if dot_env_need_local[var] && val.to_s != ""
+        log "Value for '#{var}' is good"
+        dot_env_need_local.delete(var)
+      end
+    end
+    line
+  }.compact
+
+  dot_env_need_local.each do |var,comment|
+    log "A value is needed locally for '#{var}'"
+    log ""
+    log comment
+    log ""
+    puts "Enter the value below and hit Return"
+    value = gets
+    local_contents << "#{var}=#{value}"
+    log "Got it, thanks"
+  end
+
+  log "Updating '#{dot_env_local}'"
+  File.open(dot_env_local,"w") do |file|
+    local_contents.each do |line|
+      file.puts line
+    end
+  end
+
+  log "Checking that #{dot_env_local} is being ignored"
+  gitignore = ROOT_DIR / ".gitignore"
+  if File.exist?(gitignore)
+    lines = File.read(gitignore).split(/\n/)
+    if lines.include?("/#{dot_env_local.basename}")
+      log "It's there!"
+    else
+      log "It's missing. Adding..."
+      lines << ""
+      lines << "# This contains actual secrets and should not be checked in"
+      lines << "/#{dot_env_local.basename}"
+      File.open(gitignore,"w") do |file|
+        lines.each do |line|
+          file.puts line
+        end
+      end
+    end
+  else
+    log "No #{gitignore}, so make sure you DO NOT CHECK #{dot_env_local} IN!!!"
+  end
+
   log "All set up."
   log ""
   help

@@ -26,6 +26,7 @@ gem "dotenv", groups: [:development, :test]
 
 # Omniauth handles user login et. al.
 gem "omniauth"
+gem "omniauth-github", "~> 2.0.0"
 
 gem "rack-protection"
 

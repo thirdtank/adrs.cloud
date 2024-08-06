@@ -3,10 +3,20 @@
   <h2 class="tc ma-0">Your one-stop shop for managing Architecture Decision Records</h2>
 </header>
 <main class="ph-3 mv-4">
-  <h3 class="tc">
+  <% if !info.nil? %>
+    <aside class="p mh-auto ba shadow-4 bc-blue-800 br-2 pa-3 blue-300 bg-blue-900 tc"><%= info %></aside>
+  <% end %>
+  <% if !error.nil? %>
+    <aside class="p mh-auto ba shadow-4 bc-red-800 br-2 pa-3 red-300 bg-red-900 tc"><%= error %></aside>
+  <% end %>
+  <h3 class="tc flex flex-column gap-2">
     <form action="/auth/developer" method="POST">
       <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
-      <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">Get Started Now!</button>
+      <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">Sneak Login!</button>
+    </form>
+    <form action="/auth/github" method="POST">
+      <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
+      <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">GitHub Login!</button>
     </form>
   </h3>
 </main>
