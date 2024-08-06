@@ -31,3 +31,9 @@ framework to inject information into it.
   ```
 
   This way, the session or other stuff can be injected directly when `new` is called
+
+## Flash - temp data that can passed via a redirect
+
+Use case is: you want to redirect, but include a message or other info
+
+Somehow: put it in the session, but make sure it's cleared after the page is done rendering?
