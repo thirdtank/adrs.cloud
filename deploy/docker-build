@@ -107,6 +107,9 @@ images = {
     dockerfile: "deploy/Dockerfile.web",
     heroku_image_name: "registry.heroku.com/#{heroku_app_name}/web",
   },
+}
+
+NOP = {
   "release" => {
     cmd: "bin/release",
     image_name: %{#{Brut.container.app_organization}/#{Brut.container.app_id}:#{version}-release},
