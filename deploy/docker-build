@@ -46,6 +46,8 @@ def require_main_branch
 end
 
 def require_no_local_changes
+  log "Running 'git status' to reset local caches to account for Docker<->host oddities"
+  system!("git status")
   local_changes = `git diff-index --name-only HEAD --`
   if local_changes.strip != ""
     log "You have local changes:"
