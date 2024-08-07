@@ -1,8 +1,8 @@
 # One Week Sprint
 
 1 - Get actual auth going with GitHub - timebox but should be good.
-    DONE: - can use locally
-          - can use on Heroku when deployed
+    DONE: - can use locally CHECK
+          - can use on Heroku when deployed TBD
 2 - Make deploys seamless
     DONE: - inside DX, bin/deploy handles deployment to Heroku
 

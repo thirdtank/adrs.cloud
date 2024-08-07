@@ -14,13 +14,15 @@
 
 # The most important thing to ignore of all time
 /node_modules/
-# Ignore generate assets
+# Ignore generated assets
 /app/public/*
 
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
 /docker-compose.*
+/deploy/Dockerfile*
+/deploy/docker-compose.*
 
 # Ignore jsdocs
 /jsdocs/*

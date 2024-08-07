@@ -1,13 +1,21 @@
 #!/usr/bin/env ruby
 
+if ENV["RACK_ENV"].to_s.strip != ""
+  raise "You must not set RACK_ENV in the environment"
+end
+
+ENV["RACK_ENV"] = "production"
+
 require_relative "../bin/brut_cli"
 require "optparse"
 
 def parse_options
-  options = {}
+  options = {
+    platform: "linux/amd64"
+  }
   OptionParser.new do |parser|
     parser.banner = %{Usage: #{$0} [options]}
-    parser.on("--platform=PLATFORM","Override default platform. Can be any Docker platform") do |value|
+    parser.on("--platform=PLATFORM","Override default platform. Can be any Docker platform. Default is '#{options[:platform]}'") do |value|
       options[:platform] = value
     end
 
