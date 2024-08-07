@@ -79,7 +79,7 @@ RUN groupadd --system --gid 1000 brut && \
     chown -R brut:brut logs tmp
 USER 1000:1000
 
-ENTRYPOINT ["/brut-app/bin/docker-entrypoint"]
+ENTRYPOINT ["/brut-app/deploy/docker-entrypoint"]
 
 
 # vim: ft=Dockerfile

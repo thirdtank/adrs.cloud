@@ -21,7 +21,6 @@
 /.dockerignore
 /Dockerfile*
 /docker-compose.*
-/deploy/Dockerfile*
 /deploy/docker-compose.*
 
 # Ignore jsdocs
