@@ -88,8 +88,22 @@ def setup
     log "No #{gitignore}, so make sure you DO NOT CHECK #{dot_env_local} IN!!!"
   end
 
+  log "Checking that you are set up with Heroku"
+
+
   log "All set up."
-  log ""
+  if system("heroku whoami")
+    log "You are logged in"
+  else
+    log "You are not logged into Heroku."
+    log "Please run the following:"
+    log ""
+    log "heroku auth:login"
+    log "heroku container:login"
+    log ""
+    log "Then, re-run this"
+    exit 1
+  end
   help
 end
 

@@ -17,7 +17,7 @@ end
 # It's helpful to know what messages came from this
 # script, so we'll use log instead of `puts`
 def log(message)
-  puts "[ bin/setup ] #{message}"
+  puts "[ #{$0} ] #{message}"
 end
 
 ROOT_DIR = ((Pathname(__dir__) / ".." ).expand_path)

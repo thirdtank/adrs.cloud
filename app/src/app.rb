@@ -5,6 +5,8 @@ class App < Brut::App
 
   def configure_only!
     super()
-    ::OmniAuth.config.full_host = "http://0.0.0.0:6502"
+    if Brut.container.environment.development?
+      ::OmniAuth.config.full_host = "http://0.0.0.0:6502"
+    end
   end
 end
