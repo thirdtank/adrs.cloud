@@ -6,7 +6,7 @@ CHECK 1 - Get actual auth going with GitHub - timebox but should be good.
 CHECK 2 - Make deploys seamless
           DONE: - inside DX, bin/deploy handles deployment to Heroku
 
-      3 - Integrate CSRF into forms seamlessly
+CHECK 3 - Integrate CSRF into forms seamlessly
           DONE: All previous functionality works + deployed works
 
       4 - Add tags and deploy
