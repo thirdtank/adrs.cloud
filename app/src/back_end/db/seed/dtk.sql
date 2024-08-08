@@ -5,7 +5,7 @@ INSERT INTO accounts (email, created_at) VALUES( 'davec@naildrivin5.com',now());
 -- Data for Name: adrs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-insert into adrs (title, context, facing, decision, neglected, achieve, accepting, because, created_at, accepted_at, account_id)
+insert into adrs (title, context, facing, decision, neglected, achieve, accepting, because, tags, created_at, accepted_at, account_id)
 select
 'Web Apps use GET and POST only',
 'Building a web app and *not* an API',
@@ -15,6 +15,7 @@ select
 'A simpler surface area for the controller layer that maps directly to HTML and what the web actually does and actually supports',
 'This will be different than other frameworks, and certainly coerce all non-idempotent actions into a POST.',
 'Ultimately, for the web app part, there is no benefit to PATCH, PUT, and DELETE. Forms can''t use these methods, so they must be hacked and then the backend basically conflates all of this stuff in a potentially confusing way.',
+'{web,rest,seeds}',
 now() - interval '1 week',
 now() - interval '2 days',
 accounts.id

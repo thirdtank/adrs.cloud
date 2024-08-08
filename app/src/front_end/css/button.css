@@ -54,7 +54,7 @@
 }
 
 .button--size--tiny span:has(svg) {
-  width: calc(1.5 * var(--mg-sp-1));
+  width: calc(1.125 * var(--mg-sp-2));
 }
 
 /** Sizing */
@@ -116,8 +116,15 @@
   border-color: var(--mg-purple-700);
   color: var(--mg-purple-200);
 }
+
 .button.button--color--gray {
   background-color: var(--mg-gray-800);
   border-color: var(--mg-gray-700);
   color: var(--mg-gray-200);
+}
+
+.button.button--color--white {
+  background-color: var(--mg-white);
+  border-color: var(--mg-gray-900);
+  color: var(--mg-black-ish);
 }

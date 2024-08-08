@@ -1,6 +1,7 @@
 module DataModel
 end
 AppDataModel = Class.new(Sequel::Model)
+Sequel::Model.db.extension :pg_array
 def AppDataModel.transaction(opts=:use_default,&block)
   if opts == :use_default
     opts = Sequel::Database::OPTS

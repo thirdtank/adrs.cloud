@@ -12,13 +12,16 @@
   <tbody>
     <% accepted_adrs.each do |adr| %>
     <tr>
-      <td class="va-top w-60 pa-2 lh-copy f-3 va-middle">
+      <td class="w-60 pa-2 lh-copy f-3 va-middle">
         <%= adr.title %>
+        <% adr.tags.each do |tag| %>
+          <%= component Components::Adrs::Tag.new(tag: tag) %>
+        <% end %>
       </td>
-      <td class="va-top w-20 pa-2 ws-nowrap va-middle lh-copy">
+      <td class="w-20 pa-2 ws-nowrap va-middle">
         <%= adr.accepted_at %>
       </td>
-      <td class="va-top w-20 pa-2 tr va-middle">
+      <td class="w-20 pa-2 tr va-middle">
         <nav class="flex items-baseline gap-2 mv-2">
           <a class="blue-400" href="<%= adr_path(adr) %>">View</a>
         </nav>
@@ -43,6 +46,9 @@
     <tr>
       <td class="w-60 pa-2 lh-copy f-3 va-middle">
         <%= adr.title %>
+        <% adr.tags.each do |tag| %>
+          <%= component Components::Adrs::Tag.new(tag: tag) %>
+        <% end %>
         <% if adr.refines_adr %>
         <small class="db">
           refines
