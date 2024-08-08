@@ -70,15 +70,15 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs" do
-    page Pages::Adrs.new(content: @account.adrs)
+    page Pages::Adrs.new(adrs: @account.adrs)
   end
 
   get "/adrs/new" do
-    page Pages::Adrs::New.new(content: Forms::Adrs::Draft.new)
+    page Pages::Adrs::New.new(form: Forms::Adrs::Draft.new)
   end
 
   get "/adrs/:id" do
-    page Pages::Adrs::Get.new(content: DataModel::Adr[account_id: @account.id, external_id: params[:id]])
+    page Pages::Adrs::Get.new(adr: DataModel::Adr[account_id: @account.id, external_id: params[:id]])
   end
 
   get "/adrs/:id/edit" do
@@ -92,7 +92,7 @@ class AdrApp < Sinatra::Base
                           account: @account
     case result
     in Forms::Adrs::Draft if result.invalid?
-      page Pages::Adrs::New.new(content: draft_adr)
+      page Pages::Adrs::New.new(form: draft_adr)
     else
       redirect to("/adrs")
     end

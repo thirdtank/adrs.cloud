@@ -5,8 +5,11 @@ class Pages::Adrs::Get < AppPage
     end
   end
 
-  def initialize(...)
-    super(...)
+  attr_reader :adr
+
+  def initialize(args)
+    super(args)
+    @adr = args[:adr]
     @markdown = Redcarpet::Markdown.new(
       Redcarpet::Render::HTML.new(
         filter_html: true,
@@ -20,8 +23,6 @@ class Pages::Adrs::Get < AppPage
       quote: true,
     )
   end
-
-  def adr = @content
 
   def markdown(field)
     value = "**#{field_text(field)}** #{adr.send(field)}"

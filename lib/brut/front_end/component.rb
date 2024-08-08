@@ -49,6 +49,9 @@ class Brut::FrontEnd::Component
     end
   end
 
+  def initialize(args={})
+  end
+
   # The core method of a component. This is expected to return
   # a string to be sent as a response to an HTTP request.
   #

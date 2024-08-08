@@ -1,3 +1,7 @@
 class Pages::Adrs::New < AppPage
-  def adr = @content
+  attr_reader :form
+  def initialize(args={})
+    super(args)
+    @form = args[:form]
+  end
 end

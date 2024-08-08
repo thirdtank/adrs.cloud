@@ -6,12 +6,8 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
   uses :layout_locator
   uses :page_locator
 
-  attr_reader :content
-
-
-  def initialize(content: {})
-    super()
-    @content        = content
+  def initialize(args={})
+    super(args)
   end
 
   def layout = "default"
