@@ -190,6 +190,6 @@ FileUtils.chdir ROOT_DIR do
   log ""
 
   names = images.map(&:first).join(" ")
-  log "    herkou container:release #{names}"
+  log "    heroku container:release #{names}"
   log ""
 end
