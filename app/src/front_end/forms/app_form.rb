@@ -6,6 +6,4 @@ end
 module Forms::Adrs
 end
 
-require_relative "sign_up"
-require_relative "login"
 require_relative "adrs/draft"

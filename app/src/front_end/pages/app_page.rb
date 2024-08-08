@@ -4,8 +4,6 @@ end
 module Pages
 end
 
-require_relative "login"
-require_relative "sign_up"
 require_relative "home"
 require_relative "adrs"
 require_relative "adrs/new"

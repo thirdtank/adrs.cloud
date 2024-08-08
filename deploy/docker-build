@@ -185,4 +185,11 @@ FileUtils.chdir ROOT_DIR do
     command = %{docker push #{heroku_image_name}}
     system!(command)
   end
+
+  log "You can now deploy via:"
+  log ""
+
+  names = images.map(&:first).join(" ")
+  log "    herkou container:release #{names}"
+  log ""
 end
