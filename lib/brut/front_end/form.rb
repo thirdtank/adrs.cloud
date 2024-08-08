@@ -304,7 +304,7 @@ class Brut::FrontEnd::Form
       self.class.input_definitions.key?(key)
     }
     if unknown_params.any?
-      logger.warn "Ignoring unknown params", keys: unknown_params.keys
+      logger.warn "Ignoring unknown params", keys: unknown_params
     end
     @inputs = self.class.input_definitions.map { |name,input_definition|
       input = input_definition.make_input(value: params[name] || params[name.to_sym])

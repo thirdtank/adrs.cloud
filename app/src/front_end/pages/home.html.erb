@@ -11,11 +11,11 @@
   <% end %>
   <h3 class="tc flex flex-column gap-2">
     <form action="/auth/developer" method="POST">
-      <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
+      <%= csrf_token_field %>
       <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">Sneak Login!</button>
     </form>
     <form action="/auth/github" method="POST">
-      <input type="hidden" name="authenticity_token" value="<%= csrf_token %>">
+      <%= csrf_token_field %>
       <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">GitHub Login!</button>
     </form>
   </h3>

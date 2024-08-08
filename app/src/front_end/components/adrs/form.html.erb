@@ -1,5 +1,6 @@
 <brut-form>
 <form action="/adrs" method="post" class="flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-50">
+  <%= csrf_token_field %>
   <% if form.external_id %>
     <input type="hidden" name="external_id" value="<%= form.external_id %>">
   <% end %>

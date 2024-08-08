@@ -7,9 +7,8 @@ class Pages::Adrs::Get < AppPage
 
   attr_reader :adr
 
-  def initialize(args)
-    super(args)
-    @adr = args[:adr]
+  def initialize(adr:)
+    @adr = adr
     @markdown = Redcarpet::Markdown.new(
       Redcarpet::Render::HTML.new(
         filter_html: true,

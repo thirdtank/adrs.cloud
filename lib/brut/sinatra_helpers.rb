@@ -4,7 +4,8 @@ module Brut::SinatraHelpers
   end
 
   def page(page_instance)
-    page_instance.render(csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"]))
+    call_render = CallRenderInjectingInfo.new(page_instance)
+    call_render.call_render(csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"]))
   end
 
   def process_form(form:, action:, **rest)

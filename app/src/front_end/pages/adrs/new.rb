@@ -1,7 +1,6 @@
 class Pages::Adrs::New < AppPage
   attr_reader :form
-  def initialize(args={})
-    super(args)
-    @form = args[:form]
+  def initialize(form:)
+    @form = form
   end
 end

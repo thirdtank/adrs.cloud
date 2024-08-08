@@ -1,8 +1,7 @@
 class Pages::Adrs < AppPage
 
-  def initialize(args={})
-    super(args)
-    @adrs = args[:adrs]
+  def initialize(adrs:)
+    @adrs = adrs
   end
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)
   def replaced_adrs = @adrs.select(&:replaced?).sort_by { |adr|

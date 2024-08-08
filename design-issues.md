@@ -12,25 +12,10 @@ representing the specific request for a specific page to render at a specific ti
 This is how it's treated, however the responsiobility of calling `new` is on the controller layer. This makes it hard for the
 framework to inject information into it.
 
+Inject stuff into `render`?
 
-* Change: have the framework call `new`:
+But who calls render?  That context must include env, etc.
 
-  ```ruby
-  # BEFORE
-  get "/widgets"
-    page Pages::Widgets.new(params)
-  end
-
-  # AFTER
-  get "/widgets"
-    page Pages::Widgets, params
-  end
-
-  # OR EVEN
-  page Pages::Widgets
-  ```
-
-  This way, the session or other stuff can be injected directly when `new` is called
 
 ## Flash - temp data that can passed via a redirect
 

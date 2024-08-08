@@ -49,7 +49,8 @@ class Brut::FrontEnd::Component
     end
   end
 
-  def initialize(args={})
+  def initialize
+    @rendering_context = {}
   end
 
   # The core method of a component. This is expected to return
@@ -59,12 +60,18 @@ class Brut::FrontEnd::Component
   # and sends it through ERB using this component as
   # the binding.
   def render(csrf_token: nil)
+    @rendering_context = {
+      csrf_token: csrf_token
+    }
     erb_file = self.component_locator.locate(self.template_name)
     template = ERB.new(File.read(erb_file))
     template.location = [ erb_file.to_s, 1 ]
 
     scope = self.binding_scope
+    scope.local_variable_set(:csrf_token, csrf_token)
     template.result(scope)
+  ensure
+    @rendering_context = {}
   end
 
   # Helper methods that subclasses can use.
@@ -79,7 +86,8 @@ class Brut::FrontEnd::Component
     # view re-use happens.  The component instance will be able to locate its
     # HTML template and render itself.
     def component(component_instance)
-      component_instance.render
+      call_render = CallRenderInjectingInfo.new(component_instance)
+      call_render.call_render(**@rendering_context)
     end
 
     # Inline an SVG into the page.
@@ -91,6 +99,11 @@ class Brut::FrontEnd::Component
     # Given a public path to an asset—the value you'd use in HTML—return
     # the same value, but with any content hashes that are part of the filename.
     def asset_path(path) = self.asset_path_resolver.resolve(path)
+
+    # Renders a hidden form field containing the current CSRF token
+    def csrf_token_field
+      component(Brut::FrontEnd::Components::Inputs::CsrfToken.new)
+    end
   end
   include Helpers
 

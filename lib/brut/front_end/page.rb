@@ -6,15 +6,14 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
   uses :layout_locator
   uses :page_locator
 
-  def initialize(args={})
-    super(args)
-  end
-
   def layout = "default"
 
   # Overrides component's render to add the concept of a layout.
   # A layout is an HTML/ERB file that will contain this page's contents.
   def render(csrf_token: nil)
+    @rendering_context = {
+      csrf_token: csrf_token
+    }
     layout_erb_file = self.layout_locator.locate(self.layout)
     layout_template = ERB.new(File.read(layout_erb_file))
     layout_template.location = [ layout_erb_file.to_s, 1 ]
@@ -29,6 +28,8 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
       template.result(scope)
     end
     layout_template.result(template_binding)
+  ensure
+    @rendering_context = {}
   end
 
 private
