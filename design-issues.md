@@ -9,3 +9,5 @@ Somehow: put it in the session, but make sure it's cleared after the page is don
 ## Logic useful to front-end and back-end - where does it go?
 
 ## Converting rich types in DB to and from strings needed for front-end
+
+## Actions have a lot of "is the person logged in allowed to access this"
