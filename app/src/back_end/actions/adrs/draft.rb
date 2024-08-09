@@ -35,6 +35,7 @@ class Actions::Adrs::Draft < AppAction
                  achieve: form.achieve,
                  accepting: form.accepting,
                  because: form.because,
+                 tags: tag_serializer.from_string(form.tags),
                  refines_adr_id: refines_adr&.id,
                 )
       replaced_adr = DataModel::Adr[external_id: form.replaced_adr_external_id, account_id: account.id]
@@ -48,6 +49,12 @@ class Actions::Adrs::Draft < AppAction
     end
     result.save_context(adr: adr)
     result
+  end
+
+private
+
+  def tag_serializer
+    @tag_serializer ||= Actions::Adrs::TagSerializer.new
   end
 end
 

@@ -7,6 +7,7 @@ class Forms::Adrs::Draft < AppForm
   input :achieve, required: false
   input :accepting, required: false
   input :because, required: false
+  input :tags, required: false
   input :external_id, required: false
   input :refines_adr_external_id, required: false
   input :replaced_adr_external_id, required: false
@@ -16,6 +17,7 @@ class Forms::Adrs::Draft < AppForm
   end
 
   def self.from_adr(adr)
+    tag_serializer = Actions::Adrs::TagSerializer.new
     self.new(
       external_id: adr.external_id,
       title: adr.title,
@@ -26,6 +28,7 @@ class Forms::Adrs::Draft < AppForm
       achieve: adr.achieve,
       accepting: adr.accepting,
       because: adr.because,
+      tags: tag_serializer.from_array(adr.tags),
       refines_adr_external_id: adr.refines_adr&.external_id,
     )
   end

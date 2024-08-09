@@ -5,10 +5,13 @@ class Actions::Adrs::UpdateTags < AppAction
     if !adr
       raise "account does not have an ADR with that ID"
     end
-    tags = form.tags.split(/\n/).map { |line|
-      line.split(/,/)
-    }.flatten.map(&:strip).map(&:downcase).uniq
-    adr.update(tags: tags)
+    adr.update(tags: tag_serializer.from_string(tags))
+  end
+
+private
+
+  def tag_serializer
+    @tag_serializer ||= Actions::Adrs::TagSerializer.new
   end
 
 end
