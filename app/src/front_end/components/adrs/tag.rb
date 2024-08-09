@@ -4,10 +4,10 @@ class Components::Adrs::Tag < AppComponent
   COLORS = [
     "red",
     "orange",
-    "yellow",
     "green",
     "blue",
     "purple",
+    # yellow omitted as it doesn't look good
   ]
   attr_reader :tag, :color
   def initialize(tag:)

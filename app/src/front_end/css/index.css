@@ -6,6 +6,19 @@
   --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
 }
 
+.w-quarter {
+  width: 25%;
+}
+
+.text-glow {
+  text-shadow: currentColor 0px 0px 8px;
+}
+@media (prefers-contrast: more) {
+  .text-glow {
+    text-shadow: none;
+  }
+}
+
 ::backdrop {
   background-color: black;
   opacity: 0.5;

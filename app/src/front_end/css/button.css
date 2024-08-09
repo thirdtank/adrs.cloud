@@ -9,18 +9,19 @@
               0;
   z-index: 2;
   cursor: pointer;
+  /* It appears to be "above" the screen, so should be a bit offset
+   * so that the shadow is what would appear to align with things on the 
+   * screen directly */
+  transform: translateX(calc(-0.25 * var(--mg-sp-1)))
+             translateY(calc(-0.25 * var(--mg-sp-1)));
 }
 
 /** When pressed or disabled, they are at the same level as the screen */
 .button:active, .button:disabled {
-  /* Make it appear to "press in" to the screen */
-  transform: translateX(calc(0.25 * var(--mg-sp-1)))
-             translateY(calc(0.25 * var(--mg-sp-1)));
-  /* Remove the shadow since it's no longer above the screen */
+  /* Make it appear to "press in" to the screen by removing the transform
+   * and the shadow */
+  transform: none;
   box-shadow: none;
-  /* Button bar styles remove some borders, but if it's pressed into the screen, it should
-   * have its borders back
-   */
   z-index: 1;
 }
 

@@ -98,6 +98,14 @@ class AdrApp < Sinatra::Base
     end
   end
 
+  post "/adrs/tags" do
+    adr_tags = Forms::Adrs::Tags.new(params)
+    process_form form: adr_tags,
+                 action: Actions::Adrs::UpdateTags.new,
+                 account: @account
+    redirect to("/adrs/#{adr_tags.external_id}")
+  end
+
   post "/accepted_adrs" do
     form = Forms::Adrs::Draft.new(params)
     result = process_form form: form,
