@@ -9,7 +9,6 @@ class Brut::BackEnd::Actions::CheckResult
                             field: nil,
                             key:,
                             context: {})
-    puts "Logging constraint_violation: #{object.class}/#{field}/#{key}"
     object ||= General
     field  ||= General
     @constraint_violations[object] ||= {}
@@ -33,7 +32,9 @@ class Brut::BackEnd::Actions::CheckResult
 
   def [](key_in_context) = @context.fetch(key_in_context)
 
-  def can_call? = self.constraint_violations.empty?
+  def can_call? =  self.constraint_violations.empty?
+  def invalid?  = !self.can_call?
+  def valid?    =  self.can_call?
 
   def deconstruct_keys(*)
     @context

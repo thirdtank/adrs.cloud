@@ -6,8 +6,15 @@
   <% if !info.nil? %>
     <aside class="p mh-auto ba shadow-4 bc-blue-800 br-2 pa-3 blue-300 bg-blue-900 tc"><%= info %></aside>
   <% end %>
-  <% if !error.nil? %>
-    <aside class="p mh-auto ba shadow-4 bc-red-800 br-2 pa-3 red-300 bg-red-900 tc"><%= error %></aside>
+  <% if !check_result.nil? && check_result.invalid? %>
+    <aside class="p mh-auto ba shadow-4 bc-red-800 br-2 pa-3 red-300 bg-red-900 tc">
+      <% check_result.each_violation do |object,field,key,context| %>
+        <%= object %>
+        <%= field %>
+        <%= key %>
+        <%= context %>
+      <% end %>
+    </aside>
   <% end %>
   <h3 class="tc flex flex-column gap-2">
     <form action="/auth/developer" method="POST">

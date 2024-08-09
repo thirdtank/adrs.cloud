@@ -108,11 +108,18 @@ class Brut::Config
         Sequel.connect(ENV.fetch("DATABASE_URL"))
       end
 
+      c.store_ensured_path(
+        "app_src_dir",
+        "Path to root of where all the app's source files are"
+      ) do |project_root|
+        project_root / "app" / "src"
+      end
+
       c.store_required_path(
         "front_end_src_dir",
         "Path to the root of the front end layer for the app"
-      ) do |project_root|
-        project_root / "app" / "src" / "front_end"
+      ) do |app_src_dir|
+        app_src_dir / "front_end"
       end
 
       c.store_required_path(
@@ -146,8 +153,15 @@ class Brut::Config
       c.store_required_path(
         "back_end_src_dir",
         "Path to the root of the back end layer for the app"
-      ) do |project_root|
-        project_root / "app" / "src" / "back_end"
+      ) do |app_src_dir|
+        app_src_dir / "back_end"
+      end
+
+      c.store_ensured_path(
+        "tests_dir",
+        "Path to root of where all tests are"
+      ) do |app_src_dir|
+        app_src_dir / "tests"
       end
 
       c.store_ensured_path(

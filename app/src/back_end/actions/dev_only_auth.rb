@@ -4,15 +4,18 @@ class Actions::DevOnlyAuth < AppAction
     if Brut.container.project_env.production?
       return { error: "Login failed" }
     end
+    result = self.check_result
     account = DataModel::Account[email: email]
     if account
-      return { account: account }
+      result.save_context(account: account)
+    else
+      result.constraint_violation!(field: :email, key: :no_account)
     end
-    { error: "'#{email}' has no account" }
+    result
   end
 
-  def call(omniauth_hash)
-    self.check(omniauth_hash)
+  def call(email)
+    self.check(email)
   end
 end
 

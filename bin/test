@@ -1,8 +1,132 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ruby
 
-set -e
-RACK_ENV=test
-export RACK_ENV
-echo "[ bin/test ] Not implemented"
-exit 1
+ENV["RACK_ENV"] = "test"
+
+require_relative "brut_cli"
+
+require "optparse"
+require "pathname"
+require "fileutils"
+
+def run(options,tests_to_run)
+  glob = if tests_to_run.empty?
+           Brut.container.tests_dir.to_s + "/**/*.test.rb"
+         else
+           tests_to_run
+         end
+  test_files = Dir[*glob].map { |file|
+    Pathname(file).expand_path
+  }
+  if options[:list_tests]
+    puts test_files
+    return
+  end
+
+  test_command = TestCommand.new(
+    files: test_files,
+    libs: [
+      Brut.container.app_src_dir,
+      Brut.container.project_root / "lib",
+    ]
+  )
+  command = test_command.to_s
+  system("bin/db rebuild --app-env=test")
+  Bundler.with_unbundled_env do
+    exec(command)
+  end
+end
+
+def generate(options,files)
+  files_to_tests = files.map { |file|
+    Pathname(file).expand_path
+  }.map { |file|
+    extname = file.extname
+    test_file = file.dirname / (file.basename(extname).to_s + ".test.rb")
+
+    [
+      file,
+      Brut.container.tests_dir / test_file.relative_path_from(Brut.container.app_src_dir)
+    ]
+  }.to_h
+  files_to_tests.each do |file,test|
+    file_relative = file.relative_path_from(Brut.container.project_root)
+    test_relative = test.relative_path_from(Brut.container.project_root)
+    puts "#{file_relative} should be tested in #{test_relative}"
+    if File.exist?(test)
+      puts "#{test_relative} exists"
+    else
+      class_line = File.read(file).split(/\n/).grep(/^class /)[0]
+      describe = if class_line
+                   class_line.gsub(/^class /,"").gsub(/\s.*$/,"")
+                 else
+                   "\"#{file_relative}\""
+                 end
+
+      FileUtils.mkdir_p test.dirname
+      puts "Creating #{test_relative}..."
+      File.open(test,"w") do |io|
+        io.puts %{require "tests/app_test"}
+        io.puts
+        io.puts "describe #{describe} do"
+        io.puts
+        io.puts "end"
+      end
+    end
+  end
+end
+
+class TestCommand
+  def initialize(files:, libs:)
+    @files = files
+    @libs = libs
+  end
+
+  def to_s
+    code = (
+      @files.map { |file|
+        %(require "#{file}")
+      } + [
+        "Minitest.autorun"
+      ]
+    ).join("; ")
+
+    args  = ["ruby"]
+    args << "-I#{@libs.join File::PATH_SEPARATOR}" unless @libs.empty?
+    args << "-e"
+    args << "'#{code}'"
+    args << "--"
+
+    args.join(" ")
+  end
+end
+
+
+def parse_options
+  options = {
+    list_tests: false,
+  }
+  OptionParser.new do |parser|
+    parser.banner = %{Usage: #{$0} [options] [test_files...]
+
+OPTIONS
+}
+    parser.on("--list-tests", "If specified, the tests to run are listed, but nothing is executed") do |value|
+      options[:list_tests] = value
+    end
+
+    parser.on("--generate", "Will generate an empty test for the arguments given, if they don't exist") do |value|
+      options[:generate] = value
+    end
+
+  end.parse!
+  options
+end
+
+options = parse_options
+
+if (options[:generate])
+  generate(options,ARGV)
+else
+  run(options,ARGV)
+end
 

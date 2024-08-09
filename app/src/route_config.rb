@@ -52,8 +52,8 @@ class AdrApp < Sinatra::Base
     in account:
       session["user_id"] = account.external_id
       redirect to("/adrs")
-    in error:
-      page Pages::Home.new(error: error)
+    else
+      page Pages::Home.new(check_result: result)
     end
   end
 
@@ -64,8 +64,8 @@ class AdrApp < Sinatra::Base
     in account:
       session["user_id"] = account.external_id
       redirect to("/adrs")
-    in error:
-      page Pages::Home.new(error: error)
+    else
+      page Pages::Home.new(check_result: result)
     end
   end
 

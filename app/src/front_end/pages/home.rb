@@ -1,7 +1,7 @@
 class Pages::Home < AppPage
-  attr_reader :info, :error
-  def initialize(info: nil, error: nil)
+  attr_reader :info, :check_result
+  def initialize(info: nil, check_result: nil)
     @info = info
-    @error = error
+    @check_result = check_result
   end
 end
