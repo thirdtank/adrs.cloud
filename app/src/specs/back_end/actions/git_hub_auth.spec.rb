@@ -1,6 +1,7 @@
-require "tests/app_test"
+require "spec_helper"
+require "back_end/actions/app_action"
 
-describe Actions::GitHubAuth do
+RSpec.describe Actions::GitHubAuth do
   describe "#check" do
     describe "valid payload" do
       describe "email is not in database" do
@@ -13,14 +14,14 @@ describe Actions::GitHubAuth do
             }
           }
           result = Actions::GitHubAuth.new.check(hash)
-          refute result.can_call?
+          expect(result.can_call?).to eq(false)
           found_error = false
           result.each_violation do |object,field,key,context|
             if key == :no_account
               found_error = true
             end
           end
-          assert found_error
+          expect(found_error).to eq(true)
         end
       end
       describe "email is in the database" do
@@ -34,26 +35,26 @@ describe Actions::GitHubAuth do
             }
           }
           result = Actions::GitHubAuth.new.check(hash)
-          assert result.can_call?
-          assert_equal result[:account],account
+          expect(result.can_call?).to eq(true)
+          expect(result[:account]).to eq(account)
         end
       end
     end
     describe "invalid payload" do
       it "raises on wrong provider" do
-        assert_raises do
+        expect {
           Actions::GitHubAuth.new.check({ "provider" => "twitter" })
-        end
+        }.to raise_error
       end
       it "raises on missing uid" do
-        assert_raises do
+        expect {
           Actions::GitHubAuth.new.check({ "provider" => "github", "info" => { "email" => "a@a.com" } })
-        end
+        }.to raise_error
       end
       it "raises on missing email" do
-        assert_raises do
+        expect {
           Actions::GitHubAuth.new.check({ "provider" => "github", "uid" => 99 })
-        end
+        }.to raise_error
       end
     end
   end

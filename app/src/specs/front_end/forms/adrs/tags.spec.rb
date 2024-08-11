@@ -1,10 +1,8 @@
-require "tests/app_test"
 require "front_end/forms/app_form"
 
-describe Forms::Adrs::Tags do
+RSpec.describe Forms::Adrs::Tags do
   it "is new by default" do
     form = Forms::Adrs::Tags.new
-    assert form.new?
+    expect(form.new?).to eq(true)
   end
-
 end

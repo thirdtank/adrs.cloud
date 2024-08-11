@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gem "sinatra", require: false
 
 # We need the namespace contrib
-gem "sinatra-contrib"
+gem "sinatra-contrib", require: false
 
 # Sinatra doesn't include rackup I guess
 gem "rackup"
@@ -35,6 +35,9 @@ gem "rexml"
 
 # Redcarpet parses and renders Markdown
 gem "redcarpet"
+
+# Uses RSpec for testing
+gem "rspec"
 
 # We log using the semantic_logger gem for more flexibility
 # with what goes in logs and how they work

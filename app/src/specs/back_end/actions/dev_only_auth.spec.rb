@@ -1,12 +1,12 @@
-require "tests/app_test"
+require "spec_helper"
 require "back_end/actions/app_action"
 
-describe Actions::DevOnlyAuth do
+RSpec.describe Actions::DevOnlyAuth do
   describe "#check" do
     describe "email is not in the database" do
       it "returns an error" do
         result = Actions::DevOnlyAuth.new.check("non-existent@example.com")
-        refute result.can_call?
+        expect(result.can_call?).to eq(false)
         found_error = false
         result.each_violation do |object,field,key,context|
           if field == :email
@@ -15,15 +15,15 @@ describe Actions::DevOnlyAuth do
             end
           end
         end
-        assert found_error
+        expect(found_error).to eq(true)
       end
     end
     describe "email is in the database" do
       it "returns the account" do
         account = DataModel::Account.create(email: "existent@example.com", created_at: Time.now)
         result = Actions::DevOnlyAuth.new.check(account.email)
-        assert result.can_call?
-        assert_equal result[:account],account
+        expect(result.can_call?).to eq(true)
+        expect(result[:account]).to eq(account)
       end
     end
   end
