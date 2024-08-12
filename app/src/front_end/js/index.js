@@ -45,7 +45,11 @@ class TagEditor extends BaseCustomElement {
       view.querySelectorAll("button").forEach( (button) => button.addEventListener("click", this.#openEditor) )
     }
     if (edit) {
-      edit.querySelectorAll("button[type=reset]").forEach( (button) => button.addEventListener("click", this.#dismissEditor) )
+      const resetButtons = edit.querySelectorAll("button[type=reset]")
+      if (resetButtons.length == 0) {
+        this.logger.info("Did not find any reset buttons in %o", edit)
+      }
+      resetButtons.forEach( (button) => button.addEventListener("click", this.#dismissEditor) )
     }
     
     if (this.#editable) {

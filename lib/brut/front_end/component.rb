@@ -1,4 +1,5 @@
 require "json"
+require_relative "template"
 
 module Brut::FrontEnd::Components
   autoload(:Input,"brut/front_end/components/input")
@@ -64,12 +65,8 @@ class Brut::FrontEnd::Component
       csrf_token: csrf_token
     }
     erb_file = self.component_locator.locate(self.template_name)
-    template = ERB.new(File.read(erb_file))
-    template.location = [ erb_file.to_s, 1 ]
-
-    scope = self.binding_scope
-    scope.local_variable_set(:csrf_token, csrf_token)
-    template.result(scope)
+    template = Brut::FrontEnd::Template.new(erb_file)
+    Brut::FrontEnd::Template::SafeString.from_string(template.render(self, csrf_token: csrf_token))
   ensure
     @rendering_context = {}
   end
@@ -87,13 +84,13 @@ class Brut::FrontEnd::Component
     # HTML template and render itself.
     def component(component_instance)
       call_render = CallRenderInjectingInfo.new(component_instance)
-      call_render.call_render(**@rendering_context)
+      Brut::FrontEnd::Template::SafeString.from_string(call_render.call_render(**@rendering_context))
     end
 
     # Inline an SVG into the page.
     def svg(svg)
       svg_file = self.svg_locator.locate(svg)
-      File.read(svg_file)
+      Brut::FrontEnd::Template::SafeString.from_string(File.read(svg_file))
     end
 
     # Given a public path to an asset—the value you'd use in HTML—return
