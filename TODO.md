@@ -1,29 +1,29 @@
 # One Week Sprint
 
-     1 - Convert to tile/erubi
-         DONE: ERB not being used + HTML escaping confirmed
+CHECK 1 - Convert to tile/erubi
+          DONE: ERB not being used + HTML escaping confirmed
 
-     2 - Search by tags
-         DONE: clicking a tag in any context shows the ADR list by tags
+      2 - Search by tags
+          DONE: clicking a tag in any context shows the ADR list by tags
 
-     3 - Save draft ajaxily
-         DONE: you can click save draft and the draft is saved w/out a page
-               reload, but with plenty of obvious UX
+      3 - Save draft ajaxily
+          DONE: you can click save draft and the draft is saved w/out a page
+                reload, but with plenty of obvious UX
 
-     4 - Org/Team concept
-         Needs some refinement as to what this is
+      4 - Org/Team concept
+          Needs some refinement as to what this is
 
-         * Each account/email is part of a team
-         * Team is the level of access to ADRs
-         * Team has a billing contact
-         * Members can have admin access to the team
-         * Admin access allows invites and granting/revocation of admin access
-         * This must be very lightly designed/flexible
+          * Each account/email is part of a team
+          * Team is the level of access to ADRs
+          * Team has a billing contact
+          * Members can have admin access to the team
+          * Admin access allows invites and granting/revocation of admin access
+          * This must be very lightly designed/flexible
 
-         Framework juice: codify notion of permissions a bit more
+          Framework juice: codify notion of permissions a bit more
 
-     5 - Functioning Sign Up
-         DONE: A team can be created
+      5 - Functioning Sign Up
+          DONE: A team can be created
 
 
 
