@@ -36,7 +36,9 @@ RSpec.configure do |config|
     config.default_formatter = "doc"
   end
 
-  config.profile_examples = 10
+  if ENV["RSPEC_PROFILE_EXAMPLES"]
+    config.profile_examples = ENV["RSPEC_PROFILE_EXAMPLES"].to_i
+  end
 
   config.order = :random
 

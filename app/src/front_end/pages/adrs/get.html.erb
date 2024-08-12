@@ -2,7 +2,7 @@
   <div role="none" class="w-quarter"></div>
   <article class="w-50 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
     <div class="pa-3 bg-gray-800 bb bc-gray-700">
-      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; Back</a>
+      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; View All</a>
     </div>
     <% if draft? %>
       <aside class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
@@ -112,7 +112,7 @@
         </div>
       </adr-tag-editor-view>
       <adr-tag-editor-edit class="dn">
-        <form action="/adrs/tags" method="post"
+        <form action="/adrs_tags" method="post"
               class="mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white">
           <%= csrf_token_field %>
           <input type="hidden" name="external_id" value="<%= adr.external_id %>">

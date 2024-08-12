@@ -3,7 +3,7 @@
 CHECK 1 - Convert to tile/erubi
           DONE: ERB not being used + HTML escaping confirmed
 
-      2 - Search by tags
+CHECK 2 - Search by tags
           DONE: clicking a tag in any context shows the ADR list by tags
 
       3 - Save draft ajaxily

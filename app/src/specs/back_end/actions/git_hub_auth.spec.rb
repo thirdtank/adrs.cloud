@@ -44,17 +44,17 @@ RSpec.describe Actions::GitHubAuth do
       it "raises on wrong provider" do
         expect {
           Actions::GitHubAuth.new.check({ "provider" => "twitter" })
-        }.to raise_error
+        }.to raise_error(/asked to process/)
       end
       it "raises on missing uid" do
         expect {
           Actions::GitHubAuth.new.check({ "provider" => "github", "info" => { "email" => "a@a.com" } })
-        }.to raise_error
+        }.to raise_error(/did not get a uid/)
       end
       it "raises on missing email" do
         expect {
           Actions::GitHubAuth.new.check({ "provider" => "github", "uid" => 99 })
-        }.to raise_error
+        }.to raise_error(/did not get an email/)
       end
     end
   end

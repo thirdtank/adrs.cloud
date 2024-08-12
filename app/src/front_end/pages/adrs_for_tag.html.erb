@@ -1,0 +1,74 @@
+<div class="pa-3 bg-gray-800 bb bc-gray-700">
+  <a class="f-2 fw-5 blue-400" href="/adrs">&larr; View All</a>
+</div>
+<section class="bg-blue-900 pt-3 pb-4 shadow-1">
+  <h1 class="flex items-center justify-center gap-2">ADRS tagged <%= component(Components::Adrs::Tag.new(tag: tag)) %></h1>
+  <h2 class="tc">Accepted</h2>
+  <% if accepted_adrs.any? %>
+    <table class="collapse w-60 mh-auto">
+      <thead>
+        <tr>
+          <th class="tl pa-2 fw-5 bb bc-2">Name</th>
+          <th class="tl pa-2 fw-5 bb bc-2">Accepted On</th>
+          <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% accepted_adrs.each do |adr| %>
+        <tr>
+          <td class="w-60 pa-2 lh-copy f-3 va-middle">
+            <%= adr.title %>
+          </td>
+          <td class="w-20 pa-2 ws-nowrap va-middle">
+            <%= adr.accepted_at %>
+          </td>
+          <td class="w-20 pa-2 tr va-middle">
+            <nav class="flex items-baseline gap-2 mv-2">
+              <a class="blue-400" href="<%= adr_path(adr) %>">View</a>
+            </nav>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="tc i">None</p>
+  <% end %>
+  <h2 class="tc">Drafts</h2>
+  <% if draft_adrs.any? %>
+    <table class="collapse w-60 mh-auto">
+      <thead>
+        <tr>
+          <th class="tl pa-2 fw-5 bb bc-2">Name</th>
+          <th class="tl pa-2 fw-5 bb bc-2">Created On</th>
+          <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% draft_adrs.each do |adr| %>
+        <tr>
+          <td class="w-60 pa-2 lh-copy f-3 va-middle">
+            <%= adr.title %>
+            <% if adr.refines_adr %>
+            <small class="db">
+              refines
+              “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+            </small>
+            <% end %>
+          </td>
+          <td class="w-20 pa-2 ws-nowrap va-middle">
+            <%= adr.created_at %>
+          </td>
+          <td class="w-20 pa-2 va-middle">
+            <nav class="flex items-center gap-3 mv-2">
+              <a class="blue-400 ws-nowrap" href="<%= edit_adr_path(adr) %>">Edit Draft</a>
+            </nav>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="tc i">None</p>
+  <% end %>
+</section>

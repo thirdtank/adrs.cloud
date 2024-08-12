@@ -10,6 +10,8 @@ Somehow: put it in the session, but make sure it's cleared after the page is don
 
 ## Converting rich types in DB to and from strings needed for front-end
 
+## SQL/Data Layer is nowhere near as ergonomic as Active Record
+
 ## Actions have a lot of "is the person logged in allowed to access this"
 
 * check vs call concept can help here

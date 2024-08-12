@@ -73,6 +73,15 @@ class AdrApp < Sinatra::Base
     page Pages::Adrs.new(adrs: @account.adrs)
   end
 
+  get "/adr_tags/:tag" do
+    tag = params[:tag]
+    page Pages::AdrsForTag.new(
+      tag: tag,
+      adrs: Actions::Adrs::SearchByTag.new.call(account: @account, tag: tag)
+    )
+  end
+
+
   get "/adrs/new" do
     page Pages::Adrs::New.new(form: Forms::Adrs::Draft.new)
   end
@@ -98,7 +107,7 @@ class AdrApp < Sinatra::Base
     end
   end
 
-  post "/adrs/tags" do
+  post "/adr_tags" do
     adr_tags = Forms::Adrs::Tags.new(params)
     process_form form: adr_tags,
                  action: Actions::Adrs::UpdateTags.new,

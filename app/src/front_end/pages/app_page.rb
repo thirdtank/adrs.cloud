@@ -6,6 +6,7 @@ end
 
 require_relative "home"
 require_relative "adrs"
+require_relative "adrs_for_tag"
 require_relative "adrs/new"
 require_relative "adrs/get"
 require_relative "adrs/edit"
