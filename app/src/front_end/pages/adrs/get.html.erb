@@ -112,7 +112,7 @@
         </div>
       </adr-tag-editor-view>
       <adr-tag-editor-edit class="dn">
-        <form action="/adrs_tags" method="post"
+        <form action="/adr_tags" method="post"
               class="mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white">
           <%= csrf_token_field %>
           <input type="hidden" name="external_id" value="<%= adr.external_id %>">

@@ -5,7 +5,7 @@ class Actions::Adrs::UpdateTags < AppAction
     if !adr
       raise "account does not have an ADR with that ID"
     end
-    adr.update(tags: tag_serializer.from_string(tags))
+    adr.update(tags: tag_serializer.from_string(form.tags))
   end
 
 private
