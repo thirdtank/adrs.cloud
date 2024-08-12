@@ -6,11 +6,14 @@ CHECK 1 - Convert to tile/erubi
 CHECK 2 - Search by tags
           DONE: clicking a tag in any context shows the ADR list by tags
 
-      3 - Save draft ajaxily
+      3 - Auto-include CSRF on all forms somehow
+          DONE: creating a form by default includes CSRF
+
+      4 - Save draft ajaxily
           DONE: you can click save draft and the draft is saved w/out a page
                 reload, but with plenty of obvious UX
 
-      4 - Org/Team concept
+      5 - Org/Team concept
           Needs some refinement as to what this is
 
           * Each account/email is part of a team
@@ -22,7 +25,7 @@ CHECK 2 - Search by tags
 
           Framework juice: codify notion of permissions a bit more
 
-      5 - Functioning Sign Up
+      6 - Functioning Sign Up
           DONE: A team can be created
 
 
