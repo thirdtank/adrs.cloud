@@ -25,7 +25,7 @@ class Pages::Adrs::Get < AppPage
 
   def markdown(field)
     value = "**#{field_text(field)}** #{adr.send(field)}"
-    Brut::FrontEnd::Template::SafeString.from_string(@markdown.render(value))
+    Brut::FrontEnd::Templates::HTMLSafeString.from_string(@markdown.render(value))
   end
 
   def refined_by_adrs

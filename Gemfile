@@ -39,9 +39,9 @@ gem "redcarpet"
 # Uses RSpec for testing
 gem "rspec"
 
-# We use tilt and ERUBI for html generation
+# We use tilt and Temple for html generation
 gem "tilt"
-gem "erubi"
+gem "temple"
 
 # We log using the semantic_logger gem for more flexibility
 # with what goes in logs and how they work

@@ -80,14 +80,14 @@
     <% if editable? %>
         <a class="f-2 fw-5 blue-400" href="<%= edit_adr_path(adr) %>">Edit</a>
     <% elsif accepted_and_in_effect? %>
-        <form action="/replaced_adrs" method="post">
-          <input type="hidden" name="replaced_adr_external_id" value="<%= adr.external_id %>">
-          <%= component(Components::Button.new(size: "small", color: "red", label: "Replace", icon: "change-icon")) %>
-        </form>
-        <form action="/refined_adrs" method="post">
-          <input type="hidden" name="refines_adr_external_id" value="<%= adr.external_id %>">
-          <%= component(Components::Button.new(size: "small", color: "purple", label: "Refine", icon: "adjust-control-icon")) %>
-        </form>
+      <%= form_tag(action: "/replaced_adrs", method: "post") do %>
+        <input type="hidden" name="replaced_adr_external_id" value="<%= adr.external_id %>">
+        <%= component(Components::Button.new(size: "small", color: "red", label: "Replace", icon: "change-icon")) %>
+      <% end %>
+      <%= form_tag(action: "/refined_adrs", method: "post") do %>
+        <input type="hidden" name="refines_adr_external_id" value="<%= adr.external_id %>">
+        <%= component(Components::Button.new(size: "small", color: "purple", label: "Refine", icon: "adjust-control-icon")) %>
+      <% end %>
     <% end %>
     </nav>
     <adr-tag-editor show-warnings="editor">
@@ -112,9 +112,9 @@
         </div>
       </adr-tag-editor-view>
       <adr-tag-editor-edit class="dn">
-        <form action="/adr_tags" method="post"
-              class="mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white">
-          <%= csrf_token_field %>
+        <%= form_tag(action: "/adr_tags",
+                     method: "post",
+                     class: "mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white") do %>
           <input type="hidden" name="external_id" value="<%= adr.external_id %>">
           <label class="flex flex-column gap-1 w-100">
             <div class="textarea-container">
@@ -134,7 +134,7 @@
                                                  label: "Save Tags",
                                                  icon:  "tag-line-icon")) %>
           </div>
-        </form>
+        <% end %>
       </adr-tag-editor-edit>
     </adr-tag-editor>
   </div>

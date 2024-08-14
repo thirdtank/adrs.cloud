@@ -1,11 +1,19 @@
 module Brut::SinatraHelpers
   def self.included(sinatra_app)
     sinatra_app.set :logging, false
+    sinatra_app.before do
+      Thread.current[:rendering_context] = {
+        csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
+      }
+    end
+    sinatra_app.after do
+      Thread.current[:rendering_context] = nil
+    end
   end
 
   def page(page_instance)
     call_render = CallRenderInjectingInfo.new(page_instance)
-    call_render.call_render(csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"]))
+    call_render.call_render(**Thread.current[:rendering_context])
   end
 
   def process_form(form:, action:, **rest)

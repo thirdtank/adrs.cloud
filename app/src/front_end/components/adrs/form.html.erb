@@ -1,15 +1,16 @@
 <brut-form>
-<form action="/adrs" method="post" class="flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-50">
-  <%= csrf_token_field %>
+  <%= form_tag(action:"/adrs",
+               method:"post",
+               class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-50") do %>
   <% if form.external_id %>
     <input type="hidden" name="external_id" value="<%= form.external_id %>">
   <% end %>
   <%= component Components::TextField.new(
-        label: "Title",
-        form: form,
-        input_name: "title",
-        placeholder: "e.g. We Should Write Tests",
-        autofocus: true) %>
+    label: "Title",
+    form: form,
+    input_name: "title",
+    placeholder: "e.g. We Should Write Tests",
+    autofocus: true) %>
   <div class="flex items-center gap-2 justify-between">
     <div class="w-100">
       <%= adr_textarea(name: "context", label: "Use case or user story", prefix: "In the context of") %>
@@ -82,6 +83,6 @@
     <%= accept_button %>
   </div>
   <a href="/adrs" class="red-300"><span role="none">&larr;</span> Nevermind</a>
-</form>
+<% end %>
 <%= component(Components::ConfirmationDialog.new) %>
 </brut-form>

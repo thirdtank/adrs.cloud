@@ -2,6 +2,7 @@ require "json"
 require_relative "template"
 
 module Brut::FrontEnd::Components
+  autoload(:Form,"brut/front_end/components/form")
   autoload(:Input,"brut/front_end/components/input")
   autoload(:Inputs,"brut/front_end/components/input")
 end
@@ -50,25 +51,18 @@ class Brut::FrontEnd::Component
     end
   end
 
-  def initialize
-    @rendering_context = {}
-  end
-
   # The core method of a component. This is expected to return
   # a string to be sent as a response to an HTTP request.
   #
   # This implementation uses the associated template for the component
   # and sends it through ERB using this component as
   # the binding.
-  def render(csrf_token: nil)
-    @rendering_context = {
-      csrf_token: csrf_token
-    }
+  def render
     erb_file = self.component_locator.locate(self.template_name)
     template = Brut::FrontEnd::Template.new(erb_file)
-    Brut::FrontEnd::Template::SafeString.from_string(template.render(self, csrf_token: csrf_token))
-  ensure
-    @rendering_context = {}
+    Brut::FrontEnd::Templates::HTMLSafeString.from_string(
+      template.render_template(self)
+    )
   end
 
   # Helper methods that subclasses can use.
@@ -84,22 +78,24 @@ class Brut::FrontEnd::Component
     # HTML template and render itself.
     def component(component_instance)
       call_render = CallRenderInjectingInfo.new(component_instance)
-      Brut::FrontEnd::Template::SafeString.from_string(call_render.call_render(**@rendering_context))
+      Brut::FrontEnd::Templates::HTMLSafeString.from_string(
+        call_render.call_render(**Thread.current[:rendering_context])
+      )
     end
 
     # Inline an SVG into the page.
     def svg(svg)
       svg_file = self.svg_locator.locate(svg)
-      Brut::FrontEnd::Template::SafeString.from_string(File.read(svg_file))
+      Brut::FrontEnd::Templates::HTMLSafeString.from_string(File.read(svg_file))
     end
 
     # Given a public path to an asset—the value you'd use in HTML—return
     # the same value, but with any content hashes that are part of the filename.
     def asset_path(path) = self.asset_path_resolver.resolve(path)
 
-    # Renders a hidden form field containing the current CSRF token
-    def csrf_token_field
-      component(Brut::FrontEnd::Components::Inputs::CsrfToken.new)
+    # Render a form that should include CSRF protection.
+    def form_tag(**attributes,&block)
+      component(Brut::FrontEnd::Components::Form.new(**attributes,&block))
     end
   end
   include Helpers

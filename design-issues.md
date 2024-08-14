@@ -1,5 +1,19 @@
 # Design Issues
 
+## CSRF token being passed around is a nightmare of nested calls
+
+Specific problem: A component needs access to the current csrf token when rendering, and
+                  passing it through the various call chains is a nightmare
+
+General problem: is there cross-cutting information that is needed?  current user?
+
+Options:
+
+* A global per-request context
+  PROS: Easy
+  CONS: Creates a hidden input to methods
+
+
 ## Flash - temp data that can passed via a redirect
 
 Use case is: you want to redirect, but include a message or other info

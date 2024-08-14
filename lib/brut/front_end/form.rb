@@ -58,8 +58,8 @@ module Brut::FussyTypeEnforcment
   end
 end
 
-# A constrating, which is a wrapper for a key that represents a type of error, along with context about
-# the error.  A constraint knows if it s a client side constraint or not.
+# A constraint, which is a wrapper for a key that represents a type of error, along with context about
+# the error.  A constraint knows if it's a client side constraint or not.
 class Brut::FrontEnd::Forms::Constraint
 
   CLIENT_SIDE_KEYS = [
