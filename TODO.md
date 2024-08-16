@@ -6,7 +6,7 @@ CHECK 1 - Convert to tile/erubi
 CHECK 2 - Search by tags
           DONE: clicking a tag in any context shows the ADR list by tags
 
-      3 - Auto-include CSRF on all forms somehow
+CHECK 3 - Auto-include CSRF on all forms somehow
           DONE: creating a form by default includes CSRF
 
       4 - Save draft ajaxily

@@ -35,7 +35,6 @@ class CallRenderInjectingInfo
               end
       [ arg_name, args[arg_name] ]
     }.to_h
-    puts params.inspect
     @render_method.call(**params)
   end
 end

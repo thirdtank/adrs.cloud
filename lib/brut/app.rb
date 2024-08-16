@@ -48,7 +48,6 @@ class Brut::App
     project_root = Brut.container.project_root
     project_env = Brut.container.project_env
 
-                puts project_root / ".env.#{project_env.to_s}.local"
     Dotenv.load(project_root / ".env.#{project_env.to_s}",
                 project_root / ".env.#{project_env.to_s}.local")
 
