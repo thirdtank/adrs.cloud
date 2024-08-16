@@ -70,7 +70,7 @@ class AdrApp < Sinatra::Base
   end
 
   get "/adrs" do
-    page Pages::Adrs.new(adrs: @account.adrs)
+    page Pages::Adrs.new(adrs: @account.adrs, info_message: flash[:notice])
   end
 
   get "/adr_tags/:tag" do
@@ -86,24 +86,45 @@ class AdrApp < Sinatra::Base
     page Pages::Adrs::New.new(form: Forms::Adrs::Draft.new)
   end
 
-  get "/adrs/:id" do
-    page Pages::Adrs::Get.new(adr: DataModel::Adr[account_id: @account.id, external_id: params[:id]])
-  end
-
-  get "/adrs/:id/edit" do
-    page Pages::Adrs::Edit.new(adr: DataModel::Adr[account_id: @account.id, external_id: params[:id]])
-  end
-
   post "/adrs" do
     draft_adr = Forms::Adrs::Draft.new(params)
     result = process_form form: draft_adr,
-                          action: Actions::Adrs::Draft.new,
+                          action: Actions::Adrs::NewDraft.new,
                           account: @account
     case result
     in Forms::Adrs::Draft if result.invalid?
       page Pages::Adrs::New.new(form: draft_adr)
-    else
-      redirect to("/adrs")
+    in adr:
+      flash[:notice] = :adr_created
+      redirect to("/adrs/#{adr.external_id}/edit")
+    end
+  end
+
+  get "/adrs/:external_id" do
+    page Pages::Adrs::Get.new(
+      adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
+      info_message: flash[:notice]
+    )
+  end
+
+  get "/adrs/:external_id/edit" do
+    page Pages::Adrs::Edit.new(
+      adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
+      updated_message: flash[:notice]
+    )
+  end
+
+  post "/adrs/:external_id" do
+    draft_adr = Forms::Adrs::Draft.new(params)
+    result = process_form form: draft_adr,
+                          action: Actions::Adrs::EditDraft.new,
+                          account: @account
+    case result
+    in Forms::Adrs::Draft if result.invalid?
+      page Pages::Adrs::Edit.new(adr: result.server_side_context[:adr], form: draft_adr)
+    in adr:
+      flash[:notice] = :adr_updated
+      redirect to("/adrs/#{adr.external_id}/edit")
     end
   end
 
@@ -122,10 +143,11 @@ class AdrApp < Sinatra::Base
                           account: @account
     case result
     in Forms::Adrs::Draft if result.invalid?
-      page Pages::Adrs::Edit.new(adr: DataModel::Adr[account_id: @account.id, external_id: form.external_id],
+      page Pages::Adrs::Edit.new(adr: result.server_side_context[:adr],
                                  error_message: "ADR could not be accepted",
                                  form: form)
     in adr:
+      flash[:notice] = :adr_accepted
       redirect to("/adrs/#{adr.external_id}")
     end
   end
@@ -135,6 +157,7 @@ class AdrApp < Sinatra::Base
     process_form form: draft_adr,
                  action: Actions::Adrs::Reject.new,
                  account: @account
+    flash[:notice] = :adr_rejected
     redirect to("/adrs")
   end
 

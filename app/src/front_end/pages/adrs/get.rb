@@ -5,10 +5,11 @@ class Pages::Adrs::Get < AppPage
     end
   end
 
-  attr_reader :adr
+  attr_reader :adr, :info_message
 
-  def initialize(adr:)
+  def initialize(adr:, info_message: nil)
     @adr = adr
+    @info_message = info_message
     @markdown = Redcarpet::Markdown.new(
       Redcarpet::Render::HTML.new(
         filter_html: true,

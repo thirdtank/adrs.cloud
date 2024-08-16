@@ -1,10 +1,26 @@
 class Components::Adrs::Form < AppComponent
-  attr_reader :form
-  def initialize(form, action_label)
+  attr_reader :form, :action_label, :form_action
+  def initialize(form, action:)
     @form = form
-    @action_label = action_label
+    case action
+    when :new
+      @action_label = "Save Draft"
+      @form_action  = "/adrs"
+    when :edit
+      @action_label = "Update Draft"
+      @form_action  = "/adrs/#{@form.external_id}"
+    when :replace
+      @action_label = "Save Replacement Draft"
+      @form_action  = "/adrs"
+    when :refine
+      @action_label = "Save Refining Draft"
+      @form_action  = "/adrs"
+    else
+      raise "Action '#{action}' is not known"
+    end
   end
-  def action_label = @action_label
+
+
   def adr_textarea(name:, prefix:, label:)
     component(Components::Adrs::Textarea.new(form: @form, input_name: name, prefix: prefix, label: label))
   end

@@ -1,6 +1,9 @@
-class Actions::Adrs::Draft < AppAction
+class Actions::Adrs::NewDraft < AppAction
 
   def check(form:, account:)
+    if form.external_id
+      raise "#{self.class.name} was attempted on an existing ADR with external id #{form.external_id}"
+    end
     result = self.check_result
     if form.title.to_s.strip !~ /\s+/
       result.constraint_violation!(object: form, field: :title, key: :not_enough_words, context: 2)
@@ -13,16 +16,7 @@ class Actions::Adrs::Draft < AppAction
     if !result.can_call?
       return result
     end
-
-    if form.external_id
-      adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
-      if !adr
-        raise "account does not have an ADR with that ID"
-      end
-    else
-      adr = DataModel::Adr.new(created_at: Time.now)
-    end
-
+    adr = DataModel::Adr.new(created_at: Time.now)
 
     refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: account.id]
     AppDataModel.transaction do

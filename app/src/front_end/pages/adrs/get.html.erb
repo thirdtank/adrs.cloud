@@ -1,3 +1,8 @@
+<% if info_message %>
+  <aside class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+    <%= info_message %>
+  </aside>
+<% end %>
 <div class="flex items-start gap-3 justify-center">
   <div role="none" class="w-quarter"></div>
   <article class="w-50 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">

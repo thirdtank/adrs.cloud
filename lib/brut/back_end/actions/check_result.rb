@@ -1,5 +1,5 @@
 class Brut::BackEnd::Actions::CheckResult
-  attr_reader :constraint_violations
+  attr_reader :constraint_violations, :context
   def initialize
     @constraint_violations = {}
     @context = {}
@@ -30,7 +30,15 @@ class Brut::BackEnd::Actions::CheckResult
     @context = @context.merge(hash)
   end
 
-  def [](key_in_context) = @context.fetch(key_in_context)
+  def [](key_in_context)
+    @context.fetch(key_in_context)
+  rescue KeyError => ex
+    raise KeyError.new(
+      "Context did not contain '#{key_in_context}' (#{key_in_context.class}). Context has these keys: #{@context.keys.join(',')}",
+      receiver: ex.receiver,
+      key: ex.key)
+  end
+
 
   def can_call? =  self.constraint_violations.empty?
   def invalid?  = !self.can_call?

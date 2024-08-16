@@ -298,7 +298,6 @@ class Brut::FrontEnd::Form
   # Create an instance of this form, optionally initialized with
   # the given values for its params.
   def initialize(params = nil)
-    @new = params_empty?(params)
     params ||= {}
     unknown_params = params.keys.map(&:to_s).reject { |key|
       self.class.input_definitions.key?(key)
@@ -306,10 +305,21 @@ class Brut::FrontEnd::Form
     if unknown_params.any?
       logger.warn "Ignoring unknown params", keys: unknown_params
     end
+    @new = params_empty?(params.except(*unknown_params))
     @inputs = self.class.input_definitions.map { |name,input_definition|
       input = input_definition.make_input(value: params[name] || params[name.to_sym])
       [ name, input ]
     }.to_h
+  end
+
+  # Set context from a server call that may be needed by the front-end
+  def server_side_context=(context)
+    @context = context || {}
+  end
+
+  # Retreive any server-side context that was provided. Never returns nil.
+  def server_side_context
+    @context || {}
   end
 
   # Returns true if this form represents a new, empty, untouched form. This is

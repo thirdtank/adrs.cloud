@@ -1,7 +1,10 @@
 class Pages::Adrs < AppPage
 
-  def initialize(adrs:)
-    @adrs = adrs
+  attr_reader :info_message
+
+  def initialize(adrs:, info_message: nil)
+    @adrs         = adrs
+    @info_message = info_message
   end
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)
   def replaced_adrs = @adrs.select(&:replaced?).sort_by { |adr|
@@ -9,4 +12,5 @@ class Pages::Adrs < AppPage
   }
   def draft_adrs    = @adrs.reject(&:accepted?).reject(&:rejected?).sort_by(&:created_at)
   def rejected_adrs = @adrs.select(&:rejected?).sort_by(&:rejected_at)
+
 end

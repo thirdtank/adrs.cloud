@@ -5,10 +5,26 @@ module Brut::SinatraHelpers
       Thread.current[:rendering_context] = {
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
       }
+      session[:_flash] ||= {
+        age: 0,
+        messages: {}
+      }
     end
     sinatra_app.after do
       Thread.current[:rendering_context] = nil
+      session[:_flash][:age] += 1
+      if session[:_flash][:age] > 2
+        session[:_flash] = {
+          age: 0,
+          messages: {}
+
+        }
+      end
     end
+  end
+
+  def flash
+    session[:_flash][:messages]
   end
 
   def page(page_instance)
@@ -33,6 +49,7 @@ module Brut::SinatraHelpers
       if form.valid?
         raise "WTF: Form is valid??!?!?"
       end
+      form.server_side_context = result.context
       form
     else
       result

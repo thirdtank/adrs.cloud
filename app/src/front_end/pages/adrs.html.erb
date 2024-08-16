@@ -1,3 +1,8 @@
+<% if info_message %>
+    <aside class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+      <%= info_message %>
+    </aside>
+  <% end %>
 <section class="bg-blue-900 pt-3 pb-4 shadow-1">
 <h1 class="tc">ADRS</h1>
 <h2 class="tc">Accepted</h2>
@@ -53,6 +58,11 @@
         <small class="db">
           refines
           “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+        </small>
+        <% elsif adr.proposed_to_replace_adr %>
+        <small class="db">
+          proposed to replace
+          “<a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>”
         </small>
         <% end %>
       </td>
