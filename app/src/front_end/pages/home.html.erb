@@ -17,10 +17,10 @@
     </aside>
   <% end %>
   <h3 class="tc flex flex-column gap-2">
-    <%= form_tag(action:"/auth/developer" method:"POST") do %>
+    <%= form_tag(action:"/auth/developer", method:"POST") do %>
       <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">Sneak Login!</button>
     <% end %>
-    <%= form_tag(action:"/auth/github" method:"POST") do %>
+    <%= form_tag(action:"/auth/github", method:"POST") do %>
       <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">GitHub Login!</button>
     <% end %>
   </h3>

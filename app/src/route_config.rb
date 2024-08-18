@@ -8,6 +8,8 @@ require "back_end/data_models/app_data_model"
 require "back_end/actions/app_action"
 require "front_end/forms/app_form"
 
+require "pp"
+
 class AdrApp < Sinatra::Base
 
   register Sinatra::Namespace
@@ -119,12 +121,16 @@ class AdrApp < Sinatra::Base
     result = process_form form: draft_adr,
                           action: Actions::Adrs::EditDraft.new,
                           account: @account
-    case result
-    in Forms::Adrs::Draft if result.invalid?
-      page Pages::Adrs::Edit.new(adr: result.server_side_context[:adr], form: draft_adr)
-    in adr:
-      flash[:notice] = :adr_updated
-      redirect to("/adrs/#{adr.external_id}/edit")
+    if request.xhr?
+      return 200
+    else
+      case result
+      in Forms::Adrs::Draft if result.invalid?
+        page Pages::Adrs::Edit.new(adr: result.server_side_context[:adr], form: draft_adr)
+      in adr:
+        flash[:notice] = :adr_updated
+        redirect to("/adrs/#{adr.external_id}/edit")
+      end
     end
   end
 

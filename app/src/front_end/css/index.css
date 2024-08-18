@@ -32,7 +32,15 @@
   background-color: rgb(from var(--mg-red-600) r g b / 20%);
 }
 
+.rotating {
+  animation: rotation 2s linear infinite;
+}
 
+@keyframes rotation {
+  100% {
+    transform: rotate(360deg);
+  }
+}
 /* Text fields */
 
 .text-field {
@@ -108,4 +116,46 @@ form[data-submitted] textarea:invalid ~ .text-field-error-label {
   font-size: var(--mg-fs-2);
   padding: var(--mg-sp-2);
   display: flex;
+}
+
+brut-ajax-submit[requesting] button,
+brut-ajax-submit[submitted] button {
+  animation-duration: 125ms;
+  animation-name: fade-out;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
+brut-ajax-submit [data-loading-animation],
+brut-ajax-submit [data-submitted-icon] {
+  animation-duration: 125ms;
+  animation-name: fade-out;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+brut-ajax-submit[requesting] [data-loading-animation] {
+  animation-composition: accumulate;
+  animation-duration: 125ms;
+  animation-name: fade-in;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in;
+}
+brut-ajax-submit[submitted] [data-submitted-icon] {
+  animation-duration: 125ms;
+  animation-name: fade-in;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in;
+}
+
+@keyframes fade-out {
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes fade-in {
+  100% {
+    opacity: 100%;
+    visibility: visible;
+  }
 }

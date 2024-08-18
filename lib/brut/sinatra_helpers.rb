@@ -1,6 +1,6 @@
 module Brut::SinatraHelpers
   def self.included(sinatra_app)
-    sinatra_app.set :logging, false
+    sinatra_app.set :logging, true
     sinatra_app.before do
       Thread.current[:rendering_context] = {
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])

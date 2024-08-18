@@ -20,6 +20,16 @@
 4. Add a longer title with at least two words, modify tags
    - Should save and take you to back to the edit page
 
+AJAX BEHAVIOR: if possible, the form is submitted via ajax:
+
+1. Button click -> Busy State
+2. Abort after XXX ms -> Submit request as normal
+3. If response.ok -> Saved State -> XXX ms -> Normal State
+4. If response not ok
+   if XXX ms -> submit request as normal
+   if 5xx -> retry
+   else -> submit request as normal allow browser to fail
+
 ## Reject Draft
 
 1. Select a draft

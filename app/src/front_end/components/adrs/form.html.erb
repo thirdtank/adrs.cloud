@@ -79,10 +79,20 @@
   <input type="hidden" name="replaced_adr_external_id" value="<%= form.replaced_adr_external_id %>">
   <div class="mt-2 flex gap-3 items-center justify-center">
     <%= reject_button %>
+    <brut-ajax-submit show-warnings="only-one" class="pos-relative">
     <%= component(Components::Button.new(size: "normal", color: "blue", label: action_label, icon: "edit-list-icon")) %>
+    <div data-loading-animation class="w-3 h-3 mh-auto mv-auto top-0 left-0 right-0 bottom-0 pos-absolute">
+      <div class="rotating">
+        <%= svg("loader-icon") %>
+      </div>
+    </div>
+    <div data-submitted-icon class="w-3 h-3 mh-auto mv-auto top-0 left-0 right-0 bottom-0 pos-absolute">
+      <%= svg("check-mark-icon") %>
+    </div>
+    </brut-ajax-submit>
     <%= accept_button %>
   </div>
-  <a href="/adrs" class="red-300"><span role="none">&larr;</span> Nevermind</a>
+  <a href="/adrs" class="red-300"><span role="none">&larr;</span> <%= go_back_label %></a>
 <% end %>
 <%= component(Components::ConfirmationDialog.new) %>
 </brut-form>

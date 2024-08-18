@@ -9,11 +9,15 @@ CHECK 2 - Search by tags
 CHECK 3 - Auto-include CSRF on all forms somehow
           DONE: creating a form by default includes CSRF
 
-      4 - Save draft ajaxily
+CHECK 4 - Save draft ajaxily
           DONE: you can click save draft and the draft is saved w/out a page
                 reload, but with plenty of obvious UX
 
-      5 - Org/Team concept
+      5 - Pass validation errors back from ajax submission
+          DONE: server-side validations are sent back exactly
+                as they are if submitted conventionally
+
+      6 - Org/Team concept
           Needs some refinement as to what this is
 
           * Each account/email is part of a team
@@ -25,7 +29,7 @@ CHECK 3 - Auto-include CSRF on all forms somehow
 
           Framework juice: codify notion of permissions a bit more
 
-      6 - Functioning Sign Up
+      7 - Functioning Sign Up
           DONE: A team can be created
 
 

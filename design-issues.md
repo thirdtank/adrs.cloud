@@ -13,14 +13,17 @@ Options:
   PROS: Easy
   CONS: Creates a hidden input to methods
 
-
-## Flash - temp data that can passed via a redirect
-
-Use case is: you want to redirect, but include a message or other info
-
-Somehow: put it in the session, but make sure it's cleared after the page is done rendering?
-
 ## Logic useful to front-end and back-end - where does it go?
+
+## Resourceful vs Wild West routing
+
+* The Rails way is overcomplex and not that useful
+* Wild west is maybe too loosey-goosey?
+
+## Form handling impedence mismatch: forms vs models
+
+A form is modeled as to its inputs.  But often the underlying model or models are needed.  How should these be looked up? Can they be
+done in a structured way?
 
 ## Converting rich types in DB to and from strings needed for front-end
 

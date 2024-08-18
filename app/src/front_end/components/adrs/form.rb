@@ -1,20 +1,24 @@
 class Components::Adrs::Form < AppComponent
-  attr_reader :form, :action_label, :form_action
+  attr_reader :form, :action_label, :form_action, :go_back_label
   def initialize(form, action:)
     @form = form
     case action
     when :new
-      @action_label = "Save Draft"
-      @form_action  = "/adrs"
+      @action_label  = "Save Draft"
+      @form_action   = "/adrs"
+      @go_back_label = "Nevermind"
     when :edit
-      @action_label = "Update Draft"
-      @form_action  = "/adrs/#{@form.external_id}"
+      @action_label  = "Update Draft"
+      @form_action   = "/adrs/#{@form.external_id}"
+      @go_back_label = "Back"
     when :replace
-      @action_label = "Save Replacement Draft"
-      @form_action  = "/adrs"
+      @action_label  = "Save Replacement Draft"
+      @form_action   = "/adrs"
+      @go_back_label = "Nevermind"
     when :refine
-      @action_label = "Save Refining Draft"
-      @form_action  = "/adrs"
+      @action_label  = "Save Refining Draft"
+      @form_action   = "/adrs"
+      @go_back_label = "Nevermind"
     else
       raise "Action '#{action}' is not known"
     end
