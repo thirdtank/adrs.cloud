@@ -23,6 +23,6 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
 
 private
 
-  def template_name = underscore(self.class.name).gsub(/^pages\//,"")
+  def template_name = RichString.new(self.class.name).underscorized.to_s.gsub(/^pages\//,"")
 end
 

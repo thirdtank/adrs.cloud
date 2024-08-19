@@ -9,6 +9,28 @@ class SubclassMustImplement < StandardError
   end
 end
 
+class RichString
+  def initialize(string)
+    @string = string.to_s
+  end
+
+  def underscorized
+    return self unless /[A-Z-]|::/.match?(@string)
+    word = @string.gsub("::", "/")
+    word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
+    word.tr!("-", "_")
+    word.downcase!
+    RichString.new(word)
+  end
+
+  def humanized
+    RichString.new(@string.tr("_"," "))
+  end
+
+  def to_s = @string
+  def to_str = self.to_s
+end
+
 class CallRenderInjectingInfo
   def initialize(object)
     @render_method = object.method(:render)

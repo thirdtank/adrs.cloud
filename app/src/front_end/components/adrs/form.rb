@@ -7,23 +7,28 @@ class Components::Adrs::Form < AppComponent
       @action_label  = "Save Draft"
       @form_action   = "/adrs"
       @go_back_label = "Nevermind"
+      @ajax_submit   = false
     when :edit
       @action_label  = "Update Draft"
       @form_action   = "/adrs/#{@form.external_id}"
       @go_back_label = "Back"
+      @ajax_submit   = true
     when :replace
       @action_label  = "Save Replacement Draft"
       @form_action   = "/adrs"
       @go_back_label = "Nevermind"
+      @ajax_submit   = false
     when :refine
       @action_label  = "Save Refining Draft"
       @form_action   = "/adrs"
       @go_back_label = "Nevermind"
+      @ajax_submit   = false
     else
       raise "Action '#{action}' is not known"
     end
   end
 
+  def ajax_submit? = @ajax_submit
 
   def adr_textarea(name:, prefix:, label:)
     component(Components::Adrs::Textarea.new(form: @form, input_name: name, prefix: prefix, label: label))

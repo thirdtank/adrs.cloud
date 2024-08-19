@@ -111,7 +111,6 @@ form[data-submitted] textarea:invalid ~ .text-field-error-label {
   border-top-right-radius: 999px;
   border-bottom-right-radius: 999px;
   align-items: center;
-  gap: var(--mg-sp-2);
   font-weight: 500;
   font-size: var(--mg-fs-2);
   padding: var(--mg-sp-2);
@@ -158,4 +157,8 @@ brut-ajax-submit[submitted] [data-submitted-icon] {
     opacity: 100%;
     visibility: visible;
   }
+}
+
+brut-constraint-violation-message ~ brut-constraint-violation-message::before {
+  content: ", ";
 }

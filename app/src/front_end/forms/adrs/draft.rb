@@ -1,5 +1,5 @@
 class Forms::Adrs::Draft < AppForm
-  input :title
+  input :title, minlength: 4
   input :context, required: false
   input :facing, required: false
   input :decision, required: false

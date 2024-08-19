@@ -16,5 +16,6 @@ module Brut
     autoload(:Action, "brut/back_end/action")
     autoload(:Actions, "brut/back_end/action")
   end
+  autoload(:I18n, "brut/i18n")
   autoload(:SinatraHelpers, "brut/sinatra_helpers")
 end

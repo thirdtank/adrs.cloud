@@ -1,5 +1,13 @@
 import { BaseCustomElement, RichString } from "brut-js"
-import { BrutConfirm, BrutAjaxSubmit, BrutConstraintViolationMessages, BrutConfirmationDialog, BrutForm } from "brut-js"
+import {
+  BrutConfirm,
+  BrutAjaxSubmit,
+  BrutConstraintViolationMessages,
+  BrutConstraintViolationMessage,
+  BrutConfirmationDialog,
+  BrutI18nTranslation,
+  BrutForm 
+} from "brut-js"
 
 class TagEditor extends BaseCustomElement {
 
@@ -70,6 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
   TagEditor.define()
   BrutForm.define()
   BrutConstraintViolationMessages.define()
+  BrutConstraintViolationMessage.define()
+  BrutI18nTranslation.define()
   BrutConfirm.define()
   BrutConfirmationDialog.define()
   BrutAjaxSubmit.define()

@@ -80,7 +80,10 @@ class Brut::FrontEnd::Forms::Constraint
   def initialize(key:,context:, server_side: :based_on_key)
     @key = key.to_s
     @client_side = CLIENT_SIDE_KEYS.include?(@key) && server_side != true
-    @context = context
+    @context = context || {}
+    if !@context.kind_of?(Hash)
+      raise "#{self.class} created for key #{key} with an invalid context: '#{context}/#{context.class}'. Context must be nil or a hash"
+    end
   end
 
   def client_side? = @client_side
@@ -99,11 +102,12 @@ class Brut::FrontEnd::Forms::ValidityState
   # Creates a validity state with the given errors.
   #
   # ::constraint_violations - an array of symbols or strings that represent the keys of each constraint violation.
-  #                           These keys are used to render human-readable strings
+  #                           These keys are used to render human-readable strings. The values are true or false if
+  #                           the key is currently in violation.
   def initialize(constraint_violations={})
     @constraint_violations = constraint_violations.map { |key,value|
       if value
-        Brut::FrontEnd::Forms::Constraint.new(key: key, context: value)
+        Brut::FrontEnd::Forms::Constraint.new(key: key, context: {})
       else
         nil
       end
@@ -334,7 +338,7 @@ class Brut::FrontEnd::Form
   def invalid? = !self.valid?
 
   # Set a server-side constraint violation on a given input's name.
-  def server_side_constraint_violation(input_name:, key:, context:nil)
+  def server_side_constraint_violation(input_name:, key:, context:{})
     self[input_name].server_side_constraint_violation(key,context)
   end
 

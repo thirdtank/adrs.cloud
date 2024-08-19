@@ -3,6 +3,7 @@ require_relative "junk_drawer"
 require "semantic_logger"
 require "dotenv"
 require "open3"
+require "i18n"
 
 # A class representing the Brut-powered app that is being built.
 # Unlike Brut::Config, this sets up more dynamic and app-specific stuff,
@@ -57,6 +58,8 @@ class Brut::App
     SemanticLogger.add_appender(file_name: (log_dir / "development.log").to_s)
     SemanticLogger.add_appender(io: $stdout, formatter: :color)
     SemanticLogger["Brut"].info("Logging set up")
+
+    ::I18n.load_path=Dir[Brut.container.project_root / "app" / "config" / "i18n" / "**/*.rb"]
 
   end
 

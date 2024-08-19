@@ -13,7 +13,7 @@ class Actions::Adrs::EditDraft < Actions::Adrs::SaveDraft
 
     result = self.check_result
     if form.title.to_s.strip !~ /\s+/
-      result.constraint_violation!(object: form, field: :title, key: :not_enough_words, context: 2)
+      result.constraint_violation!(object: form, field: :title, key: :not_enough_words, context: { minwords: 2 })
     end
     result.save_context(adr:adr)
     result

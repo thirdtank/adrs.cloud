@@ -43,7 +43,9 @@ module Brut::SinatraHelpers
     in Brut::BackEnd::Actions::CheckResult if !result.can_call?
       result.each_violation do |object,field,key,context|
         if object == form
-          form.server_side_constraint_violation(input_name: field, key: key, context: context)
+          context ||= {}
+          humanized_field = RichString.new(field).humanized.to_s
+          form.server_side_constraint_violation(input_name: field, key: key, context: context.merge(field: humanized_field))
         end
       end
       if form.valid?

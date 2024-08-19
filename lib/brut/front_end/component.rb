@@ -2,9 +2,10 @@ require "json"
 require_relative "template"
 
 module Brut::FrontEnd::Components
-  autoload(:Form,"brut/front_end/components/form")
+  autoload(:FormTag,"brut/front_end/components/form_tag")
   autoload(:Input,"brut/front_end/components/input")
   autoload(:Inputs,"brut/front_end/components/input")
+  autoload(:I18nTranslations,"brut/front_end/components/i18n_translations")
 end
 # A Component is the top level class for managing the rendering of 
 # content.  A component is essentially an ERB template and a class whose
@@ -95,10 +96,11 @@ class Brut::FrontEnd::Component
 
     # Render a form that should include CSRF protection.
     def form_tag(**attributes,&block)
-      component(Brut::FrontEnd::Components::Form.new(**attributes,&block))
+      component(Brut::FrontEnd::Components::FormTag.new(**attributes,&block))
     end
   end
   include Helpers
+  include Brut::I18n
 
 private
 
@@ -107,14 +109,5 @@ private
   # Determines the canonical name/location of the template used for this
   # component.  It does this base do the class name. CameCase is converted
   # to snake_case. 
-  def template_name = underscore(self.class.name).gsub(/^components\//,"")
-
-  def underscore(string)
-    return string.to_s.dup unless /[A-Z-]|::/.match?(string)
-    word = string.to_s.gsub("::", "/")
-    word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
-    word.tr!("-", "_")
-    word.downcase!
-    word
-  end
+  def template_name = RichString.new(self.class.name).underscorized.to_s.gsub(/^components\//,"")
 end

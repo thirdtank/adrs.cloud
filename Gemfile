@@ -43,6 +43,9 @@ gem "rspec"
 gem "tilt"
 gem "temple"
 
+# The i18n gem is used to manage translations
+gem "i18n"
+
 # We log using the semantic_logger gem for more flexibility
 # with what goes in logs and how they work
 gem "semantic_logger"

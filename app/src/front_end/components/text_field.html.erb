@@ -5,7 +5,9 @@
     </brut-constraint-violation-messages>
     <% constraint_violations.map { |constraint| %>
       <% if !constraint.client_side? %>
-        <%= constraint.to_s %> - <%= constraint.context %>
+        <brut-constraint-violation-message>
+          <%= t("cv.be.#{constraint}", constraint.context).capitalize %>
+        </brut-constraint-violation-message>
       <% end %>
     <% }.compact.join(", ") %>
   </div>

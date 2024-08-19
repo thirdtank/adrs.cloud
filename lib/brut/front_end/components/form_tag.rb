@@ -1,6 +1,6 @@
 require "rexml"
 # Represents a <form> HTML component
-class Brut::FrontEnd::Components::Form < Brut::FrontEnd::Component
+class Brut::FrontEnd::Components::FormTag < Brut::FrontEnd::Component
   def initialize(**attributes,&contents)
     @attributes = attributes
     @contents = contents

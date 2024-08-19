@@ -18,7 +18,7 @@ class Brut::BackEnd::Actions::Validators::DataObjectValidator < Brut::BackEnd::A
         when :minlength
           if value.respond_to?(:length) || value.nil?
             if value.nil? || value.length < option_value
-              check_result.constraint_violation!(object: object, field: attribute, key: :too_short, context: option_value)
+              check_result.constraint_violation!(object: object, field: attribute, key: :too_short, context: { minlength: option_value })
             end
           else
             raise "'#{attribute}''s value (a '#{value.class}') does not respond to 'length' - :minlength cannot be used as a validation"
