@@ -121,13 +121,20 @@ class AdrApp < Sinatra::Base
     result = process_form form: draft_adr,
                           action: Actions::Adrs::EditDraft.new,
                           account: @account
-    if request.xhr?
-      return 200
-    else
-      case result
-      in Forms::Adrs::Draft if result.invalid?
+    case result
+    in Forms::Adrs::Draft if result.invalid?
+      if request.xhr?
+        [
+          422,
+          component(Components::Adrs::ErrorMessages.new(form: result)).to_s,
+        ]
+      else
         page Pages::Adrs::Edit.new(adr: result.server_side_context[:adr], form: draft_adr)
-      in adr:
+      end
+    in adr:
+      if request.xhr?
+        200
+      else
         flash[:notice] = :adr_updated
         redirect to("/adrs/#{adr.external_id}/edit")
       end

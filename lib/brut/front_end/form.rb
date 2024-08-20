@@ -346,6 +346,25 @@ class Brut::FrontEnd::Form
     @inputs.map { |name,input| [ name, input.value ] }.to_h
   end
 
+  def constraint_violations(server_side_only: false)
+    @inputs.map { |input_name, input|
+      if input.valid?
+        nil
+      else
+        [
+          input_name,
+          input.validity_state.select { |constraint|
+            if server_side_only
+              !constraint.client_side?
+            else
+              true
+            end
+          }
+        ]
+      end
+    }.compact.to_h
+  end
+
 private
 
   def params_empty?(params) = params.nil? || params.empty?

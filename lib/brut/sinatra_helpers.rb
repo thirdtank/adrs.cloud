@@ -31,6 +31,9 @@ module Brut::SinatraHelpers
     call_render = CallRenderInjectingInfo.new(page_instance)
     call_render.call_render(**Thread.current[:rendering_context])
   end
+  def component(component_instance)
+    self.page(component_instance)
+  end
 
   def process_form(form:, action:, **rest)
     SemanticLogger["SinatraHelpers"].info("Processing form",

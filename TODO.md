@@ -3,7 +3,7 @@
 CHECK 1 - Basic i18n setup
           DONE: Can show errors via i18n on both client and server
 
-      2 - Pass validation errors back from ajax submission
+CHECK 2 - Pass validation errors back from ajax submission
           DONE: server-side validations are sent back exactly
                 as they are if submitted conventionally
 

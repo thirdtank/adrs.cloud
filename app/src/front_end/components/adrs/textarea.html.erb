@@ -8,11 +8,15 @@
   <div class="text-field-error-label">
     <brut-constraint-violation-messages>
     </brut-constraint-violation-messages>
-    <% constraint_violations.map { |constraint| %>
+    <brut-constraint-violation-messages input-name="<%= input_name %>" server-side class="flex flex-wrap items-baseline">
+    <% constraint_violations.each do |constraint| %>
       <% if !constraint.client_side? %>
-        <brut-constraint-violation-message><%= t("cv.be.#{constraint}", constraint.context).capitalize %></brut-constraint-violation-message>
+        <brut-constraint-violation-message>
+          <%= t("cv.be.#{constraint}", constraint.context).capitalize %>
+        </brut-constraint-violation-message>
       <% end %>
-    <% }.compact.join(", ") %>
+    <% end %>
+    </brut-constraint-violation-messages>
   </div>
   <div class="text-field-label">
     <span class="f-1"><%= label %></span>
