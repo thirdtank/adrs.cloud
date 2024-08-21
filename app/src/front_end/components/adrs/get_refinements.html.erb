@@ -23,7 +23,7 @@
       <tbody>
         <% refined_by_adrs.each do |refining_adr| %>
           <tr>
-            <td class="pv-2 pr-2"><a class="blue-300" href="<%= adr_path(refining_adr) %>"><%= refining_adr.title %></a></td>
+            <td class="pv-2 pr-2"><a class="blue-300" href="<%= path(refining_adr) %>"><%= refining_adr.title %></a></td>
             <td class="pv-2 pr-2">
               <% if refining_adr.accepted? %>
                 Accepted

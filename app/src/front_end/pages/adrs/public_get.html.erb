@@ -1,0 +1,65 @@
+<div class="flex items-start gap-3 justify-center">
+  <div role="none" class="w-quarter"></div>
+  <article class="w-50 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
+    <h2 class="tc measure-narrow ph-1 mh-auto lh-title fs-5 mt-3 mb-1 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
+    <div class="tc f-1 mb-3">
+      <% if adr.replaced? %>
+        <h3 class="lh-title f-3 fw-5 pa-2 mh-3 ba br-2 bc-red-300 red-900 bg-red-300 flex items-center gap-3">
+          <div class="w-3">
+          <%= svg("change-icon") %>
+          </div>
+          <div class="tl">
+            <div class="f-2">
+              Replaced
+              <time class="fw-6" datetime="<%= adr.replaced_by_adr.accepted_at %>"><%= adr.replaced_by_adr.accepted_at %></time>
+            <% if adr.replaced_by_adr.public? %>
+              by
+            <% end %>
+            </div>
+            <% if adr.replaced_by_adr.public? %>
+              <a class="db red-900" href="<%= public_adr_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
+            <% end %>
+          </div>
+        </h3>
+      <% end %>
+      <h3 class="lh-title fw-5 pa-2 mh-3 ba br-2 
+        <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' %>
+        ">
+        <% if adr.replaced? %>
+          Originally
+        <% end %>
+        Accepted <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
+      </h3>
+      <% if !adr.replaced_adr.nil? && adr.replaced_adr.public? %>
+        <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900">
+          Replaces <a class="green-300" href="<%= public_adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
+        </h3>
+      <% end %>
+      Created <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
+    </div>
+    <section class="rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
+    <section class="rendered-markdown ph-3"><%= markdown(:facing) %></section>
+    <div class="ph-3 f-3 bt bb <%= adr.accepted_at.nil? ? 'bc-yellow-600 bg-yellow-800 yellow-100' : 'bc-green-600 bg-green-800 green-200' %>">
+      <section class="rendered-markdown ph-3 fw-5"><%= markdown(:decision) %></section>
+    </div>
+    <section class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:neglected) %></section>
+    <section class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:achieve) %></section>
+    <section class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:accepting) %></section>
+    <section class="rendered-markdown ph-3"><%= markdown(:because) %></section>
+    <% if adr.refines? && adr.refines_adr.public? %>
+      <section class="bt bc-gray-800">
+      <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-blue-800 blue-300 bg-blue-900 flex items-center gap-2">
+        <div class="w-2">
+          <%= svg("adjust-control-icon") %>
+        </div>
+        <div class="tl">
+          Refines “<a class="blue-300" href="<%= public_adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+        </div>
+      </h3>
+      </section>
+    <% end %>
+    <%= component(Components::Adrs::GetRefinements.new(refined_by_adrs: public_refined_by_adrs, public_paths: true)) %>
+  </article>
+  <div role="none" class="w-quarter"></div>
+</div>
+</div>

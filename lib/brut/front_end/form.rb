@@ -303,6 +303,7 @@ class Brut::FrontEnd::Form
   # the given values for its params.
   def initialize(params = nil)
     params ||= {}
+    params = params.to_h
     unknown_params = params.keys.map(&:to_s).reject { |key|
       self.class.input_definitions.key?(key)
     }

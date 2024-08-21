@@ -3,5 +3,11 @@
 # or page as needed.
 module AppViewHelpers
   def adr_path(adr) = "/adrs/#{adr.external_id}"
+  def public_adr_path(adr)
+    if !adr.public?
+      raise "This should not have been called"
+    end
+    "/p/adrs/#{adr.public_id}"
+  end
   def edit_adr_path(adr) = "/adrs/#{adr.external_id}/edit"
 end

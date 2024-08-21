@@ -14,7 +14,7 @@ class Forms::Adrs::Draft < AppForm
 
   def params_empty?(params)
     puts params.except(:refines_adr_external_id,:replaced_adr_external_id)
-    params.nil? || params.except("refines_adr_external_id","replaced_adr_external_id").empty?
+    params.nil? || params.except(:refines_adr_external_id,:replaced_adr_external_id).empty?
   end
 
   def self.from_adr(adr)

@@ -1,15 +1,15 @@
-class Pages::Adrs::Get < AppPage
+class Pages::Adrs::PublicGet < AppPage
   class Markdown < Redcarpet::Render::HTML
     def header(text,header_level)
       super.header(text,header_level.to_i + 3)
     end
   end
 
-  attr_reader :adr, :info_message
+  attr_reader :adr, :account
 
-  def initialize(adr:, info_message: nil)
+  def initialize(adr:, account:)
     @adr = adr
-    @info_message = info_message
+    @account = account
     @markdown = Redcarpet::Markdown.new(
       Redcarpet::Render::HTML.new(
         filter_html: true,
@@ -29,16 +29,9 @@ class Pages::Adrs::Get < AppPage
     Brut::FrontEnd::Templates::HTMLSafeString.from_string(@markdown.render(value))
   end
 
-  def refined_by_adrs
-    adr.refined_by_adrs.reject(&:rejected?).reject(&:replaced?)
+  def public_refined_by_adrs
+    adr.refined_by_adrs.reject(&:rejected?).reject(&:replaced?).select(&:public?)
   end
-
-  def editable? = !adr.accepted? && !adr.rejected?
-  def draft? = self.editable?
-
-  def private? = !self.public?
-  def public?  =  adr.public?
-  def public_path = public_adr_path(adr)
 
 private
 

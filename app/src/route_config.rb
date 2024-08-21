@@ -29,12 +29,17 @@ class AdrApp < Sinatra::Base
   include Brut::SinatraHelpers
 
   before do
-    if request.path_info !~ /^\/auth\// && request.path_info != "/"
-      @account = DataModel::Account[external_id: session["user_id"]]
-      if !@account
-        redirect to("/")
-        return
-      end
+    is_auth_callback         =  request.path_info =~ /^\/auth\//
+    is_root                  =  request.path_info == "/"
+    is_public_dynamic_route  =  request.path_info =~ /^\/p\//
+
+    @account = DataModel::Account[external_id: session["user_id"]]
+
+    logged_out = @account.nil?
+    allowed_when_logged_out = is_auth_callback || is_root || is_public_dynamic_route
+
+    if logged_out && !allowed_when_logged_out
+      redirect to("/")
     end
   end
 
@@ -178,11 +183,22 @@ class AdrApp < Sinatra::Base
   end
 
   post "/replaced_adrs" do
-    page Pages::Adrs::Replace.new(form: Forms::Adrs::Draft.new(params), account: @account)
+    form = Forms::Adrs::Draft.new(
+      replaced_adr_external_id: params[:external_id]
+    )
+    page Pages::Adrs::Replace.new(form: form, account: @account)
   end
 
   post "/refined_adrs" do
-    page Pages::Adrs::Refine.new(form: Forms::Adrs::Draft.new(params), account: @account)
+    form = Forms::Adrs::Draft.new(
+      refines_adr_external_id: params[:external_id]
+    )
+    page Pages::Adrs::Refine.new(form: form, account: @account)
+  end
+
+  get "/p/adrs/:id" do
+    adr = DataModel::Adr[public_id: params[:id]]
+    page Pages::Adrs::PublicGet.new(adr: adr, account: @account)
   end
 
   post "/public_adrs" do

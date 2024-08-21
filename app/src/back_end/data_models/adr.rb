@@ -24,14 +24,14 @@ class DataModel::Adr < AppDataModel
     tags_value = self[:tags] || []
 
     if self.public?
-      tags_value + [ self.phony_tag_for_public ]
+      tags_value + [ self.class.phony_tag_for_public ]
     else
       tags_value
     end
   end
 
   def tags=(tags)
-    self[:tags] = tags.delete_if { |element| element.to_s.downcase == self.phony_tag_for_public }
+    self[:tags] = tags.delete_if { |element| element.to_s.downcase == self.class.phony_tag_for_public }
   end
 
   def public?   = !self.public_id.nil?
@@ -42,7 +42,8 @@ class DataModel::Adr < AppDataModel
   def refines_adr = self.class[id: self.refines_adr_id]
   def refines? = !self.refines_adr.nil?
 
+  def self.phony_tag_for_public = "public".freeze
+
 private
 
-  def phony_tag_for_public = "public".freeze
 end
