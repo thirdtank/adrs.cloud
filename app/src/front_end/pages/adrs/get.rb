@@ -38,6 +38,15 @@ class Pages::Adrs::Get < AppPage
 
   def accepted_and_in_effect? = adr.accepted? && !adr.replaced?
 
+  def private? = !self.public?
+  def public?  =  adr.public?
+  def public_path
+    if !public?
+      raise "This method should not have been called as the ADR is not public"
+    end
+    "/public_adrs/#{adr.public_id}"
+  end
+
 private
 
   def field_text(field)

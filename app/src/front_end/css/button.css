@@ -32,7 +32,7 @@
 .button:disabled,
 .button:disabled svg path {
   filter: grayscale(80%); 
-  color: var(--mg-gray-300);
+  color: var(--mg-gray-500) !important; /* !important to override color in the button color classes */
 }
 
 .button span:has(svg) {
@@ -44,18 +44,22 @@
 
 .button--size--large span:has(svg) {
   width: var(--mg-sp-4);
+  height: var(--mg-sp-4);
 }
 
 .button--size--normal span:has(svg) {
   width: calc(1.5 * var(--mg-sp-3));
+  height: calc(1.5 * var(--mg-sp-3));
 }
 
 .button--size--small span:has(svg) {
   width: calc(1.5 * var(--mg-sp-2));
+  height: calc(1.5 * var(--mg-sp-2));
 }
 
 .button--size--tiny span:has(svg) {
   width: calc(1.125 * var(--mg-sp-2));
+  height: calc(1.125 * var(--mg-sp-2));
 }
 
 /** Sizing */
@@ -86,6 +90,22 @@
   padding-bottom: var(--mg-sp-1);
   font-size: var(--mg-fs-1);
 }
+
+/** Variants to allow for "button bars" */
+.button.button--variant--left {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.button.button--variant--middle {
+  border-radius: 0;
+}
+
+.button.button--variant--right {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 /** Colors */
 .button.button--color--red {
   background-color: var(--mg-red-800);

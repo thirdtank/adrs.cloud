@@ -5,40 +5,27 @@ module Brut::BackEnd::Actions
   autoload(:CheckResult,"brut/back_end/actions/check_result")
 end
 
-# Actions are the core abstraction for performing logic.  An Action can do or be anything - it's merely a seam
-# between infrastructure like responding to HTTP or a job and your app's particular code or logic.
+# Actions are the seam between the front end and the back-end.  You are required to use an Action
+# to process a form submission using Brut's form submission subsystem, but your business logic
+# and other domain logic can be implemented any way you like.
 #
-# Because an Action can be anything, it's a very minimal abstraction.  An Action implements two methods:
+# An Action must implement the method `call`.
 #
-# * `check` - this performs any checking or validation to determine if the action can be called and should succeeed.
-#             `check` is intended to take all the inputs of the action and, if anything is wrong, return a structure
-#             explaining the problem.   This is similar to calling `.valid?` on an Active Record and then looking at
-#             its `errors`, however this is less tied to database tables and field validations.
+# `call` performs the action.  It will have one of three possible outcomes:
 #
-#             `check` is expected to return a `Brut::Action::CheckResult` which can hold three types of information:
-#
-#             - Is `call` expected to succeed?
-#             - If not, structured errors to explain why `call` will fail
-#             - Any additional context, for example records fetched from the database
-# * `call` - This performs the action.  It can return anything meaningful to the caller.  In particular,
-#            it could return a `Brut::Action::CheckResult`, thus implying that `call` may call `check`.  This is
-#            not required, but usually handy to avoid having to explicitly call `check`
-#
-# The definition of "success" is important for the Action concept.  An invocation of `call` will have one
-# of three possible outcomes:
-#
-# * a `CheckResult` is returned. This indicates `call` should not have been called and/or will never succeed and that the 
-#   caller must provide different inputs.  A common example might be that an email is required, but the stringn provided isn't an
-#   email.
-# * Any other value is returned. This indicates `call` did whatever it was supposed to do.  Depending on what is needed,
-#   this could be `nil` or some sort of object.  It is up to the implementor and the caller to determine what makes sense,
-#   but in no way should this eventuality be considered an "error".
-# * An exception is thrown.  This indicates an ephemeral or transient error occurred. There was no way to forsee or prevent this
-#   and `call` should be tried again - it will not have had its desired affect. Note that this highly depends on how `call`
-#   is implemented. It should be idempotent so that a retry is safe.  this is up to the programmer to do, and Brut will
-#   necessarily re-try `call`.
-#
+# * A `CheckResult` is returned. This indicates `call` should not have been called and/or will never succeed and that the 
+#   caller must provide different inputs.  A common example might be that an email is required, but the 
+#   string provided wasn't an email.
+# * Any other value is returned. This indicates `call` did whatever it was supposed to do.  The actual value depends on
+#   what the action is supposed to accomplish.  It is recommended to return as little as possible, potentially
+#   returning `nil`.  Regardless, if a `CheckResult` is not returned, the action is considered to have completed
+#   successfully or otherwise should not be re-tried.
+# * An exception is raised.  This indicates an ephemeral or transient error occurred. There was no way to forsee 
+#   or prevent this and `call` should be tried again - it will not have had its desired affect.
+#   Note that `call` must be carefully implemented to allow a retry to be safe, so if you cannot guarantee that
+#   do not raise an exception.
 class Brut::BackEnd::Action
+  include SemanticLogger::Loggable
 
   def call(*)
     throw "Subclass must implement"
@@ -50,6 +37,7 @@ class Brut::BackEnd::Action
 
 private
 
+  # Helper method to create a `CheckResult`
   def check_result = Brut::BackEnd::Actions::CheckResult.new
 
 end

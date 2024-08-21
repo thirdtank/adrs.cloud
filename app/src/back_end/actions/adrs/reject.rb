@@ -1,6 +1,6 @@
-class Actions::Adrs::Reject < AppAction
+class Actions::Adrs::Reject
 
-  def call(form:, account:)
+  def reject(form:, account:)
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
     if !adr
       raise "account does not have an ADR with that ID"
@@ -9,6 +9,7 @@ class Actions::Adrs::Reject < AppAction
       raise "Accepted ADR may not be rejected"
     end
     adr.update(rejected_at: Time.now)
+    adr
   end
 
 end

@@ -1,11 +1,12 @@
-class Actions::Adrs::UpdateTags < AppAction
+class Actions::Adrs::UpdateTags
 
-  def call(form:, account:)
+  def update(form:, account:)
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
     if !adr
       raise "account does not have an ADR with that ID"
     end
     adr.update(tags: tag_serializer.from_string(form.tags))
+    adr
   end
 
 private

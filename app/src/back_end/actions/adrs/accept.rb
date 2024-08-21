@@ -1,4 +1,4 @@
-class Actions::Adrs::Accept < AppAction
+class Actions::Adrs::Accept
   class AcceptedAdrValidator < Brut::BackEnd::Actions::Validators::DataObjectValidator
     validate :context   , required: true , minlength: 10
     validate :facing    , required: true , minlength: 10
@@ -9,8 +9,8 @@ class Actions::Adrs::Accept < AppAction
     validate :because   , required: true , minlength: 10
   end
 
-  def check(form:, account:)
-    result = self.check_result
+  def accept(form:, account:)
+    result = Brut::BackEnd::Actions::CheckResult.new
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
     if !adr
       raise "This account cannot access this ADR"
@@ -18,12 +18,9 @@ class Actions::Adrs::Accept < AppAction
     result.save_context(adr: adr)
     validator = AcceptedAdrValidator.new
     validator.validate(form,result)
-    result
-  end
-
-  def call(form:, account:)
-    result = self.check(form: form, account: account)
-    return result if !result.can_call?
+    if result.constraint_violations?
+      return result
+    end
     adr = result[:adr]
     AppDataModel.transaction do
       if !adr.accepted?
@@ -35,6 +32,7 @@ class Actions::Adrs::Accept < AppAction
                    achieve: form.achieve,
                    accepting: form.accepting,
                    because: form.because,
+                   tags: tag_serializer.from_string(form.tags),
                    accepted_at: Time.now,
                   )
       end
@@ -44,6 +42,12 @@ class Actions::Adrs::Accept < AppAction
         end
       end
     end
-    result
+    adr
+  end
+
+private
+
+  def tag_serializer
+    @tag_serializer ||= Actions::Adrs::TagSerializer.new
   end
 end

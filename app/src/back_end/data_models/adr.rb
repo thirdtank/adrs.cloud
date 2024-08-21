@@ -20,10 +20,29 @@ class DataModel::Adr < AppDataModel
     self[id: id]
   end
 
+  def tags
+    tags_value = self[:tags] || []
+
+    if self.public?
+      tags_value + [ self.phony_tag_for_public ]
+    else
+      tags_value
+    end
+  end
+
+  def tags=(tags)
+    self[:tags] = tags.delete_if { |element| element.to_s.downcase == self.phony_tag_for_public }
+  end
+
+  def public?   = !self.public_id.nil?
   def accepted? = !self.accepted_at.nil?
   def rejected? = !self.rejected_at.nil?
   def replaced? = !self.replaced_by_adr.nil?
 
   def refines_adr = self.class[id: self.refines_adr_id]
   def refines? = !self.refines_adr.nil?
+
+private
+
+  def phony_tag_for_public = "public".freeze
 end

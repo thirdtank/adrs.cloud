@@ -1,38 +1,5 @@
 # Design Issues
 
-## i18n and error messages
-
-Issue is that i18n generally needs to be integrated *and* be available to the front-end.
-
-Ideally, it will be easy to never put text into anythning and have i18n handle everything.
-
-Key issues with Rails to avoid:
-
-* poor mix of DRY and no DRY
-* extremely hard to tell what keys are being used
-* lots of keys for the same thing without any o11y to indicate what is happening
-* How to ship this stuff client-side without it being a nightmare
-* YAML is a terrible choice
-
-- Decisions
-  - Use i18n gem
-  - use ruby and not yaml because fuck yaml
-  - when Brut is gemified, a new project will be given a copy of the
-    translations, so there is a single file provided as default.
-
-## CSRF token being passed around is a nightmare of nested calls
-
-Specific problem: A component needs access to the current csrf token when rendering, and
-                  passing it through the various call chains is a nightmare
-
-General problem: is there cross-cutting information that is needed?  current user?
-
-Options:
-
-* A global per-request context
-  PROS: Easy
-  CONS: Creates a hidden input to methods
-
 ## Logic useful to front-end and back-end - where does it go?
 
 ## Resourceful vs Wild West routing

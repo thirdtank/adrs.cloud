@@ -14,7 +14,8 @@
   <% if value %>
       value="<%= value %>"
   <% end %>
-  class="flex items-center justify-around gap-2 button button--size--<%= size %> button--color--<%= color %>" aria-label="<%= label %>">
+      title="<%= title %>"
+      class="flex items-center justify-around gap-2 button button--size--<%= size %> button--color--<%= color %> <%= variant_class %>" aria-label="<%= label %>">
   <% if icon %>
     <span aria-hidden="true">
       <%= svg(icon) %>

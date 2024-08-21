@@ -79,7 +79,7 @@ class AdrApp < Sinatra::Base
     tag = params[:tag]
     page Pages::AdrsForTag.new(
       tag: tag,
-      adrs: Actions::Adrs::SearchByTag.new.call(account: @account, tag: tag)
+      adrs: Actions::Adrs::Search.new.by_tag(account: @account, tag: tag)
     )
   end
 
@@ -91,14 +91,14 @@ class AdrApp < Sinatra::Base
   post "/adrs" do
     draft_adr = Forms::Adrs::Draft.new(params)
     result = process_form form: draft_adr,
-                          action: Actions::Adrs::NewDraft.new,
+                          action: Actions::Adrs::SaveDraft.new,
+                          action_method: :save_new,
                           account: @account
-    case result
-    in Forms::Adrs::Draft if result.invalid?
-      page Pages::Adrs::New.new(form: draft_adr)
-    in adr:
+    if result.constraint_violations?
+      page Pages::Adrs::New.new(form: result.form)
+    else
       flash[:notice] = :adr_created
-      redirect to("/adrs/#{adr.external_id}/edit")
+      redirect to("/adrs/#{result.action_return_value.external_id}/edit")
     end
   end
 
@@ -119,24 +119,25 @@ class AdrApp < Sinatra::Base
   post "/adrs/:external_id" do
     draft_adr = Forms::Adrs::Draft.new(params)
     result = process_form form: draft_adr,
-                          action: Actions::Adrs::EditDraft.new,
+                          action: Actions::Adrs::SaveDraft.new,
+                          action_method: :update,
                           account: @account
-    case result
-    in Forms::Adrs::Draft if result.invalid?
+    if result.constraint_violations?
       if request.xhr?
         [
           422,
-          component(Components::Adrs::ErrorMessages.new(form: result)).to_s,
+          component(Components::Adrs::ErrorMessages.new(form: result.form)).to_s,
         ]
       else
-        page Pages::Adrs::Edit.new(adr: result.server_side_context[:adr], form: draft_adr)
+        page Pages::Adrs::Edit.new(adr: result[:adr], form: result.form)
       end
-    in adr:
+    else
+
       if request.xhr?
         200
       else
         flash[:notice] = :adr_updated
-        redirect to("/adrs/#{adr.external_id}/edit")
+        redirect to("/adrs/#{result.action_return_value.external_id}/edit")
       end
     end
   end
@@ -145,6 +146,7 @@ class AdrApp < Sinatra::Base
     adr_tags = Forms::Adrs::Tags.new(params)
     process_form form: adr_tags,
                  action: Actions::Adrs::UpdateTags.new,
+                 action_method: :update,
                  account: @account
     redirect to("/adrs/#{adr_tags.external_id}")
   end
@@ -153,15 +155,15 @@ class AdrApp < Sinatra::Base
     form = Forms::Adrs::Draft.new(params)
     result = process_form form: form,
                           action: Actions::Adrs::Accept.new,
+                          action_method: :accept,
                           account: @account
-    case result
-    in Forms::Adrs::Draft if result.invalid?
-      page Pages::Adrs::Edit.new(adr: result.server_side_context[:adr],
+    if result.constraint_violations?
+      page Pages::Adrs::Edit.new(adr: result[:adr],
                                  error_message: "ADR could not be accepted",
-                                 form: form)
-    in adr:
+                                 form: result.form)
+    else
       flash[:notice] = :adr_accepted
-      redirect to("/adrs/#{adr.external_id}")
+      redirect to("/adrs/#{result.action_return_value.external_id}")
     end
   end
 
@@ -169,6 +171,7 @@ class AdrApp < Sinatra::Base
     draft_adr = Forms::Adrs::Draft.new(params)
     process_form form: draft_adr,
                  action: Actions::Adrs::Reject.new,
+                 action_method: :reject,
                  account: @account
     flash[:notice] = :adr_rejected
     redirect to("/adrs")
@@ -180,5 +183,14 @@ class AdrApp < Sinatra::Base
 
   post "/refined_adrs" do
     page Pages::Adrs::Refine.new(form: Forms::Adrs::Draft.new(params), account: @account)
+  end
+
+  post "/public_adrs" do
+    Actions::Adrs::Public.new.make_public(external_id: params[:external_id], account: @account)
+    redirect to("/adrs/#{params[:external_id]}")
+  end
+  post "/private_adrs" do
+    Actions::Adrs::Public.new.make_private(external_id: params[:external_id], account: @account)
+    redirect to("/adrs/#{params[:external_id]}")
   end
 end

@@ -85,13 +85,52 @@
     <% if editable? %>
         <a class="f-2 fw-5 blue-400" href="<%= edit_adr_path(adr) %>">Edit</a>
     <% elsif accepted_and_in_effect? %>
-      <%= form_tag(action: "/replaced_adrs", method: "post") do %>
-        <input type="hidden" name="replaced_adr_external_id" value="<%= adr.external_id %>">
-        <%= component(Components::Button.new(size: "small", color: "red", label: "Replace", icon: "change-icon")) %>
+      <%= form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2") do %>
+        <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+        <fieldset class="bn pa-0 ma-0 flex items-center">
+
+          <%= component(Components::Button.new(
+            size: "small",
+            formaction: "/public_adrs",
+            variant: :left,
+            disabled: public? ? "This ADR is already public" : false,
+            color: "orange",
+            label: "Make Public",
+            confirm: "This will create a publicly accessible URL to allow anyone with it to view this ADR",
+            icon: "globe-network-icon")) %>
+
+          <%= component(Components::Button.new(
+            size: "small",
+            formaction: "/private_adrs",
+            variant: :right,
+            disabled: private? ? "This ADR is already private" : false,
+            color: "blue",
+            label: "Make Private",
+            confirm: "Anyone with this ADR's public URL will no longer be able to access it",
+            icon: "lock-icon")) %>
+
+        </fieldset>
+        <% if public? %>
+          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= public_path %>">
+            <span class="tdu f-1">View Public Page</span>
+            <div class="w-1" role="img" aria-description="external link icon"><%= svg("external-link-icon") %></div>
+          </a>
+        <% else %>
+          <details>
+            <summary class="f-1 fw-5 i">
+              What is public?
+            </summary>
+          <p class="f-1 i p">
+            Public ADRs are not discoverable, but have a private URL you can share with others. Anyone with this URL can read the ADR, but cannot modify it.
+          </p>
+          </details>
+        <% end %>
       <% end %>
-      <%= form_tag(action: "/refined_adrs", method: "post") do %>
+      <%= form_tag(method: "post", class:"flex items-center") do %>
+        <input type="hidden" name="replaced_adr_external_id" value="<%= adr.external_id %>">
         <input type="hidden" name="refines_adr_external_id" value="<%= adr.external_id %>">
-        <%= component(Components::Button.new(size: "small", color: "purple", label: "Refine", icon: "adjust-control-icon")) %>
+        <%= component(Components::Button.new(size: "normal", variant: :left, formaction: "/replaced_adrs", color: "red", label: "Replace", icon: "change-icon")) %>
+        <%= component(Components::Button.new(size: "normal", variant: :right, formaction: "/refined_adrs", color: "purple", label: "Refine", icon: "adjust-control-icon")) %>
       <% end %>
     <% end %>
     </nav>
@@ -144,3 +183,4 @@
     </adr-tag-editor>
   </div>
 </div>
+<%= component(Components::ConfirmationDialog.new) %>

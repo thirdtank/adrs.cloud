@@ -7,17 +7,10 @@ CHECK 2 - Pass validation errors back from ajax submission
           DONE: server-side validations are sent back exactly
                 as they are if submitted conventionally
 
-      3 - Org/Team concept
-          Needs some refinement as to what this is
-
-          * Each account/email is part of a team
-          * Team is the level of access to ADRs
-          * Team has a billing contact
-          * Members can have admin access to the team
-          * Admin access allows invites and granting/revocation of admin access
-          * This must be very lightly designed/flexible
-
-          Framework juice: codify notion of permissions a bit more
+      3 - Public sharing of ADRs
+          DONE: User can mark an accepted ADR as public
+                Refined and Replaced ADRs are public by default, but can be made non-public
+                ADR can be made non-public after the fact
 
       4 - Functioning Sign Up
           DONE: A team can be created

@@ -1,5 +1,8 @@
 class Brut::BackEnd::Actions::CheckResult
   attr_reader :constraint_violations, :context
+
+  attr_accessor :form, :action_return_value
+
   def initialize
     @constraint_violations = {}
     @context = {}
@@ -40,13 +43,7 @@ class Brut::BackEnd::Actions::CheckResult
   end
 
 
-  def can_call? =  self.constraint_violations.empty?
-  def invalid?  = !self.can_call?
-  def valid?    =  self.can_call?
-
-  def deconstruct_keys(*)
-    @context
-  end
+  def constraint_violations? = self.constraint_violations.any?
 
 private
 

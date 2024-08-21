@@ -35,29 +35,16 @@ module Brut::SinatraHelpers
     self.page(component_instance)
   end
 
-  def process_form(form:, action:, **rest)
+  def process_form(form:, action:, action_method: :call, **rest)
     SemanticLogger["SinatraHelpers"].info("Processing form",
                                         form: form.class,
                                         action: action.class,
+                                        action_method: action_method,
                                         params: form.to_h)
-    action = Brut::BackEnd::Actions::FormSubmission.new(action: action)
-    result = action.call(form: form, **rest)
-    case result
-    in Brut::BackEnd::Actions::CheckResult if !result.can_call?
-      result.each_violation do |object,field,key,context|
-        if object == form
-          context ||= {}
-          humanized_field = RichString.new(field).humanized.to_s
-          form.server_side_constraint_violation(input_name: field, key: key, context: context.merge(field: humanized_field))
-        end
-      end
-      if form.valid?
-        raise "WTF: Form is valid??!?!?"
-      end
-      form.server_side_context = result.context
-      form
-    else
-      result
-    end
+    form_submission = Brut::BackEnd::Actions::FormSubmission.new
+    form_submission.process_form(form: form,
+                                 action: action,
+                                 action_method: action_method,
+                                 **rest)
   end
 end

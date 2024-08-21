@@ -1,5 +1,12 @@
-<span class="dib ph-2 pv-1 br-left-1 br-right-3 bg-<%= color %>-800 <%= color %>-300 ba bc-<%= color %>-700 f-1 fw-normal ttl tracked-tight">
-  <a class="<%= color %>-300" href="/adr_tags/<%= tag %>">
-  <%= tag %>
+<span class="dib ph-2 pv-1 br-left-1 br-right-3 bg-<%= color %>-800 <%= color %>-300 ba bc-<%= color %>-<%= border_weight %> f-1 fw-normal ttl tracked-tight">
+  <a class="<%= color %>-300 fw-<%= weight %> flex items-center gap-1" href="/adr_tags/<%= tag %>">
+    <% if icon %>
+      <span class="w-1">
+        <%= svg(icon) %>
+      </span>
+    <% end %>
+    <span>
+      <%= tag %>
+    </span>
   </a>
 </span>

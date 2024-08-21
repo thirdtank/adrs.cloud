@@ -1,13 +1,38 @@
-class Actions::Adrs::SaveDraft < AppAction
-  def call(form:, account:)
-    result = self.check(form: form, account: account)
-    if !result.can_call?
+class Actions::Adrs::SaveDraft
+  def save_new(form:, account:)
+    if form.external_id
+      raise "#{self.class.name} was attempted on an existing ADR with external id #{form.external_id}"
+    end
+
+    adr = DataModel::Adr.new(created_at: Time.now, account_id: account.id)
+
+    save(form: form, adr: adr)
+  end
+
+  def update(form:, account:)
+    if form.external_id.nil?
+      raise "#{self.class.name} was attempted on a new ADR without an external id"
+    end
+
+    adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
+
+    if !adr
+      raise "account does not have an ADR with that ID"
+    end
+
+    save(form: form, adr: adr)
+
+  end
+
+private
+
+  def save(form:, adr:)
+    result = create_result(form:form,adr:adr)
+    if result.constraint_violations?
       return result
     end
 
-    adr = result[:adr]
-
-    refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: account.id]
+    refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: adr.account.id]
     AppDataModel.transaction do
       adr.update(title: form.title,
                  context: form.context,
@@ -20,7 +45,7 @@ class Actions::Adrs::SaveDraft < AppAction
                  tags: tag_serializer.from_string(form.tags),
                  refines_adr_id: refines_adr&.id,
                 )
-      replaced_adr = DataModel::Adr[external_id: form.replaced_adr_external_id, account_id: account.id]
+      replaced_adr = DataModel::Adr[external_id: form.replaced_adr_external_id, account_id: adr.account.id]
       if replaced_adr
         DataModel::ProposedAdrReplacement.create(
           replacing_adr_id: adr.id,
@@ -29,12 +54,19 @@ class Actions::Adrs::SaveDraft < AppAction
         )
       end
     end
-    result
+    adr
   end
-
-private
 
   def tag_serializer
     @tag_serializer ||= Actions::Adrs::TagSerializer.new
+  end
+
+  def create_result(form:,adr:)
+    result = Brut::BackEnd::Actions::CheckResult.new
+    if form.title.to_s.strip !~ /\s+/
+      result.constraint_violation!(object: form, field: :title, key: :not_enough_words, context: { minwords: 2 })
+    end
+    result.save_context(adr:adr)
+    result
   end
 end
