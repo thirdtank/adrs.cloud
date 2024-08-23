@@ -3,6 +3,7 @@
 require "optparse"
 require "pathname"
 require "prism"
+require "fileutils"
 
 ENV["RACK_ENV"] = "development"
 require_relative "brut_cli"
@@ -88,6 +89,7 @@ class Command
         classes = find_classes(result.value)
         log "#{destination} will contain tests for: #{classes.map(&:constant_path).map(&:full_name).join(', ')}"
 
+        FileUtils.mkdir_p destination.dirname
         File.open(destination,"w") do |file|
           file.puts "require \"spec_helper\""
           source_require = source.relative_path_from(Brut.container.app_src_dir).sub(/#{Regexp.escape(source.extname)}$/,"")
