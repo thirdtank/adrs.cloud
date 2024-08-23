@@ -46,6 +46,18 @@ gem "temple"
 # The i18n gem is used to manage translations
 gem "i18n"
 
+# Scaffold uses this to parse source files
+gem "prism"
+
+# Factory Bot generates test data
+# require: false is there because FactoryBot has a problem with ActiveSupport and so
+# it must be loaded first, THEN factory_bot.  If 6.4.7 or later is released,
+# this can be removed. See spec_helper.rb
+gem "factory_bot", require: false
+
+# We use faker to generate fake data
+gem "faker"
+
 # We log using the semantic_logger gem for more flexibility
 # with what goes in logs and how they work
 gem "semantic_logger"

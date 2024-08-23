@@ -1,7 +1,8 @@
 class Actions::Adrs::SaveDraft
   def save_new(form:, account:)
     if form.external_id
-      raise "#{self.class.name} was attempted on an existing ADR with external id #{form.external_id}"
+      raise Brut::BackEnd::Errors::Bug,
+        "#{self.class.name} was attempted on an existing ADR with external id #{form.external_id}"
     end
 
     adr = DataModel::Adr.new(created_at: Time.now, account_id: account.id)
@@ -11,13 +12,14 @@ class Actions::Adrs::SaveDraft
 
   def update(form:, account:)
     if form.external_id.nil?
-      raise "#{self.class.name} was attempted on a new ADR without an external id"
+      raise Brut::BackEnd::Errors::Bug,
+        "#{self.class.name} was attempted on a new ADR without an external id"
     end
 
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
 
     if !adr
-      raise "account does not have an ADR with that ID"
+      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{form.external_id}"
     end
 
     save(form: form, adr: adr)

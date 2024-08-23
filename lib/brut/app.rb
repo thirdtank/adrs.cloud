@@ -59,7 +59,7 @@ class Brut::App
     SemanticLogger.add_appender(io: $stdout, formatter: :color)
     SemanticLogger["Brut"].info("Logging set up")
 
-    ::I18n.load_path=Dir[Brut.container.project_root / "app" / "config" / "i18n" / "**/*.rb"]
+    ::I18n.load_path += Dir[Brut.container.project_root / "app" / "config" / "i18n" / "**/*.rb"]
 
   end
 

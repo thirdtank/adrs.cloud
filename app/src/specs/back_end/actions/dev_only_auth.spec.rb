@@ -6,7 +6,7 @@ RSpec.describe Actions::DevOnlyAuth do
     describe "email is not in the database" do
       it "returns an error" do
         result = Actions::DevOnlyAuth.new.check("non-existent@example.com")
-        expect(result.can_call?).to eq(false)
+        expect(result.constraint_violations?).to eq(true)
         found_error = false
         result.each_violation do |object,field,key,context|
           if field == :email
@@ -22,7 +22,7 @@ RSpec.describe Actions::DevOnlyAuth do
       it "returns the account" do
         account = DataModel::Account.create(email: "existent@example.com", created_at: Time.now)
         result = Actions::DevOnlyAuth.new.check(account.email)
-        expect(result.can_call?).to eq(true)
+        expect(result.constraint_violations?).to eq(false)
         expect(result[:account]).to eq(account)
       end
     end

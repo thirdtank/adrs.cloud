@@ -6,10 +6,18 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
 
 cd "${SCRIPT_DIR}/.."
 
-bin/rspec \
-  -I app/src/specs \
-  -I app/src/ \
-  -I lib/ \
-  -P "**/*.spec.rb" \
-  app/src/specs/
+if [ $# -eq 0 ]; then
+  bin/rspec \
+    -I app/src/specs \
+    -I app/src/ \
+    -I lib/ \
+    -P "**/*.spec.rb" \
+    app/src/specs/
+else
+  bin/rspec \
+    -I app/src/specs \
+    -I app/src/ \
+    -I lib/ \
+    "$@"
+fi
 

@@ -13,7 +13,6 @@ class Forms::Adrs::Draft < AppForm
   input :replaced_adr_external_id, required: false
 
   def params_empty?(params)
-    puts params.except(:refines_adr_external_id,:replaced_adr_external_id)
     params.nil? || params.except(:refines_adr_external_id,:replaced_adr_external_id).empty?
   end
 

@@ -5,10 +5,12 @@ class Actions::Adrs::Public
     adr = require_account_own_adr!(external_id,account)
     random_hex = SecureRandom.hex
     adr.update(public_id: "padr_#{random_hex}")
+    adr
   end
   def make_private(external_id:, account:)
     adr = require_account_own_adr!(external_id,account)
     adr.update(public_id: nil)
+    adr
   end
 
 private
@@ -16,7 +18,7 @@ private
   def require_account_own_adr!(external_id,account)
     adr = DataModel::Adr[external_id: external_id, account_id: account.id]
     if adr.nil?
-      raise "This account does not own this adr"
+      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{external_id}"
     end
     adr
   end

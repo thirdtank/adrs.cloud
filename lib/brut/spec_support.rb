@@ -1,0 +1,8 @@
+# Convention here is different. We don't want to autoload
+# a lot of stuff, since RSpec pollutes the Object namespace.
+# Instead, we'll require that these files are required explicitly
+module Brut
+  module SpecSupport
+  end
+end
+require_relative "spec_support/matcher"

@@ -14,7 +14,7 @@ RSpec.describe Actions::GitHubAuth do
             }
           }
           result = Actions::GitHubAuth.new.check(hash)
-          expect(result.can_call?).to eq(false)
+          expect(result.constraint_violations?).to eq(true)
           found_error = false
           result.each_violation do |object,field,key,context|
             if key == :no_account
@@ -35,7 +35,7 @@ RSpec.describe Actions::GitHubAuth do
             }
           }
           result = Actions::GitHubAuth.new.check(hash)
-          expect(result.can_call?).to eq(true)
+          expect(result.constraint_violations?).to eq(false)
           expect(result[:account]).to eq(account)
         end
       end

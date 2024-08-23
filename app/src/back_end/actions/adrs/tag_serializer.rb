@@ -4,8 +4,12 @@ class Actions::Adrs::TagSerializer
   end
 
   def from_string(tags_string)
-    tags_string.to_s.split(/\n/).map { |line|
-      line.split(/,/)
-    }.flatten.map(&:strip).map(&:downcase).uniq
+    tags_string.to_s.split(/\n/).
+      map { |line| line.split(/,/) }.
+      flatten.
+      map(&:strip).
+      reject { |tag| tag == "" }.
+      map(&:downcase).
+      uniq
   end
 end

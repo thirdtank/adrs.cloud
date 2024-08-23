@@ -13,7 +13,7 @@ class Actions::Adrs::Accept
     result = Brut::BackEnd::Actions::CheckResult.new
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
     if !adr
-      raise "This account cannot access this ADR"
+      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{form.external_id}"
     end
     result.save_context(adr: adr)
     validator = AcceptedAdrValidator.new

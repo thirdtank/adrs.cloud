@@ -1,0 +1,139 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+require "pathname"
+require "prism"
+
+ENV["RACK_ENV"] = "development"
+require_relative "brut_cli"
+
+def parse_options
+  options = {
+    overwrite: false,
+  }
+  OptionParser.new do |parser|
+    parser.banner = %{Usage: #{$0} [options] «command» [args]
+
+Scaffolds various types of files.
+
+COMMANDS
+
+  test - scaffolds test for the files given in args
+
+OPTIONS
+}
+    parser.on("--overwrite", "If set, any files that exists already will be overwritten by new scaffolds") do |value|
+      options[:overwrite] = !!value
+    end
+  end.parse!
+  options
+end
+
+options = parse_options
+
+class Command
+  def self.from_string(string, args:, options:)
+    case string
+    when "test" then Test.new(args: args, options: options)
+    else
+      nil
+    end
+  end
+
+  def initialize(args:, options:)
+    @args    = args
+    @options = options
+  end
+
+  class Test < Command
+    def call
+      if @args.empty?
+        log "'test' requires one or more files to scaffold a test for"
+        return 1
+      end
+      files_to_test_files = @args.map { |arg|
+        Pathname(arg).expand_path
+      }.map { |pathname|
+        relative = pathname.relative_path_from(Brut.container.app_src_dir)
+        test_file = Brut.container.app_src_dir / "specs" / relative.dirname / "#{relative.basename(relative.extname)}.spec.rb"
+        [ pathname, test_file ]
+      }.to_h
+
+      non_existent_sources  = files_to_test_files.keys.select   { |pathname| !pathname.exist? }
+      existent_destinations = files_to_test_files.values.select { |pathname| pathname.exist? }
+
+      if non_existent_sources.any?
+        relative_paths = non_existent_sources.map { |pathname| pathname.relative_path_from(Brut.container.project_root) }
+        log "Not all input files exist:"
+        relative_paths.each do |file|
+          log file
+        end
+        return 1
+      end
+
+      if existent_destinations.any? && !@options[:overwrite]
+        relative_paths = existent_destinations.map { |pathname| pathname.relative_path_from(Brut.container.project_root) }
+        log "Some files to be generated exist. Set --overwrite to overwrite them:"
+        relative_paths.each do |file|
+          log file
+        end
+        return 1
+      end
+
+      files_to_test_files.each do |source,destination|
+        result = Prism.parse_file(source.to_s)
+        if !result
+          raise "WTF"
+        end
+        classes = find_classes(result.value)
+        log "#{destination} will contain tests for: #{classes.map(&:constant_path).map(&:full_name).join(', ')}"
+
+        File.open(destination,"w") do |file|
+          file.puts "require \"spec_helper\""
+          source_require = source.relative_path_from(Brut.container.app_src_dir).sub(/#{Regexp.escape(source.extname)}$/,"")
+          file.puts "require \"#{source_require}\""
+          file.puts
+          classes.each do |class_node|
+            class_name = class_node.constant_path.full_name
+            file.puts "RSpec.describe #{class_name} do"
+            file.puts
+            file.puts "end"
+          end
+        end
+      end
+
+      0
+
+    end
+  end
+
+end
+
+
+def find_classes(ast)
+  classes = []
+  if ast.nil?
+    return classes
+  end
+  if ast.kind_of?(Prism::ClassNode)
+    classes << ast
+  end
+  ast.child_nodes.each do |child|
+    result = find_classes(child)
+    classes = classes + result
+  end
+  classes
+end
+
+if ARGV[0].to_s.strip == ""
+  log "You must provide a command"
+  exit 1
+end
+
+command = Command.from_string(ARGV[0],args: ARGV[1..-1],options: options)
+if !command
+  log "'#{ARGV[0]}' is not a supported command"
+  exit 1
+end
+
+exit command.call

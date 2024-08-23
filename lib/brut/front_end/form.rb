@@ -308,7 +308,7 @@ class Brut::FrontEnd::Form
       self.class.input_definitions.key?(key)
     }
     if unknown_params.any?
-      logger.warn "Ignoring unknown params", keys: unknown_params
+      logger.info "Ignoring unknown params", keys: unknown_params
     end
     @new = params_empty?(params.except(*unknown_params))
     @inputs = self.class.input_definitions.map { |name,input_definition|
