@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :adr, class: "DataModel::Adr" do
     account
-    title { Faker::Book.title }
+    title { Faker::Book.unique.title }
     created_at { Time.now }
     trait :accepted do
       context   { Faker::Hipster.paragraph }

@@ -23,6 +23,9 @@
         no_accepted: "None Accepted",
         no_replaced: "None Replaced",
         no_rejected: "None Rejected",
+        new: {
+          adr_invalid: "ADR is invalid. See below",
+        },
         edit: {
           adr_cannot_be_accepted: "ADR cannot be accepted. See below",
           refines: "Refines",

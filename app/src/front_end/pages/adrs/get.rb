@@ -1,32 +1,14 @@
 class Pages::Adrs::Get < AppPage
-  class Markdown < Redcarpet::Render::HTML
-    def header(text,header_level)
-      super.header(text,header_level.to_i + 3)
-    end
-  end
-
   attr_reader :adr, :info_message
 
   def initialize(adr:, info_message: nil)
     @adr = adr
     @info_message = info_message
-    @markdown = Redcarpet::Markdown.new(
-      Redcarpet::Render::HTML.new(
-        filter_html: true,
-        no_images: true,
-        no_styles: true,
-        safe_links_only: true,
-        link_attributes: { class: "blue-400" },
-      ),
-      fenced_code_blocks: true,
-      autolink: true,
-      quote: true,
-    )
   end
 
   def markdown(field)
     value = "**#{field_text(field)}** #{adr.send(field)}"
-    Brut::FrontEnd::Templates::HTMLSafeString.from_string(@markdown.render(value))
+    component(Components::MarkdownString.new(value))
   end
 
   def refined_by_adrs

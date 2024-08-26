@@ -14,6 +14,16 @@ class Support::HtmlLocator
     caption.parent
   end
 
+  def element(css_selector)
+    element = @rendered_html.css(css_selector)
+    if (element.kind_of?(Nokogiri::XML::NodeSet))
+      expect(element.length).to be < 2
+      return element.first
+    else
+      expect([Nokogiri::XML::Node, Nokogiri::XML::Element]).to include(element.class)
+      return element
+    end
+  end
   def element!(css_selector)
     element = @rendered_html.css(css_selector)
     if (element.kind_of?(Nokogiri::XML::NodeSet))

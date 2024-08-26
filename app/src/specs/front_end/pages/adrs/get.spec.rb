@@ -12,12 +12,13 @@ RSpec.describe Pages::Adrs::Get do
     end
   end
   context "draft" do
-    it "shows the draft label" do
-      adr = create(:adr)
+    it "shows the draft label and renders content in markdown" do
+      adr = create(:adr, because: "Because *this* is a test of `markdown`")
       page = described_class.new(adr: adr)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("aside[role='note']").text.to_s.strip).to eq("DRAFT")
+      expect(html_locator.element!("[aria-label='because']").inner_html).to include("Because <em>this</em> is a test of <code>markdown</code>")
     end
   end
   context "replaced" do

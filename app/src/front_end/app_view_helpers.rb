@@ -3,9 +3,13 @@
 # or page as needed.
 module AppViewHelpers
   def adr_path(adr) = "/adrs/#{adr.external_id}"
-  def public_adr_path(adr)
+  def public_adr_path(adr, on_private: :bug)
     if !adr.public?
-      raise Brut::BackEnd::Errors::Bug, "#{adr.external_id} is not public - this should not have been called"
+      if on_private != nil
+        raise Brut::BackEnd::Errors::Bug, "#{adr.external_id} is not public - this should not have been called"
+      else
+        nil
+      end
     end
     "/p/adrs/#{adr.public_id}"
   end
