@@ -1,150 +1,164 @@
 <% if info_message %>
-    <aside class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
-      <%= info_message %>
+    <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+      <%= t(info_message) %>
     </aside>
   <% end %>
 <section class="bg-blue-900 pt-3 pb-4 shadow-1">
-<h1 class="tc">ADRS</h1>
+<h1 class="tc">ADRs</h1>
 <h2 class="tc">Accepted</h2>
-<table class="collapse w-60 mh-auto">
-  <thead>
-    <tr>
-      <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-      <th class="tl pa-2 fw-5 bb bc-2">Accepted On</th>
-      <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% accepted_adrs.each do |adr| %>
-    <tr>
-      <td class="w-60 pa-2 lh-copy f-3 va-middle">
-        <%= adr.title %>
-        <% adr.tags.each do |tag| %>
-          <%= component Components::Adrs::Tag.new(tag: tag) %>
-        <% end %>
-      </td>
-      <td class="w-20 pa-2 ws-nowrap va-middle">
-        <%= adr.accepted_at %>
-      </td>
-      <td class="w-20 pa-2 tr va-middle">
-        <nav class="flex items-baseline gap-2 mv-2">
-          <a class="blue-400" href="<%= adr_path(adr) %>">View</a>
-        </nav>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+<% if accepted_adrs.any? %>
+  <table class="collapse w-60 mh-auto">
+    <caption class="sr-only">Accepted ADRs</caption>
+    <thead>
+      <tr>
+        <th class="tl pa-2 fw-5 bb bc-2">Name</th>
+        <th class="tl pa-2 fw-5 bb bc-2">Accepted On</th>
+        <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% accepted_adrs.each do |adr| %>
+      <tr>
+        <td class="w-60 pa-2 lh-copy f-3 va-middle">
+          <%= adr.title %>
+          <% adr.tags.each do |tag| %>
+            <%= component Components::Adrs::Tag.new(tag: tag) %>
+          <% end %>
+        </td>
+        <td class="w-20 pa-2 ws-nowrap va-middle">
+          <%= adr.accepted_at %>
+        </td>
+        <td class="w-20 pa-2 tr va-middle">
+          <nav class="flex items-baseline gap-2 mv-2">
+            <a class="blue-400" href="<%= adr_path(adr) %>">View</a>
+          </nav>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="i w-100 tc"><%= t("pages.adrs.no_accepted") %></p>
+<% end %>
 <h2 class="tc">Drafts</h2>
-<table class="collapse w-60 mh-auto">
-  <% if draft_adrs.any? %>
-  <thead>
-    <tr>
-      <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-      <th class="tl pa-2 fw-5 bb bc-2">Created On</th>
-      <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
-    </tr>
-  </thead>
-  <% end %>
-  <tbody>
-    <% draft_adrs.each do |adr| %>
-    <tr>
-      <td class="w-60 pa-2 lh-copy f-3 va-middle">
-        <%= adr.title %>
-        <% adr.tags.each do |tag| %>
-          <%= component Components::Adrs::Tag.new(tag: tag) %>
-        <% end %>
-        <% if adr.refines_adr %>
-        <small class="db">
-          refines
-          “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
-        </small>
-        <% elsif adr.proposed_to_replace_adr %>
-        <small class="db">
-          proposed to replace
-          “<a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>”
-        </small>
-        <% end %>
-      </td>
-      <td class="w-20 pa-2 ws-nowrap va-middle">
-        <%= adr.created_at %>
-      </td>
-      <td class="w-20 pa-2 va-middle">
-        <nav class="flex items-center gap-3 mv-2">
-          <a class="blue-400 ws-nowrap" href="<%= edit_adr_path(adr) %>">Edit Draft</a>
-        </nav>
-      </td>
-    </tr>
-    <% end %>
-    <tr>
-      <td class="tc pa-2" colspan="3">
-        <a class="f-3 blue-400 fw-5" href="/adrs/new">Add a new one!</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<% if draft_adrs.any? %>
+  <table class="collapse w-60 mh-auto">
+    <caption class="sr-only">Draft ADRs</caption>
+    <thead>
+      <tr>
+        <th class="tl pa-2 fw-5 bb bc-2">Name</th>
+        <th class="tl pa-2 fw-5 bb bc-2">Created On</th>
+        <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% draft_adrs.each do |adr| %>
+        <tr>
+          <td class="w-60 pa-2 lh-copy f-3 va-middle">
+            <%= adr.title %>
+            <% adr.tags.each do |tag| %>
+              <%= component Components::Adrs::Tag.new(tag: tag) %>
+            <% end %>
+            <% if adr.refines_adr %>
+            <small class="db">
+              refines
+              “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+            </small>
+            <% elsif adr.proposed_to_replace_adr %>
+            <small class="db">
+              proposed to replace
+              “<a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>”
+            </small>
+            <% end %>
+          </td>
+          <td class="w-20 pa-2 ws-nowrap va-middle">
+            <%= adr.created_at %>
+          </td>
+          <td class="w-20 pa-2 va-middle">
+            <nav class="flex items-center gap-3 mv-2">
+              <a class="blue-400 ws-nowrap" href="<%= edit_adr_path(adr) %>">Edit Draft</a>
+            </nav>
+          </td>
+        </tr>
+      <% end %>
+      <tr>
+        <td class="tc pa-2" colspan="3">
+          <a class="f-3 blue-400 fw-5" href="/adrs/new">Add a new one!</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<% else %>
+  <p class="i w-100 tc"><%= t("pages.adrs.no_drafts") %></p>
+<% end %>
 </section>
 <details class="pt-4">
   <summary class="w-60 mh-auto pa-2">
     View Replaced and Rejected ADRs
   </summary>
   <h2 class="tc">Replaced</h2>
-  <table class="collapse w-60 mh-auto">
-    <% if replaced_adrs.any? %>
-    <thead>
-      <tr>
-        <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-        <th class="tl pa-2 fw-5 bb bc-2">Replaced By</th>
-        <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
-      </tr>
-    </thead>
-    <% end %>
-    <tbody>
-      <% replaced_adrs.each do |adr| %>
-      <tr>
-        <td class="w-50 pa-2 lh-copy f-2 va-middle">
-          <%= adr.title %>
-        </td>
-        <td class="w-30 pa-2 va-middle f-3 p">
-          <%= adr.replaced_by_adr.title %>
-        </td>
-        <td class="w-20 pa-2 va-middle">
-          <nav class="flex flex-column items-start gap-2 mv-2">
-            <a class="blue-400" href="<%= adr_path(adr) %>">View Original</a>
-            <a class="blue-400" href="<%= adr_path(adr.replaced_by_adr) %>">View Replacement</a>
-          </nav>
-        </td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <% if replaced_adrs.any? %>
+    <table class="collapse w-60 mh-auto">
+      <caption class="sr-only">Replaced ADRs</caption>
+      <thead>
+        <tr>
+          <th class="tl pa-2 fw-5 bb bc-2">Name</th>
+          <th class="tl pa-2 fw-5 bb bc-2">Replaced By</th>
+          <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% replaced_adrs.each do |adr| %>
+        <tr>
+          <td class="w-50 pa-2 lh-copy f-2 va-middle">
+            <%= adr.title %>
+          </td>
+          <td class="w-30 pa-2 va-middle f-3 p">
+            <%= adr.replaced_by_adr.title %>
+          </td>
+          <td class="w-20 pa-2 va-middle">
+            <nav class="flex flex-column items-start gap-2 mv-2">
+              <a class="blue-400" href="<%= adr_path(adr) %>">View Original</a>
+              <a class="blue-400" href="<%= adr_path(adr.replaced_by_adr) %>">View Replacement</a>
+            </nav>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="i w-100 tc"><%= t("pages.adrs.no_replaced") %></p>
+  <% end %>
   <h2 class="tc">Rejected</h2>
-  <table class="collapse w-60 mh-auto">
-    <% if rejected_adrs.any? %>
-    <thead>
-      <tr>
-        <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-        <th class="tl pa-2 fw-5 bb bc-2">Rejected On</th>
-        <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
-      </tr>
-    </thead>
-    <% end %>
-    <tbody>
-      <% rejected_adrs.each do |adr| %>
-      <tr>
-        <td class="w-60 pa-2 lh-copy f-3 va-middle">
-          <%= adr.title %>
-        </td>
-        <td class="w-20 pa-2 ws-nowrap va-middle">
-          <%= adr.rejected_at %>
-        </td>
-        <td class="w-20 pa-2 va-middle">
-          <nav class="flex items-baseline gap-2 mv-2">
-            <a class="blue-400" href="<%= adr_path(adr) %>">View Draft</a>
-          </nav>
-        </td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <% if rejected_adrs.any? %>
+    <table class="collapse w-60 mh-auto">
+        <caption class="sr-only">Rejected ADRs</caption>
+      <thead>
+        <tr>
+          <th class="tl pa-2 fw-5 bb bc-2">Name</th>
+          <th class="tl pa-2 fw-5 bb bc-2">Rejected On</th>
+          <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rejected_adrs.each do |adr| %>
+        <tr>
+          <td class="w-60 pa-2 lh-copy f-3 va-middle">
+            <%= adr.title %>
+          </td>
+          <td class="w-20 pa-2 ws-nowrap va-middle">
+            <%= adr.rejected_at %>
+          </td>
+          <td class="w-20 pa-2 va-middle">
+            <nav class="flex items-baseline gap-2 mv-2">
+              <a class="blue-400" href="<%= adr_path(adr) %>">View Draft</a>
+            </nav>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="i w-100 tc"><%= t("pages.adrs.no_rejected") %></p>
+  <% end %>
 </details>

@@ -22,8 +22,6 @@ class Brut::FrontEnd::Components::Inputs::TextField < Brut::FrontEnd::Components
     if input.step
       default_html_attributes["step"] = input.step
     end
-    puts form.new?
-    puts form.class
     if !form.new? && !input.valid?
       default_html_attributes["data-invalid"] = true
       input.validity_state.each do |constraint,violated|

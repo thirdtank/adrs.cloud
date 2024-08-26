@@ -24,7 +24,15 @@ class Components::Button < AppComponent
     @value                =   value
     @type                 =   type
     @variant              =   variant
-    @title                =   disabled.kind_of?(String) ? disabled : title
+
+    disabled_message = disabled.kind_of?(String) ? disabled : nil
+    @title                =   if @disabled
+                                disabled_message
+                              elsif title
+                                title
+                              else
+                                label
+                              end
   end
 
 

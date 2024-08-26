@@ -58,6 +58,9 @@ gem "factory_bot", require: false
 # We use faker to generate fake data
 gem "faker"
 
+# Nokogiri is used to parse HTML in tests
+gem "nokogiri"
+
 # We log using the semantic_logger gem for more flexibility
 # with what goes in logs and how they work
 gem "semantic_logger"

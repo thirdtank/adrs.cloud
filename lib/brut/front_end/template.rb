@@ -25,4 +25,8 @@ class Brut::FrontEnd::Template
   def render_template(...)
     @tilt_template.render(...)
   end
+
+  def self.escape_html(string)
+    Brut::FrontEnd::Templates::EscapableFilter.escape_html(string)
+  end
 end

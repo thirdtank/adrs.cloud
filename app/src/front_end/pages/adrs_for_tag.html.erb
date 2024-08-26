@@ -6,6 +6,7 @@
   <h2 class="tc">Accepted</h2>
   <% if accepted_adrs.any? %>
     <table class="collapse w-60 mh-auto">
+      <caption class="sr-only">Accepted ADRs</caption>
       <thead>
         <tr>
           <th class="tl pa-2 fw-5 bb bc-2">Name</th>
@@ -32,11 +33,12 @@
       </tbody>
     </table>
   <% else %>
-    <p class="tc i">None</p>
+    <p class="tc i"><%= t("pages.adrs_for_tag.no_accepted", tag: tag) %></p>
   <% end %>
   <h2 class="tc">Drafts</h2>
   <% if draft_adrs.any? %>
     <table class="collapse w-60 mh-auto">
+      <caption class="sr-only">Draft ADRs</caption>
       <thead>
         <tr>
           <th class="tl pa-2 fw-5 bb bc-2">Name</th>
@@ -69,6 +71,6 @@
       </tbody>
     </table>
   <% else %>
-    <p class="tc i">None</p>
+    <p class="tc i"><%= t("pages.adrs_for_tag.no_drafts", tag: tag) %></p>
   <% end %>
 </section>

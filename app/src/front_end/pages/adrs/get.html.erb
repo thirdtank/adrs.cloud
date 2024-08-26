@@ -1,6 +1,6 @@
 <% if info_message %>
-  <aside class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
-    <%= info_message %>
+  <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+    <%= t(info_message) %>
   </aside>
 <% end %>
 <div class="flex items-start gap-3 justify-center">
@@ -10,7 +10,7 @@
       <a class="f-2 fw-5 blue-400" href="/adrs">&larr; View All</a>
     </div>
     <% if draft? %>
-      <aside class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
+      <aside role="note" class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
       DRAFT
       </aside>
     <% end %>

@@ -43,6 +43,28 @@ module Brut::I18n
     if result.kind_of?(Hash)
       raise I18n::MissingInterpolationArgument.new(:count,interpolated_values,keys.join(","))
     end
+    Brut::FrontEnd::Template.escape_html(result)
+  end
+
+  # Translates the given key, but does not do any HTML escaping.  Any String values
+  # in interpolated_values *will* be escaped, however.  To avoid that, those strings
+  # can be wrapped in a Brut::FrontEnd::Templates::HTMLSafeString.
+  def t_html(keys,interpolated_values={})
+    keys = Array(keys)
+    default_interpolated_values = {
+      field: this_field_value,
+    }
+    escaped_interpolated_values = interpolated_values.map { |key,value|
+      if value.kind_of?(String)
+        [ key, Brut::FrontEnd::Template.escape_html(value) ]
+      else
+        [ key, value ]
+      end
+    }.to_h
+    result = ::I18n.t(keys.first, default: keys[1..-1],raise: true, **default_interpolated_values.merge(escaped_interpolated_values))
+    if result.kind_of?(Hash)
+      raise I18n::MissingInterpolationArgument.new(:count,interpolated_values,keys.join(","))
+    end
     result
   end
 

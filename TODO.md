@@ -12,9 +12,11 @@ CHECK 3 - Public sharing of ADRs
                 Refined and Replaced ADRs are public by default, but can be made non-public
                 ADR can be made non-public after the fact
 
-      4 - Unit tests of the app
-          DONE: All app/src classes are tested that should be
+CHECK 4 - Unit tests of the backend app
+          DONE: All app/src classes are tested that should be in the backend
 
+      5 - Unit tests of the front-end Ruby app
+          DONE: All app/src classes are tested that should be in the backend
 ## 2024-08-12
 
 CHECK 1 - Convert to tile/erubi

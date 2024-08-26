@@ -9,5 +9,30 @@
         not_enough_words: "%{field} must have at least %{minwords} words",
       },
     },
+    actions: {
+      adrs: {
+        created: "ADR Created",
+        updated: "ADR Updated",
+        rejected: "ADR Rejected",
+        accepted: "ADR Accepted",
+      }
+    },
+    pages: {
+      adrs: {
+        no_drafts: "None Drafted",
+        no_accepted: "None Accepted",
+        no_replaced: "None Replaced",
+        no_rejected: "None Rejected",
+        edit: {
+          adr_cannot_be_accepted: "ADR cannot be accepted. See below",
+          refines: "Refines",
+          proposed_replacement: "Proposed Replacement for",
+        }
+      },
+      adrs_for_tag: {
+        no_drafts: "None Drafted with tag '%{tag}'",
+        no_accepted: "None Accepted with tag '%{tag}'",
+      },
+    },
   },
 }

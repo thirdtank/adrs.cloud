@@ -102,7 +102,7 @@ class AdrApp < Sinatra::Base
     if result.constraint_violations?
       page Pages::Adrs::New.new(form: result.form)
     else
-      flash[:notice] = :adr_created
+      flash[:notice] = "actions.adrs.created"
       redirect to("/adrs/#{result.action_return_value.external_id}/edit")
     end
   end
@@ -117,7 +117,7 @@ class AdrApp < Sinatra::Base
   get "/adrs/:external_id/edit" do
     page Pages::Adrs::Edit.new(
       adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
-      updated_message: flash[:notice]
+      updated_message: "actions.adrs.updated",
     )
   end
 
@@ -141,7 +141,7 @@ class AdrApp < Sinatra::Base
       if request.xhr?
         200
       else
-        flash[:notice] = :adr_updated
+        flash[:notice] = "actions.adrs.updated"
         redirect to("/adrs/#{result.action_return_value.external_id}/edit")
       end
     end
@@ -164,10 +164,10 @@ class AdrApp < Sinatra::Base
                           account: @account
     if result.constraint_violations?
       page Pages::Adrs::Edit.new(adr: result[:adr],
-                                 error_message: "ADR could not be accepted",
+                                 error_message: "pages.adrs.edit.adr_cannot_be_accepted",
                                  form: result.form)
     else
-      flash[:notice] = :adr_accepted
+      flash[:notice] = "actions.adrs.accepted"
       redirect to("/adrs/#{result.action_return_value.external_id}")
     end
   end
@@ -178,7 +178,7 @@ class AdrApp < Sinatra::Base
                  action: Actions::Adrs::Reject.new,
                  action_method: :reject,
                  account: @account
-    flash[:notice] = :adr_rejected
+    flash[:notice] = "actions.adrs.rejected"
     redirect to("/adrs")
   end
 

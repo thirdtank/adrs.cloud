@@ -5,7 +5,7 @@ module AppViewHelpers
   def adr_path(adr) = "/adrs/#{adr.external_id}"
   def public_adr_path(adr)
     if !adr.public?
-      raise "This should not have been called"
+      raise Brut::BackEnd::Errors::Bug, "#{adr.external_id} is not public - this should not have been called"
     end
     "/p/adrs/#{adr.public_id}"
   end

@@ -10,6 +10,9 @@ require "brut/spec_support"
 require "active_support"
 require "factory_bot"
 require "faker"
+require "nokogiri"
+
+require_relative "support"
 
 Faker::Config.locale = :en
 FactoryBot.definition_file_paths = [
@@ -24,10 +27,28 @@ SemanticLogger.default_level = ENV.fetch("LOGGER_LEVEL_FOR_TESTS","warn")
 
 RSpec.configure do |config|
 
+  config.define_derived_metadata do |metadata|
+    if metadata[:described_class].to_s =~ /^Components::/ ||
+       metadata[:described_class].to_s =~ /^Pages::/ ||
+       metadata[:page] == true
+      metadata[:component] = true
+    end
+  end
+  config.include Brut::SpecSupport::ComponentParser, component: true
   config.around do |example|
+    rendering_context = Thread.current[:rendering_context]
+    is_component = example.metadata[:component]
+    if is_component
+      Thread.current[:rendering_context] = {
+        csrf_token: "test-csrf-token"
+      }
+    end
     Sequel::Model.db.transaction do
       example.run
       raise Sequel::Rollback
+    end
+    if is_component
+      Thread.current[:rendering_context] = rendering_context
     end
   end
 
