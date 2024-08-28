@@ -1,5 +1,18 @@
 # One Week Sprint
 
+CHECK 1 - Unit tests of the front-end Ruby app
+          DONE: All app/src classes are tested that should be in the backend
+
+
+What is this going to be / criteria for launch?
+
+- a nice free thing that's fun - requires limiting accounts
+- someting to charge money for - would need user research to see if it's worth doing/what features are missing
+- a demonstration of Brut - perhaps.  It likely needs more interactive JavaScript features,
+                                      background jobs, and maybe API integration.
+
+## 2024-08-19
+
 CHECK 1 - Basic i18n setup
           DONE: Can show errors via i18n on both client and server
 
@@ -15,8 +28,6 @@ CHECK 3 - Public sharing of ADRs
 CHECK 4 - Unit tests of the backend app
           DONE: All app/src classes are tested that should be in the backend
 
-      5 - Unit tests of the front-end Ruby app
-          DONE: All app/src classes are tested that should be in the backend
 ## 2024-08-12
 
 CHECK 1 - Convert to tile/erubi
