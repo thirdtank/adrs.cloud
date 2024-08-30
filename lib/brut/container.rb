@@ -27,6 +27,7 @@ class Brut::Container
   # Store a named value for later.
   #
   # name:: The name of the value. This should be a string that is a valid Ruby identifier.
+  # type:: String of the name of the class taht represents the type of this value.
   # description:: Documentation as to what this value is for.
   # value:: if given, this is the value to use.
   # block:: If value is omitted, block will be evaluated the first time the value is

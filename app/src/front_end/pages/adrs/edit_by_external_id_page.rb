@@ -1,4 +1,4 @@
-class Pages::Adrs::Edit < AppPage
+class Adrs::EditByExternalIdPage < AppPage
   attr_reader :adr, :form, :error_message
   def initialize(account: nil, external_id: nil, adr: nil, form: nil, error_message: nil)
     @adr = adr || DataModel::Adr[account_id: account.id, external_id: external_id]

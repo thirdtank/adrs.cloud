@@ -1,10 +1,15 @@
-class Pages::Adrs < AppPage
+class AdrsPage < AppPage
 
-  attr_reader :info_message
+  attr_reader :info_message, :tag
 
-  def initialize(account:, info_message: nil)
-    @adrs         = account.adrs
+  def initialize(account:, info_message: nil, tag: nil)
     @info_message = info_message
+    @tag          = tag
+    @adrs         = if @tag.nil?
+                      account.adrs
+                    else
+                      Actions::Adrs::Search.new.by_tag(account: account, tag: @tag)
+                    end
   end
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)
   def replaced_adrs = @adrs.select(&:replaced?).sort_by { |adr|
@@ -12,5 +17,9 @@ class Pages::Adrs < AppPage
   }
   def draft_adrs    = @adrs.reject(&:accepted?).reject(&:rejected?).sort_by(&:created_at)
   def rejected_adrs = @adrs.select(&:rejected?).sort_by(&:rejected_at)
+
+  def tag? = !!@tag
+
+  def routing = Brut.container.routing
 
 end

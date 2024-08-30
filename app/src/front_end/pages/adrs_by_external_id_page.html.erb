@@ -1,0 +1,187 @@
+<% if info_message %>
+  <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+    <%= t(info_message) %>
+  </aside>
+<% end %>
+<div class="flex items-start gap-3 justify-center">
+  <div role="none" class="w-quarter"></div>
+  <article class="w-50 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
+    <div class="pa-3 bg-gray-800 bb bc-gray-700">
+      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; View All</a>
+    </div>
+    <% if draft? %>
+      <aside role="note" class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
+      DRAFT
+      </aside>
+    <% end %>
+    <h2 class="tc measure-narrow ph-1 mh-auto lh-title fs-5 mt-3 mb-1 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
+    <div class="tc f-1 mb-3">
+      <% if adr.replaced? %>
+        <h3 class="lh-title f-3 fw-5 pa-2 mh-3 ba br-2 bc-red-300 red-900 bg-red-300 flex items-center gap-3">
+          <div class="w-3">
+          <%= svg("change-icon") %>
+          </div>
+          <div class="tl">
+            <div class="f-2">
+              Replaced <time class="fw-6" datetime="<%= adr.replaced_by_adr.accepted_at %>"><%= adr.replaced_by_adr.accepted_at %></time> by
+            </div>
+            <a class="db red-900" href="<%= adr_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
+          </div>
+        </h3>
+      <% end %>
+      <% if adr.accepted? %>
+        <h3 class="lh-title fw-5 pa-2 mh-3 ba br-2 
+          <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' %>
+          ">
+          <% if adr.replaced? %>
+            Originally
+          <% end %>
+          Accepted <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
+        </h3>
+      <% end %>
+      <% if !adr.replaced_adr.nil? %>
+        <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900">
+          Replaces <a class="green-300" href="<%= adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
+        </h3>
+      <% end %>
+      <% if adr.rejected? %>
+      <h3 class="lh-title fw-5 pa-2 mh-3 ba br-2 bc-red-200 red-800 bg-red-200">
+      Rejected <time class="fw-6" datetime="<%= adr.created_at %>"><%= adr.rejected_at %></time>
+      </h3>
+      <% end %>
+      Created <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
+    </div>
+    <section aria-label="context" class="rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
+    <section aria-label="facing" class="rendered-markdown ph-3"><%= markdown(:facing) %></section>
+    <div class="ph-3 f-3 bt bb <%= adr.accepted_at.nil? ? 'bc-yellow-600 bg-yellow-800 yellow-100' : 'bc-green-600 bg-green-800 green-200' %>">
+      <section aria-label="decision" class="rendered-markdown ph-3 fw-5"><%= markdown(:decision) %></section>
+    </div>
+    <section aria-label="neglected" class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:neglected) %></section>
+    <section aria-label="achieve" class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:achieve) %></section>
+    <section aria-label="accepting" class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:accepting) %></section>
+    <section aria-label="because" class="rendered-markdown ph-3"><%= markdown(:because) %></section>
+    <% if adr.refines? %>
+      <section class="bt bc-gray-800">
+      <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-blue-800 blue-300 bg-blue-900 flex items-center gap-2">
+        <div class="w-2">
+          <%= svg("adjust-control-icon") %>
+        </div>
+        <div class="tl">
+          Refines “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+        </div>
+      </h3>
+      </section>
+    <% end %>
+    <%= component(Components::Adrs::GetRefinements.new(refined_by_adrs: refined_by_adrs)) %>
+    <div class="pa-3 bg-gray-800 bt bc-gray-700">
+      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; Back</a>
+    </div>
+  </article>
+  <div class="w-quarter mv-3">
+    <div style="visibility: hidden" role="none" class="pa-3">
+      <span class="f-2 fw-5">hidden</span>
+    </div>
+    <nav class="flex flex-column gap-3 mt-1 bb bc-gray-600 pb-3 mr-3">
+    <% if editable? %>
+        <a class="f-2 fw-5 blue-400" href="<%= edit_adr_path(adr) %>">Edit</a>
+    <% elsif adr.accepted? %>
+      <%= form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2") do %>
+        <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+        <fieldset class="bn pa-0 ma-0 flex items-center">
+
+          <%= component(Components::Button.new(
+            size: "small",
+            formaction: "/public_adrs",
+            variant: :left,
+            disabled: public? ? "This ADR is already public" : false,
+            color: "orange",
+            label: "Make Public",
+            confirm: "This will create a publicly accessible URL to allow anyone with it to view this ADR",
+            icon: "globe-network-icon")) %>
+
+          <%= component(Components::Button.new(
+            size: "small",
+            formaction: "/private_adrs",
+            variant: :right,
+            disabled: private? ? "This ADR is already private" : false,
+            color: "blue",
+            label: "Make Private",
+            confirm: "Anyone with this ADR's public URL will no longer be able to access it",
+            icon: "lock-icon")) %>
+
+        </fieldset>
+        <% if public? %>
+          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= public_path %>">
+            <span class="tdu f-1">View Public Page</span>
+            <div class="w-1" role="img" aria-description="external link icon"><%= svg("external-link-icon") %></div>
+          </a>
+        <% else %>
+          <details>
+            <summary class="f-1 fw-5 i">
+              What is public?
+            </summary>
+          <p class="f-1 i p">
+            Public ADRs are not discoverable, but have a private URL you can share with others. Anyone with this URL can read the ADR, but cannot modify it.
+          </p>
+          </details>
+        <% end %>
+      <% end %>
+      <% if !adr.replaced? %>
+        <%= form_tag(method: "post", class:"flex items-center") do %>
+          <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+          <%= component(Components::Button.new(size: "normal", variant: :left, formaction: "/replaced_adrs", color: "red", label: "Replace", icon: "change-icon")) %>
+          <%= component(Components::Button.new(size: "normal", variant: :right, formaction: "/refined_adrs", color: "purple", label: "Refine", icon: "adjust-control-icon")) %>
+        <% end %>
+      <% end %>
+    <% end %>
+    </nav>
+    <adr-tag-editor show-warnings="editor">
+      <adr-tag-editor-view>
+        <div class="flex items-end justify-between mb-2 pv-3 pr-3">
+          <div>
+            <div class="f-1 fw-bold mb-3">Tags</div>
+            <div class="flex flex-wrap items-center gap-2">
+              <% if adr.tags.any? %>
+                <% adr.tags.each do |tag| %>
+                  <%= component Components::Adrs::Tag.new(tag: tag) %>
+                <% end %>
+              <% else %>
+                <span class="f-1 gray-400 i">None</span>
+              <% end %>
+            </div>
+          </div>
+          <%= component(Components::Button.new(size: "tiny",
+                                               color: adr.tags.any? ? "white"          : "purple",
+                                               label: adr.tags.any? ? "Edit"           : "Add",
+                                               icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
+        </div>
+      </adr-tag-editor-view>
+      <adr-tag-editor-edit class="dn">
+        <%= form_tag(action: "/adr_tags",
+                     method: "post",
+                     class: "mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white") do %>
+          <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+          <label class="flex flex-column gap-1 w-100">
+            <div class="textarea-container">
+              <textarea name="tags" class="textarea"><%= adr.tags.join(", ") %></textarea>
+            </div>
+            <span class="sr-only">Tags</span>
+            <p class="p f-1 i ma-0">Separate tags by commas or new lines. Tags are case-insensitive</p>
+          </label>
+          <div class="flex items-center justify-between gap-2 w-100">
+            <%= component(Components::Button.new(size: "tiny",
+                                                 type: "reset",
+                                                 color: "red",
+                                                 label: "Nevermind",
+                                                 icon:  "close-line-icon")) %>
+            <%= component(Components::Button.new(size: "small",
+                                                 color: "blue",
+                                                 label: "Save Tags",
+                                                 icon:  "tag-line-icon")) %>
+          </div>
+        <% end %>
+      </adr-tag-editor-edit>
+    </adr-tag-editor>
+  </div>
+</div>
+<%= component(Components::ConfirmationDialog.new) %>

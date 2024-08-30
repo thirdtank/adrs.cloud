@@ -6,6 +6,19 @@
 * there is an 80% pattern for gets: render a page with some data
 * there is an 80% pattern for posts: process a form, then render errors or render/redirect OK
 
+```
+page route # serves up the given page, using a convention for the class name and
+           # injecting any context based on page's constructor params
+
+page route, page_class: SomeClass # Specify the class without conventions
+```
+
+### Page Route/Class name conventions
+
+* `/widgets` - `WidgetsPage`
+* `/widgets/popular` - `WidgetsPopularPage`
+* `/widget/:id` - `WidgetByIdPage`
+* `/widget/:id/tags - `WidgetByIdTagsPage`
 
 ## Logic useful to front-end and back-end - where does it go?
 

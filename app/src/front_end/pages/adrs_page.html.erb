@@ -1,10 +1,20 @@
+<% if tag? %>
+  <div class="pa-3 bg-gray-800 bb bc-gray-700">
+    <a class="f-2 fw-5 blue-400" href="/adrs">&larr; View All</a>
+  </div>
+<% end %>
 <% if info_message %>
     <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
       <%= t(info_message) %>
     </aside>
   <% end %>
 <section class="bg-blue-900 pt-3 pb-4 shadow-1">
-<h1 class="tc">ADRs</h1>
+  <h1 class="flex items-center justify-center gap-2">
+    ADRs
+    <% if tag? %>
+      tagged <%= component(Components::Adrs::Tag.new(tag: tag)) %>
+    <% end %>
+  </h1>
 <h2 class="tc">Accepted</h2>
 <% if accepted_adrs.any? %>
   <table class="collapse w-60 mh-auto">
@@ -76,7 +86,7 @@
           </td>
           <td class="w-20 pa-2 va-middle">
             <nav class="flex items-center gap-3 mv-2">
-              <a class="blue-400 ws-nowrap" href="<%= edit_adr_path(adr) %>">Edit Draft</a>
+              <a class="blue-400 ws-nowrap" href="<%= routing.for(Adrs::EditByExternalIdPage, external_id: adr.external_id) %>">Edit Draft</a>
             </nav>
           </td>
         </tr>
@@ -92,6 +102,7 @@
   <p class="i w-100 tc"><%= t("pages.adrs.no_drafts") %></p>
 <% end %>
 </section>
+<% if !tag? %>
 <details class="pt-4">
   <summary class="w-60 mh-auto pa-2">
     View Replaced and Rejected ADRs
@@ -151,7 +162,7 @@
           </td>
           <td class="w-20 pa-2 va-middle">
             <nav class="flex items-baseline gap-2 mv-2">
-              <a class="blue-400" href="<%= adr_path(adr) %>">View Draft</a>
+              <a class="blue-400" href="<%= routing.for(AdrsByExternalIdPage, external_id: adr.external_id) %>">View Draft</a>
             </nav>
           </td>
         </tr>
@@ -162,3 +173,4 @@
     <p class="i w-100 tc"><%= t("pages.adrs.no_rejected") %></p>
   <% end %>
 </details>
+<% end %>

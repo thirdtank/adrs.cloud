@@ -29,16 +29,12 @@ class AdrApp < Sinatra::Base
   include Brut::SinatraHelpers
 
   before do
-    @request_data = {}
-  end
-
-  before do
     is_auth_callback         =  request.path_info.match?(/^\/auth\//)
     is_root                  =  request.path_info == "/"
-    is_public_dynamic_route  =  request.path_info.match?(/^\/p\//)
+    is_public_dynamic_route  =  request.path_info.match?(/^\/public_adrs\//)
 
     @account = DataModel::Account[external_id: session["user_id"]]
-    @request_data[:account] = @account
+    Thread.current.thread_variable_get(:request_context)[:account] = @account
 
     logged_out = @account.nil?
     requires_login = !is_auth_callback && !is_root && !is_public_dynamic_route
@@ -93,8 +89,6 @@ class AdrApp < Sinatra::Base
   #  page Pages::Adrs.new(adrs: @account.adrs, info_message: flash[:notice])
   #end
 
-  page "/adr_tags/:tag", page_class: Pages::AdrsForTag
-
   #get "/adr_tags/:tag" do
   #  tag = params[:tag]
   #  page Pages::AdrsForTag.new(
@@ -103,7 +97,7 @@ class AdrApp < Sinatra::Base
   #  )
   #end
 
-  page "/draft_adrs/new", form_class: Forms::Adrs::Draft
+  pagex "/draft_adrs/new", form_class: Forms::Adrs::Draft
   #get "/adrs/new" do
   #  page Pages::Adrs::New.new(form: Forms::Adrs::Draft.new)
   #end
@@ -148,7 +142,7 @@ class AdrApp < Sinatra::Base
   # - violations are just an array of fields/values/context
   # - serialize those in a short-lived cookie and/or flash-type structure
 
-  page "/adrs/:external_id", page_class: Pages::Adrs::Get
+  page "/adrs/:external_id"
 
   #get "/adrs/:external_id" do
   #  page Pages::Adrs::Get.new(
@@ -157,7 +151,7 @@ class AdrApp < Sinatra::Base
   #  )
   #end
 
-  page "/adrs/:external_id/edit", page_class: Pages::Adrs::Edit
+  page "/adrs/edit/:external_id"
 
   #get "/adrs/:external_id/edit" do
   #  page Pages::Adrs::Edit.new(
@@ -241,10 +235,11 @@ class AdrApp < Sinatra::Base
     page Pages::Adrs::Refine.new(form: form, account: @account)
   end
 
-  get "/p/adrs/:id" do
-    adr = DataModel::Adr[public_id: params[:id]]
-    page Pages::Adrs::PublicGet.new(adr: adr, account: @account)
-  end
+  page "/public_adrs/:public_id"
+  #get "/p/adrs/:id" do
+  #  adr = DataModel::Adr[public_id: params[:id]]
+  #  page Pages::Adrs::PublicGet.new(adr: adr, account: @account)
+  #end
 
   post "/public_adrs" do
     Actions::Adrs::Public.new.make_public(external_id: params[:external_id], account: @account)

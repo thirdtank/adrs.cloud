@@ -26,5 +26,7 @@ class Components::Adrs::Tag < AppComponent
     end
   end
 
+  def routing = Brut.container.routing
+
 end
 

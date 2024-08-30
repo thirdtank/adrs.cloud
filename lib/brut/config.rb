@@ -230,7 +230,6 @@ class Brut::Config
                                                        extension: "svg")
       end
 
-
       c.store(
         "asset_path_resolver",
         "Brut::FrontEnd::Component::AssetPathResolver",
@@ -238,6 +237,14 @@ class Brut::Config
       ) do |asset_metadata_file|
         Brut::FrontEnd::Component::AssetPathResolver.new(metadata_file: asset_metadata_file)
       end
+
+      c.store(
+        "routing",
+        "Brut::FrontEnd::Routing",
+        "Routing for all registered routes of this app",
+        Brut::FrontEnd::Routing.new
+      )
+
     end
   end
 end

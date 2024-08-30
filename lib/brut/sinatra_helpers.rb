@@ -1,4 +1,53 @@
+module Brut
+  # Holds free-form, non-serializable data
+  # that is context for this request.
+  # This information can be plucked out
+  # by pages or components.
+  class RequestContext
+    def initialize
+      @hash = {}
+    end
+
+    def []=(key,value)
+      key = key.to_sym
+      @hash[key] = value
+    end
+
+    def [](key)
+      @hash[key.to_sym]
+    end
+
+    def key?(key)
+      @hash.key?(key.to_sym)
+    end
+
+    # Returns a hash suitable to passing into this class' constructor.
+    def as_constructor_args(klass, request_params: {}, flash:)
+      args = {}
+      klass.instance_method(:initialize).parameters.each do |(type,name)|
+        if ![ :key,:keyreq ].include?(type)
+          raise ArgumentError,"#{name} is not a keyword arg, but is a #{type}"
+        end
+        if self.key?(name)
+          args[name] = self[name]
+        elsif request_params[name.to_s] || request_params[name.to_sym]
+          args[name] = request_params[name.to_s] || request_params[name.to_sym]
+        elsif name == :flash
+          args[name] = flash
+        elsif type == :keyreq
+          raise ArgumentError,"initializer argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
+        else
+          # this keyword arg has a default value which will be used
+        end
+      end
+      args
+    end
+  end
+end
+
 module Brut::SinatraHelpers
+
+
   def self.included(sinatra_app)
     sinatra_app.extend(ClassMethods)
     sinatra_app.set :logging, true
@@ -10,6 +59,7 @@ module Brut::SinatraHelpers
         age: 0,
         messages: {}
       }
+      Thread.current.thread_variable_set(:request_context, Brut::RequestContext.new)
     end
     sinatra_app.after do
       Thread.current[:rendering_context] = nil
@@ -51,6 +101,21 @@ module Brut::SinatraHelpers
 
   module ClassMethods
 
+    def page(path)
+      route = Brut.container.routing.regsiter(path)
+      page_class = route.page_class
+
+      get route.to_s do
+        request_context = Thread.current.thread_variable_get(:request_context)
+        constructor_args = request_context.as_constructor_args(
+          page_class,
+          request_params: params,
+          flash: flash,
+        )
+        page page_class.new(**constructor_args)
+      end
+    end
+
     # Declare a web page at a given route.  A web page is backed by an instance of a class that provides that page its dynamic 
     # behavior.  That class must be a subclass of `Brut::FrontEnd::Page`.  Its constructor must accept
     # only keyword arguments, and these must be sufficient for the page to work. An instance is used per request.
@@ -71,7 +136,7 @@ module Brut::SinatraHelpers
     # Class name derivation
     #
     # TBD
-    def page(route, page_class: :derive, **rest)
+    def pagex(route, page_class: :derive, **rest)
       page_class = if page_class == :derive
                      classes_parts = route.split(/\//)
                      if classes_parts[0] != ""
@@ -98,7 +163,7 @@ module Brut::SinatraHelpers
                             elsif params[name]
                               params[name]
                             else
-                              @request_data.key?(name) ? @request_data[name] : @request_data[name.to_s]
+                              Thread.current.thread_variable_get(:request_context)[name]
                             end
             if current_value
               args[name] = current_value
