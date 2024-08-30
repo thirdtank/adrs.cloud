@@ -27,10 +27,6 @@
     <aside role="alert" class="pa-3 br-3 w-50 mh-auto ba bc-red-500 bg-red-800 red-300 mb-3">
       <%= t(error_message) %>
     </aside>
-  <% elsif updated? %>
-    <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
-      <%= t(updated_message) %>
-    </aside>
   <% end %>
   <%= component Components::Adrs::Form.new(form, action: :edit) %>
 </section>

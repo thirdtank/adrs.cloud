@@ -5,7 +5,7 @@ class Components::Adrs::Form < AppComponent
     case action
     when :new
       @action_label  = "Save Draft"
-      @form_action   = "/adrs"
+      @form_action   = "/draft_adrs"
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     when :edit
@@ -15,12 +15,12 @@ class Components::Adrs::Form < AppComponent
       @ajax_submit   = true
     when :replace
       @action_label  = "Save Replacement Draft"
-      @form_action   = "/adrs"
+      @form_action   = "/draft_adrs"
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     when :refine
       @action_label  = "Save Refining Draft"
-      @form_action   = "/adrs"
+      @form_action   = "/draft_adrs"
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     else

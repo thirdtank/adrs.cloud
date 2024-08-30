@@ -6,7 +6,7 @@
   <% if !info.nil? %>
     <aside class="p mh-auto ba shadow-4 bc-blue-800 br-2 pa-3 blue-300 bg-blue-900 tc"><%= info %></aside>
   <% end %>
-  <% if !check_result.nil? && check_result.invalid? %>
+  <% if !check_result.nil? && check_result.constraint_violations? %>
     <aside class="p mh-auto ba shadow-4 bc-red-800 br-2 pa-3 red-300 bg-red-900 tc">
       <% check_result.each_violation do |object,field,key,context| %>
         <%= object %>

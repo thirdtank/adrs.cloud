@@ -1,7 +1,7 @@
 class Pages::AdrsForTag < AppPage
   attr_reader :tag
-  def initialize(adrs:, tag:)
-    @adrs = adrs
+  def initialize(tag:, account:)
+    @adrs = Actions::Adrs::Search.new.by_tag(account: account, tag: tag)
     @tag = tag
   end
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)

@@ -1,5 +1,12 @@
 # Design Issues
 
+## Routing - mapping routes to logic
+
+* Rails has routes in one file, mapping to a symbol that is interpretted as a class.  I think this kinda sucks
+* there is an 80% pattern for gets: render a page with some data
+* there is an 80% pattern for posts: process a form, then render errors or render/redirect OK
+
+
 ## Logic useful to front-end and back-end - where does it go?
 
 ## Resourceful vs Wild West routing

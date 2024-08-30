@@ -2,8 +2,8 @@ class Pages::Adrs < AppPage
 
   attr_reader :info_message
 
-  def initialize(adrs:, info_message: nil)
-    @adrs         = adrs
+  def initialize(account:, info_message: nil)
+    @adrs         = account.adrs
     @info_message = info_message
   end
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)

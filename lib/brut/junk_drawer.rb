@@ -23,6 +23,12 @@ class RichString
     RichString.new(word)
   end
 
+  def camelize
+    @string.to_s.split(/[_-]/).map { |part|
+      part.capitalize
+    }.join("")
+  end
+
   def humanized
     RichString.new(@string.tr("_"," "))
   end

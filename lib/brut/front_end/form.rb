@@ -371,3 +371,11 @@ private
   def params_empty?(params) = params.nil? || params.empty?
 
 end
+
+class Brut::FormResponse
+  attr_reader :notice, :redirect_to
+  def initialize(notice:,redirect_to:)
+    @notice      = notice
+    @redirect_to = redirect_to
+  end
+end

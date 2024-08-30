@@ -29,17 +29,30 @@ class AdrApp < Sinatra::Base
   include Brut::SinatraHelpers
 
   before do
-    is_auth_callback         =  request.path_info =~ /^\/auth\//
+    @request_data = {}
+  end
+
+  before do
+    is_auth_callback         =  request.path_info.match?(/^\/auth\//)
     is_root                  =  request.path_info == "/"
-    is_public_dynamic_route  =  request.path_info =~ /^\/p\//
+    is_public_dynamic_route  =  request.path_info.match?(/^\/p\//)
 
     @account = DataModel::Account[external_id: session["user_id"]]
+    @request_data[:account] = @account
 
     logged_out = @account.nil?
-    allowed_when_logged_out = is_auth_callback || is_root || is_public_dynamic_route
+    requires_login = !is_auth_callback && !is_root && !is_public_dynamic_route
 
-    if logged_out && !allowed_when_logged_out
-      redirect to("/")
+    if requires_login
+      logger.info "Login required"
+      if logged_out
+        logger.info "No one is logged in"
+        redirect to("/")
+      else
+        logger.info "Someone is logged in so all good"
+      end
+    else
+      logger.info "Login not required"
     end
   end
 
@@ -55,45 +68,47 @@ class AdrApp < Sinatra::Base
   get "/auth/developer/callback" do
     action = Actions::DevOnlyAuth.new
     result = action.call(params[:email])
-    case result
-    in account:
-      session["user_id"] = account.external_id
-      redirect to("/adrs")
-    else
+    if result.constraint_violations?
       page Pages::Home.new(check_result: result)
+    else
+      session["user_id"] = result[:account].external_id
+      redirect to("/adrs")
     end
   end
 
   get "/auth/github/callback" do
     action = Actions::GitHubAuth.new
     result = action.call(env["omniauth.auth"])
-    case result
-    in account:
-      session["user_id"] = account.external_id
-      redirect to("/adrs")
-    else
+    if result.constraint_violations?
       page Pages::Home.new(check_result: result)
+    else
+      session["user_id"] = result[:account].external_id
+      redirect to("/adrs")
     end
   end
 
-  get "/adrs" do
-    page Pages::Adrs.new(adrs: @account.adrs, info_message: flash[:notice])
-  end
+  page "/adrs"
 
-  get "/adr_tags/:tag" do
-    tag = params[:tag]
-    page Pages::AdrsForTag.new(
-      tag: tag,
-      adrs: Actions::Adrs::Search.new.by_tag(account: @account, tag: tag)
-    )
-  end
+  #get "/adrs" do
+  #  page Pages::Adrs.new(adrs: @account.adrs, info_message: flash[:notice])
+  #end
 
+  page "/adr_tags/:tag", page_class: Pages::AdrsForTag
 
-  get "/adrs/new" do
-    page Pages::Adrs::New.new(form: Forms::Adrs::Draft.new)
-  end
+  #get "/adr_tags/:tag" do
+  #  tag = params[:tag]
+  #  page Pages::AdrsForTag.new(
+  #    tag: tag,
+  #    adrs: Actions::Adrs::Search.new.by_tag(account: @account, tag: tag)
+  #  )
+  #end
 
-  post "/adrs" do
+  page "/draft_adrs/new", form_class: Forms::Adrs::Draft
+  #get "/adrs/new" do
+  #  page Pages::Adrs::New.new(form: Forms::Adrs::Draft.new)
+  #end
+
+  post "/draft_adrs" do
     draft_adr = Forms::Adrs::Draft.new(params)
     result = process_form form: draft_adr,
                           action: Actions::Adrs::SaveDraft.new,
@@ -107,19 +122,49 @@ class AdrApp < Sinatra::Base
     end
   end
 
-  get "/adrs/:external_id" do
-    page Pages::Adrs::Get.new(
-      adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
-      info_message: flash[:notice]
-    )
-  end
+  # Form submission:
+  #
+  # 1 - create a Form instance with only those params desired
+  # 2 - re-validate client-side validations
+  # 3 - Process the form with back-end class
+  # 4 - If there are constraint violations, render a page
+  # 5 - If not, redirect or render another page
+  #
+  # Of note: rendering a page instead of redirect can create confusion - can this be avoided?
+  #
+  # What if the Form did it all? Or did more?
+  #
+  # form = form_class.new(params)
+  # form.process!
+  #
+  # if form.constraint_violations?
+  #   # XXX
+  # else
+  #   # YYY
+  # end
+  #
+  # How would redirect-after-post work for errors?
+  #
+  # - violations are just an array of fields/values/context
+  # - serialize those in a short-lived cookie and/or flash-type structure
 
-  get "/adrs/:external_id/edit" do
-    page Pages::Adrs::Edit.new(
-      adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
-      updated_message: "actions.adrs.updated",
-    )
-  end
+  page "/adrs/:external_id", page_class: Pages::Adrs::Get
+
+  #get "/adrs/:external_id" do
+  #  page Pages::Adrs::Get.new(
+  #    adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
+  #    info_message: flash[:notice]
+  #  )
+  #end
+
+  page "/adrs/:external_id/edit", page_class: Pages::Adrs::Edit
+
+  #get "/adrs/:external_id/edit" do
+  #  page Pages::Adrs::Edit.new(
+  #    adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
+  #    updated_message: "actions.adrs.updated",
+  #  )
+  #end
 
   post "/adrs/:external_id" do
     draft_adr = Forms::Adrs::Draft.new(params)

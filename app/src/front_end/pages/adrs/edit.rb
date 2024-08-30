@@ -1,12 +1,8 @@
 class Pages::Adrs::Edit < AppPage
-  attr_reader :adr, :form, :error_message, :updated_message
-  def initialize(adr:, form: nil, error_message: nil, updated_message: nil)
-    @adr = adr
+  attr_reader :adr, :form, :error_message
+  def initialize(account: nil, external_id: nil, adr: nil, form: nil, error_message: nil)
+    @adr = adr || DataModel::Adr[account_id: account.id, external_id: external_id]
     @form = form || Forms::Adrs::Draft.from_adr(@adr)
     @error_message = error_message
-    @updated_message = updated_message
   end
-
-  def updated? = !@updated_message.nil?
-
 end

@@ -1,9 +1,9 @@
 class Pages::Adrs::Get < AppPage
   attr_reader :adr, :info_message
 
-  def initialize(adr:, info_message: nil)
-    @adr = adr
-    @info_message = info_message
+  def initialize(account:, external_id:, flash:)
+    @adr = DataModel::Adr[account_id: account.id, external_id: external_id]
+    @info_message = flash[:notice]
   end
 
   def markdown(field)

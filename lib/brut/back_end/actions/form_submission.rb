@@ -81,7 +81,9 @@ class Brut::BackEnd::Actions::FormSubmission < Brut::BackEnd::Action
 
     logger.debug("call(#{form.class},#{action.class},#{action_method},**rest)")
     if form.invalid?
-      return form
+      result = Brut::BackEnd::Actions::CheckResult.new
+      result.form = form
+      return result
     end
 
     returned_value = action.send(action_method,form: form, **rest)
