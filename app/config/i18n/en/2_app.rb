@@ -28,6 +28,7 @@
         },
         edit: {
           adr_cannot_be_accepted: "ADR cannot be accepted. See below",
+          adr_invalid: "ADR is invalid. See below",
           refines: "Refines",
           proposed_replacement: "Proposed Replacement for",
         }

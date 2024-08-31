@@ -1,5 +1,4 @@
 require "sinatra/base"
-require "sinatra/namespace"
 
 require "front_end/app_view_helpers"
 require "front_end/components/app_component"
@@ -11,8 +10,6 @@ require "front_end/forms/app_form"
 require "pp"
 
 class AdrApp < Sinatra::Base
-
-  register Sinatra::Namespace
 
   enable :sessions
   set :session_secret, ENV.fetch("SESSION_SECRET")
@@ -85,22 +82,8 @@ class AdrApp < Sinatra::Base
 
   page "/adrs"
 
-  #get "/adrs" do
-  #  page Pages::Adrs.new(adrs: @account.adrs, info_message: flash[:notice])
-  #end
-
-  #get "/adr_tags/:tag" do
-  #  tag = params[:tag]
-  #  page Pages::AdrsForTag.new(
-  #    tag: tag,
-  #    adrs: Actions::Adrs::Search.new.by_tag(account: @account, tag: tag)
-  #  )
-  #end
-
-  pagex "/draft_adrs/new", form_class: Forms::Adrs::Draft
-  #get "/adrs/new" do
-  #  page Pages::Adrs::New.new(form: Forms::Adrs::Draft.new)
-  #end
+  page "/new_draft_adr", form_class: Forms::Adrs::Draft
+  form "/new_draft_adr"
 
   post "/draft_adrs" do
     draft_adr = Forms::Adrs::Draft.new(params)
@@ -116,42 +99,10 @@ class AdrApp < Sinatra::Base
     end
   end
 
-  # Form submission:
-  #
-  # 1 - create a Form instance with only those params desired
-  # 2 - re-validate client-side validations
-  # 3 - Process the form with back-end class
-  # 4 - If there are constraint violations, render a page
-  # 5 - If not, redirect or render another page
-  #
-  # Of note: rendering a page instead of redirect can create confusion - can this be avoided?
-  #
-  # What if the Form did it all? Or did more?
-  #
-  # form = form_class.new(params)
-  # form.process!
-  #
-  # if form.constraint_violations?
-  #   # XXX
-  # else
-  #   # YYY
-  # end
-  #
-  # How would redirect-after-post work for errors?
-  #
-  # - violations are just an array of fields/values/context
-  # - serialize those in a short-lived cookie and/or flash-type structure
-
   page "/adrs/:external_id"
 
-  #get "/adrs/:external_id" do
-  #  page Pages::Adrs::Get.new(
-  #    adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
-  #    info_message: flash[:notice]
-  #  )
-  #end
-
-  page "/adrs/edit/:external_id"
+  page "/edit_draft_adr/:external_id"
+  form "/edit_draft_adr/:external_id"
 
   #get "/adrs/:external_id/edit" do
   #  page Pages::Adrs::Edit.new(

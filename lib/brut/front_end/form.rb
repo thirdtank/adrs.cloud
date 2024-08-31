@@ -88,6 +88,14 @@ class Brut::FrontEnd::Forms::Constraint
 
   def client_side? = @client_side
   def to_s = @key
+
+  def to_json(*args)
+    {
+      key: self.key,
+      context: self.context,
+      client_side: self.client_side?
+    }.to_json(*args)
+  end
 end
 
 # Mirrors a web browser's ValidityState API. Captures the overall state
@@ -134,6 +142,7 @@ end
 # An InputDefinition captures metadata used to create an Input. Think of this
 # as a template for creating inputs.  An Input has state, such as values and thus validity.
 # An InputDefinition is immutable and defines inputs.
+# XXX: Merge with the other one
 class Brut::FrontEnd::Forms::InputDefinition
   include Brut::FussyTypeEnforcment
   attr_reader :max,
@@ -289,20 +298,35 @@ class Brut::FrontEnd::Form
   include SemanticLogger::Loggable
 
   def self.input(name,attributes={})
-    input_definition = Brut::FrontEnd::Forms::InputDefinition.new(**(attributes.merge(name: name)))
+    self.add_input_definition(
+      Brut::FrontEnd::Forms::InputDefinition.new(**(attributes.merge(name: name)))
+    )
+  end
+
+  def self.add_input_definition(input_definition)
     @input_definitions ||= {}
     @input_definitions[input_definition.name] = input_definition
-    define_method name do
-      self[name].value
+    define_method input_definition.name do
+      self[input_definition.name].value
+    end
+  end
+
+  def self.inputs_from(other_class)
+    if !other_class.respond_to?(:input_definitions)
+      raise ArgumentError,"#{other_class} does not respond to #input_definitions - you cannot copy inputs from it"
+    end
+    other_class.input_definitions.each do |_name,input_definition|
+      self.add_input_definition(input_definition)
     end
   end
 
   def self.input_definitions = @input_definitions
 
+  attr_reader :params
+
   # Create an instance of this form, optionally initialized with
   # the given values for its params.
-  def initialize(params = nil)
-    params ||= {}
+  def initialize(params: {})
     params = params.to_h
     unknown_params = params.keys.map(&:to_s).reject { |key|
       self.class.input_definitions.key?(key)
@@ -310,9 +334,10 @@ class Brut::FrontEnd::Form
     if unknown_params.any?
       logger.info "Ignoring unknown params", keys: unknown_params
     end
-    @new = params_empty?(params.except(*unknown_params))
+    @params = params.except(*unknown_params)
+    @new = params_empty?(@params)
     @inputs = self.class.input_definitions.map { |name,input_definition|
-      input = input_definition.make_input(value: params[name] || params[name.to_sym])
+      input = input_definition.make_input(value: @params[name] || @params[name.to_sym])
       [ name, input ]
     }.to_h
   end
@@ -372,10 +397,42 @@ private
 
 end
 
-class Brut::FormResponse
-  attr_reader :notice, :redirect_to
-  def initialize(notice:,redirect_to:)
-    @notice      = notice
-    @redirect_to = redirect_to
+class Brut::FrontEnd::FormProcessingResponse
+
+  def self.redirect_to(uri)                              = Redirect.new(uri)
+  def self.render_page(page)                             = RenderPage.new(page)
+  def self.render_component(component, http_status: 200) = RenderComponent.new(component,http_status)
+  def self.send_http_status(http_status)                 = SendHttpStatusOnly.new(http_status)
+
+  class Redirect < Brut::FrontEnd::FormProcessingResponse
+    def initialize(uri)
+      @uri = uri
+    end
+
+    def deconstruct_keys(keys) = { redirect: @uri }
+
   end
+
+  class RenderPage < Brut::FrontEnd::FormProcessingResponse
+    def initialize(page)
+      @page = page
+    end
+    def deconstruct_keys(keys) = { page_instance: @page }
+  end
+
+  class RenderComponent < Brut::FrontEnd::FormProcessingResponse
+    def initialize(component, http_status)
+      @component   = component
+      @http_status = http_status
+    end
+    def deconstruct_keys(keys) = { component_instance: @component, http_status: @http_status }
+  end
+
+  class SendHttpStatusOnly < Brut::FrontEnd::FormProcessingResponse
+    def initialize(http_status)
+      @http_status = http_status
+    end
+    def deconstruct_keys(keys) = { http_status: @http_status }
+  end
+
 end

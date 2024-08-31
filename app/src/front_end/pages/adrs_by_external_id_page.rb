@@ -22,6 +22,8 @@ class AdrsByExternalIdPage < AppPage
   def public?  =  adr.public?
   def public_path = Brut.container.routing.for(PublicAdrsByPublicIdPage, public_id: adr.public_id)
 
+  def routing = Brut.container.routing
+
 private
 
   def field_text(field)

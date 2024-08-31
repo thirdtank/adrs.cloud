@@ -5,12 +5,12 @@ class Components::Adrs::Form < AppComponent
     case action
     when :new
       @action_label  = "Save Draft"
-      @form_action   = "/draft_adrs"
+      @form_action   = Brut.container.routing.for(NewDraftAdrForm)
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     when :edit
       @action_label  = "Update Draft"
-      @form_action   = "/adrs/#{@form.external_id}"
+      @form_action   = Brut.container.routing.for(EditDraftAdrWithExternalIdForm, external_id: @form.external_id)
       @go_back_label = "Back"
       @ajax_submit   = true
     when :replace

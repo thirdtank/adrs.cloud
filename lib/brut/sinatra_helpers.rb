@@ -22,7 +22,7 @@ module Brut
     end
 
     # Returns a hash suitable to passing into this class' constructor.
-    def as_constructor_args(klass, request_params: {}, flash:)
+    def as_constructor_args(klass, request_params: {}, flash:, additional_args: {})
       args = {}
       klass.instance_method(:initialize).parameters.each do |(type,name)|
         if ![ :key,:keyreq ].include?(type)
@@ -30,10 +30,16 @@ module Brut
         end
         if self.key?(name)
           args[name] = self[name]
+        elsif name == :params
+          args[name] = request_params
         elsif request_params[name.to_s] || request_params[name.to_sym]
           args[name] = request_params[name.to_s] || request_params[name.to_sym]
         elsif name == :flash
           args[name] = flash
+        elsif additional_args[name]
+          args[name] = additional_args[name]
+        elsif additional_args["#{name}_class".to_sym]
+          args[name] = additional_args["#{name}_class".to_sym].new
         elsif type == :keyreq
           raise ArgumentError,"initializer argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
         else
@@ -101,9 +107,45 @@ module Brut::SinatraHelpers
 
   module ClassMethods
 
-    def page(path)
-      route = Brut.container.routing.regsiter(path)
-      page_class = route.page_class
+    # Regsiters a page in your app. A page is what it sounds like - a web page that's rendered from a URL.  It will be provided
+    # via an HTTP get to the path provided.
+    #
+    # The page is rendered dynamically by using an instance of a page class as binding to HTML via ERB.  The name of the class and the name of the
+    # ERB file are based on the path, according to the conventions described below.
+    #
+    # A few examples:
+    #
+    # * `page("/widgets")` will use `WidgetsPage`, and expect the HTML in `app/src/pages/widgets_page.html.erb`
+    # * `page("/widgets/:id")` will use `WidgetsByIdPage`, and expect the HTML in `app/src/pages/widgets_by_id_page.html.erb`
+    # * `page("/admin/widgets/:internal_id") will use `Admin::WidgetsByInternalIdPage`, and expect HTML in
+    # `app/src/pages/admin/widgets_by_internal_id_page.html.erb`
+    #
+    # The general conventions are:
+    #
+    # * Each part of the path that is not a placeholder will be camelized
+    # * Any part of the path that *is* a placholder has its leading colon removed, then is camelized, but appended to
+    #   the previous part with `By`, thus `WidgetsById` is created from `Widgets`, `By`, and `Id`.
+    # * The final part of the path is further appended with `Page`.
+    # * These parts now make up a path to a class, so the entire thing is joined by `::` to form the fully-qualified class name.
+    #
+    # When a  GET is issued to the path, the page is instantiated.  The page's constructor may accept keyword arguments (however it must not accept
+    # any other type of argument).
+    #
+    # Each keyword argument found will be provided when the class is created, as follows:
+    #
+    # * Any placeholders, so when a path `/widgets/1234` is requested, `WidgetsPage.new(id: "1234")` will be used to create the page object.
+    # * Anything in the request context, such as the current user
+    # * Any query string parameters 
+    # * Anything passed as keyword args to this method, with the following adjustment:
+    #   - Any key ending in `_class` whose value is a Class will be instantiated and
+    #     passed in as the key withoutr `_class`, e.g. form_class: SomeForm will
+    #     pass `form: SomeForm.new` to the constructor
+    # * The flash
+    #
+    # Once this page object exists, `render` will be called to produce HTML to send back to the browser.
+    def page(path, **custom_constructor_args)
+      route = Brut.container.routing.register_page(path)
+      page_class = route.handler_class
 
       get route.to_s do
         request_context = Thread.current.thread_variable_get(:request_context)
@@ -111,8 +153,55 @@ module Brut::SinatraHelpers
           page_class,
           request_params: params,
           flash: flash,
+          additional_args: custom_constructor_args
         )
         page page_class.new(**constructor_args)
+      end
+    end
+
+    # Declares a form that will be submitted to the app.  When the given path receives a POST, a form class is instantiated
+    # with the parameters submitted.  The name of the class is based on a convention similar to `page`:
+    #
+    # * Each part of the path that is not a placeholder will be camelized
+    # * Any part of the path that *is* a placholder has its leading colon removed, then is camelized, but appended to
+    #   the previous part with `With`, thus `WidgetsWithId` is created from `Widgets`, `With`, and `Id`.
+    # * The final part of the path is further appended with `Form`.
+    # * These parts now make up a path to a class, so the entire thing is joined by `::` to form the fully-qualified class name.
+    #
+    # Examples:
+    #
+    # * `form("/widgets")` will use `WidgetsForm`
+    # * `form("/widgets/:id")` will use `WidgetsWithIdForm`
+    # * `form("/admin/widgets/:internal_id") will use `Admin::WidgetsWithInternalIdForm`
+    #
+    def form(path)
+      route = Brut.container.routing.register_form(path)
+      form_class = route.handler_class
+
+      post route.to_s do
+        request_context = Thread.current.thread_variable_get(:request_context)
+        constructor_args = request_context.as_constructor_args(
+          form_class,
+          request_params: params,
+          flash: flash,
+        )
+        form = form_class.new(**constructor_args)
+
+        result = form.process!(xhr: request.xhr?, account: request_context[:account])
+
+        case result
+        in redirect:
+          redirect to(redirect)
+        in page_instance:
+          page(page_instance).to_s
+        in component_instance:, http_status:
+          [
+            http_status,
+            component(component_instance).to_s,
+          ]
+        in http_status:
+          http_status
+        end
       end
     end
 

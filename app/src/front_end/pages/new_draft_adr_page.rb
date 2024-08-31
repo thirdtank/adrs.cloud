@@ -1,6 +1,6 @@
-class Pages::Adrs::New < AppPage
+class NewDraftAdrPage < AppPage
   attr_reader :form, :error_message
-  def initialize(form:)
+  def initialize(form:, constraint_violations: {})
     @form = form
     @error_message = if !@form.new? && form.invalid?
                        "pages.adrs.new.adr_invalid"
