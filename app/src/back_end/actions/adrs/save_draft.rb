@@ -1,10 +1,5 @@
 class Actions::Adrs::SaveDraft
   def save_new(form:, account:)
-    if form.external_id
-      raise Brut::BackEnd::Errors::Bug,
-        "#{self.class.name} was attempted on an existing ADR with external id #{form.external_id}"
-    end
-
     adr = DataModel::Adr.new(created_at: Time.now, account_id: account.id)
 
     save(form: form, adr: adr)

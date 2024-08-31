@@ -2,7 +2,9 @@ class EditDraftAdrWithExternalIdForm < AppForm
   inputs_from NewDraftAdrForm
   input :external_id, required: false
 
-  def process!(account:, xhr:)
+  def new_record? = false
+
+  def process!(account:, xhr:, flash:)
     if self.invalid?
       return
     end
@@ -38,6 +40,7 @@ class EditDraftAdrWithExternalIdForm < AppForm
       if xhr
         Brut::FrontEnd::FormProcessingResponse.send_http_status(200)
       else
+        flash[:notice] = "actions.adrs.updated"
         Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(AdrsByExternalIdPage, external_id: result.external_id))
       end
     end

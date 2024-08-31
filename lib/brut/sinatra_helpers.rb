@@ -23,8 +23,24 @@ module Brut
 
     # Returns a hash suitable to passing into this class' constructor.
     def as_constructor_args(klass, request_params: {}, flash:, additional_args: {})
+      args_for_method(method: klass.instance_method(:initialize),
+                      request_params: request_params,
+                      flash: flash,
+                      additional_args: additional_args)
+    end
+
+    def as_method_args(object, method_name, request_params: {}, flash:, additional_args: {})
+      args_for_method(method: object.method(method_name),
+                      request_params: request_params,
+                      flash: flash,
+                      additional_args: additional_args)
+    end
+
+  private
+
+    def args_for_method(method:, request_params:, flash:, additional_args:)
       args = {}
-      klass.instance_method(:initialize).parameters.each do |(type,name)|
+      method.parameters.each do |(type,name)|
         if ![ :key,:keyreq ].include?(type)
           raise ArgumentError,"#{name} is not a keyword arg, but is a #{type}"
         end
@@ -187,7 +203,9 @@ module Brut::SinatraHelpers
         )
         form = form_class.new(**constructor_args)
 
-        result = form.process!(xhr: request.xhr?, account: request_context[:account])
+        process_args = request_context.as_method_args(form,:process!, flash: flash, additional_args: { xhr: request.xhr? })
+
+        result = form.process!(**process_args)
 
         case result
         in redirect:

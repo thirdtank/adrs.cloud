@@ -15,7 +15,9 @@ class NewDraftAdrForm < AppForm
     params.nil? || params.except(:refines_adr_external_id,:replaced_adr_external_id).empty?
   end
 
-  def process!(account:, xhr:)
+  def new_record? = true
+
+  def process!(account:, flash:)
     if self.invalid?
       return
     end
@@ -35,9 +37,11 @@ class NewDraftAdrForm < AppForm
           end
         end
       end
+      flash[:error] = "pages.adrs.new.adr_invalid"
       Brut::FrontEnd::FormProcessingResponse.render_page(NewDraftAdrPage.new(form: self))
     else
-      Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(AdrsByExternalIdPage, external_id: result.external_id))
+      flash[:notice] = "actions.adrs.created"
+      Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(EditDraftAdrByExternalIdPage, external_id: result.external_id))
     end
   end
 

@@ -82,7 +82,7 @@ class AdrApp < Sinatra::Base
 
   page "/adrs"
 
-  page "/new_draft_adr", form_class: Forms::Adrs::Draft
+  page "/new_draft_adr"
   form "/new_draft_adr"
 
   post "/draft_adrs" do
