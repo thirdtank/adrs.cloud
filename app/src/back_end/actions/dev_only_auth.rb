@@ -4,12 +4,12 @@ class Actions::DevOnlyAuth < AppAction
     if Brut.container.project_env.production?
       return { error: "Login failed" }
     end
-    result = self.check_result
+    result = new_result
     account = DataModel::Account[email: email]
     if account
-      result.save_context(account: account)
+      result[:account] = account
     else
-      result.constraint_violation!(field: :email, key: :no_account)
+      result.constraint_violation!(object: email, field: :email, key: :no_account)
     end
     result
   end

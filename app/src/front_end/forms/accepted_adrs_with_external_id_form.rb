@@ -9,17 +9,14 @@ class AcceptedAdrsWithExternalIdForm < AppForm
     end
     action = Actions::Adrs::Accept.new
     result = action.accept(form: self, account: account)
-    case result
-    in Brut::BackEnd::Actions::CheckResult
-      if result.constraint_violations?
-        result.each_violation do |object,field,key,context|
-          if object == self
-            context ||= {}
-            humanized_field = RichString.new(field).humanized.to_s
-            self.server_side_constraint_violation(input_name: field, key: key, context: context.merge(field: humanized_field))
-          else
-            logger.warn("Ignoring constraint violation on object #{object} (field: #{field}, key: #{key}), because it is not the form")
-          end
+    if result.constraint_violations?
+      result.each_violation do |object,field,key,context|
+        if object == self
+          context ||= {}
+          humanized_field = RichString.new(field).humanized.to_s
+          self.server_side_constraint_violation(input_name: field, key: key, context: context.merge(field: humanized_field))
+        else
+          logger.warn("Ignoring constraint violation on object #{object} (field: #{field}, key: #{key}), because it is not the form")
         end
       end
       EditDraftAdrByExternalIdPage.new(
@@ -30,7 +27,7 @@ class AcceptedAdrsWithExternalIdForm < AppForm
       )
     else
       flash[:notice] = "actions.adrs.accepted"
-      redirect_to(AdrsByExternalIdPage, external_id: result.external_id)
+      redirect_to(AdrsByExternalIdPage, external_id: result[:adr].external_id)
     end
   end
 end

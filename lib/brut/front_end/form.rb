@@ -1,11 +1,8 @@
 require "forwardable"
 
 module Brut::FrontEnd::Forms
-  autoload(:ConformingValue, "brut/front_end/forms/conforming_value")
-  autoload(:MissingValue, "brut/front_end/forms/missing_value")
-  autoload(:NonConformingValue, "brut/front_end/forms/non_conforming_value")
   autoload(:InputDefinition, "brut/front_end/forms/input_definition")
-  autoload(:Constraint, "brut/front_end/forms/constraint")
+  autoload(:ConstraintViolation, "brut/front_end/forms/constraint_violation")
   autoload(:ValidityState, "brut/front_end/forms/validity_state")
   autoload(:Input, "brut/front_end/forms/input")
 end

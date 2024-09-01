@@ -16,13 +16,13 @@ class Actions::GitHubAuth < AppAction
       raise "Problem with GitHub auth: we did not get an email from 'info':\n#{omniauth_hash['info']}"
     end
 
-    result = self.check_result
+    result = new_result
 
     account = DataModel::Account[email: email]
     if account
-      result.save_context(account: account)
+      result[:account] = account
     else
-      result.constraint_violation!(field: :email, key: :no_account)
+      result.constraint_violation!(object: omniauth_hash, field: :email, key: :no_account)
     end
     result
   end

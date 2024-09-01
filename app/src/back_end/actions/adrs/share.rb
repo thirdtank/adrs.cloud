@@ -1,6 +1,6 @@
 require "securerandom"
 
-class Actions::Adrs::Share
+class Actions::Adrs::Share < AppAction
   def share(external_id:, account:)
     adr = require_account_own_adr!(external_id,account)
     random_hex = SecureRandom.hex

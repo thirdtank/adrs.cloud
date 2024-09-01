@@ -1,6 +1,6 @@
-# A constraint, which is a wrapper for a key that represents a type of error, along with context about
-# the error.  A constraint knows if it's a client side constraint or not.
-class Brut::FrontEnd::Forms::Constraint
+# Represents a specific error with a field.  A field can have any number of constraint violations
+# to indicate what is wrong with it.  
+class Brut::FrontEnd::Forms::ConstraintViolation
 
   CLIENT_SIDE_KEYS = [
     "bad_input",

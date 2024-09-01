@@ -1,4 +1,4 @@
-class Actions::Adrs::Accept
+class Actions::Adrs::Accept < AppAction
   class AcceptedAdrValidator < Brut::BackEnd::Actions::Validators::DataObjectValidator
     validate :context   , required: true , minlength: 10
     validate :facing    , required: true , minlength: 10
@@ -10,18 +10,17 @@ class Actions::Adrs::Accept
   end
 
   def accept(form:, account:)
-    result = Brut::BackEnd::Actions::CheckResult.new
+    result = new_result
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
     if !adr
       raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{form.external_id}"
     end
-    result.save_context(adr: adr)
+    result[:adr] = adr
     validator = AcceptedAdrValidator.new
     validator.validate(form,result)
     if result.constraint_violations?
       return result
     end
-    adr = result[:adr]
     AppDataModel.transaction do
       if !adr.accepted?
         adr.update(title: form.title,
@@ -42,7 +41,7 @@ class Actions::Adrs::Accept
         end
       end
     end
-    adr
+    result
   end
 
 private

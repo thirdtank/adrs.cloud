@@ -1,4 +1,4 @@
-class Actions::Adrs::Reject
+class Actions::Adrs::Reject < AppAction
 
   def reject(form:, account:)
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]

@@ -1,4 +1,4 @@
-class Actions::Adrs::Search
+class Actions::Adrs::Search < AppAction
   def by_tag(tag:, account:)
     tag = tag.downcase
     if (tag == DataModel::Adr.phony_tag_for_shared)

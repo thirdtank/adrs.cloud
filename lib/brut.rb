@@ -17,6 +17,7 @@ module Brut
     autoload(:HttpStatus, "brut/front_end/http_status")
   end
   module BackEnd
+    autoload(:Result, "brut/back_end/result")
     autoload(:Action, "brut/back_end/action")
     autoload(:Actions, "brut/back_end/action")
     autoload(:Error, "brut/back_end/error")

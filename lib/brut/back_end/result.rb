@@ -1,19 +1,17 @@
-class Brut::BackEnd::Actions::CheckResult
+# The result of back-end processing, which is essentially
+# a container for constraint violations and arbitrary context.
+class Brut::BackEnd::Result
   attr_reader :constraint_violations, :context
-
-  attr_accessor :form, :action_return_value
 
   def initialize
     @constraint_violations = {}
     @context = {}
   end
 
-  def constraint_violation!(object:nil,
-                            field: nil,
+  def constraint_violation!(object:,
+                            field:,
                             key:,
                             context: {})
-    object ||= General
-    field  ||= General
     @constraint_violations[object] ||= {}
     @constraint_violations[object][field] ||= {}
     @constraint_violations[object][field][key] = context
@@ -29,8 +27,8 @@ class Brut::BackEnd::Actions::CheckResult
     end
   end
 
-  def save_context(hash)
-    @context = @context.merge(hash)
+  def []=(key_in_context,object)
+    @context[key_in_context] = object
   end
 
   def [](key_in_context)
@@ -45,7 +43,4 @@ class Brut::BackEnd::Actions::CheckResult
 
   def constraint_violations? = self.constraint_violations.any?
 
-private
-
-  General = Object.new
 end

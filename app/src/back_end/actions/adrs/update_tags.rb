@@ -1,4 +1,4 @@
-class Actions::Adrs::UpdateTags
+class Actions::Adrs::UpdateTags < AppAction
 
   def update(form:, account:)
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]

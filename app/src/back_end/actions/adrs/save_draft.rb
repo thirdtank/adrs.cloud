@@ -1,4 +1,4 @@
-class Actions::Adrs::SaveDraft
+class Actions::Adrs::SaveDraft < AppAction
   def save_new(form:, account:)
     adr = DataModel::Adr.new(created_at: Time.now, account_id: account.id)
 
@@ -51,7 +51,7 @@ private
         )
       end
     end
-    adr
+    result
   end
 
   def tag_serializer
@@ -59,11 +59,11 @@ private
   end
 
   def create_result(form:,adr:)
-    result = Brut::BackEnd::Actions::CheckResult.new
+    result = new_result
     if form.title.to_s.strip !~ /\s+/
       result.constraint_violation!(object: form, field: :title, key: :not_enough_words, context: { minwords: 2 })
     end
-    result.save_context(adr:adr)
+    result[:adr] = adr
     result
   end
 end
