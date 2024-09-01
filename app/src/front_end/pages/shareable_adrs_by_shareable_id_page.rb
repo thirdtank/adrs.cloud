@@ -1,8 +1,8 @@
-class PublicAdrsByPublicIdPage < AppPage
+class ShareableAdrsByShareableIdPage < AppPage
   attr_reader :adr, :account
 
-  def initialize(public_id:, account:)
-    @adr = DataModel::Adr[public_id: public_id]
+  def initialize(shareable_id:, account:)
+    @adr = DataModel::Adr[shareable_id: shareable_id]
     @account = account
   end
 
@@ -11,9 +11,11 @@ class PublicAdrsByPublicIdPage < AppPage
     component(Components::MarkdownString.new(value))
   end
 
-  def public_refined_by_adrs
-    adr.refined_by_adrs.reject(&:rejected?).reject(&:replaced?).select(&:public?)
+  def shareable_refined_by_adrs
+    adr.refined_by_adrs.reject(&:rejected?).reject(&:replaced?).select(&:shared?)
   end
+
+  def routing = Brut.container.routing
 
 private
 

@@ -28,5 +28,10 @@
       <%= t(error_message) %>
     </aside>
   <% end %>
+  <% if info_message %>
+    <aside role="status" class="pa-3 br-3 w-50 mh-auto ba bc-blue-500 bg-blue-800 blue-300 mb-3">
+      <%= t(info_message) %>
+    </aside>
+  <% end %>
   <%= component Components::Adrs::Form.new(form, action: :edit) %>
 </section>

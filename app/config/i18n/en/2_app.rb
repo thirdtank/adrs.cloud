@@ -15,6 +15,7 @@
         updated: "ADR Updated",
         rejected: "ADR Rejected",
         accepted: "ADR Accepted",
+        tags_updated: "Tags Updated",
       }
     },
     pages: {

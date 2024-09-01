@@ -12,26 +12,26 @@ RSpec.describe DataModel::Adr do
   end
 
   describe "#tags" do
-    context "adr is public" do
-      it "includes 'public' in the tags" do
-        adr = create(:adr, public_id: "asdfasdfasdf")
-        expect(adr.tags).to include("public")
+    context "adr is shared" do
+      it "includes 'shared' in the tags" do
+        adr = create(:adr, shareable_id: "asdfasdfasdf")
+        expect(adr.tags).to include("shared")
       end
     end
-    context "adr is not public" do
-      it "does not include 'public' in the tags" do
-        adr = create(:adr, public_id: nil, tags: [ "foo" ])
-        expect(adr.tags).not_to include("public")
+    context "adr is not shared" do
+      it "does not include 'shared' in the tags" do
+        adr = create(:adr, shareable_id: nil, tags: [ "foo" ])
+        expect(adr.tags).not_to include("shared")
       end
     end
   end
   describe "#tags=" do
-    it "removes public before saving" do
-      adr = create(:adr, public_id: nil, tags: [ "foo" ])
-      adr.tags = [ "foo", "bar", "PUBLIC" ]
+    it "removes 'shared' before saving" do
+      adr = create(:adr, shareable_id: nil, tags: [ "foo" ])
+      adr.tags = [ "foo", "bar", "SHARED" ]
       adr.save
       adr.reload
-      expect(adr.tags).not_to include("public")
+      expect(adr.tags).not_to include("shared")
     end
   end
 

@@ -8,9 +8,9 @@ RSpec.describe Components::Adrs::GetRefinements do
       account = create(:account)
       adr_being_refined = create(:adr, :accepted, account: account)
       adrs = [
-        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, public_id: "abcdefg"),
-        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, public_id: "wrtdfgf"),
-        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, public_id: "95jf9ej"),
+        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, shareable_id: "abcdefg"),
+        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, shareable_id: "wrtdfgf"),
+        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, shareable_id: "95jf9ej"),
       ]
       component = described_class.new(refined_by_adrs: adrs, public_paths: true)
 
@@ -28,9 +28,9 @@ RSpec.describe Components::Adrs::GetRefinements do
       account = create(:account)
       adr_being_refined = create(:adr, :accepted, account: account)
       adrs = [
-        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, public_id: "abcdefg"),
-        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, public_id: "wrtdfgf"),
-        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, public_id: "95jf9ej"),
+        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, shareable_id: "abcdefg"),
+        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, shareable_id: "wrtdfgf"),
+        create(:adr, :accepted, refines_adr_id: adr_being_refined.id, account: account, shareable_id: "95jf9ej"),
       ]
       component = described_class.new(refined_by_adrs: adrs)
 

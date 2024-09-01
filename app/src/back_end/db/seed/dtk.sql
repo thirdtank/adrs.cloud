@@ -5,7 +5,7 @@ INSERT INTO accounts (email, created_at) VALUES( 'davec@naildrivin5.com',now());
 -- Data for Name: adrs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-insert into adrs (title, context, facing, decision, neglected, achieve, accepting, because, tags, created_at, accepted_at, account_id)
+insert into adrs (title, context, facing, decision, neglected, achieve, accepting, because, tags, created_at, accepted_at, shareable_id, account_id)
 select
 'Web Apps use GET and POST only',
 'Building a web app and *not* an API',
@@ -18,6 +18,7 @@ select
 '{web,rest,seeds}',
 now() - interval '1 week',
 now() - interval '2 days',
+'padr_abcbdbcbdbcbcbd',
 accounts.id
 from accounts where email = 'davec@naildrivin5.com'
 ;

@@ -2,8 +2,9 @@ class AdrsPage < AppPage
 
   attr_reader :info_message, :tag
 
-  def initialize(account:, info_message: nil, tag: nil)
-    @info_message = info_message
+  def initialize(account:, flash:, tag: nil)
+    puts "page constructor: #{flash.inspect}"
+    @info_message = flash[:notice]
     @tag          = tag
     @adrs         = if @tag.nil?
                       account.adrs

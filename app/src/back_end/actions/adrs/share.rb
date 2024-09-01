@@ -1,13 +1,13 @@
 require "securerandom"
 
 class Actions::Adrs::Share
-  def share(external_id:, account:)
+  def make_public(external_id:, account:)
     adr = require_account_own_adr!(external_id,account)
     random_hex = SecureRandom.hex
     adr.update(shareable_id: "padr_#{random_hex}")
     adr
   end
-  def stop_sharing(external_id:, account:)
+  def make_private(external_id:, account:)
     adr = require_account_own_adr!(external_id,account)
     adr.update(shareable_id: nil)
     adr

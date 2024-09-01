@@ -33,7 +33,8 @@ class EditDraftAdrWithExternalIdForm < AppForm
         Brut::FrontEnd::FormProcessingResponse.render_page(EditDraftAdrByExternalIdPage.new(
           adr: result[:adr],
           form: self,
-          error_message: "pages.adrs.edit.adr_invalid"
+          error_message: "pages.adrs.edit.adr_invalid",
+          flash: flash,
         ))
       end
     else

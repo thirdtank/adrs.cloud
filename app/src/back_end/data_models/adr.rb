@@ -23,8 +23,8 @@ class DataModel::Adr < AppDataModel
   def tags
     tags_value = self[:tags] || []
 
-    if self.public?
-      tags_value + [ self.class.phony_tag_for_public ]
+    if self.shared?
+      tags_value + [ self.class.phony_tag_for_shared ]
     else
       tags_value
     end
@@ -34,7 +34,7 @@ class DataModel::Adr < AppDataModel
     self[:tags] = tags.delete_if { |element| element.to_s.downcase == self.class.phony_tag_for_public }
   end
 
-  def public?   = !self.public_id.nil?
+  def shared?   = !self.shareable_id.nil?
   def accepted? = !self.accepted_at.nil?
   def rejected? = !self.rejected_at.nil?
   def replaced? = !self.replaced_by_adr.nil?
@@ -42,7 +42,7 @@ class DataModel::Adr < AppDataModel
   def refines_adr = self.class[id: self.refines_adr_id]
   def refines? = !self.refines_adr.nil?
 
-  def self.phony_tag_for_public = "public".freeze
+  def self.phony_tag_for_shared = "shared".freeze
 
 private
 

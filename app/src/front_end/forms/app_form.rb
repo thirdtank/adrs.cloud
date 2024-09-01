@@ -5,7 +5,10 @@ module Forms
 end
 module Forms::Adrs
 end
-require_relative "adrs/draft"
-require_relative "adrs/tags"
 require_relative "new_draft_adr_form"
 require_relative "edit_draft_adr_with_external_id_form"
+require_relative "adr_tags_with_external_id_form"
+require_relative "accepted_adrs_with_external_id_form"
+require_relative "rejected_adrs_with_external_id_form"
+require_relative "replaced_adrs_with_existing_external_id_form"
+require_relative "refined_adrs_with_existing_external_id_form"

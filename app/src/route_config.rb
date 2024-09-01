@@ -28,7 +28,7 @@ class AdrApp < Sinatra::Base
   before do
     is_auth_callback         =  request.path_info.match?(/^\/auth\//)
     is_root                  =  request.path_info == "/"
-    is_public_dynamic_route  =  request.path_info.match?(/^\/public_adrs\//)
+    is_public_dynamic_route  =  request.path_info.match?(/^\/shareable_adrs\//)
 
     @account = DataModel::Account[external_id: session["user_id"]]
     Thread.current.thread_variable_get(:request_context)[:account] = @account
@@ -85,112 +85,19 @@ class AdrApp < Sinatra::Base
   page "/new_draft_adr"
   form "/new_draft_adr"
 
-  post "/draft_adrs" do
-    draft_adr = Forms::Adrs::Draft.new(params)
-    result = process_form form: draft_adr,
-                          action: Actions::Adrs::SaveDraft.new,
-                          action_method: :save_new,
-                          account: @account
-    if result.constraint_violations?
-      page Pages::Adrs::New.new(form: result.form)
-    else
-      flash[:notice] = "actions.adrs.created"
-      redirect to("/adrs/#{result.action_return_value.external_id}/edit")
-    end
-  end
-
   page "/adrs/:external_id"
 
   page "/edit_draft_adr/:external_id"
   form "/edit_draft_adr/:external_id"
 
-  #get "/adrs/:external_id/edit" do
-  #  page Pages::Adrs::Edit.new(
-  #    adr: DataModel::Adr[account_id: @account.id, external_id: params[:external_id]],
-  #    updated_message: "actions.adrs.updated",
-  #  )
-  #end
+  form "/adr_tags/:external_id"
 
-  post "/adrs/:external_id" do
-    draft_adr = Forms::Adrs::Draft.new(params)
-    result = process_form form: draft_adr,
-                          action: Actions::Adrs::SaveDraft.new,
-                          action_method: :update,
-                          account: @account
-    if result.constraint_violations?
-      if request.xhr?
-        [
-          422,
-          component(Components::Adrs::ErrorMessages.new(form: result.form)).to_s,
-        ]
-      else
-        page Pages::Adrs::Edit.new(adr: result[:adr], form: result.form)
-      end
-    else
+  form "/accepted_adrs/:external_id"
+  form "/rejected_adrs/:external_id"
+  form "/replaced_adrs/:existing_external_id"
+  form "/refined_adrs/:existing_external_id"
 
-      if request.xhr?
-        200
-      else
-        flash[:notice] = "actions.adrs.updated"
-        redirect to("/adrs/#{result.action_return_value.external_id}/edit")
-      end
-    end
-  end
-
-  post "/adr_tags" do
-    adr_tags = Forms::Adrs::Tags.new(params)
-    process_form form: adr_tags,
-                 action: Actions::Adrs::UpdateTags.new,
-                 action_method: :update,
-                 account: @account
-    redirect to("/adrs/#{adr_tags.external_id}")
-  end
-
-  post "/accepted_adrs" do
-    form = Forms::Adrs::Draft.new(params)
-    result = process_form form: form,
-                          action: Actions::Adrs::Accept.new,
-                          action_method: :accept,
-                          account: @account
-    if result.constraint_violations?
-      page Pages::Adrs::Edit.new(adr: result[:adr],
-                                 error_message: "pages.adrs.edit.adr_cannot_be_accepted",
-                                 form: result.form)
-    else
-      flash[:notice] = "actions.adrs.accepted"
-      redirect to("/adrs/#{result.action_return_value.external_id}")
-    end
-  end
-
-  post "/rejected_adrs" do
-    draft_adr = Forms::Adrs::Draft.new(params)
-    process_form form: draft_adr,
-                 action: Actions::Adrs::Reject.new,
-                 action_method: :reject,
-                 account: @account
-    flash[:notice] = "actions.adrs.rejected"
-    redirect to("/adrs")
-  end
-
-  post "/replaced_adrs" do
-    form = Forms::Adrs::Draft.new(
-      replaced_adr_external_id: params[:external_id]
-    )
-    page Pages::Adrs::Replace.new(form: form, account: @account)
-  end
-
-  post "/refined_adrs" do
-    form = Forms::Adrs::Draft.new(
-      refines_adr_external_id: params[:external_id]
-    )
-    page Pages::Adrs::Refine.new(form: form, account: @account)
-  end
-
-  page "/public_adrs/:public_id"
-  #get "/p/adrs/:id" do
-  #  adr = DataModel::Adr[public_id: params[:id]]
-  #  page Pages::Adrs::PublicGet.new(adr: adr, account: @account)
-  #end
+  page "/shareable_adrs/:shareable_id"
 
   post "/public_adrs" do
     Actions::Adrs::Public.new.make_public(external_id: params[:external_id], account: @account)

@@ -18,9 +18,8 @@ class AdrsByExternalIdPage < AppPage
   def editable? = !adr.accepted? && !adr.rejected?
   def draft? = self.editable?
 
-  def private? = !self.public?
-  def public?  =  adr.public?
-  def public_path = Brut.container.routing.for(PublicAdrsByPublicIdPage, public_id: adr.public_id)
+  def private? = !self.shared?
+  def shared?  =  adr.shared?
 
   def routing = Brut.container.routing
 

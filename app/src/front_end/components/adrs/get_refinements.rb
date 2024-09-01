@@ -1,15 +1,15 @@
 class Components::Adrs::GetRefinements < AppComponent
   attr_reader :refined_by_adrs
-  def initialize(refined_by_adrs:, public_paths: false)
-    @refined_by_adrs = refined_by_adrs
-    @public_paths = !!public_paths
+  def initialize(refined_by_adrs:, shareable_paths: false)
+    @refined_by_adrs =   refined_by_adrs
+    @shareable_paths = !!shareable_paths
   end
 
   def path(adr)
-    if @public_paths
-      public_adr_path(adr)
+    if @shareable_paths
+      Brut.container.routing.for(ShareableAdrsByShareableIdPage, shareable_id: adr.shareable_id)
     else
-      adr_path(adr)
+      Brut.container.routing.for(AdrsByExternalIdPage, shareable_id: adr.external_id)
     end
   end
 end

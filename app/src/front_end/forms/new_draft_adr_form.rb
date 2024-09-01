@@ -38,7 +38,7 @@ class NewDraftAdrForm < AppForm
         end
       end
       flash[:error] = "pages.adrs.new.adr_invalid"
-      Brut::FrontEnd::FormProcessingResponse.render_page(NewDraftAdrPage.new(form: self))
+      Brut::FrontEnd::FormProcessingResponse.render_page(NewDraftAdrPage.new(form: self, account: account))
     else
       flash[:notice] = "actions.adrs.created"
       Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(EditDraftAdrByExternalIdPage, external_id: result.external_id))

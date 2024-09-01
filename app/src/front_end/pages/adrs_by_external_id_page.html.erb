@@ -93,7 +93,7 @@
             size: "small",
             formaction: "/public_adrs",
             variant: :left,
-            disabled: public? ? "This ADR is already public" : false,
+            disabled: shared? ? "This ADR is already public" : false,
             color: "orange",
             label: "Make Public",
             confirm: "This will create a publicly accessible URL to allow anyone with it to view this ADR",
@@ -110,8 +110,8 @@
             icon: "lock-icon")) %>
 
         </fieldset>
-        <% if public? %>
-          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= public_path %>">
+        <% if shared? %>
+          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= routing.for(ShareableAdrsByShareableIdPage, shareable_id: adr.shareable_id) %>">
             <span class="tdu f-1">View Public Page</span>
             <div class="w-1" role="img" aria-description="external link icon"><%= svg("external-link-icon") %></div>
           </a>
@@ -129,8 +129,26 @@
       <% if !adr.replaced? %>
         <%= form_tag(method: "post", class:"flex items-center") do %>
           <input type="hidden" name="external_id" value="<%= adr.external_id %>">
-          <%= component(Components::Button.new(size: "normal", variant: :left, formaction: "/replaced_adrs", color: "red", label: "Replace", icon: "change-icon")) %>
-          <%= component(Components::Button.new(size: "normal", variant: :right, formaction: "/refined_adrs", color: "purple", label: "Refine", icon: "adjust-control-icon")) %>
+          <%= component(
+            Components::Button.new(
+              size: "normal",
+              variant: :left,
+              formaction: routing.for(ReplacedAdrsWithExistingExternalIdForm, existing_external_id: adr.external_id),
+              color: "red",
+              label: "Replace",
+              icon: "change-icon"
+            )
+          ) %>
+          <%= component(
+            Components::Button.new(
+              size: "normal",
+              variant: :right,
+              formaction: routing.for(RefinedAdrsWithExistingExternalIdForm, existing_external_id: adr.external_id),
+              color: "purple",
+              label: "Refine",
+              icon: "adjust-control-icon"
+            )
+          ) %>
         <% end %>
       <% end %>
     <% end %>
@@ -157,10 +175,9 @@
         </div>
       </adr-tag-editor-view>
       <adr-tag-editor-edit class="dn">
-        <%= form_tag(action: "/adr_tags",
+        <%= form_tag(action: routing.for(AdrTagsWithExternalIdForm, external_id: adr.external_id),
                      method: "post",
                      class: "mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white") do %>
-          <input type="hidden" name="external_id" value="<%= adr.external_id %>">
           <label class="flex flex-column gap-1 w-100">
             <div class="textarea-container">
               <textarea name="tags" class="textarea"><%= adr.tags.join(", ") %></textarea>
