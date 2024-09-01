@@ -4,10 +4,12 @@ module Brut
   # This information can be plucked out
   # by pages or components.
   class RequestContext
-    def initialize(env:,session:)
+    def initialize(env:,session:,flash:,xhr:)
       @hash = {
-        env: env,
-        session: session,
+        env:,
+        session:,
+        flash:,
+        xhr:,
       }
     end
 
@@ -25,23 +27,19 @@ module Brut
     end
 
     # Returns a hash suitable to passing into this class' constructor.
-    def as_constructor_args(klass, request_params: {}, flash:, additional_args: {})
+    def as_constructor_args(klass, request_params: {})
       args_for_method(method: klass.instance_method(:initialize),
-                      request_params: request_params,
-                      flash: flash,
-                      additional_args: additional_args)
+                      request_params: request_params)
     end
 
-    def as_method_args(object, method_name, request_params: {}, flash:, additional_args: {})
+    def as_method_args(object, method_name, request_params: {})
       args_for_method(method: object.method(method_name),
-                      request_params: request_params,
-                      flash: flash,
-                      additional_args: additional_args)
+                      request_params: request_params)
     end
 
   private
 
-    def args_for_method(method:, request_params:, flash:, additional_args:)
+    def args_for_method(method:, request_params:)
       args = {}
       method.parameters.each do |(type,name)|
         if ![ :key,:keyreq ].include?(type)
@@ -51,14 +49,8 @@ module Brut
           args[name] = self[name]
         elsif name == :params
           args[name] = request_params
-        elsif name == :flash
-          args[name] = flash
         elsif request_params[name.to_s] || request_params[name.to_sym]
           args[name] = request_params[name.to_s] || request_params[name.to_sym]
-        elsif additional_args[name]
-          args[name] = additional_args[name]
-        elsif additional_args["#{name}_class".to_sym]
-          args[name] = additional_args["#{name}_class".to_sym].new
         elsif type == :keyreq
           raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
         else
@@ -122,7 +114,10 @@ module Brut::SinatraHelpers
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
       }
       session[:_flash] ||= Flash.new.to_h
-      Thread.current.thread_variable_set(:request_context, Brut::RequestContext.new(env:env,session:session))
+      Thread.current.thread_variable_set(
+        :request_context,
+        Brut::RequestContext.new(env:,session:,flash:,xhr: request.xhr?)
+      )
     end
     sinatra_app.after do
       Thread.current[:rendering_context] = nil
@@ -195,7 +190,7 @@ module Brut::SinatraHelpers
     # * The flash
     #
     # Once this page object exists, `render` will be called to produce HTML to send back to the browser.
-    def page(path, **custom_constructor_args)
+    def page(path)
       route = Brut.container.routing.register_page(path)
       page_class = route.handler_class
 
@@ -204,8 +199,6 @@ module Brut::SinatraHelpers
         constructor_args = request_context.as_constructor_args(
           page_class,
           request_params: params,
-          flash: flash,
-          additional_args: custom_constructor_args
         )
         page page_class.new(**constructor_args)
       end
@@ -235,11 +228,10 @@ module Brut::SinatraHelpers
         constructor_args = request_context.as_constructor_args(
           form_class,
           request_params: params,
-          flash: flash,
         )
         form = form_class.new(**constructor_args)
 
-        process_args = request_context.as_method_args(form,:process!, flash: flash, additional_args: { xhr: request.xhr? })
+        process_args = request_context.as_method_args(form,:process!)
 
         result = form.process!(**process_args)
 
@@ -268,14 +260,10 @@ module Brut::SinatraHelpers
         constructor_args = request_context.as_constructor_args(
           handler_class,
           request_params: params,
-          flash: flash,
         )
         handler = handler_class.new(**constructor_args)
 
-        handle_args = request_context.as_method_args(handler,:handle!,
-                                                     request_params: params,
-                                                     flash: flash,
-                                                     additional_args: { xhr: request.xhr? })
+        handle_args = request_context.as_method_args(handler,:handle!, request_params: params)
 
         result = handler.handle!(**handle_args)
 
@@ -292,71 +280,6 @@ module Brut::SinatraHelpers
         in http_status:
           http_status
         end
-      end
-    end
-
-    # Declare a web page at a given route.  A web page is backed by an instance of a class that provides that page its dynamic 
-    # behavior.  That class must be a subclass of `Brut::FrontEnd::Page`.  Its constructor must accept
-    # only keyword arguments, and these must be sufficient for the page to work. An instance is used per request.
-    #
-    # route:: a URL, starting with a slash, that represents the route to this page
-    # page_class:: if present, this is the class for the page. If omitted, the class name is guessed, based
-    #              on the route.  See "class name derivation" below.
-    #
-    # When the route is requested via an HTTP GET, the page is instantiated.  The page class' constructor should accept keyword
-    # arguments, and these arguments will be injected as follows:
-    #
-    # * Any named value inside the request data.  For example, if you have set the `current_user` into the request data,
-    #   a kwarg `current_user:` will be given that value.
-    # * Any named value from the route. For example if your route is `/widgets/:id`, then a kwarg `id:` will have the value
-    #   from the route.
-    # * `flash:` for the flash
-    #
-    # Class name derivation
-    #
-    # TBD
-    def pagex(route, page_class: :derive, **rest)
-      page_class = if page_class == :derive
-                     classes_parts = route.split(/\//)
-                     if classes_parts[0] != ""
-                       raise ArgumentError, "You may not derive a page class unless your route starts with /"
-                     end
-                     classes_parts[0] = "Pages"
-                     classes_parts.reduce(self) do |mod,class_part|
-                       mod.const_get(
-                         RichString.new(class_part).camelize.to_s
-                       )
-                     end
-                   else
-                     page_class
-                   end
-      get route do
-        args = {}
-        page_class.instance_method(:initialize).parameters.each do |(type,name)|
-          if ![ :key,:keyreq ].include?(type)
-            raise ArgumentError,"Page constructors must accept only keyword arguments"
-          end
-          if args[name].nil?
-            current_value = if name == :flash
-                              flash
-                            elsif params[name]
-                              params[name]
-                            else
-                              Thread.current.thread_variable_get(:request_context)[name]
-                            end
-            if current_value
-              args[name] = current_value
-            elsif rest[name]
-              args[name] = rest[name]
-            elsif rest["#{name}_class".to_sym]
-              object = rest["#{name}_class".to_sym].new
-              args[name] = object
-            elsif type == :keyreq
-              raise ArgumentError,"Initializer for #{page_class} wants to be injected with #{name} but there isn't anything with that value. Default it to `nil` if you want `nil` injected"
-            end
-          end
-        end
-        page page_class.new(**args)
       end
     end
   end
