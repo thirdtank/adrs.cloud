@@ -7,6 +7,6 @@ class RefinedAdrsWithExistingExternalIdForm < AppForm
         refines_adr_external_id: self.existing_external_id
       }
     )
-    Brut::FrontEnd::FormProcessingResponse.render_page(NewDraftAdrPage.new(form: form, account: account))
+    NewDraftAdrPage.new(form: form, account: account)
   end
 end

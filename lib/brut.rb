@@ -11,7 +11,10 @@ module Brut
     autoload(:Components, "brut/front_end/component")
     autoload(:Page, "brut/front_end/page")
     autoload(:Form, "brut/front_end/form")
+    autoload(:Handler, "brut/front_end/handler")
     autoload(:Routing, "brut/front_end/routing")
+    autoload(:HttpMethod, "brut/front_end/http_method")
+    autoload(:HttpStatus, "brut/front_end/http_status")
   end
   module BackEnd
     autoload(:Action, "brut/back_end/action")

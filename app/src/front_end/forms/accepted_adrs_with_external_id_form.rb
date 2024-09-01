@@ -4,7 +4,7 @@ class AcceptedAdrsWithExternalIdForm < AppForm
   def new_record? = false
 
   def process!(account:, flash:)
-    if self.invalid?
+    if self.constraint_violations?
       return
     end
     action = Actions::Adrs::Accept.new
@@ -22,15 +22,15 @@ class AcceptedAdrsWithExternalIdForm < AppForm
           end
         end
       end
-      Brut::FrontEnd::FormProcessingResponse.render_page(EditDraftAdrByExternalIdPage.new(
+      EditDraftAdrByExternalIdPage.new(
         adr: result[:adr],
         form: self,
         error_message: "pages.adrs.edit.adr_cannot_be_accepted",
         flash: flash,
-      ))
+      )
     else
       flash[:notice] = "actions.adrs.accepted"
-      Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(AdrsByExternalIdPage, external_id: result.external_id))
+      redirect_to(AdrsByExternalIdPage, external_id: result.external_id)
     end
   end
 end

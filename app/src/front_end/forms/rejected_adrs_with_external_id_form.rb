@@ -6,8 +6,6 @@ class RejectedAdrsWithExternalIdForm < AppForm
     action = Actions::Adrs::Reject.new
     action.reject(form: self, account: account)
     flash[:notice] = "actions.adrs.rejected"
-    Brut::FrontEnd::FormProcessingResponse.redirect_to(
-      Brut.container.routing.for(AdrsPage)
-    )
+    redirect_to(AdrsPage)
   end
 end

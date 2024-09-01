@@ -5,7 +5,7 @@ class EditDraftAdrWithExternalIdForm < AppForm
   def new_record? = false
 
   def process!(account:, xhr:, flash:)
-    if self.invalid?
+    if self.constraint_violations?
       return
     end
     action = Actions::Adrs::SaveDraft.new
@@ -25,24 +25,24 @@ class EditDraftAdrWithExternalIdForm < AppForm
         end
       end
       if xhr
-        Brut::FrontEnd::FormProcessingResponse.render_component(
+        [
           Components::Adrs::ErrorMessages.new(form: self),
-          http_status: 422
-        )
+          http_status(422),
+        ]
       else
-        Brut::FrontEnd::FormProcessingResponse.render_page(EditDraftAdrByExternalIdPage.new(
+        EditDraftAdrByExternalIdPage.new(
           adr: result[:adr],
           form: self,
           error_message: "pages.adrs.edit.adr_invalid",
           flash: flash,
-        ))
+        )
       end
     else
       if xhr
-        Brut::FrontEnd::FormProcessingResponse.send_http_status(200)
+        http_status(200)
       else
         flash[:notice] = "actions.adrs.updated"
-        Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(AdrsByExternalIdPage, external_id: result.external_id))
+        redirect_to(AdrsByExternalIdPage, external_id: result.external_id)
       end
     end
   end

@@ -31,7 +31,7 @@ class DataModel::Adr < AppDataModel
   end
 
   def tags=(tags)
-    self[:tags] = tags.delete_if { |element| element.to_s.downcase == self.class.phony_tag_for_public }
+    self[:tags] = tags.delete_if { |element| element.to_s.downcase == self.class.phony_tag_for_shared }
   end
 
   def shared?   = !self.shareable_id.nil?

@@ -1,5 +1,4 @@
 module Brut::BackEnd::Actions
-  autoload(:FormSubmission,"brut/back_end/actions/form_submission")
   autoload(:Validator,"brut/back_end/actions/validator")
   autoload(:Validators,"brut/back_end/actions/validator")
   autoload(:CheckResult,"brut/back_end/actions/check_result")

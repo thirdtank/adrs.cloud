@@ -3,7 +3,7 @@ class NewDraftAdrPage < AppPage
   def initialize(form: nil, account:)
     @form = form || NewDraftAdrForm.new
     @account = account
-    @error_message = if !@form.new? && form.invalid?
+    @error_message = if !@form.new? && form.constraint_violations?
                        "pages.adrs.new.adr_invalid"
                      else
                        nil

@@ -1,57 +1,82 @@
+# An InputDefinition captures metadata used to create an Input. Think of this
+# as a template for creating inputs.  An Input has state, such as values and thus validity.
+# An InputDefinition is immutable and defines inputs.
 class Brut::FrontEnd::Forms::InputDefinition
+  include Brut::FussyTypeEnforcment
+  attr_reader :max,
+              :maxlength,
+              :min,
+              :minlength,
+              :name,
+              :pattern,
+              :required,
+              :step,
+              :type
 
-  class Email
-    REGEXP = /^[^@]+@[^@]+\.[^@]+$/
-
-    def self.pattern = REGEXP.source
-    def self.input_type = "email"
-
-    def initialize(string)
-      string = string.to_s.strip
-      if string =~ REGEXP
-        @email = string
-      else
-        raise ArgumentError.new("'#{string}' is not an email address")
-      end
-    end
-
-    def to_s = @email
-    def eql?(other)
-      other.to_s == self.to_s
-    end
-    def hash = self.to_s.hash
-  end
-
-  SPECIAL_TYPES = {
-    email: Email
+  INPUT_TYPES_TO_CLASS = {
+    "checkbox"       => String,
+    "color"          => String,
+    "date"           => String,
+    "datetime-local" => String,
+    "email"          => String,
+    "file"           => String,
+    "hidden"         => String,
+    "month"          => String,
+    "number"         => Numeric,
+    "password"       => String,
+    "radio"          => String,
+    "range"          => String,
+    "search"         => String,
+    "tel"            => String,
+    "text"           => String,
+    "time"           => String,
+    "url"            => String,
+    "week"           => String,
   }
 
-  attr_reader :name, :type, :minlength
-  def initialize(name, type, options)
-    @name = name.to_s
-    @type = SPECIAL_TYPES[type] || type
-    @required = options.key?(:required) ? options[:required] : true
-    @minlength = options.key?(:minlength) ? options[:minlength].to_i : false
-  end
+  # Create an InputDefinition. This should very closely mirror
+  # the attributes used in an <INPUT> element in HTML.
+  def initialize(
+    max: nil,
+    maxlength: nil,
+    min: nil,
+    minlength: nil,
+    name: nil,
+    pattern: nil,
+    required: true,
+    step: nil,
+    type: nil
+  )
+    name = name.to_s
+    type = if type.nil?
+             case name
+             when "email" then "email"
+             when "password" then "password"
+             else
+               "text"
+             end
+           else
+             type
+           end
 
-  def required? = !!@required
+    @max       = type!( max       , Numeric       , "max")
+    @maxlength = type!( maxlength , Numeric       , "maxlength")
+    @min       = type!( min       , Numeric       , "min")
+    @minlength = type!( minlength , Numeric       , "minlength")
+    @name      = type!( name      , String        , "name")
+    @pattern   = type!( pattern   , String        , "pattern")
+    @required  = type!( required  , [true, false] , "required", :required)
+    @step      = type!( step      , Numeric       , "step")
+    @type      = type!( type      , INPUT_TYPES_TO_CLASS.keys,
+                                                    "type", :required)
 
-  def pattern
-    if type == Email
-      type.pattern
-    else
-      nil
+    if @pattern.nil? && type == "email"
+      @pattern = /^[^@]+@[^@]+\.[^@]+$/.source
     end
   end
 
-  def html_input_type
-    if type == Email
-      "email"
-    elsif type == String
-      "text"
-    else
-      raise "Cannot support '#{type}' at this time"
-    end
+  # Create an Input based on this defitition, initializing it with the given value.
+  def make_input(value:)
+    Brut::FrontEnd::Forms::Input.new(input_definition: self, value: value)
   end
-
 end

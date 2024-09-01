@@ -1,4 +1,4 @@
-class AppHandler
+class AppHandler < Brut::FrontEnd::Handler
 end
 
 require_relative "logout_handler"

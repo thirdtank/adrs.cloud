@@ -6,9 +6,7 @@ class AdrTagsWithExternalIdForm < AppForm
     update_tags = Actions::Adrs::UpdateTags.new
     update_tags.update(form: self, account: account)
     flash[:notice] = "actions.adrs.tags_updated"
-    Brut::FrontEnd::FormProcessingResponse.redirect_to(
-      Brut.container.routing.for(AdrsByExternalIdPage, external_id: self.external_id)
-    )
+    redirect_to(AdrsByExternalIdPage, external_id: self.external_id)
   end
 end
 

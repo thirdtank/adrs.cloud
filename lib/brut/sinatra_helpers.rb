@@ -139,19 +139,6 @@ module Brut::SinatraHelpers
     self.page(component_instance)
   end
 
-  def process_form(form:, action:, action_method: :call, **rest)
-    SemanticLogger["SinatraHelpers"].info("Processing form",
-                                        form: form.class,
-                                        action: action.class,
-                                        action_method: action_method,
-                                        params: form.to_h)
-    form_submission = Brut::BackEnd::Actions::FormSubmission.new
-    form_submission.process_form(form: form,
-                                 action: action,
-                                 action_method: action_method,
-                                 **rest)
-  end
-
   module ClassMethods
 
     # Regsiters a page in your app. A page is what it sounds like - a web page that's rendered from a URL.  It will be provided
@@ -194,7 +181,7 @@ module Brut::SinatraHelpers
       route = Brut.container.routing.register_page(path)
       page_class = route.handler_class
 
-      get route.to_s do
+      get route.path_template do
         request_context = Thread.current.thread_variable_get(:request_context)
         constructor_args = request_context.as_constructor_args(
           page_class,
@@ -220,67 +207,53 @@ module Brut::SinatraHelpers
     # * `form("/admin/widgets/:internal_id") will use `Admin::WidgetsWithInternalIdForm`
     #
     def form(path)
-      route = Brut.container.routing.register_form(path)
+      route      = Brut.container.routing.register_form(path)
       form_class = route.handler_class
-
-      post route.to_s do
-        request_context = Thread.current.thread_variable_get(:request_context)
-        constructor_args = request_context.as_constructor_args(
-          form_class,
-          request_params: params,
-        )
-        form = form_class.new(**constructor_args)
-
-        process_args = request_context.as_method_args(form,:process!)
-
-        result = form.process!(**process_args)
-
-        case result
-        in redirect:
-          redirect to(redirect)
-        in page_instance:
-          page(page_instance).to_s
-        in component_instance:, http_status:
-          [
-            http_status,
-            component(component_instance).to_s,
-          ]
-        in http_status:
-          http_status
-        end
-      end
+      self.define_handled_route(route,form_class)
     end
 
     def path(path, method:)
-      route = Brut.container.routing.register_path(path, method:)
+      route         = Brut.container.routing.register_path(path, method: Brut::FrontEnd::HttpMethod.new(method))
       handler_class = route.handler_class
+      self.define_handled_route(route,handler_class)
+    end
 
-      route method.to_s.upcase, path do
+  private
+
+    def define_handled_route(brut_route,handler_class)
+
+      method = brut_route.method.to_s.upcase
+      path   = brut_route.path_template
+
+      route method, path do
         request_context = Thread.current.thread_variable_get(:request_context)
         constructor_args = request_context.as_constructor_args(
           handler_class,
           request_params: params,
         )
-        handler = handler_class.new(**constructor_args)
+        form = handler_class.new(**constructor_args)
 
-        handle_args = request_context.as_method_args(handler,:handle!, request_params: params)
+        process_args = request_context.as_method_args(form,:process!)
 
-        result = handler.handle!(**handle_args)
+        result = form.handle!(**process_args)
 
         case result
-        in redirect:
-          redirect to(redirect)
-        in page_instance:
-          page(page_instance).to_s
-        in component_instance:, http_status:
+        in URI => uri
+          redirect to(uri.to_s)
+        in Brut::FrontEnd::Component => component_instance
+          component(component_instance).to_s
+        in [ Brut::FrontEnd::Component => component_instance, Brut::FrontEnd::HttpStatus => http_status ]
           [
-            http_status,
+            http_status.to_i,
             component(component_instance).to_s,
           ]
-        in http_status:
-          http_status
+        in Brut::FrontEnd::HttpStatus => http_status
+          http_status.to_i
+        else
+          raise NoMatchingPatternError, "Result from #{form.class}'s process! method was a #{result.class}, which cannot be used to understand the response to generate"
         end
       end
     end
+
   end
 end

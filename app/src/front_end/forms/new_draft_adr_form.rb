@@ -18,7 +18,7 @@ class NewDraftAdrForm < AppForm
   def new_record? = true
 
   def process!(account:, flash:)
-    if self.invalid?
+    if self.constraint_violations?
       return
     end
     action = Actions::Adrs::SaveDraft.new
@@ -38,10 +38,10 @@ class NewDraftAdrForm < AppForm
         end
       end
       flash[:error] = "pages.adrs.new.adr_invalid"
-      Brut::FrontEnd::FormProcessingResponse.render_page(NewDraftAdrPage.new(form: self, account: account))
+      NewDraftAdrPage.new(form: self, account: account)
     else
       flash[:notice] = "actions.adrs.created"
-      Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(EditDraftAdrByExternalIdPage, external_id: result.external_id))
+      redirect_to(EditDraftAdrByExternalIdPage, external_id: result.external_id)
     end
   end
 
