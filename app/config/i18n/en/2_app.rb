@@ -10,12 +10,17 @@
       },
     },
     actions: {
+      auth: {
+        logged_out: "You have been logged out",
+      },
       adrs: {
         created: "ADR Created",
         updated: "ADR Updated",
         rejected: "ADR Rejected",
         accepted: "ADR Accepted",
         tags_updated: "Tags Updated",
+        shared: "ADR Shared",
+        sharing_stopped: "ADR No Longer Shared",
       }
     },
     pages: {

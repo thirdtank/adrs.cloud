@@ -3,18 +3,8 @@
   <h2 class="tc ma-0">Your one-stop shop for managing Architecture Decision Records</h2>
 </header>
 <main class="ph-3 mv-4">
-  <% if !info.nil? %>
-    <aside class="p mh-auto ba shadow-4 bc-blue-800 br-2 pa-3 blue-300 bg-blue-900 tc"><%= info %></aside>
-  <% end %>
-  <% if !check_result.nil? && check_result.constraint_violations? %>
-    <aside class="p mh-auto ba shadow-4 bc-red-800 br-2 pa-3 red-300 bg-red-900 tc">
-      <% check_result.each_violation do |object,field,key,context| %>
-        <%= object %>
-        <%= field %>
-        <%= key %>
-        <%= context %>
-      <% end %>
-    </aside>
+  <% if !info_message.nil? %>
+    <aside class="p mh-auto ba shadow-4 bc-blue-800 br-2 pa-3 blue-300 bg-blue-900 tc"><%= I18n.t(info_message) %></aside>
   <% end %>
   <h3 class="tc flex flex-column gap-2">
     <%= form_tag(action:"/auth/developer", method:"POST") do %>

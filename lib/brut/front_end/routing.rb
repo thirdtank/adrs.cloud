@@ -18,6 +18,12 @@ class Brut::FrontEnd::Routing
     route
   end
 
+  def register_path(path, method:)
+    route = Route.new(method, path)
+    @routes << route
+    route
+  end
+
   def for(handler_class, **rest)
     route = @routes.detect { |route|
       route.handler_class == handler_class
@@ -76,6 +82,9 @@ class Brut::FrontEnd::Routing
 
   private
     def locate_handler_class
+      if @path == "/"
+        return Module.const_get("HomePage")
+      end
       path_parts = @path.split(/\//)[1..-1]
 
       part_names = path_parts.reduce([]) { |array,path_part|
@@ -103,6 +112,10 @@ class Brut::FrontEnd::Routing
                        end
       raise "Cannot find page class for route '#{@path}', which should be #{part_names.join("::")}. #{module_message} the class or module '#{ex.name}'"
     end
+
+    def suffix = "Handler"
+    def preposition = "With"
+
   end
 
   class PageRoute < Route

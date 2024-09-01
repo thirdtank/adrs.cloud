@@ -91,39 +91,30 @@
 
           <%= component(Components::Button.new(
             size: "small",
-            formaction: "/public_adrs",
+            formaction: routing.for(SharedAdrsWithExternalIdForm, external_id: adr.external_id),
             variant: :left,
-            disabled: shared? ? "This ADR is already public" : false,
+            disabled: shared? ? "This ADR is already shared" : false,
             color: "orange",
-            label: "Make Public",
+            label: "Share",
             confirm: "This will create a publicly accessible URL to allow anyone with it to view this ADR",
             icon: "globe-network-icon")) %>
 
           <%= component(Components::Button.new(
             size: "small",
-            formaction: "/private_adrs",
+            formaction: routing.for(PrivateAdrsWithExternalIdForm, external_id: adr.external_id),
             variant: :right,
-            disabled: private? ? "This ADR is already private" : false,
+            disabled: private? ? "This ADR is not shared" : false,
             color: "blue",
-            label: "Make Private",
-            confirm: "Anyone with this ADR's public URL will no longer be able to access it",
+            label: "Stop Sharing",
+            confirm: "Anyone with this ADR's shareable URL will no longer be able to access it",
             icon: "lock-icon")) %>
 
         </fieldset>
         <% if shared? %>
-          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= routing.for(ShareableAdrsByShareableIdPage, shareable_id: adr.shareable_id) %>">
-            <span class="tdu f-1">View Public Page</span>
+          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= routing.for(SharedAdrsByShareableIdPage, shareable_id: adr.shareable_id) %>">
+            <span class="tdu f-1">View Shareable Page</span>
             <div class="w-1" role="img" aria-description="external link icon"><%= svg("external-link-icon") %></div>
           </a>
-        <% else %>
-          <details>
-            <summary class="f-1 fw-5 i">
-              What is public?
-            </summary>
-          <p class="f-1 i p">
-            Public ADRs are not discoverable, but have a private URL you can share with others. Anyone with this URL can read the ADR, but cannot modify it.
-          </p>
-          </details>
         <% end %>
       <% end %>
       <% if !adr.replaced? %>

@@ -4,8 +4,11 @@ module Brut
   # This information can be plucked out
   # by pages or components.
   class RequestContext
-    def initialize
-      @hash = {}
+    def initialize(env:,session:)
+      @hash = {
+        env: env,
+        session: session,
+      }
     end
 
     def []=(key,value)
@@ -48,16 +51,16 @@ module Brut
           args[name] = self[name]
         elsif name == :params
           args[name] = request_params
-        elsif request_params[name.to_s] || request_params[name.to_sym]
-          args[name] = request_params[name.to_s] || request_params[name.to_sym]
         elsif name == :flash
           args[name] = flash
+        elsif request_params[name.to_s] || request_params[name.to_sym]
+          args[name] = request_params[name.to_s] || request_params[name.to_sym]
         elsif additional_args[name]
           args[name] = additional_args[name]
         elsif additional_args["#{name}_class".to_sym]
           args[name] = additional_args["#{name}_class".to_sym].new
         elsif type == :keyreq
-          raise ArgumentError,"initializer argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
+          raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
         else
           # this keyword arg has a default value which will be used
         end
@@ -119,7 +122,7 @@ module Brut::SinatraHelpers
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
       }
       session[:_flash] ||= Flash.new.to_h
-      Thread.current.thread_variable_set(:request_context, Brut::RequestContext.new)
+      Thread.current.thread_variable_set(:request_context, Brut::RequestContext.new(env:env,session:session))
     end
     sinatra_app.after do
       Thread.current[:rendering_context] = nil
@@ -239,6 +242,42 @@ module Brut::SinatraHelpers
         process_args = request_context.as_method_args(form,:process!, flash: flash, additional_args: { xhr: request.xhr? })
 
         result = form.process!(**process_args)
+
+        case result
+        in redirect:
+          redirect to(redirect)
+        in page_instance:
+          page(page_instance).to_s
+        in component_instance:, http_status:
+          [
+            http_status,
+            component(component_instance).to_s,
+          ]
+        in http_status:
+          http_status
+        end
+      end
+    end
+
+    def path(path, method:)
+      route = Brut.container.routing.register_path(path, method:)
+      handler_class = route.handler_class
+
+      route method.to_s.upcase, path do
+        request_context = Thread.current.thread_variable_get(:request_context)
+        constructor_args = request_context.as_constructor_args(
+          handler_class,
+          request_params: params,
+          flash: flash,
+        )
+        handler = handler_class.new(**constructor_args)
+
+        handle_args = request_context.as_method_args(handler,:handle!,
+                                                     request_params: params,
+                                                     flash: flash,
+                                                     additional_args: { xhr: request.xhr? })
+
+        result = handler.handle!(**handle_args)
 
         case result
         in redirect:

@@ -6,9 +6,9 @@ module Pages
   end
 end
 
-require_relative "home"
+require_relative "home_page"
 require_relative "adrs_page"
 require_relative "adrs_by_external_id_page"
 require_relative "new_draft_adr_page"
 require_relative "edit_draft_adr_by_external_id_page"
-require_relative "shareable_adrs_by_shareable_id_page"
+require_relative "shared_adrs_by_shareable_id_page"
