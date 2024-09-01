@@ -1,5 +1,5 @@
 class Actions::Adrs::Accept < AppAction
-  class AcceptedAdrValidator < Brut::BackEnd::Actions::Validators::DataObjectValidator
+  class AcceptedAdrValidator < Brut::BackEnd::Actions::Validators::FormValidator
     validate :context   , required: true , minlength: 10
     validate :facing    , required: true , minlength: 10
     validate :decision  , required: true , minlength: 10
@@ -10,16 +10,18 @@ class Actions::Adrs::Accept < AppAction
   end
 
   def accept(form:, account:)
-    result = new_result
     adr = DataModel::Adr[external_id: form.external_id, account_id: account.id]
     if !adr
       raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{form.external_id}"
     end
-    result[:adr] = adr
+    if form.constraint_violations?
+      return adr
+    end
+
     validator = AcceptedAdrValidator.new
-    validator.validate(form,result)
-    if result.constraint_violations?
-      return result
+    validator.validate(form)
+    if form.constraint_violations?
+      return adr
     end
     AppDataModel.transaction do
       if !adr.accepted?
@@ -41,7 +43,7 @@ class Actions::Adrs::Accept < AppAction
         end
       end
     end
-    result
+    adr
   end
 
 private

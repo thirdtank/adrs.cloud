@@ -24,9 +24,12 @@ class Actions::Adrs::SaveDraft < AppAction
 private
 
   def save(form:, adr:)
-    result = create_result(form:form,adr:adr)
-    if result.constraint_violations?
-      return result
+    if form.constraint_violations?
+      return adr
+    end
+    if form.title.to_s.strip !~ /\s+/
+      form.server_side_constraint_violation(input_name: :title, key: :not_enough_words, context: { minwords: 2 })
+      return adr
     end
 
     refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: adr.account.id]
@@ -51,7 +54,7 @@ private
         )
       end
     end
-    result
+    adr
   end
 
   def tag_serializer

@@ -5,22 +5,10 @@ class EditDraftAdrWithExternalIdForm < AppForm
   def new_record? = false
 
   def process!(account:, xhr:, flash:)
-    if self.constraint_violations?
-      return
-    end
     action = Actions::Adrs::SaveDraft.new
 
-    result = action.update(form: self, account: account)
-    if result.constraint_violations?
-      result.each_violation do |object,field,key,context|
-        if object == self
-          context ||= {}
-          humanized_field = RichString.new(field).humanized.to_s
-          self.server_side_constraint_violation(input_name: field, key: key, context: context.merge(field: humanized_field))
-        else
-          logger.warn("Ignoring constraint violation on object #{object} (field: #{field}, key: #{key}), because it is not the form")
-        end
-      end
+    adr = action.update(form: self, account: account)
+    if self.constraint_violations?
       if xhr
         [
           Components::Adrs::ErrorMessages.new(form: self),
@@ -28,7 +16,7 @@ class EditDraftAdrWithExternalIdForm < AppForm
         ]
       else
         EditDraftAdrByExternalIdPage.new(
-          adr: result[:adr],
+          adr: adr,
           form: self,
           error_message: "pages.adrs.edit.adr_invalid",
           flash: flash,
@@ -39,7 +27,7 @@ class EditDraftAdrWithExternalIdForm < AppForm
         http_status(200)
       else
         flash[:notice] = "actions.adrs.updated"
-        redirect_to(AdrsByExternalIdPage, external_id: result[:adr].external_id)
+        redirect_to(AdrsByExternalIdPage, external_id: adr.external_id)
       end
     end
   end

@@ -18,27 +18,15 @@ class NewDraftAdrForm < AppForm
   def new_record? = true
 
   def process!(account:, flash:)
-    if self.constraint_violations?
-      return
-    end
     action = Actions::Adrs::SaveDraft.new
 
-    result = action.save_new(form: self, account: account)
-    if result.constraint_violations?
-      result.each_violation do |object,field,key,context|
-        if object == self
-          context ||= {}
-          humanized_field = RichString.new(field).humanized.to_s
-          self.server_side_constraint_violation(input_name: field, key: key, context: context.merge(field: humanized_field))
-        else
-          logger.warn("Ignoring constraint violation on object #{object} (field: #{field}, key: #{key}), because it is not the form")
-        end
-      end
+    adr = action.save_new(form: self, account: account)
+    if self.constraint_violations?
       flash[:error] = "pages.adrs.new.adr_invalid"
       NewDraftAdrPage.new(form: self, account: account)
     else
       flash[:notice] = "actions.adrs.created"
-      redirect_to(EditDraftAdrByExternalIdPage, external_id: result[:adr].external_id)
+      redirect_to(EditDraftAdrByExternalIdPage, external_id: adr.external_id)
     end
   end
 
