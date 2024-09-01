@@ -1,21 +1,10 @@
 class Actions::DevOnlyAuth < AppAction
 
-  def check(email)
+  def auth(email)
     if Brut.container.project_env.production?
-      return { error: "Login failed" }
+      return nil
     end
-    result = new_result
-    account = DataModel::Account[email: email]
-    if account
-      result[:account] = account
-    else
-      result.constraint_violation!(object: email, field: :email, key: :no_account)
-    end
-    result
-  end
-
-  def call(email)
-    self.check(email)
+    DataModel::Account[email: email]
   end
 end
 

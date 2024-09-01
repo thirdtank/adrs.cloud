@@ -6,6 +6,9 @@
   <% if !info_message.nil? %>
     <aside class="p mh-auto ba shadow-4 bc-blue-800 br-2 pa-3 blue-300 bg-blue-900 tc"><%= I18n.t(info_message) %></aside>
   <% end %>
+  <% if !error_message.nil? %>
+    <aside class="p mh-auto ba shadow-4 bc-red-800 br-2 pa-3 red-300 bg-red-900 tc"><%= I18n.t(error_message) %></aside>
+  <% end %>
   <h3 class="tc flex flex-column gap-2">
     <%= form_tag(action:"/auth/developer", method:"POST") do %>
       <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">Sneak Login!</button>

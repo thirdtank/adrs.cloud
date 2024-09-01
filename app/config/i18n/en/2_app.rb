@@ -12,6 +12,7 @@
     actions: {
       auth: {
         logged_out: "You have been logged out",
+        no_account: "There is no account with the credentials you provided",
       },
       adrs: {
         created: "ADR Created",

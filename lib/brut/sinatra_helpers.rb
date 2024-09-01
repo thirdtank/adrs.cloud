@@ -52,7 +52,7 @@ module Brut
         elsif request_params[name.to_s] || request_params[name.to_sym]
           args[name] = request_params[name.to_s] || request_params[name.to_sym]
         elsif type == :keyreq
-          raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
+          raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}, request_params: #{request_params.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
         else
           # this keyword arg has a default value which will be used
         end
@@ -209,18 +209,18 @@ module Brut::SinatraHelpers
     def form(path)
       route      = Brut.container.routing.register_form(path)
       form_class = route.handler_class
-      self.define_handled_route(route,form_class)
+      self.define_handled_route(route,form_class,:process!)
     end
 
     def path(path, method:)
       route         = Brut.container.routing.register_path(path, method: Brut::FrontEnd::HttpMethod.new(method))
       handler_class = route.handler_class
-      self.define_handled_route(route,handler_class)
+      self.define_handled_route(route,handler_class,:handle!)
     end
 
   private
 
-    def define_handled_route(brut_route,handler_class)
+    def define_handled_route(brut_route,handler_class,method_name)
 
       method = brut_route.method.to_s.upcase
       path   = brut_route.path_template
@@ -233,7 +233,7 @@ module Brut::SinatraHelpers
         )
         form = handler_class.new(**constructor_args)
 
-        process_args = request_context.as_method_args(form,:process!)
+        process_args = request_context.as_method_args(form,method_name,request_params: params)
 
         result = form.handle!(**process_args)
 

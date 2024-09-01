@@ -3,6 +3,6 @@ class LogoutHandler < AppHandler
     session.delete("user_id")
 
     flash[:notice] = "actions.auth.logged_out"
-    Brut::FrontEnd::FormProcessingResponse.redirect_to(Brut.container.routing.for(HomePage))
+    redirect_to(HomePage)
   end
 end
