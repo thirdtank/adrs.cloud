@@ -36,16 +36,11 @@ module Brut::FrontEnd::FormInputDeclaration
   def input_definitions = @input_definitions
 end
 
-class Brut::FrontEnd::Form < Brut::FrontEnd::Handler
+class Brut::FrontEnd::Form
 
   include SemanticLogger::Loggable
 
   extend Brut::FrontEnd::FormInputDeclaration
-
-  def handle!(...) = process!(...)
-  def process!(**)
-    raise SubclassMustImplement
-  end
 
   # Create an instance of this form, optionally initialized with
   # the given values for its params.

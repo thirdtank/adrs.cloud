@@ -38,7 +38,7 @@ class Components::Adrs::Form < AppComponent
     if !@form.new_record?
       component(
         Components::Button.new(
-          formaction: Brut.container.routing.for(RejectedAdrsWithExternalIdForm, external_id: @form.external_id),
+          formaction: Brut.container.routing.for(RejectedAdrsWithExternalIdHandler, external_id: @form.external_id),
           size: "small",
           color: "red",
           label: "Reject ADR",

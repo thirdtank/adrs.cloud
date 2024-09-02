@@ -2,6 +2,9 @@ require "uri"
 
 # Holds the registered routes for this app.
 class Brut::FrontEnd::Routing
+
+  include SemanticLogger::Loggable
+
   def initialize
     @routes = Set.new
   end
@@ -26,7 +29,13 @@ class Brut::FrontEnd::Routing
 
   def for(handler_class, with_method: :any, **rest)
     route = @routes.detect { |route|
-      route.handler_class == handler_class
+      handler_class_match = route.handler_class == handler_class
+      form_class_match = if route.respond_to?(:form_class)
+                           route.form_class == handler_class
+                         else
+                           false
+                         end
+      handler_class_match || form_class_match
     }
     if !route
       raise ArgumentError,"There is no configured route for #{handler_class}"
@@ -52,6 +61,8 @@ class Brut::FrontEnd::Routing
 
   class Route
 
+    include SemanticLogger::Loggable
+
     attr_reader :handler_class, :path_template, :method
 
     def initialize(method,path_template)
@@ -64,7 +75,7 @@ class Brut::FrontEnd::Routing
       end
       @method        = method
       @path_template = path_template
-      @handler_class = self.locate_handler_class
+      @handler_class = self.locate_handler_class(self.suffix,self.preposition)
     end
 
     def path(**query_string_params)
@@ -89,7 +100,7 @@ class Brut::FrontEnd::Routing
     end
 
   private
-    def locate_handler_class
+    def locate_handler_class(suffix,preposition, allow_missing: false)
       if @path_template == "/"
         return Module.const_get("HomePage")
       end
@@ -101,14 +112,14 @@ class Brut::FrontEnd::Routing
             raise ArgumentError,"Your path may not start with a placeholder: '#{@path_template}'"
           end
           placeholder_camelized = RichString.new($1).camelize
-          array[-1] << self.preposition
+          array[-1] << preposition
           array[-1] << placeholder_camelized.to_s
         else
           array << RichString.new(path_part).camelize.to_s
         end
         array
       }
-      part_names[-1] += self.suffix
+      part_names[-1] += suffix
       part_names.inject(Module) { |mod,path_element|
         mod.const_get(path_element)
       }
@@ -118,7 +129,13 @@ class Brut::FrontEnd::Routing
                        else
                          "Module '#{ex.receiver}' did not have"
                        end
-      raise "Cannot find page class for route '#{@path_template}', which should be #{part_names.join("::")}. #{module_message} the class or module '#{ex.name}'"
+      message = "Cannot find page class for route '#{@path_template}', which should be #{part_names.join("::")}. #{module_message} the class or module '#{ex.name}'"
+      if allow_missing
+        logger.debug(message)
+        return nil
+      else
+        raise message
+      end
     end
 
     def suffix = "Handler"
@@ -134,12 +151,13 @@ class Brut::FrontEnd::Routing
     def preposition = "By"
   end
 
+
   class FormRoute < Route
+    attr_reader :form_class
     def initialize(path)
       super(Brut::FrontEnd::HttpMethod.new(:post),path)
+      @form_class = self.locate_handler_class("Form","With", allow_missing: true)
     end
-    def suffix = "Form"
-    def preposition = "With"
   end
 end
 

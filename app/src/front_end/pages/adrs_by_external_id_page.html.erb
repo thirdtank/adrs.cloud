@@ -91,7 +91,7 @@
 
           <%= component(Components::Button.new(
             size: "small",
-            formaction: routing.for(SharedAdrsWithExternalIdForm, external_id: adr.external_id),
+            formaction: routing.for(SharedAdrsWithExternalIdHandler, external_id: adr.external_id),
             variant: :left,
             disabled: shared? ? "This ADR is already shared" : false,
             color: "orange",
@@ -101,7 +101,7 @@
 
           <%= component(Components::Button.new(
             size: "small",
-            formaction: routing.for(PrivateAdrsWithExternalIdForm, external_id: adr.external_id),
+            formaction: routing.for(PrivateAdrsWithExternalIdHandler, external_id: adr.external_id),
             variant: :right,
             disabled: private? ? "This ADR is not shared" : false,
             color: "blue",
@@ -124,7 +124,7 @@
             Components::Button.new(
               size: "normal",
               variant: :left,
-              formaction: routing.for(ReplacedAdrsWithExistingExternalIdForm, existing_external_id: adr.external_id),
+              formaction: routing.for(ReplacedAdrsWithExistingExternalIdHandler, existing_external_id: adr.external_id),
               color: "red",
               label: "Replace",
               icon: "change-icon"
@@ -134,7 +134,7 @@
             Components::Button.new(
               size: "normal",
               variant: :right,
-              formaction: routing.for(RefinedAdrsWithExistingExternalIdForm, existing_external_id: adr.external_id),
+              formaction: routing.for(RefinedAdrsWithExistingExternalIdHandler, existing_external_id: adr.external_id),
               color: "purple",
               label: "Refine",
               icon: "adjust-control-icon"

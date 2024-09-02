@@ -27,28 +27,29 @@ module Brut
     end
 
     # Returns a hash suitable to passing into this class' constructor.
-    def as_constructor_args(klass, request_params: {})
-      args_for_method(method: klass.instance_method(:initialize),
-                      request_params: request_params)
+    def as_constructor_args(klass, request_params:)
+      args_for_method(method: klass.instance_method(:initialize), request_params:, form: nil)
     end
 
-    def as_method_args(object, method_name, request_params: {})
-      args_for_method(method: object.method(method_name),
-                      request_params: request_params)
+    def as_method_args(object, method_name, request_params:,form:)
+      args_for_method(method: object.method(method_name), request_params:, form:)
     end
 
   private
 
-    def args_for_method(method:, request_params:)
+    def args_for_method(method:, request_params:, form: )
       args = {}
       method.parameters.each do |(type,name)|
+        if name.to_s == "**" || name.to_s == "*"
+          raise ArgumentError,"#{method.class}##{method.name} accepts '#{name}' and not keyword args. Define it in your class to accept the keyword arguments your method needs"
+        end
         if ![ :key,:keyreq ].include?(type)
           raise ArgumentError,"#{name} is not a keyword arg, but is a #{type}"
         end
         if self.key?(name)
           args[name] = self[name]
-        elsif name == :params
-          args[name] = request_params
+        elsif !form.nil? && name == :form
+          args[name] = form
         elsif request_params[name.to_s] || request_params[name.to_sym]
           args[name] = request_params[name.to_s] || request_params[name.to_sym]
         elsif type == :keyreq
@@ -191,27 +192,41 @@ module Brut::SinatraHelpers
       end
     end
 
-    # Declares a form that will be submitted to the app.  When the given path receives a POST, a form class is instantiated
-    # with the parameters submitted.  The name of the class is based on a convention similar to `page`:
+    # Declares a form that will be submitted to the app. To handle the submission you must providate
+    # a handler and an optional form.  The form defines all the fields in your form, including constraints.
+    # These can be used to generate HTML for the form.  When the form is submitted to your app, the form
+    # is instantiated and filled in with all the values it is requesting.  That form is then passed off to the
+    # configured handler.  The handle! method performs whatever processing is needed.
+    #
+    # The form is optional if you don't have any parameters to submit for whatever the action is.  For example, you 
+    # might have an action like `/archived_widgets/:widget_id` that you POST to in order to archive the given
+    # widget.  In this case, you can omit the form.  `:widget_id` will be made availbale to your handler.
+    #
+    # The name of the classes are based on a convention similar to `page`:
     #
     # * Each part of the path that is not a placeholder will be camelized
     # * Any part of the path that *is* a placholder has its leading colon removed, then is camelized, but appended to
     #   the previous part with `With`, thus `WidgetsWithId` is created from `Widgets`, `With`, and `Id`.
-    # * The final part of the path is further appended with `Form`.
+    # * The final part of the path is further appended with `Form` or `Handler`.
     # * These parts now make up a path to a class, so the entire thing is joined by `::` to form the fully-qualified class name.
     #
     # Examples:
     #
-    # * `form("/widgets")` will use `WidgetsForm`
-    # * `form("/widgets/:id")` will use `WidgetsWithIdForm`
-    # * `form("/admin/widgets/:internal_id") will use `Admin::WidgetsWithInternalIdForm`
+    # * `form("/widgets")` will use `WidgetsForm` and `WidgetsHandler`
+    # * `form("/widgets/:id")` will use `WidgetsWithIdForm` and `WidgetsWithIdHandler`
+    # * `form("/admin/widgets/:internal_id") will use `Admin::WidgetsWithInternalIdForm` and `Admin::WidgetsWithInternalIdHandler`
     #
     def form(path)
       route      = Brut.container.routing.register_form(path)
-      form_class = route.handler_class
-      self.define_handled_route(route,form_class,:process!)
+      handler_class = route.handler_class
+      form_class    = route.form_class
+      self.define_handled_route(route,handler_class,:handle!,form_class)
     end
 
+    # When you need to respond to a given path/method, but it's not a page nor a form.  For example, webhooks often
+    # require responding to GET even though they aren't rendering pages nor considered to be idempotent.
+    #
+    # This will locate a handler class based on the same naming convention as for forms.
     def path(path, method:)
       route         = Brut.container.routing.register_path(path, method: Brut::FrontEnd::HttpMethod.new(method))
       handler_class = route.handler_class
@@ -220,22 +235,23 @@ module Brut::SinatraHelpers
 
   private
 
-    def define_handled_route(brut_route,handler_class,method_name)
+    def define_handled_route(brut_route,handler_class,method_name,form_class=nil)
 
       method = brut_route.method.to_s.upcase
       path   = brut_route.path_template
 
       route method, path do
         request_context = Thread.current.thread_variable_get(:request_context)
-        constructor_args = request_context.as_constructor_args(
-          handler_class,
-          request_params: params,
-        )
-        form = handler_class.new(**constructor_args)
+        handler = handler_class.new
+        form = if form_class.nil?
+                 nil
+               else
+                 form_class.new(params: params)
+               end
 
-        process_args = request_context.as_method_args(form,method_name,request_params: params)
+        process_args = request_context.as_method_args(handler,method_name,request_params: params,form: form)
 
-        result = form.handle!(**process_args)
+        result = handler.handle!(**process_args)
 
         case result
         in URI => uri
@@ -250,7 +266,7 @@ module Brut::SinatraHelpers
         in Brut::FrontEnd::HttpStatus => http_status
           http_status.to_i
         else
-          raise NoMatchingPatternError, "Result from #{form.class}'s process! method was a #{result.class}, which cannot be used to understand the response to generate"
+          raise NoMatchingPatternError, "Result from #{handler.class}'s handle! method was a #{result.class}, which cannot be used to understand the response to generate"
         end
       end
     end

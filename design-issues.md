@@ -1,36 +1,18 @@
 # Design Issues
 
-## Routing - mapping routes to logic
+## Back-end logic, form processing, etc.
 
-* Rails has routes in one file, mapping to a symbol that is interpretted as a class.  I think this kinda sucks
-* there is an 80% pattern for gets: render a page with some data
-* there is an 80% pattern for posts: process a form, then render errors or render/redirect OK
+When a form is declared, there is a path representing that form's action, and a class that describes the form's fields.
 
-```
-page route # serves up the given page, using a convention for the class name and
-           # injecting any context based on page's constructor params
+The form class has two jobs:
 
-page route, page_class: SomeClass # Specify the class without conventions
-```
+- describe the fields in the form
+- Trigger back-end processing logic, then route the user based on the results
 
-### Page Route/Class name conventions
 
-* `/widgets` - `WidgetsPage`
-* `/widgets/popular` - `WidgetsPopularPage`
-* `/widget/:id` - `WidgetByIdPage`
-* `/widget/:id/tags - `WidgetByIdTagsPage`
 
 ## Logic useful to front-end and back-end - where does it go?
 
-## Resourceful vs Wild West routing
-
-* The Rails way is overcomplex and not that useful
-* Wild west is maybe too loosey-goosey?
-
-## Form handling impedence mismatch: forms vs models
-
-A form is modeled as to its inputs.  But often the underlying model or models are needed.  How should these be looked up? Can they be
-done in a structured way?
 
 ## Converting rich types in DB to and from strings needed for front-end
 
