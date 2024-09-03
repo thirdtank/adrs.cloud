@@ -65,48 +65,6 @@ end
 
 module Brut::SinatraHelpers
 
-  class Flash
-    def self.from_h(hash)
-      hash ||= {}
-      self.new(
-        age: hash[:age] || 0,
-        messages: hash[:messages] || {}
-      )
-    end
-    def initialize(age: 0, messages: {})
-      @age = age.to_i
-      if !messages.kind_of?(Hash)
-        raise ArgumentError,"messages must be a Hash, not a #{messages.class}"
-      end
-      @messages = messages
-    end
-
-    def age!
-      @age += 1
-      if @age > 1
-        @age = 0
-        @messages = {}
-      end
-    end
-
-    def [](key)
-      @messages[key]
-    end
-
-    def []=(key,message)
-      @messages[key] = message
-      @age = [0,@age-1].max
-    end
-
-    def to_h
-      {
-        age: @age,
-        messages: @messages,
-      }
-    end
-  end
-
-
   def self.included(sinatra_app)
     sinatra_app.extend(ClassMethods)
     sinatra_app.set :logging, true
@@ -114,7 +72,7 @@ module Brut::SinatraHelpers
       Thread.current[:rendering_context] = {
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
       }
-      session[:_flash] ||= Flash.new.to_h
+      session[:_flash] ||= Brut::FrontEnd::Flash.new.to_h
       Thread.current.thread_variable_set(
         :request_context,
         Brut::RequestContext.new(env:,session:,flash:,xhr: request.xhr?)
@@ -122,14 +80,14 @@ module Brut::SinatraHelpers
     end
     sinatra_app.after do
       Thread.current[:rendering_context] = nil
-      flash = Flash.from_h(session[:_flash])
+      flash = Brut::FrontEnd::Flash.from_h(session[:_flash])
       flash.age!
       session[:_flash] = flash.to_h
     end
   end
 
   def flash
-    Flash.from_h(session[:_flash])
+    Brut::FrontEnd::Flash.from_h(session[:_flash])
   end
 
   def page(page_instance)

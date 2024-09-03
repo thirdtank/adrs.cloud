@@ -8,7 +8,7 @@ RSpec.describe Actions::Adrs::UpdateTags do
     context "adr does not exist" do
       it "raises not found" do
         account = create(:account)
-        form = Forms::Adrs::Draft.new(external_id: "foobar")
+        form = AdrTagsWithExternalIdForm.new(params: { external_id: "foobar" })
         expect {
           update_tags.update(form: form, account: account)
         }.to raise_error(Brut::BackEnd::Errors::NotFound)
@@ -19,7 +19,7 @@ RSpec.describe Actions::Adrs::UpdateTags do
         it "raises not found" do
           adr = create(:adr)
           account = create(:account)
-          form = Forms::Adrs::Draft.new(external_id: adr.external_id)
+          form = AdrTagsWithExternalIdForm.new(params: { external_id: adr.external_id })
           expect {
             update_tags.update(form: form, account: account)
           }.to raise_error(Brut::BackEnd::Errors::NotFound)
@@ -29,7 +29,7 @@ RSpec.describe Actions::Adrs::UpdateTags do
         it "updates the tags based on the form's string of tags" do
           adr = create(:adr)
           account = adr.account
-          form = Forms::Adrs::Draft.new(external_id: adr.external_id, tags: "foo, bar\nBLAH")
+          form = AdrTagsWithExternalIdForm.new(params: { external_id: adr.external_id, tags: "foo, bar\nBLAH" })
           return_value = update_tags.update(form: form, account: account)
 
           adr.reload

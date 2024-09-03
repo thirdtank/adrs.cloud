@@ -10,7 +10,8 @@ class Support::HtmlLocator
     caption = @rendered_html.css("table caption").detect { |element|
       element.text == caption
     }
-    expect(caption).not_to eq(nil)
+    captions_found = @rendered_html.css("table caption").map(&:text).join(", ")
+    expect(caption).not_to eq(nil),"Found these captions: #{captions_found}"
     caption.parent
   end
 

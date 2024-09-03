@@ -9,9 +9,8 @@ RSpec.describe Actions::Adrs::Reject do
     context "adr does not exist" do
       it "raises not found" do
         account = create(:account)
-        form = Forms::Adrs::Draft.new(external_id: "foobar")
         expect {
-          reject.reject(form: form, account: account)
+          reject.reject(external_id: "foobar", account: account)
         }.to raise_error(Brut::BackEnd::Errors::NotFound)
       end
     end
@@ -20,9 +19,8 @@ RSpec.describe Actions::Adrs::Reject do
         it "raises not found" do
           adr = create(:adr)
           account = create(:account)
-          form = Forms::Adrs::Draft.new(external_id: adr.external_id)
           expect {
-            reject.reject(form: form, account: account)
+            reject.reject(external_id: adr.external_id, account: account)
           }.to raise_error(Brut::BackEnd::Errors::NotFound)
         end
 
@@ -31,9 +29,8 @@ RSpec.describe Actions::Adrs::Reject do
         it "raises bug" do
           adr = create(:adr, :accepted)
           account = adr.account
-          form = Forms::Adrs::Draft.new(external_id: adr.external_id)
           expect {
-            reject.reject(form: form, account: account)
+            reject.reject(external_id: adr.external_id, account: account)
           }.to raise_error(Brut::BackEnd::Errors::Bug)
         end
       end
@@ -42,9 +39,8 @@ RSpec.describe Actions::Adrs::Reject do
           it "sets rejected_at" do
             adr = create(:adr)
             account = adr.account
-            form = Forms::Adrs::Draft.new(external_id: adr.external_id)
 
-            return_value = reject.reject(form: form, account: account)
+            return_value = reject.reject(external_id: adr.external_id, account: account)
             adr.refresh
 
             expect(adr.rejected_at).to be_within(1000).of(Time.now)
@@ -57,9 +53,8 @@ RSpec.describe Actions::Adrs::Reject do
             rejected_at = Time.now - 10_000
             adr = create(:adr, rejected_at: rejected_at)
             account = adr.account
-            form = Forms::Adrs::Draft.new(external_id: adr.external_id)
 
-            return_value = reject.reject(form: form, account: account)
+            return_value = reject.reject(external_id: adr.external_id, account: account)
             adr.refresh
 
             expect(adr.rejected_at.to_i).to eq(rejected_at.to_i)

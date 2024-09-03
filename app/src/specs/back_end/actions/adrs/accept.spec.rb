@@ -9,7 +9,7 @@ RSpec.describe Actions::Adrs::Accept do
     context "adr does not exist" do
       it "raises not found" do
         account = create(:account)
-        form = Forms::Adrs::Draft.new(external_id: "foobar")
+        form = AcceptedAdrsWithExternalIdForm.new(params: { external_id: "foobar" })
         expect {
           accept.accept(form: form, account: account)
         }.to raise_error(Brut::BackEnd::Errors::NotFound)
@@ -20,7 +20,7 @@ RSpec.describe Actions::Adrs::Accept do
         it "raises not found" do
           adr = create(:adr)
           account = create(:account)
-          form = Forms::Adrs::Draft.new(external_id: adr.external_id)
+          form = AcceptedAdrsWithExternalIdForm.new(params: { external_id: adr.external_id })
           expect {
             accept.accept(form: form, account: account)
           }.to raise_error(Brut::BackEnd::Errors::NotFound)
@@ -31,18 +31,18 @@ RSpec.describe Actions::Adrs::Accept do
           it "returns a Brut::BackEnd::Actions::CheckResult indicating the problems" do
             adr = create(:adr)
             account = adr.account
-            form = Forms::Adrs::Draft.new(external_id: adr.external_id, title: adr.title)
+            form = AcceptedAdrsWithExternalIdForm.new(params: { external_id: adr.external_id, title: adr.title })
 
             result = accept.accept(form: form, account: account)
 
-            expect(result.constraint_violations?).to eq(true)
-            expect(result).to have_constraint_violation(:context, object: form, key: :required)
-            expect(result).to have_constraint_violation(:facing, object: form, key: :required)
-            expect(result).to have_constraint_violation(:decision, object: form, key: :required)
-            expect(result).to have_constraint_violation(:neglected, object: form, key: :required)
-            expect(result).to have_constraint_violation(:achieve, object: form, key: :required)
-            expect(result).to have_constraint_violation(:accepting, object: form, key: :required)
-            expect(result).to have_constraint_violation(:because, object: form, key: :required)
+            expect(form.constraint_violations?).to eq(true)
+            expect(form).to have_constraint_violation(:context   , key: :required)
+            expect(form).to have_constraint_violation(:facing    , key: :required)
+            expect(form).to have_constraint_violation(:decision  , key: :required)
+            expect(form).to have_constraint_violation(:neglected , key: :required)
+            expect(form).to have_constraint_violation(:achieve   , key: :required)
+            expect(form).to have_constraint_violation(:accepting , key: :required)
+            expect(form).to have_constraint_violation(:because   , key: :required)
           end
         end
         context "there are no constraint violations" do
@@ -50,7 +50,7 @@ RSpec.describe Actions::Adrs::Accept do
             it "sets accepted_at" do
               adr = create(:adr, :accepted, accepted_at: nil)
               account = adr.account
-              form = Forms::Adrs::Draft.new(adr.to_hash)
+              form = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash)
 
               result = accept.accept(form: form, account: account)
               expect(result.class).to  eq(DataModel::Adr)
@@ -64,7 +64,7 @@ RSpec.describe Actions::Adrs::Accept do
               accepted_at = Time.now - 10_000
               adr = create(:adr, :accepted, accepted_at: accepted_at)
               account = adr.account
-              form = Forms::Adrs::Draft.new(adr.to_hash)
+              form = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash)
 
               result = accept.accept(form: form, account: account)
               expect(result.class).to  eq(DataModel::Adr)
@@ -84,7 +84,7 @@ RSpec.describe Actions::Adrs::Accept do
               )
               account = adr.account
 
-              form = Forms::Adrs::Draft.new(adr.to_hash)
+              form = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash)
 
               result = accept.accept(form: form, account: account)
               expect(result.class).to  eq(DataModel::Adr)

@@ -1,11 +1,10 @@
 require "spec_helper"
-require "front_end/pages/adrs/get"
 
-RSpec.describe Pages::Adrs::Get do
+RSpec.describe AdrsByExternalIdPage do
   context "info message" do
     it "shows the info message" do
       adr = create(:adr)
-      page = described_class.new(adr: adr, info_message: "actions.adrs.accepted")
+      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: flash_from(notice: "actions.adrs.accepted"))
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("aside[role='status']").text.to_s.strip).to eq("ADR Accepted")
@@ -14,7 +13,7 @@ RSpec.describe Pages::Adrs::Get do
   context "draft" do
     it "shows the draft label and renders content in markdown" do
       adr = create(:adr, because: "Because *this* is a test of `markdown`")
-      page = described_class.new(adr: adr)
+      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("aside[role='note']").text.to_s.strip).to eq("DRAFT")
@@ -33,8 +32,8 @@ RSpec.describe Pages::Adrs::Get do
         replaced_adr_id: replaced_adr.id,
         created_at: Time.now,
       )
-      page = described_class.new(adr: replaced_adr)
 
+      page = described_class.new(account: account, external_id: replaced_adr.external_id, flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
@@ -56,7 +55,7 @@ RSpec.describe Pages::Adrs::Get do
       refining_adr = create(:adr, :accepted, account: account, refines_adr_id: refined_adr.id)
       refining_adr.update(external_id: "refining")
 
-      page = described_class.new(adr: refining_adr)
+      page = described_class.new(account: account, external_id: refining_adr.external_id, flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
@@ -72,7 +71,7 @@ RSpec.describe Pages::Adrs::Get do
     it "shows that it was accepted and allows replacement and refinement" do
       adr  = create(:adr, :accepted)
 
-      page = described_class.new(adr: adr)
+      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
 
       parsed_html = render_and_parse(page)
 
@@ -88,7 +87,7 @@ RSpec.describe Pages::Adrs::Get do
     it "shows that it was accepted and allows replacement and refinement" do
       adr = create(:adr, rejected_at: Time.now)
 
-      page = described_class.new(adr: adr)
+      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
 
       parsed_html = render_and_parse(page)
 
@@ -100,11 +99,11 @@ RSpec.describe Pages::Adrs::Get do
       expect(parsed_html.css("aside[role='note']").length).to eq(0)
     end
   end
-  context "public" do
+  context "shared" do
     it "disables the public button, enables the private one" do
-      adr  = create(:adr, :accepted, public_id: "some-id")
+      adr  = create(:adr, :accepted, shareable_id: "some-id")
 
-      page = described_class.new(adr: adr)
+      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
@@ -113,16 +112,16 @@ RSpec.describe Pages::Adrs::Get do
       expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to eq("Make Public")
-      element = html_locator.element!("button[title='Make Private']")
+      expect(element.text.strip).to eq("Share")
+      element = html_locator.element!("button[title='Stop Sharing']")
       expect(element).not_to have_html_attribute(disabled: true)
     end
   end
   context "private" do
     it "disables the private button, enables the public one" do
-      adr  = create(:adr, :accepted, public_id: nil)
+      adr  = create(:adr, :accepted, shareable_id: nil)
 
-      page = described_class.new(adr: adr)
+      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
@@ -131,8 +130,8 @@ RSpec.describe Pages::Adrs::Get do
       expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to eq("Make Private")
-      element = html_locator.element!("button[title='Make Public']")
+      expect(element.text.strip).to eq("Stop Sharing")
+      element = html_locator.element!("button[title='Share']")
       expect(element).not_to have_html_attribute(disabled: true)
     end
   end

@@ -1,15 +1,11 @@
 # Design Issues
 
-## Back-end logic, form processing, etc.
+## End-to-End Testing
 
-When a form is declared, there is a path representing that form's action, and a class that describes the form's fields.
+My spike works, but it's not that great. It doesn't seem to really address the issues faced by other tools.
 
-The form class has two jobs:
-
-- describe the fields in the form
-- Trigger back-end processing logic, then route the user based on the results
-
-
+I wonder if a better solution is to use https://playwright-ruby-client.vercel.app/docs/api/browser#new\_page but not capybara.  In theory, a better
+set of assertions and testing stuff could be done that uses the infra fromp playwright without it's shitty API.
 
 ## Logic useful to front-end and back-end - where does it go?
 
@@ -78,19 +74,6 @@ end
 
 ```
 
-
-## Testing Needs Infra
-
-* Minitest is incredibly rudimentary.  The following things are difficult to do:
-  - tag tests/metadata
-  - mocking sucks compred to rspec
-  - examine test runs and produce structured output
-  - there is no "around" concept
-* RSpec has all this, but has the following downsides:
-  - there is too much stuff to avoid e.g. shared example, shared contexts, wacky matchers etc.
-  - ok, that's really it TBH
-
---> Switch to RSpec
 
 
 ### Browser Testing

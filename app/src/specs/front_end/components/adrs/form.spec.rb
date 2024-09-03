@@ -1,11 +1,11 @@
 require "spec_helper"
 require "front_end/components/adrs/form"
 
-RSpec.describe Components::Adrs::Form do
+RSpec.describe Components::Adrs::Form, component: true do
   context "ADR has been saved" do
     it "renders accept and reject buttons and uses an ajax submit button" do
       adr = create(:adr)
-      form = Forms::Adrs::Draft.from_adr(adr)
+      form = EditDraftAdrWithExternalIdForm.from_adr(adr)
       component = described_class.new(form,action: :edit)
 
       parsed_html = render_and_parse(component)
@@ -18,7 +18,7 @@ RSpec.describe Components::Adrs::Form do
   context "ADR has not been saved" do
     context "saving new" do
       it "has no accept or reject buttons, no ajax submit" do
-        form = Forms::Adrs::Draft.new
+        form = NewDraftAdrForm.new
         component = described_class.new(form,action: :new)
 
         parsed_html = render_and_parse(component)
@@ -32,7 +32,7 @@ RSpec.describe Components::Adrs::Form do
     context "saving a replacement" do
       it "has no accept or reject buttons, no ajax submit" do
         replaced_adr_external_id = "some-adr-id"
-        form = Forms::Adrs::Draft.new(replaced_adr_external_id: replaced_adr_external_id)
+        form = NewDraftAdrForm.new(params: { replaced_adr_external_id: replaced_adr_external_id })
         component = described_class.new(form,action: :replace)
 
         parsed_html = render_and_parse(component)
@@ -47,7 +47,7 @@ RSpec.describe Components::Adrs::Form do
     context "saving a refinement" do
       it "has no accept or reject buttons, no ajax submit" do
         refines_adr_external_id = "some-adr-id"
-        form = Forms::Adrs::Draft.new(refines_adr_external_id: refines_adr_external_id)
+        form = NewDraftAdrForm.new(params: { refines_adr_external_id: refines_adr_external_id })
         component = described_class.new(form,action: :refine)
 
         parsed_html = render_and_parse(component)

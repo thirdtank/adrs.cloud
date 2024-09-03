@@ -17,7 +17,7 @@
             <% end %>
             </div>
             <% if adr.replaced_by_adr.shared? %>
-              <a class="db red-900" href="<%= routing.for(ShareableAdrsByShareableIdPage, shareable_id: adr.replaced_by_adr.shareable_id) %>"><%= adr.replaced_by_adr.title %></a>
+              <a class="db red-900" href="<%= shareable_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
             <% end %>
           </div>
         </h3>
@@ -32,7 +32,7 @@
       </h3>
       <% if !adr.replaced_adr.nil? && adr.replaced_adr.shared? %>
         <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900">
-          Replaces <a class="green-300" href="<%= routing.for(ShareableAdrsByShareableIdPage, shareable_id: adr.replaced_adr.shareable_id) %>"><%= adr.replaced_adr.title %></a>.
+          Replaces <a class="green-300" href="<%= shareable_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
         </h3>
       <% end %>
       Created <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
@@ -53,7 +53,7 @@
           <%= svg("adjust-control-icon") %>
         </div>
         <div class="tl">
-          Refines “<a class="blue-300" href="<%= routing.for(ShareableAdrsByShareableIdPage,shareable_id: adr.refines_adr.shareable_id) %>"><%= adr.refines_adr.title %></a>”
+          Refines “<a class="blue-300" href="<%= shareable_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
         </div>
       </h3>
       </section>

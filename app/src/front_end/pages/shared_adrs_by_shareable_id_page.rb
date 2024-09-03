@@ -2,6 +2,9 @@ class SharedAdrsByShareableIdPage < AppPage
   attr_reader :adr, :account
 
   def initialize(shareable_id:, account:)
+    if shareable_id.nil?
+      raise ArgumentError,"shareable_id may not be nil"
+    end
     @adr = DataModel::Adr[shareable_id: shareable_id]
     @account = account
   end
@@ -15,7 +18,12 @@ class SharedAdrsByShareableIdPage < AppPage
     adr.refined_by_adrs.reject(&:rejected?).reject(&:replaced?).select(&:shared?)
   end
 
-  def routing = Brut.container.routing
+  def shareable_path(adr)
+    if !adr.shared?
+      raise Brut::BackEnd::Errors::Bug, "#{adr.external_id} is not share - this should not have been called"
+    end
+    Brut.container.routing.for(self.class,shareable_id: adr.shareable_id)
+  end
 
 private
 

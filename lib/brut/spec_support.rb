@@ -6,3 +6,4 @@ module Brut
   end
 end
 require_relative "spec_support/matcher"
+require_relative "spec_support/component_support"

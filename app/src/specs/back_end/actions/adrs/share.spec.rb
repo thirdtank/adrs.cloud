@@ -90,7 +90,7 @@ RSpec.describe Actions::Adrs::Share do
           adr = create(:adr, :accepted, shareable_id: nil)
           account = adr.account
 
-          unshare = adrs_share.stop_sharing(external_id: adr.external_id, account: account)
+          return_value = adrs_share.stop_sharing(external_id: adr.external_id, account: account)
 
           adr.reload
 

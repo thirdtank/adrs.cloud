@@ -2,10 +2,10 @@ require "spec_helper"
 require "back_end/actions/app_action"
 
 RSpec.describe Actions::GitHubAuth do
-  describe "#check" do
+  describe "#auth" do
     describe "valid payload" do
       describe "email is not in database" do
-        it "returns an error" do
+        it "returns nil" do
           hash = {
             "provider" => "github",
             "uid" => 99,
@@ -13,15 +13,8 @@ RSpec.describe Actions::GitHubAuth do
               "email" => "non-existent@example.com",
             }
           }
-          result = Actions::GitHubAuth.new.check(hash)
-          expect(result.constraint_violations?).to eq(true)
-          found_error = false
-          result.each_violation do |object,field,key,context|
-            if key == :no_account
-              found_error = true
-            end
-          end
-          expect(found_error).to eq(true)
+          result = Actions::GitHubAuth.new.auth(hash)
+          expect(result).to eq(nil)
         end
       end
       describe "email is in the database" do
@@ -34,26 +27,25 @@ RSpec.describe Actions::GitHubAuth do
               "email" => account.email
             }
           }
-          result = Actions::GitHubAuth.new.check(hash)
-          expect(result.constraint_violations?).to eq(false)
-          expect(result[:account]).to eq(account)
+          result = Actions::GitHubAuth.new.auth(hash)
+          expect(result).to eq(account)
         end
       end
     end
     describe "invalid payload" do
       it "raises on wrong provider" do
         expect {
-          Actions::GitHubAuth.new.check({ "provider" => "twitter" })
+          Actions::GitHubAuth.new.auth({ "provider" => "twitter" })
         }.to raise_error(/asked to process/)
       end
       it "raises on missing uid" do
         expect {
-          Actions::GitHubAuth.new.check({ "provider" => "github", "info" => { "email" => "a@a.com" } })
+          Actions::GitHubAuth.new.auth({ "provider" => "github", "info" => { "email" => "a@a.com" } })
         }.to raise_error(/did not get a uid/)
       end
       it "raises on missing email" do
         expect {
-          Actions::GitHubAuth.new.check({ "provider" => "github", "uid" => 99 })
+          Actions::GitHubAuth.new.auth({ "provider" => "github", "uid" => 99 })
         }.to raise_error(/did not get an email/)
       end
     end

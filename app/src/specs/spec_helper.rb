@@ -28,13 +28,13 @@ SemanticLogger.default_level = ENV.fetch("LOGGER_LEVEL_FOR_TESTS","warn")
 RSpec.configure do |config|
 
   config.define_derived_metadata do |metadata|
-    if metadata[:described_class].to_s =~ /^Components::/ ||
-       metadata[:described_class].to_s =~ /^Pages::/ ||
+    if metadata[:described_class].to_s =~ /[a-z0-9]Component%/ ||
+       metadata[:described_class].to_s =~ /[a-z0-9]Page$/ ||
        metadata[:page] == true
       metadata[:component] = true
     end
   end
-  config.include Brut::SpecSupport::ComponentParser, component: true
+  config.include Brut::SpecSupport::ComponentSupport, component: true
   config.around do |example|
     rendering_context = Thread.current[:rendering_context]
     is_component = example.metadata[:component]
