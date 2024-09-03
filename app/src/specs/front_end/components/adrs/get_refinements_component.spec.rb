@@ -1,7 +1,6 @@
 require "spec_helper"
-require "front_end/components/adrs/get_refinements"
 
-RSpec.describe Components::Adrs::GetRefinements, component: true do
+RSpec.describe Adrs::GetRefinementsComponent, component: true do
   context "shareable_paths requested" do
     it "uses the public path for each ADR" do
       account = create(:account)

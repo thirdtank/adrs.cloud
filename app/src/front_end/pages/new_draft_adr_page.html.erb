@@ -14,5 +14,5 @@
       <%= t(error_message) %>
     </aside>
   <% end %>
-  <%= component Components::Adrs::Form.new(form, action: :new) %>
+  <%= component Adrs::FormComponent.new(form, action: :new) %>
 </section>

@@ -72,7 +72,7 @@
       </h3>
       </section>
     <% end %>
-    <%= component(Components::Adrs::GetRefinements.new(refined_by_adrs: refined_by_adrs)) %>
+    <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: refined_by_adrs)) %>
     <div class="pa-3 bg-gray-800 bt bc-gray-700">
       <a class="f-2 fw-5 blue-400" href="/adrs">&larr; Back</a>
     </div>
@@ -89,7 +89,7 @@
         <input type="hidden" name="external_id" value="<%= adr.external_id %>">
         <fieldset class="bn pa-0 ma-0 flex items-center">
 
-          <%= component(Components::Button.new(
+          <%= component(ButtonComponent.new(
             size: "small",
             formaction: routing.for(SharedAdrsWithExternalIdHandler, external_id: adr.external_id),
             variant: :left,
@@ -99,7 +99,7 @@
             confirm: "This will create a publicly accessible URL to allow anyone with it to view this ADR",
             icon: "globe-network-icon")) %>
 
-          <%= component(Components::Button.new(
+          <%= component(ButtonComponent.new(
             size: "small",
             formaction: routing.for(PrivateAdrsWithExternalIdHandler, external_id: adr.external_id),
             variant: :right,
@@ -121,7 +121,7 @@
         <%= form_tag(method: "post", class:"flex items-center") do %>
           <input type="hidden" name="external_id" value="<%= adr.external_id %>">
           <%= component(
-            Components::Button.new(
+            ButtonComponent.new(
               size: "normal",
               variant: :left,
               formaction: routing.for(ReplacedAdrsWithExistingExternalIdHandler, existing_external_id: adr.external_id),
@@ -131,7 +131,7 @@
             )
           ) %>
           <%= component(
-            Components::Button.new(
+            ButtonComponent.new(
               size: "normal",
               variant: :right,
               formaction: routing.for(RefinedAdrsWithExistingExternalIdHandler, existing_external_id: adr.external_id),
@@ -152,14 +152,14 @@
             <div class="flex flex-wrap items-center gap-2">
               <% if adr.tags.any? %>
                 <% adr.tags.each do |tag| %>
-                  <%= component Components::Adrs::Tag.new(tag: tag) %>
+                  <%= component Adrs::TagComponent.new(tag: tag) %>
                 <% end %>
               <% else %>
                 <span class="f-1 gray-400 i">None</span>
               <% end %>
             </div>
           </div>
-          <%= component(Components::Button.new(size: "tiny",
+          <%= component(ButtonComponent.new(size: "tiny",
                                                color: adr.tags.any? ? "white"          : "purple",
                                                label: adr.tags.any? ? "Edit"           : "Add",
                                                icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
@@ -177,12 +177,12 @@
             <p class="p f-1 i ma-0">Separate tags by commas or new lines. Tags are case-insensitive</p>
           </label>
           <div class="flex items-center justify-between gap-2 w-100">
-            <%= component(Components::Button.new(size: "tiny",
+            <%= component(ButtonComponent.new(size: "tiny",
                                                  type: "reset",
                                                  color: "red",
                                                  label: "Nevermind",
                                                  icon:  "close-line-icon")) %>
-            <%= component(Components::Button.new(size: "small",
+            <%= component(ButtonComponent.new(size: "small",
                                                  color: "blue",
                                                  label: "Save Tags",
                                                  icon:  "tag-line-icon")) %>
@@ -192,4 +192,4 @@
     </adr-tag-editor>
   </div>
 </div>
-<%= component(Components::ConfirmationDialog.new) %>
+<%= component(ConfirmationDialogComponent.new) %>

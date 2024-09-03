@@ -1,4 +1,4 @@
-class Components::TextField < AppComponent
+class TextFieldComponent < AppComponent
   attr_reader :label, :input_name, :input_component, :constraint_violations
   def initialize(label:,form:, input_name: nil, autofocus: false, placeholder: false)
     @label = label

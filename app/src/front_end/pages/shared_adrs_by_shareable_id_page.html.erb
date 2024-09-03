@@ -58,7 +58,7 @@
       </h3>
       </section>
     <% end %>
-    <%= component(Components::Adrs::GetRefinements.new(refined_by_adrs: shareable_refined_by_adrs, shareable_paths: true)) %>
+    <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: shareable_refined_by_adrs, shareable_paths: true)) %>
   </article>
   <div role="none" class="w-quarter"></div>
 </div>

@@ -1,4 +1,4 @@
-class Components::MarkdownString < AppComponent
+class MarkdownStringComponent < AppComponent
   class Markdown < Redcarpet::Render::HTML
     def header(text,header_level)
       super.header(text,header_level.to_i + 3)

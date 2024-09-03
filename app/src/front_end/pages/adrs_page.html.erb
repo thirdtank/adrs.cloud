@@ -12,7 +12,7 @@
   <h1 class="flex items-center justify-center gap-2">
     ADRs
     <% if tag? %>
-      tagged <%= component(Components::Adrs::Tag.new(tag: tag)) %>
+      tagged <%= component(Adrs::TagComponent.new(tag: tag)) %>
     <% end %>
   </h1>
 <h2 class="tc">Accepted</h2>
@@ -32,7 +32,7 @@
         <td class="w-60 pa-2 lh-copy f-3 va-middle">
           <%= adr.title %>
           <% adr.tags.each do |tag| %>
-            <%= component Components::Adrs::Tag.new(tag: tag) %>
+            <%= component Adrs::TagComponent.new(tag: tag) %>
           <% end %>
         </td>
         <td class="w-20 pa-2 ws-nowrap va-middle">
@@ -67,7 +67,7 @@
           <td class="w-60 pa-2 lh-copy f-3 va-middle">
             <%= adr.title %>
             <% adr.tags.each do |tag| %>
-              <%= component Components::Adrs::Tag.new(tag: tag) %>
+              <%= component Adrs::TagComponent.new(tag: tag) %>
             <% end %>
             <% if adr.refines_adr %>
             <small class="db">

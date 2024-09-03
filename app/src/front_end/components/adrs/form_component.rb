@@ -1,4 +1,4 @@
-class Components::Adrs::Form < AppComponent
+class Adrs::FormComponent < AppComponent
   attr_reader :form, :action_label, :form_action, :go_back_label
   def initialize(form, action:)
     @form = form
@@ -31,13 +31,13 @@ class Components::Adrs::Form < AppComponent
   def ajax_submit? = @ajax_submit
 
   def adr_textarea(name:, prefix:, label:)
-    component(Components::Adrs::Textarea.new(form: @form, input_name: name, prefix: prefix, label: label))
+    component(Adrs::TextareaComponent.new(form: @form, input_name: name, prefix: prefix, label: label))
   end
 
   def reject_button
     if !@form.new_record?
       component(
-        Components::Button.new(
+        ButtonComponent.new(
           formaction: Brut.container.routing.for(RejectedAdrsWithExternalIdHandler, external_id: @form.external_id),
           size: "small",
           color: "red",
@@ -52,7 +52,7 @@ class Components::Adrs::Form < AppComponent
   def accept_button
     if !@form.new_record?
       component(
-        Components::Button.new(
+        ButtonComponent.new(
           formaction: Brut.container.routing.for(AcceptedAdrsWithExternalIdForm, external_id: @form.external_id),
           size: "small",
           color: "green",

@@ -11,7 +11,7 @@ class SharedAdrsByShareableIdPage < AppPage
 
   def markdown(field)
     value = "**#{field_text(field)}** #{adr.send(field)}"
-    component(Components::MarkdownString.new(value))
+    component(MarkdownStringComponent.new(value))
   end
 
   def shareable_refined_by_adrs

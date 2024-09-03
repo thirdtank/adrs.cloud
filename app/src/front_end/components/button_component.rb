@@ -1,4 +1,4 @@
-class Components::Button < AppComponent
+class ButtonComponent < AppComponent
   attr_reader :size, :color, :label, :icon, :confirmation_message, :confirm_dialog, :type, :formaction, :disabled, :value, :title
 
   def initialize(size: :normal,

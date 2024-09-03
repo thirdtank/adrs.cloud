@@ -1,7 +1,6 @@
 require "spec_helper"
-require "front_end/components/adrs/tag"
 
-RSpec.describe Components::Adrs::Tag, component: true do
+RSpec.describe Adrs::TagComponent, component: true do
   context "tag is 'shared'" do
     it "inlines an SVG icon" do
       component = described_class.new(tag: "shared")

@@ -33,5 +33,5 @@
       <%= t(info_message) %>
     </aside>
   <% end %>
-  <%= component Components::Adrs::Form.new(form, action: :edit) %>
+  <%= component Adrs::FormComponent.new(form, action: :edit) %>
 </section>

@@ -1,7 +1,6 @@
 require "spec_helper"
-require "front_end/components/adrs/form"
 
-RSpec.describe Components::Adrs::Form, component: true do
+RSpec.describe Adrs::FormComponent, component: true do
   context "ADR has been saved" do
     it "renders accept and reject buttons and uses an ajax submit button" do
       adr = create(:adr)

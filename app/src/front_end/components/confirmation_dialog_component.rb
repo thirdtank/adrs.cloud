@@ -1,0 +1,2 @@
+class ConfirmationDialogComponent < AppComponent
+end

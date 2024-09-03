@@ -1,4 +1,4 @@
-class Components::Adrs::Textarea < AppComponent
+class Adrs::TextareaComponent < AppComponent
   attr_reader :prefix, :input_name, :constraint_violations, :input_component, :label
   def initialize(form:, input_name:, label:, prefix:)
     @label = label

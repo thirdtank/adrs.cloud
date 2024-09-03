@@ -1,7 +1,7 @@
-module Components::Adrs
+module Adrs
 end
-require_relative "adrs/form"
-require_relative "adrs/tag"
-require_relative "adrs/textarea"
-require_relative "adrs/get_refinements"
-require_relative "adrs/error_messages"
+require_relative "adrs/form_component"
+require_relative "adrs/tag_component"
+require_relative "adrs/textarea_component"
+require_relative "adrs/get_refinements_component"
+require_relative "adrs/error_messages_component"
