@@ -60,13 +60,4 @@ private
   def tag_serializer
     @tag_serializer ||= Actions::Adrs::TagSerializer.new
   end
-
-  def create_result(form:,adr:)
-    result = new_result
-    if form.title.to_s.strip !~ /\s+/
-      result.constraint_violation!(object: form, field: :title, key: :not_enough_words, context: { minwords: 2 })
-    end
-    result[:adr] = adr
-    result
-  end
 end

@@ -1,5 +1,5 @@
 class Actions::Adrs::Accept < AppAction
-  class AcceptedAdrValidator < Brut::BackEnd::Actions::Validators::FormValidator
+  class AcceptedAdrValidator < Brut::BackEnd::Validators::FormValidator
     validate :context   , required: true , minlength: 10
     validate :facing    , required: true , minlength: 10
     validate :decision  , required: true , minlength: 10

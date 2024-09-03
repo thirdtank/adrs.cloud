@@ -1,4 +1,8 @@
-class Brut::BackEnd::Actions::Validators::FormValidator < Brut::BackEnd::Actions::Validator
+# Subclass this in your back-end to create a server-side
+# validator for your form.  This provides for a much
+# richer set of validations than you get from the browser, but
+# works basically the same way.
+class Brut::BackEnd::Validators::FormValidator
   def self.validate(attribute,options)
     @@validations ||= {}
     @@validations[attribute] = options

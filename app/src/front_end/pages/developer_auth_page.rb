@@ -1,0 +1,3 @@
+class DeveloperAuthPage < AppPage
+
+end

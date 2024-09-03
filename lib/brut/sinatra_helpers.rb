@@ -134,7 +134,13 @@ module Brut::SinatraHelpers
 
   def page(page_instance)
     call_render = CallRenderInjectingInfo.new(page_instance)
-    call_render.call_render(**Thread.current[:rendering_context])
+    result = call_render.call_render(**Thread.current[:rendering_context])
+    case result
+    in Brut::FrontEnd::HttpStatus => http_status
+      http_status.to_i
+    else
+      result
+    end
   end
   def component(component_instance)
     self.page(component_instance)

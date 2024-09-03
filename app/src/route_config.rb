@@ -21,7 +21,6 @@ class AdrApp < Sinatra::Base
 
   use OmniAuth::Builder do
     provider :github, ENV.fetch("GITHUB_CLIENT_ID"), ENV.fetch("GITHUB_CLIENT_SECRET"), scope: "read:user,user:email"
-    provider :developer
   end
 
   include Brut::SinatraHelpers
@@ -30,12 +29,13 @@ class AdrApp < Sinatra::Base
     is_auth_callback         = request.path_info.match?(/^\/auth\//)
     is_root                  = request.path_info == "/"
     is_public_dynamic_route  = request.path_info.match?(/^\/shared_adrs\//)
+    is_test_page             = request.path_info == "/end-to-end-tests"
 
     @account = DataModel::Account[external_id: session["user_id"]]
     Thread.current.thread_variable_get(:request_context)[:account] = @account
 
     logged_out = @account.nil?
-    requires_login = !is_auth_callback && !is_root && !is_public_dynamic_route
+    requires_login = !is_auth_callback && !is_root && !is_public_dynamic_route && !is_test_page
 
     if requires_login
       logger.info "Login required"
@@ -50,7 +50,12 @@ class AdrApp < Sinatra::Base
     end
   end
 
+  form "/auth/developer"
+  page "/developer-auth"
+
   page "/"
+
+  page "/end-to-end-tests"
 
   path "/auth/developer/callback", method: :get
   path "/auth/github/callback", method: :get
