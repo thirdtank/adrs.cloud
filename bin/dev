@@ -2,5 +2,7 @@
 
 set -e
 
-RACK_ENV=development SHELL=/bin/bash npx chokidar --initial -p "app/src/**/*" "lib/**/*" -c "bin/build-and-run"
+RACK_ENV="${RACK_ENV:-development}"
+
+RACK_ENV="${RACK_ENV}" SHELL=/bin/bash npx chokidar --initial -p "app/src/**/*" "lib/**/*" -c "bin/build-and-run"
 

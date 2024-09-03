@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+
+cd "${SCRIPT_DIR}/.."
+echo "Rebuilding test database and loading seeds"
+bin/db rebuild --app-env=test --seeds
+
+RACK_ENV=test bin/dev &
+echo "open /end-to-end-tests in your browser"
+wait
+

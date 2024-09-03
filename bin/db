@@ -155,7 +155,7 @@ class Command
     ]
     def call
       migrations_dir = Brut.container.migrations_dir
-      seeds_dir = Brut.container.db_seeds_dir
+      seeds_dir = Brut.container.db_seeds_dir / @options[:app_env]
       if !migrations_dir.exist?
         puts "#{migrations_dir} doesn't exist"
         return
@@ -190,7 +190,7 @@ class Command
         end
         if seeds_dir.exist?
           if @options[:load_seeds]
-            puts "Loading seeds"
+            puts "Loading seeds from #{seeds_dir}"
             connection.transaction do
               Dir["#{seeds_dir}/*.sql"].each do |file|
                 puts "Loading #{file}..."

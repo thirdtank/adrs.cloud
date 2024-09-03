@@ -63,7 +63,7 @@
     </thead>
     <tbody>
       <% draft_adrs.each do |adr| %>
-        <tr>
+        <tr title="<%= adr.title %>">
           <td class="w-60 pa-2 lh-copy f-3 va-middle">
             <%= adr.title %>
             <% adr.tags.each do |tag| %>

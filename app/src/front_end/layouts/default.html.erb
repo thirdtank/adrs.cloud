@@ -9,6 +9,9 @@
   </head>
   <link rel="stylesheet" href="<%= asset_path('/css/styles.css') %>">
   <script defer src="<%= asset_path('/js/app.js') %>"></script>
+  <% if Brut.container.project_env.test? %>
+    <script defer src="<%= asset_path('/js/end-to-end-tests.js') %>"></script>
+  <% end %>
   <style>
   </style>
 

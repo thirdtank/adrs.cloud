@@ -7,6 +7,8 @@ echo "[ bin/build ] building CSS"
 ${SCRIPT_DIR}/build-css
 echo "[ bin/build ] building JS"
 ${SCRIPT_DIR}/build-js
+echo "[ bin/build ] building end-to-end testing JS"
+${SCRIPT_DIR}/build-js --source-file=end-to-end-tests.js --output-file=end-to-end-tests.js
 echo "[ bin/build ] removing jsdocs/"
 rm -rf jsdocs
 echo "[ bin/build ] Building JSDoc"
