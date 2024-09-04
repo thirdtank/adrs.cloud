@@ -15,8 +15,8 @@ RSpec.describe Adrs::GetRefinementsComponent, component: true do
       parsed_html = render_and_parse(component)
 
       adrs.each do |adr|
-        expect(parsed_html.css("a[href='#{Brut.container.routing.for(SharedAdrsByShareableIdPage, shareable_id: adr.shareable_id)}']").length).to eq(1)
-        expect(parsed_html.css("a[href='#{Brut.container.routing.for(AdrsByExternalIdPage, external_id: adr.external_id)}']").length).to eq(0)
+        expect(parsed_html.css("a[href='#{routing_for(SharedAdrsByShareableIdPage, shareable_id: adr.shareable_id)}']").length).to eq(1)
+        expect(parsed_html.css("a[href='#{routing_for(AdrsByExternalIdPage, external_id: adr.external_id)}']").length).to eq(0)
       end
     end
   end
@@ -35,8 +35,8 @@ RSpec.describe Adrs::GetRefinementsComponent, component: true do
       parsed_html = render_and_parse(component)
 
       adrs.each do |adr|
-        expect(parsed_html.css("a[href='#{Brut.container.routing.for(SharedAdrsByShareableIdPage, shareable_id: adr.shareable_id)}']").length).to eq(0)
-        expect(parsed_html.css("a[href='#{Brut.container.routing.for(AdrsByExternalIdPage, external_id: adr.external_id)}']").length).to eq(1)
+        expect(parsed_html.css("a[href='#{routing_for(SharedAdrsByShareableIdPage, shareable_id: adr.shareable_id)}']").length).to eq(0)
+        expect(parsed_html.css("a[href='#{routing_for(AdrsByExternalIdPage, external_id: adr.external_id)}']").length).to eq(1)
       end
     end
   end

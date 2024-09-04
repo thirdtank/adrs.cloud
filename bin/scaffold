@@ -98,7 +98,9 @@ class Command
 
         code = ["require \"spec_helper\"\n"] + classes.map { |class_name|
           %{RSpec.describe #{class_name} do
-  # tests here...
+  it "should have tests" do
+    expect(false).to eq(true)
+  end
 end}
         }
 
