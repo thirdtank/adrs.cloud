@@ -26,6 +26,9 @@ OPTIONS
     parser.on("--overwrite", "If set, any files that exists already will be overwritten by new scaffolds") do |value|
       options[:overwrite] = !!value
     end
+    parser.on("--dry-run", "If set, no files are changed. You will see output of what would happen without this flag") do |value|
+      options[:dry_run] = !!value
+    end
   end.parse!
   options
 end
@@ -86,21 +89,27 @@ class Command
         if !result
           raise "WTF"
         end
-        classes = find_classes(result.value)
-        log "#{destination} will contain tests for: #{classes.map(&:constant_path).map(&:full_name).join(', ')}"
+        classes = find_classes(result.value).map { |(module_nodes,class_node)|
+          (module_nodes.map(&:constant_path).map(&:full_name).map(&:to_s) + [class_node.constant_path.full_name.to_s]).compact.join("::")
+        }
+
+
+        log "#{destination} will contain tests for:\n#{classes.join("\n")}\n\n"
+
+        code = ["require \"spec_helper\"\n"] + classes.map { |class_name|
+          %{RSpec.describe #{class_name} do
+  # tests here...
+end}
+        }
+
+        if @options[:dry_run]
+          puts code
+          return 0
+        end
 
         FileUtils.mkdir_p destination.dirname
         File.open(destination,"w") do |file|
-          file.puts "require \"spec_helper\""
-          source_require = source.relative_path_from(Brut.container.app_src_dir).sub(/#{Regexp.escape(source.extname)}$/,"")
-          file.puts "require \"#{source_require}\""
-          file.puts
-          classes.each do |class_node|
-            class_name = class_node.constant_path.full_name
-            file.puts "RSpec.describe #{class_name} do"
-            file.puts
-            file.puts "end"
-          end
+          file.puts code
         end
       end
 
@@ -112,16 +121,20 @@ class Command
 end
 
 
-def find_classes(ast)
+def find_classes(ast,current_modules = [])
   classes = []
   if ast.nil?
     return classes
   end
+  new_module = nil
   if ast.kind_of?(Prism::ClassNode)
-    classes << ast
+    classes << [ current_modules, ast ]
+  elsif ast.kind_of?(Prism::ModuleNode)
+    new_module = ast
   end
   ast.child_nodes.each do |child|
-    result = find_classes(child)
+    new_current_modules = current_modules + [ new_module ]
+    result = find_classes(child, new_current_modules.compact)
     classes = classes + result
   end
   classes
