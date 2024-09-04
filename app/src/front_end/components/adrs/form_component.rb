@@ -5,12 +5,12 @@ class Adrs::FormComponent < AppComponent
     case action
     when :new
       @action_label  = "Save Draft"
-      @form_action   = Brut.container.routing.for(NewDraftAdrForm)
+      @form_action   = NewDraftAdrForm.routing
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     when :edit
       @action_label  = "Update Draft"
-      @form_action   = Brut.container.routing.for(EditDraftAdrWithExternalIdForm, external_id: @form.external_id)
+      @form_action   = EditDraftAdrWithExternalIdForm.routing(external_id: @form.external_id)
       @go_back_label = "Back"
       @ajax_submit   = true
     when :replace
@@ -38,7 +38,7 @@ class Adrs::FormComponent < AppComponent
     if !@form.new_record?
       component(
         ButtonComponent.new(
-          formaction: Brut.container.routing.for(RejectedAdrsWithExternalIdHandler, external_id: @form.external_id),
+          formaction: RejectedAdrsWithExternalIdHandler.routing(external_id: @form.external_id),
           size: "small",
           color: "red",
           label: "Reject ADR",
@@ -53,7 +53,7 @@ class Adrs::FormComponent < AppComponent
     if !@form.new_record?
       component(
         ButtonComponent.new(
-          formaction: Brut.container.routing.for(AcceptedAdrsWithExternalIdForm, external_id: @form.external_id),
+          formaction: AcceptedAdrsWithExternalIdForm.routing(external_id: @form.external_id),
           size: "small",
           color: "green",
           label: "Accept ADR",

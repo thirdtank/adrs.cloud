@@ -1,5 +1,5 @@
 <span class="dib ph-2 pv-1 br-left-1 br-right-3 bg-<%= color %>-800 <%= color %>-300 ba bc-<%= color %>-<%= border_weight %> f-1 fw-normal ttl tracked-tight">
-  <a class="<%= color %>-300 fw-<%= weight %> flex items-center gap-1" href="<%= routing.for(AdrsPage, tag: tag) %>">
+  <a class="<%= color %>-300 fw-<%= weight %> flex items-center gap-1" href="<%= AdrsPage.routing(tag: tag) %>">
     <% if icon %>
       <span class="w-1">
         <%= svg(icon) %>

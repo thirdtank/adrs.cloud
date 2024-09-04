@@ -83,7 +83,7 @@
     </div>
     <nav class="flex flex-column gap-3 mt-1 bb bc-gray-600 pb-3 mr-3">
     <% if editable? %>
-        <a class="f-2 fw-5 blue-400" href="<%= routing.for(EditDraftAdrByExternalIdPage, external_id: adr.external_id) %>">Edit</a>
+        <a class="f-2 fw-5 blue-400" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>">Edit</a>
     <% elsif adr.accepted? %>
       <%= form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2") do %>
         <input type="hidden" name="external_id" value="<%= adr.external_id %>">
@@ -91,7 +91,7 @@
 
           <%= component(ButtonComponent.new(
             size: "small",
-            formaction: routing.for(SharedAdrsWithExternalIdHandler, external_id: adr.external_id),
+            formaction: SharedAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
             variant: :left,
             disabled: shared? ? "This ADR is already shared" : false,
             color: "orange",
@@ -101,7 +101,7 @@
 
           <%= component(ButtonComponent.new(
             size: "small",
-            formaction: routing.for(PrivateAdrsWithExternalIdHandler, external_id: adr.external_id),
+            formaction: PrivateAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
             variant: :right,
             disabled: private? ? "This ADR is not shared" : false,
             color: "blue",
@@ -111,7 +111,7 @@
 
         </fieldset>
         <% if shared? %>
-          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= routing.for(SharedAdrsByShareableIdPage, shareable_id: adr.shareable_id) %>">
+          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id) %>">
             <span class="tdu f-1">View Shareable Page</span>
             <div class="w-1" role="img" aria-description="external link icon"><%= svg("external-link-icon") %></div>
           </a>
@@ -124,7 +124,7 @@
             ButtonComponent.new(
               size: "normal",
               variant: :left,
-              formaction: routing.for(ReplacedAdrsWithExistingExternalIdHandler, existing_external_id: adr.external_id),
+              formaction: ReplacedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
               color: "red",
               label: "Replace",
               icon: "change-icon"
@@ -134,7 +134,7 @@
             ButtonComponent.new(
               size: "normal",
               variant: :right,
-              formaction: routing.for(RefinedAdrsWithExistingExternalIdHandler, existing_external_id: adr.external_id),
+              formaction: RefinedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
               color: "purple",
               label: "Refine",
               icon: "adjust-control-icon"
@@ -166,7 +166,7 @@
         </div>
       </adr-tag-editor-view>
       <adr-tag-editor-edit class="dn">
-        <%= form_tag(action: routing.for(AdrTagsWithExternalIdForm, external_id: adr.external_id),
+        <%= form_tag(action: AdrTagsWithExternalIdForm.routing(external_id: adr.external_id),
                      method: "post",
                      class: "mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white") do %>
           <label class="flex flex-column gap-1 w-100">

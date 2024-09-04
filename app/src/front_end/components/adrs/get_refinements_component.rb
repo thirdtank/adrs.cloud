@@ -7,9 +7,9 @@ class Adrs::GetRefinementsComponent < AppComponent
 
   def path(adr)
     if @shareable_paths
-      Brut.container.routing.for(SharedAdrsByShareableIdPage, shareable_id: adr.shareable_id)
+      SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id)
     else
-      Brut.container.routing.for(AdrsByExternalIdPage, external_id: adr.external_id)
+      AdrsByExternalIdPage.routing(external_id: adr.external_id)
     end
   end
 end

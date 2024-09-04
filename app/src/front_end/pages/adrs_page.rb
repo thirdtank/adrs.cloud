@@ -20,6 +20,4 @@ class AdrsPage < AppPage
 
   def tag? = !!@tag
 
-  def routing = Brut.container.routing
-
 end

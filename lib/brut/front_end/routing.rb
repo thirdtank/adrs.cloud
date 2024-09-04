@@ -12,18 +12,21 @@ class Brut::FrontEnd::Routing
   def register_page(path)
     route = PageRoute.new(path)
     @routes << route
+    add_routing_method(route)
     route
   end
 
   def register_form(path)
     route = FormRoute.new(path)
     @routes << route
+    add_routing_method(route)
     route
   end
 
   def register_path(path, method:)
     route = Route.new(method, path)
     @routes << route
+    add_routing_method(route)
     route
   end
 
@@ -57,6 +60,21 @@ class Brut::FrontEnd::Routing
     @routes.map { |route|
       "#{route.method}:#{route.path} - #{route.handler_class.name}"
     }.join("\n")
+  end
+
+  def add_routing_method(route)
+    handler_class = route.handler_class
+    if handler_class.respond_to?(:routing)
+      raise ArgumentError,"#{handler_class} implements ::routing, which it should not"
+    end
+    form_class = route.respond_to?(:form_class) ? route.form_class : nil
+    [ handler_class, form_class ].compact.each do |klass|
+      klass.class_eval do
+        def self.routing(**args)
+          Brut.container.routing.for(self,**args)
+        end
+      end
+    end
   end
 
   class Route

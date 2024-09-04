@@ -22,7 +22,7 @@ class SharedAdrsByShareableIdPage < AppPage
     if !adr.shared?
       raise Brut::BackEnd::Errors::Bug, "#{adr.external_id} is not share - this should not have been called"
     end
-    Brut.container.routing.for(self.class,shareable_id: adr.shareable_id)
+    self.class.routing(shareable_id: adr.shareable_id)
   end
 
 private

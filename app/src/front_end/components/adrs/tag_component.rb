@@ -25,8 +25,5 @@ class Adrs::TagComponent < AppComponent
       @border_weight = 700
     end
   end
-
-  def routing = Brut.container.routing
-
 end
 

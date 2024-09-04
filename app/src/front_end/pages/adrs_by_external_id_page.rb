@@ -21,8 +21,6 @@ class AdrsByExternalIdPage < AppPage
   def private? = !self.shared?
   def shared?  =  adr.shared?
 
-  def routing = Brut.container.routing
-
 private
 
   def field_text(field)

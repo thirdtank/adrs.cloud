@@ -86,14 +86,14 @@
           </td>
           <td class="w-20 pa-2 va-middle">
             <nav class="flex items-center gap-3 mv-2">
-              <a class="blue-400 ws-nowrap" href="<%= routing.for(EditDraftAdrByExternalIdPage, external_id: adr.external_id) %>">Edit Draft</a>
+              <a class="blue-400 ws-nowrap" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>">Edit Draft</a>
             </nav>
           </td>
         </tr>
       <% end %>
       <tr>
         <td class="tc pa-2" colspan="3">
-          <a class="f-3 blue-400 fw-5" href="<%= routing.for(NewDraftAdrPage) %>">Add a new one!</a>
+          <a class="f-3 blue-400 fw-5" href="<%= NewDraftAdrPage.routing %>">Add a new one!</a>
         </td>
       </tr>
     </tbody>
@@ -162,7 +162,7 @@
           </td>
           <td class="w-20 pa-2 va-middle">
             <nav class="flex items-baseline gap-2 mv-2">
-              <a class="blue-400" href="<%= routing.for(AdrsByExternalIdPage, external_id: adr.external_id) %>">View Draft</a>
+              <a class="blue-400" href="<%= AdrsByExternalIdPage.routing(external_id: adr.external_id) %>">View Draft</a>
             </nav>
           </td>
         </tr>
