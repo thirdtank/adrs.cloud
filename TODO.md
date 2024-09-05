@@ -1,8 +1,19 @@
 # One Week Sprint
 
-CHECK 1 - Unit tests of the front-end Ruby app
-          DONE: All app/src classes are tested that should be in the backend
+CHECK 1 - Vim Projectionist setup
+          DONE: Can use vim :A and friends to switch back and forth
 
+      2 - i18n Cleanup
+          DONE: all strings are i18n'ed
+          DONE: i18n.rb is set up in a meaningful way that makes more sense than what is now
+
+      3 - Limits on accounts
+          DONE: An account can be limited to only 5 ADRs (the limit can be changed per-account)
+          DONE: Admin UI to allow new accounts + adjust limits
+          DONE: limit is not a set of attributes on accounts
+
+      4 - Visual Review
+          DONE: List of all parts of the app that need a visual re-think or change
 
 What is this going to be / criteria for launch?
 

@@ -1,0 +1,23 @@
+{
+  "app/src/*.rb": {
+    "alternate": "app/src/specs/{}.spec.rb",
+    "type": "source"
+  },
+  "app/src/specs/*.spec.rb": {
+    "alternate": "app/src/{}.rb",
+    "type": "spec"
+  },
+  "app/src/front_end/components/*.rb": {
+    "type": "component"
+  },
+  "app/src/front_end/forms/*.rb": {
+    "type": "form"
+  },
+  "app/src/front_end/handlers/*.rb": {
+    "type": "handler"
+  },
+  "app/src/front_end/pages/*.rb": {
+    "type": "page"
+  }
+
+}
