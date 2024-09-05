@@ -14,14 +14,14 @@ class EditDraftAdrWithExternalIdHandler < AppHandler
           adr:,
           form:,
           flash:,
-          error_message: "pages.adrs.edit.adr_invalid",
+          error_message: :adr_invalid,
         )
       end
     else
       if xhr
         http_status(200)
       else
-        flash[:notice] = "actions.adrs.updated"
+        flash[:notice] = :adr_updated
         redirect_to(AdrsByExternalIdPage, external_id: adr.external_id)
       end
     end

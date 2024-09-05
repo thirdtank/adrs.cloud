@@ -4,7 +4,7 @@ class NewDraftAdrPage < AppPage
     @form = form || NewDraftAdrForm.new
     @account = account
     @error_message = if !@form.new? && form.constraint_violations?
-                       "pages.adrs.new.adr_invalid"
+                       :adr_invalid
                      else
                        nil
                      end

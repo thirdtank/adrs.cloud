@@ -21,7 +21,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         html_locator = Support::HtmlLocator.new(parsed_html)
 
         expect(parsed_html.text).to match(/Originally\s+Accepted/)
-        expect(parsed_html.text).to match(/Replaced\s+#{Regexp.escape(replacing_adr.accepted_at.to_s)}/)
+        expect(parsed_html.text).to match(/Replaced on\s+#{Regexp.escape(replacing_adr.accepted_at.to_s)}/)
         expect(parsed_html.text).not_to include(replacing_adr.title)
         expect(parsed_html.css("[href='#{page.adr_path(replacing_adr)}']").length).to eq(0)
         link = html_locator.element("a[href='#{routing_for(described_class, shareable_id: replacing_adr.shareable_id)}']")
@@ -46,7 +46,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         parsed_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
 
-        expect(parsed_html.text).to match(/Replaced\s+#{Regexp.escape(replacing_adr.accepted_at.to_s)}/)
+        expect(parsed_html.text).to match(/Replaced on\s+#{Regexp.escape(replacing_adr.accepted_at.to_s)}/)
         expect(parsed_html.text).to match(/Originally\s+Accepted/)
         expect(parsed_html.css("[href='#{page.adr_path(replacing_adr)}']").length).to eq(0)
         link = html_locator.element!("a[href='#{routing_for(described_class, shareable_id: replacing_adr.shareable_id)}']")

@@ -1,7 +1,51 @@
 # Interface for translations.  This is prefered over using Ruby's I18n directly.
 # This is intended to be mixed-in to any class that requires this, so that you can more
 # expediently access the `t` method.
+#
+# If you include this you may implement i18n_keys_for(key) that is expected to return
+# an array of keys to try, in order.  This allows you to provide an API like t(:foo), but
+# have it actually look up `pages.ThisPage.foo`
 module Brut::I18n
+
+  def t(key,**rest)
+    if respond_to?(:i18n_keys_for)
+      key = i18n_keys_for(key)
+    else
+      key = Array(key)
+    end
+    t_direct(key,**rest)
+  rescue I18n::MissingInterpolationArgument => ex
+    if ex.key.to_s == "block"
+      raise ArgumentError,"One of the keys #{key.join(", ")} contained a %{block} interpolation value: '#{ex.string}'. This means you must use t_html *and* yield a block to it"
+    else
+      raise
+    end
+  end
+
+  def t_html(key,**rest)
+    if respond_to?(:i18n_keys_for)
+      key = i18n_keys_for(key)
+    else
+      key = Array(key)
+    end
+    if block_given?
+      if rest[:block]
+        raise ArgumentError,"t_html was given a block and a block: param. You can't do both "
+      end
+      rest[:block] = Brut::FrontEnd::Templates::HTMLSafeString.from_string(yield.to_s.strip)
+    end
+    t_html_direct(key,**rest)
+  rescue I18n::MissingInterpolationArgument => ex
+    if ex.key.to_s == "block"
+      raise ArgumentError,"One of the keys #{key.join(", ")} contained a %{block} interpolation value: '#{ex.string}'. This means that this message is expecting a block given to `t_html`"
+    else
+      raise
+    end
+  end
+
+  def this_field_value
+    @__this_field_value ||= ::I18n.t("general.cv.this_field", raise: true)
+  end
 
   # Needs:
   #
@@ -34,7 +78,7 @@ module Brut::I18n
   # @raise [I18n::MissingTranslation] if no translation is found
   # @raise [I18n::MissingInterpolationArgument] if interpolation arguments are missing, or if the key
   #                                             has pluralizations and no count: was given
-  def t(keys,interpolated_values={})
+  def t_direct(keys,interpolated_values={})
     keys = Array(keys).map(&:to_sym)
     default_interpolated_values = {
       field: this_field_value,
@@ -49,7 +93,7 @@ module Brut::I18n
   # Translates the given key, but does not do any HTML escaping.  Any String values
   # in interpolated_values *will* be escaped, however.  To avoid that, those strings
   # can be wrapped in a Brut::FrontEnd::Templates::HTMLSafeString.
-  def t_html(keys,interpolated_values={})
+  def t_html_direct(keys,interpolated_values={})
     keys = Array(keys).map(&:to_sym)
     default_interpolated_values = {
       field: this_field_value,
@@ -68,11 +112,4 @@ module Brut::I18n
     result
   end
 
-  def this_field_value
-    @__this_field_value ||= ::I18n.t("cv.this_field", raise: true)
-  end
-
-  module TMethod
-    extend Brut::I18n
-  end
 end

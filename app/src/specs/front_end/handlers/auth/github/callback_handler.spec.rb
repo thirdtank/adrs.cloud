@@ -38,7 +38,7 @@ RSpec.describe Auth::Github::CallbackHandler do
                                            flash: flash,
                                            session: session)
       expect(result.class).to eq(HomePage)
-      expect(flash[:error]).to eq("actions.auth.no_account")
+      expect(flash[:error]).to eq("auth.no_account")
       expect(session.key?("user_id")).to eq(false)
     end
   end

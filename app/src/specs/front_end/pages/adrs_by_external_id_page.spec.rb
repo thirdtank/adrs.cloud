@@ -4,7 +4,7 @@ RSpec.describe AdrsByExternalIdPage do
   context "info message" do
     it "shows the info message" do
       adr = create(:adr)
-      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: flash_from(notice: "actions.adrs.accepted"))
+      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: flash_from(notice: :adr_accepted))
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("aside[role='status']").text.to_s.strip).to eq("ADR Accepted")

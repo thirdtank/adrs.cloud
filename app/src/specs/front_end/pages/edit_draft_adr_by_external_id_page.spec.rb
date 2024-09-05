@@ -6,12 +6,12 @@ RSpec.describe EditDraftAdrByExternalIdPage do
       adr = create(:adr)
       page = described_class.new(account: adr.account, external_id: adr.external_id,
                                  flash: empty_flash,
-                                 error_message: "pages.adrs.edit.adr_cannot_be_accepted")
+                                 error_message: :adr_cannot_be_accepted)
 
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
       aside = html_locator.element!("aside[role='alert']")
-      expect(aside.text.to_s.strip).to eq(page.t("pages.adrs.edit.adr_cannot_be_accepted"))
+      expect(aside.text.to_s.strip).to eq(page.t(:adr_cannot_be_accepted))
     end
   end
   context "form with errors" do

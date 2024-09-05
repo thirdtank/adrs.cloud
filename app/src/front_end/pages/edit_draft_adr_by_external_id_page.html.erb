@@ -7,7 +7,9 @@
       <%= svg("adjust-control-icon") %>
       </span>
       <span>
-        <%= t("pages.adrs.edit.refines") %> “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+        <%= t_html(:refines) do %>
+          <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
+        <% end %>
       </span>
     </h3>
   <% end %>
@@ -17,7 +19,9 @@
       <%= svg("change-icon") %>
       </span>
       <span>
-        <%= t("pages.adrs.edit.proposed_replacement") %> “<a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>”
+        <%= t_html(:proposed_replacement) do %>
+          <a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>
+        <% end %>
       </span>
     </h3>
   <% end %>

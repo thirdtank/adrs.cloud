@@ -3,7 +3,7 @@
 CHECK 1 - Vim Projectionist setup
           DONE: Can use vim :A and friends to switch back and forth
 
-      2 - i18n Cleanup
+CHECK 2 - i18n Cleanup
           DONE: all strings are i18n'ed
           DONE: i18n.rb is set up in a meaningful way that makes more sense than what is now
 

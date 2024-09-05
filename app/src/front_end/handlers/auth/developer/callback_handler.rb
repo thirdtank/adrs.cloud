@@ -5,7 +5,7 @@ module Auth
         action = Actions::DevOnlyAuth.new
         account = action.auth(email)
         if account.nil?
-          flash[:error] = "actions.auth.no_account"
+          flash[:error] = "auth.no_account"
           HomePage.new(flash:)
         else
           session["user_id"] = account.external_id

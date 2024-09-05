@@ -4,10 +4,10 @@ class NewDraftAdrHandler < AppHandler
 
     adr = action.save_new(form:,account:)
     if form.constraint_violations?
-      flash[:error] = "pages.adrs.new.adr_invalid"
+      flash[:error] = :adr_invalid
       NewDraftAdrPage.new(form:,account:)
     else
-      flash[:notice] = "actions.adrs.created"
+      flash[:notice] = :adr_created
       redirect_to(EditDraftAdrByExternalIdPage, external_id: adr.external_id)
     end
   end

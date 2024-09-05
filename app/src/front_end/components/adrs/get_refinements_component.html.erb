@@ -4,7 +4,7 @@
       <span class="w-2">
         <%= svg("adjust-control-icon") %>
       </span>
-      Refinements
+      <%= t(:refinements) %>
     </h4>
     <table class="collapse w-100 mh-auto f-1">
       <thead>
@@ -26,11 +26,11 @@
             <td class="pv-2 pr-2"><a class="blue-300" href="<%= path(refining_adr) %>"><%= refining_adr.title %></a></td>
             <td class="pv-2 pr-2">
               <% if refining_adr.accepted? %>
-                Accepted
+                <%= t(:is_accepted) %>
               <% elsif refining_adr.rejected? %>
-                Rejected
+                <%= t(:is_rejected) %>
               <% else %>
-                Draft
+                <%= t(:is_draft) %>
               <% end %>
             </td>
             <td class="pv-2 pr-2">

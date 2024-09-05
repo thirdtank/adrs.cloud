@@ -10,7 +10,7 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
         result = described_class.new.handle!(form: form, account: adr.account, xhr: false, flash: empty_flash)
 
         expect(result.class).to eq(EditDraftAdrByExternalIdPage)
-        expect(result.error_message).to eq("pages.adrs.edit.adr_invalid")
+        expect(result.error_message).to eq(:adr_invalid)
         expect(result.form).to eq(form)
       end
     end

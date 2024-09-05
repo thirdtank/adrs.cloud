@@ -7,10 +7,10 @@ class AcceptedAdrsWithExternalIdHandler < AppHandler
         adr:,
         form:,
         flash:,
-        error_message: "pages.adrs.edit.adr_cannot_be_accepted",
+        error_message: :adr_cannot_be_accepted,
       )
     else
-      flash[:notice] = "actions.adrs.accepted"
+      flash[:notice] = :adr_accepted
       redirect_to(AdrsByExternalIdPage, external_id: adr.external_id)
     end
   end

@@ -13,7 +13,7 @@ RSpec.describe NewDraftAdrPage do
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       element = html_locator.element!("aside[role='alert']")
-      expect(element.text.to_s.strip).to eq("ADR is invalid. See below")
+      expect(element.text.to_s.strip).to eq(page.t(:adr_invalid))
     end
   end
   context "form is valid but blank" do

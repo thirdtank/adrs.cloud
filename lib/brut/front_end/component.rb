@@ -102,6 +102,14 @@ class Brut::FrontEnd::Component
   include Helpers
   include Brut::I18n
 
+  def i18n_keys_for(key)
+    [
+      "components.#{self.class}.#{key}",
+      "components.general.#{key}",
+      "general.#{key}",
+    ]
+  end
+
 private
 
   def binding_scope = binding

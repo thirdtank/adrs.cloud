@@ -2,27 +2,21 @@
 {
   # en: must be the first entry, thus indicating this is the EN translations
   en: {
-    cv: { # short for "constraint violations" to avoid having to type that out
-      be: { # short for "back-end", again not to have to type it out
-        # These are snake case, which is idiomatic for Ruby.  The values
-        # here are all based on DataObjectValidator's behavior
-        not_enough_words: "%{field} must have at least %{minwords} words",
+    general: {
+      nevermind: "Nevermind",
+      cv: { # short for "constraint violations" to avoid having to type that out
+        be: { # short for "back-end", again not to have to type it out
+          # These are snake case, which is idiomatic for Ruby.  The values
+          # here are all based on DataObjectValidator's behavior
+          not_enough_words: "%{field} must have at least %{minwords} words",
+        },
       },
     },
-    actions: {
-      auth: {
-        logged_out: "You have been logged out",
-        no_account: "There is no account with the credentials you provided",
+    layouts: {
+      default: {
+        title: "Welcome to ADRpg!",
+        logout: "Logout",
       },
-      adrs: {
-        created: "ADR Created",
-        updated: "ADR Updated",
-        rejected: "ADR Rejected",
-        accepted: "ADR Accepted",
-        tags_updated: "Tags Updated",
-        shared: "ADR Shared",
-        sharing_stopped: "ADR No Longer Shared",
-      }
     },
     pages: {
       general: {
@@ -33,9 +27,19 @@
         view: "View",
         share: "Share",
         none: "None",
-        nevermind: "Nevermind",
         aria: {
           external_link_icon: "external link icon",
+        },
+        adr_accepted: "ADR Accepted",
+        adr_created: "ADR Created",
+        adr_rejected: "ADR Rejected",
+        adr_shared: "ADR Shared",
+        adr_invalid: "ADR cannot be created. See below.",
+        tags_updated: "Tags Updated",
+        sharing_stopped: "Sharing Stopped",
+        auth: {
+          no_account: "No account with that email",
+          logged_out: "You have been logged out",
         }
       },
       AdrsPage: {
@@ -97,18 +101,25 @@
           because: "**Because** %{content}",
         },
       },
+      EditDraftAdrByExternalIdPage: {
+        proposed_replacement: "Proposed Replacement for “%{block}”",
+        refines: "Refines “%{block}”",
+        adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
+        adr_invalid: "ADR cannot be saved. See below.",
+      },
       NewDraftAdrPage: {
         draft_new: "Draft New ADR",
         refines: "Refines “%{title}”",
         replaces: "Proposed to Replace “%{title}”",
+        adr_invalid: "ADR cannot be created. See below."
       },
       SharedAdrsByShareableIdPage: {
         replaced_on: "Replaced on %{block}",
         replaced_by: "reaplaced by “%{block}”",
         accepted: "Accepted %{block}",
         originally_accepted: "Originally Accepted %{block}",
-        replaces: "Replaces “%{title}”",
-        refines: "Refines “%{title}”",
+        replaces: "Replaces “%{block}”",
+        refines: "Refines “%{block}”",
         fields: {
           context: "**In the context of** %{content}",
           facing: "**Facing** %{content}",
@@ -135,5 +146,17 @@
         no_accepted: "None Accepted with tag '%{tag}'",
       },
     },
+    components: {
+      "Adrs::FormComponent": {
+        adr_title: "Title",
+        adr_title_placeholder: "e.g. We Should Write Tests",
+      },
+      "Adrs::GetRefinementsComponent": {
+        refinements: "Refinements",
+        is_accepted: "Accepted",
+        is_rejected: "Rejected",
+        is_draft: "Draft",
+      },
+    }
   },
 }

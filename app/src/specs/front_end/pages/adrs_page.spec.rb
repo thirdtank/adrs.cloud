@@ -19,8 +19,8 @@ RSpec.describe AdrsPage do
   context "flash info message" do
     it "shows the info message, translated" do
       account = create(:account)
-      page = described_class.new(account: account, flash: flash_from({ notice: "actions.adrs.created" }))
-      info_message = page.t("actions.adrs.created")
+      page = described_class.new(account: account, flash: flash_from(notice: :adr_created))
+      info_message = page.t(:adr_created)
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
       aside = html_locator.element!("aside[role='status']")

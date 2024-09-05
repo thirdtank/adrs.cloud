@@ -5,7 +5,7 @@ module Auth
         action = Actions::GitHubAuth.new
         account = action.auth(env["omniauth.auth"])
         if account.nil?
-          flash[:error] = "actions.auth.no_account"
+          flash[:error] = "auth.no_account"
           HomePage.new(flash:)
         else
           session["user_id"] = account.external_id
