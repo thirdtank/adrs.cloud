@@ -1,6 +1,6 @@
 <% if tag? %>
   <div class="pa-3 bg-gray-800 bb bc-gray-700">
-    <a class="f-2 fw-5 blue-400" href="/adrs">&larr; View All</a>
+    <a class="f-2 fw-5 blue-400" href="/adrs">&larr; <%= t(:view_all) %></a>
   </div>
 <% end %>
 <% if info_message %>
@@ -10,20 +10,23 @@
 <% end %>
 <section class="bg-blue-900 pt-3 pb-4 shadow-1">
   <h1 class="flex items-center justify-center gap-2">
-    ADRs
     <% if tag? %>
-      tagged <%= component(Adrs::TagComponent.new(tag: tag)) %>
+      <%= t_html(:adrs_tagged) do %>
+        <%= component(Adrs::TagComponent.new(tag: tag)) %>
+      <% end %>
+    <% else %>
+      <%= t(:adrs) %>
     <% end %>
   </h1>
-<h2 class="tc">Accepted</h2>
+  <h2 class="tc"><%= t(:accepted) %></h2>
 <% if accepted_adrs.any? %>
   <table class="collapse w-60 mh-auto">
-    <caption class="sr-only">Accepted ADRs</caption>
+    <caption class="sr-only"><%= t("captions.accepted") %></caption>
     <thead>
       <tr>
-        <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-        <th class="tl pa-2 fw-5 bb bc-2">Accepted On</th>
-        <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+        <th class="tl pa-2 fw-5 bb bc-2"><%= t(:name) %></th>
+        <th class="tl pa-2 fw-5 bb bc-2"><%= t(:accepted_on) %></th>
+        <th class="tl pa-2 bb bc-2"><span class="sr-only"><%= t(:actions) %></span></th>
       </tr>
     </thead>
     <tbody>
@@ -40,7 +43,7 @@
         </td>
         <td class="w-20 pa-2 tr va-middle">
           <nav class="flex items-baseline gap-2 mv-2">
-            <a class="blue-400" href="<%= adr_path(adr) %>">View</a>
+            <a class="blue-400" href="<%= adr_path(adr) %>"><%= t(:view) %></a>
           </nav>
         </td>
       </tr>
@@ -48,17 +51,17 @@
     </tbody>
   </table>
 <% else %>
-  <p class="i w-100 tc"><%= t("pages.adrs.no_accepted") %></p>
+  <p class="i w-100 tc"><%= t(:no_accepted) %></p>
 <% end %>
-<h2 class="tc">Drafts</h2>
+<h2 class="tc"><%= t(:drafts) %></h2>
 <% if draft_adrs.any? %>
   <table class="collapse w-60 mh-auto">
-    <caption class="sr-only">Draft ADRs</caption>
+    <caption class="sr-only"><%= t("captions.drafts") %></caption>
     <thead>
       <tr>
-        <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-        <th class="tl pa-2 fw-5 bb bc-2">Created On</th>
-        <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+        <th class="tl pa-2 fw-5 bb bc-2"><%= t(:name) %></th>
+        <th class="tl pa-2 fw-5 bb bc-2"><%= t(:created_on) %></th>
+        <th class="tl pa-2 bb bc-2"><span class="sr-only"><%= t(:actions) %></span></th>
       </tr>
     </thead>
     <tbody>
@@ -71,13 +74,15 @@
             <% end %>
             <% if adr.refines_adr %>
             <small class="db">
-              refines
-              “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+              <%= t_html(:refines) do %>
+                “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+              <% end %>
             </small>
             <% elsif adr.proposed_to_replace_adr %>
             <small class="db">
-              proposed to replace
-              “<a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>”
+              <%= t_html(:replaces) do %>
+                “<a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>”
+              <% end %>
             </small>
             <% end %>
           </td>
@@ -86,36 +91,36 @@
           </td>
           <td class="w-20 pa-2 va-middle">
             <nav class="flex items-center gap-3 mv-2">
-              <a class="blue-400 ws-nowrap" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>">Edit Draft</a>
+              <a class="blue-400 ws-nowrap" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>"><%= t(:edit_draft) %></a>
             </nav>
           </td>
         </tr>
       <% end %>
       <tr>
         <td class="tc pa-2" colspan="3">
-          <a class="f-3 blue-400 fw-5" href="<%= NewDraftAdrPage.routing %>">Add a new one!</a>
+          <a class="f-3 blue-400 fw-5" href="<%= NewDraftAdrPage.routing %>"><%= t(:add_new) %></a>
         </td>
       </tr>
     </tbody>
   </table>
 <% else %>
-  <p class="i w-100 tc"><%= t("pages.adrs.no_drafts") %></p>
+  <p class="i w-100 tc"><%= t(:no_drafts) %></p>
 <% end %>
 </section>
 <% if !tag? %>
 <details class="pt-4">
   <summary class="w-60 mh-auto pa-2">
-    View Replaced and Rejected ADRs
+    <%= t(:view_replaced_and_rejected) %>
   </summary>
-  <h2 class="tc">Replaced</h2>
+  <h2 class="tc"><%= t(:replaced) %></h2>
   <% if replaced_adrs.any? %>
     <table class="collapse w-60 mh-auto">
-      <caption class="sr-only">Replaced ADRs</caption>
+      <caption class="sr-only"><%= t("captions.replaced") %></caption>
       <thead>
         <tr>
-          <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-          <th class="tl pa-2 fw-5 bb bc-2">Replaced By</th>
-          <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+          <th class="tl pa-2 fw-5 bb bc-2"><%= t(:name) %></th>
+          <th class="tl pa-2 fw-5 bb bc-2"><%= t(:replaced_by) %></th>
+          <th class="tl pa-2 bb bc-2"><span class="sr-only"><%= t(:actions) %></span></th>
         </tr>
       </thead>
       <tbody>
@@ -129,8 +134,8 @@
           </td>
           <td class="w-20 pa-2 va-middle">
             <nav class="flex flex-column items-start gap-2 mv-2">
-              <a class="blue-400" href="<%= adr_path(adr) %>">View Original</a>
-              <a class="blue-400" href="<%= adr_path(adr.replaced_by_adr) %>">View Replacement</a>
+              <a class="blue-400" href="<%= adr_path(adr) %>"><%= t(:view_original) %></a>
+              <a class="blue-400" href="<%= adr_path(adr.replaced_by_adr) %>"><%= t(:view_replacement) %></a>
             </nav>
           </td>
         </tr>
@@ -138,17 +143,17 @@
       </tbody>
     </table>
   <% else %>
-    <p class="i w-100 tc"><%= t("pages.adrs.no_replaced") %></p>
+    <p class="i w-100 tc"><%= t(:no_replaced) %></p>
   <% end %>
-  <h2 class="tc">Rejected</h2>
+  <h2 class="tc"><%= t(:rejected) %></h2>
   <% if rejected_adrs.any? %>
     <table class="collapse w-60 mh-auto">
-        <caption class="sr-only">Rejected ADRs</caption>
+      <caption class="sr-only"><%= t("captions.rejected") %></caption>
       <thead>
         <tr>
-          <th class="tl pa-2 fw-5 bb bc-2">Name</th>
-          <th class="tl pa-2 fw-5 bb bc-2">Rejected On</th>
-          <th class="tl pa-2 bb bc-2"><span class="sr-only">Actions</span></th>
+          <th class="tl pa-2 fw-5 bb bc-2"><%= t(:name) %></th>
+          <th class="tl pa-2 fw-5 bb bc-2"><%= t(:rejected_on) %></th>
+          <th class="tl pa-2 bb bc-2"><span class="sr-only"><%= t(:actions) %></span></th>
         </tr>
       </thead>
       <tbody>
@@ -162,7 +167,7 @@
           </td>
           <td class="w-20 pa-2 va-middle">
             <nav class="flex items-baseline gap-2 mv-2">
-              <a class="blue-400" href="<%= AdrsByExternalIdPage.routing(external_id: adr.external_id) %>">View Draft</a>
+              <a class="blue-400" href="<%= AdrsByExternalIdPage.routing(external_id: adr.external_id) %>"><%= t(:view_draft) %></a>
             </nav>
           </td>
         </tr>
@@ -170,7 +175,7 @@
       </tbody>
     </table>
   <% else %>
-    <p class="i w-100 tc"><%= t("pages.adrs.no_rejected") %></p>
+    <p class="i w-100 tc"><%= t(:no_rejected) %></p>
   <% end %>
 </details>
 <% end %>

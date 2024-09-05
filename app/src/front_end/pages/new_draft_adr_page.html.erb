@@ -1,11 +1,14 @@
 <header>
-  <h1 class="tc ma-0 mt-3 ttu tracked-tight f-7">ADRpg</h1>
-  <h2 class="tc mt-0 f-5 fw-5">Draft New ADR</h2>
+<h2 class="tc ma-0 mt-3 ttu tracked-tight f-7"><%= t(:draft_new) %></h2>
   <% if refines_adr %>
-    <h3 class="tc mt-0 f-4">Refines “<%= refines_adr.title %>”</h3>
+    <h3 class="tc mt-0 f-4">
+      <%= t(:refines, title: refines_adr.title) %>
+    </h3>
   <% end %>
   <% if replaces_adr %>
-    <h3 class="tc mt-0 f-4">Proposed to Replace “<%= replaces_adr.title %>”</h3>
+    <h3 class="tc mt-0 f-4">
+      <%= t(:replaces, title: replaces_adr.title) %>
+    </h3>
   <% end %>
 </header>
 <section class="pa-3">

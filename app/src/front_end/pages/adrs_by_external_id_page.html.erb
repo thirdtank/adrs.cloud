@@ -7,11 +7,11 @@
   <div role="none" class="w-quarter"></div>
   <article class="w-50 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
     <div class="pa-3 bg-gray-800 bb bc-gray-700">
-      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; View All</a>
+      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; <%= t(:view_all) %></a>
     </div>
     <% if draft? %>
       <aside role="note" class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
-      DRAFT
+      <%= t(:draft) %>
       </aside>
     <% end %>
     <h2 class="tc measure-narrow ph-1 mh-auto lh-title fs-5 mt-3 mb-1 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
@@ -33,23 +33,28 @@
         <h3 class="lh-title fw-5 pa-2 mh-3 ba br-2 
           <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' %>
           ">
-          <% if adr.replaced? %>
-            Originally
+          <%= t_html(accepted_i18n_key) do %>
+            <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
           <% end %>
-          Accepted <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
         </h3>
       <% end %>
       <% if !adr.replaced_adr.nil? %>
         <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900">
-          Replaces <a class="green-300" href="<%= adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
+          <%= t_html(:replaces) do %>
+            <a class="green-300" href="<%= adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
+          <% end %>
         </h3>
       <% end %>
       <% if adr.rejected? %>
       <h3 class="lh-title fw-5 pa-2 mh-3 ba br-2 bc-red-200 red-800 bg-red-200">
-      Rejected <time class="fw-6" datetime="<%= adr.created_at %>"><%= adr.rejected_at %></time>
+        <%= t_html(:rejected) do %>
+          <time class="fw-6" datetime="<%= adr.created_at %>"><%= adr.rejected_at %></time>
+        <% end %>
       </h3>
       <% end %>
-      Created <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
+      <%= t_html(:created) do %>
+        <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
+      <% end %>
     </div>
     <section aria-label="context" class="rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
     <section aria-label="facing" class="rendered-markdown ph-3"><%= markdown(:facing) %></section>
@@ -67,14 +72,16 @@
           <%= svg("adjust-control-icon") %>
         </div>
         <div class="tl">
-          Refines “<a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+          <%= t_html(:refines) do %>
+            <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
+          <% end %>
         </div>
       </h3>
       </section>
     <% end %>
     <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: refined_by_adrs)) %>
     <div class="pa-3 bg-gray-800 bt bc-gray-700">
-      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; Back</a>
+      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; <%= t(:back) %></a>
     </div>
   </article>
   <div class="w-quarter mv-3">
@@ -83,7 +90,7 @@
     </div>
     <nav class="flex flex-column gap-3 mt-1 bb bc-gray-600 pb-3 mr-3">
     <% if editable? %>
-        <a class="f-2 fw-5 blue-400" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>">Edit</a>
+      <a class="f-2 fw-5 blue-400" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>"><%= t(:edit) %></a>
     <% elsif adr.accepted? %>
       <%= form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2") do %>
         <input type="hidden" name="external_id" value="<%= adr.external_id %>">
@@ -93,27 +100,27 @@
             size: "small",
             formaction: SharedAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
             variant: :left,
-            disabled: shared? ? "This ADR is already shared" : false,
+            disabled: shared? ? t(:already_shared) : false,
             color: "orange",
-            label: "Share",
-            confirm: "This will create a publicly accessible URL to allow anyone with it to view this ADR",
+            label: t(:share),
+            confirm: t(:share_confirm),
             icon: "globe-network-icon")) %>
 
           <%= component(ButtonComponent.new(
             size: "small",
             formaction: PrivateAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
             variant: :right,
-            disabled: private? ? "This ADR is not shared" : false,
+            disabled: private? ? t(:not_shared) : false,
             color: "blue",
-            label: "Stop Sharing",
-            confirm: "Anyone with this ADR's shareable URL will no longer be able to access it",
+            label: t(:stop_sharing),
+            confirm: t(:stop_share_confirm),
             icon: "lock-icon")) %>
 
         </fieldset>
         <% if shared? %>
           <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id) %>">
-            <span class="tdu f-1">View Shareable Page</span>
-            <div class="w-1" role="img" aria-description="external link icon"><%= svg("external-link-icon") %></div>
+            <span class="tdu f-1"><%= t(:view_share_page) %></span>
+            <div class="w-1" role="img" aria-description="<%= t("aria.external_link_icon") %>"><%= svg("external-link-icon") %></div>
           </a>
         <% end %>
       <% end %>
@@ -126,7 +133,7 @@
               variant: :left,
               formaction: ReplacedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
               color: "red",
-              label: "Replace",
+              label: t(:replace),
               icon: "change-icon"
             )
           ) %>
@@ -136,7 +143,7 @@
               variant: :right,
               formaction: RefinedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
               color: "purple",
-              label: "Refine",
+              label: t(:refine),
               icon: "adjust-control-icon"
             )
           ) %>
@@ -155,14 +162,15 @@
                   <%= component Adrs::TagComponent.new(tag: tag) %>
                 <% end %>
               <% else %>
-                <span class="f-1 gray-400 i">None</span>
+                <span class="f-1 gray-400 i"><%= t(:none) %></span>
               <% end %>
             </div>
           </div>
-          <%= component(ButtonComponent.new(size: "tiny",
-                                               color: adr.tags.any? ? "white"          : "purple",
-                                               label: adr.tags.any? ? "Edit"           : "Add",
-                                               icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
+          <%= component(ButtonComponent.new(
+            size: "tiny",
+            color: adr.tags.any? ? "white"          : "purple",
+            label: adr.tags.any? ? t(:edit)         : t(:add),
+            icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
         </div>
       </adr-tag-editor-view>
       <adr-tag-editor-edit class="dn">
@@ -180,11 +188,11 @@
             <%= component(ButtonComponent.new(size: "tiny",
                                                  type: "reset",
                                                  color: "red",
-                                                 label: "Nevermind",
+                                                 label: t(:nevermind),
                                                  icon:  "close-line-icon")) %>
             <%= component(ButtonComponent.new(size: "small",
                                                  color: "blue",
-                                                 label: "Save Tags",
+                                                 label: t(:save_tags),
                                                  icon:  "tag-line-icon")) %>
           </div>
         <% end %>

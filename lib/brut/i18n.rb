@@ -35,7 +35,7 @@ module Brut::I18n
   # @raise [I18n::MissingInterpolationArgument] if interpolation arguments are missing, or if the key
   #                                             has pluralizations and no count: was given
   def t(keys,interpolated_values={})
-    keys = Array(keys)
+    keys = Array(keys).map(&:to_sym)
     default_interpolated_values = {
       field: this_field_value,
     }
@@ -50,7 +50,7 @@ module Brut::I18n
   # in interpolated_values *will* be escaped, however.  To avoid that, those strings
   # can be wrapped in a Brut::FrontEnd::Templates::HTMLSafeString.
   def t_html(keys,interpolated_values={})
-    keys = Array(keys)
+    keys = Array(keys).map(&:to_sym)
     default_interpolated_values = {
       field: this_field_value,
     }
@@ -70,5 +70,9 @@ module Brut::I18n
 
   def this_field_value
     @__this_field_value ||= ::I18n.t("cv.this_field", raise: true)
+  end
+
+  module TMethod
+    extend Brut::I18n
   end
 end

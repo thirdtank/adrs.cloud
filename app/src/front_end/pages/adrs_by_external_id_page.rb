@@ -7,7 +7,7 @@ class AdrsByExternalIdPage < AppPage
   end
 
   def markdown(field)
-    value = "**#{field_text(field)}** #{adr.send(field)}"
+    value = t("fields.#{field}", content: adr.send(field))
     component(MarkdownStringComponent.new(value))
   end
 
@@ -21,19 +21,7 @@ class AdrsByExternalIdPage < AppPage
   def private? = !self.shared?
   def shared?  =  adr.shared?
 
-private
+  def accepted_i18n_key = adr.replaced? ? :originally_accepted : :accepted
 
-  def field_text(field)
-    case field
-    when :context   then "In the context of"
-    when :facing    then "Facing"
-    when :decision  then "We decided"
-    when :neglected then "Neglecting"
-    when :achieve   then "To achieve"
-    when :accepting then "Accepting"
-    when :because   then "Because"
-    else raise ArgumentError.new("No such field '#{field}'")
-    end
-  end
 end
 

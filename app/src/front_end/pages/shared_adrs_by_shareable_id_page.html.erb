@@ -10,15 +10,15 @@
           </div>
           <div class="tl">
             <div class="f-2">
-              Replaced
-              <time class="fw-6" datetime="<%= adr.replaced_by_adr.accepted_at %>"><%= adr.replaced_by_adr.accepted_at %></time>
-            <% if adr.replaced_by_adr.shared? %>
-              by
-            <% end %>
+              <%= t_html(:replaced_on) do %>
+                <time class="fw-6" datetime="<%= adr.replaced_by_adr.accepted_at %>"><%= adr.replaced_by_adr.accepted_at %></time>
+              <% end %>
+              <% if adr.replaced_by_adr.shared? %>
+                <%= t_html(:replaced_by) do %>
+                  <a class="db red-900" href="<%= shareable_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
+                <% end %>
+              <% end %>
             </div>
-            <% if adr.replaced_by_adr.shared? %>
-              <a class="db red-900" href="<%= shareable_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
-            <% end %>
           </div>
         </h3>
       <% end %>
@@ -26,13 +26,20 @@
         <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' %>
         ">
         <% if adr.replaced? %>
-          Originally
+          <%= t_html(:originally_accepted) do %>
+            <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
+          <% end %>
+        <% else %>
+          <%= t_html(:accepted) do %>
+            <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
+          <% end %>
         <% end %>
-        Accepted <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
       </h3>
       <% if !adr.replaced_adr.nil? && adr.replaced_adr.shared? %>
         <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900">
-          Replaces <a class="green-300" href="<%= shareable_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
+          <%= t_html(:replaced) do %>
+            <a class="green-300" href="<%= shareable_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>
+          <% end %>
         </h3>
       <% end %>
       Created <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
@@ -53,7 +60,9 @@
           <%= svg("adjust-control-icon") %>
         </div>
         <div class="tl">
-          Refines “<a class="blue-300" href="<%= shareable_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>”
+          <%= t(:refines) do %>
+            <a class="blue-300" href="<%= shareable_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
+          <% end %>
         </div>
       </h3>
       </section>
@@ -61,5 +70,4 @@
     <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: shareable_refined_by_adrs, shareable_paths: true)) %>
   </article>
   <div role="none" class="w-quarter"></div>
-</div>
 </div>
