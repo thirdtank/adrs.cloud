@@ -12,6 +12,10 @@ CHECK 2 - i18n Cleanup
           DONE: Admin UI to allow new accounts + adjust limits
           DONE: limit is not a set of attributes on accounts
 
+          account -> entitlements -> entitlements_defaults
+
+          USER       WHAT THEY CAN DO   PLAN
+
       4 - Visual Review
           DONE: List of all parts of the app that need a visual re-think or change
 
