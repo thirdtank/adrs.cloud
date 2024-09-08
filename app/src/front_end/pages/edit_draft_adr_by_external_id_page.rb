@@ -1,8 +1,8 @@
 class EditDraftAdrByExternalIdPage < AppPage
-  attr_reader :adr, :form, :error_message, :info_message
+  attr_reader :draft_adr, :form, :error_message, :info_message
   def initialize(account:, external_id:, form: nil, flash:)
-    @adr = DataModel::Adr[account_id: account.id, external_id: external_id]
-    @form = form || EditDraftAdrWithExternalIdForm.from_adr(@adr)
+    @draft_adr = DraftAdr.find(external_id:,account:)
+    @form = form || EditDraftAdrWithExternalIdForm.new(params: @draft_adr.to_h)
     @error_message = flash.alert
     @info_message = flash.notice
   end

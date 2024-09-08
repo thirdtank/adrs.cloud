@@ -4,7 +4,7 @@ RSpec.describe Adrs::FormComponent, component: true do
   context "ADR has been saved" do
     it "renders accept and reject buttons and uses an ajax submit button" do
       adr = create(:adr)
-      form = EditDraftAdrWithExternalIdForm.from_adr(adr)
+      form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: adr.title })
       component = described_class.new(form,action: :edit)
 
       parsed_html = render_and_parse(component)

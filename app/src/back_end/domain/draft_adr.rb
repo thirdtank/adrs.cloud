@@ -16,11 +16,30 @@ class DraftAdr
   attr_reader :form
 
   def initialize(adr:)
-
     @adr  = adr
   end
 
-  def external_id = @adr.external_id
+  def external_id   =  @adr.external_id
+  def refining?     = !self.adr_refining.nil?
+  def replacing?    = !self.adr_replacing.nil?
+  def adr_refining  =  @adr.refines_adr
+  def adr_replacing =  @adr.proposed_to_replace_adr
+
+  def to_h
+    {
+      external_id: @adr.external_id,
+      title: @adr.title,
+      context: @adr.context,
+      facing: @adr.facing,
+      decision: @adr.decision,
+      neglected: @adr.neglected,
+      achieve: @adr.achieve,
+      accepting: @adr.accepting,
+      because: @adr.because,
+      tags: Tags.from_array(array: @adr.tags).to_s,
+      refines_adr_external_id: @adr.refines_adr&.external_id,
+    }
+  end
 
   def accept(form:)
     AppDataModel.transaction do

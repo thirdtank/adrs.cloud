@@ -3,11 +3,4 @@ class DataModel::Account < AppDataModel
 
   one_to_many :adrs
   one_to_one :entitlement
-
-#  def self.create(...)
-#    super(...)
-#    id = self.db["select currval('accounts_id_seq')"]
-#    self[id: id]
-#  end
 end
-

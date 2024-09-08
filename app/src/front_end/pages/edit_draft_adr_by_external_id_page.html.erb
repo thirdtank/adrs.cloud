@@ -1,26 +1,26 @@
 <header>
   <h1 class="tc ma-0 mt-3 ttu tracked-tight f-7">ADRpg</h1>
   <h2 class="tc mt-0 f-5 fw-5">Edit ADR</h2>
-  <% if !adr.refines_adr.nil? %>
+  <% if draft_adr.refining? %>
     <h3 class="mt-1 fw-4 f-2 i flex items-center justify-center gap-2">
       <span class="w-2 gray-300">
       <%= svg("adjust-control-icon") %>
       </span>
       <span>
         <%= t_html(:refines) do %>
-          <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
+          <a class="blue-300" href="<%= adr_path(draft_adr.adr_refining) %>"><%= draft_adr.adr_refining.title %></a>
         <% end %>
       </span>
     </h3>
   <% end %>
-  <% if !adr.proposed_to_replace_adr.nil? %>
+  <% if draft_adr.replacing? %>
     <h3 class="mt-1 fw-4 f-2 i flex items-center justify-center gap-2">
       <span class="w-2 gray-300">
       <%= svg("change-icon") %>
       </span>
       <span>
         <%= t_html(:proposed_replacement) do %>
-          <a class="blue-300" href="<%= adr_path(adr.proposed_to_replace_adr) %>"><%= adr.proposed_to_replace_adr.title %></a>
+          <a class="blue-300" href="<%= adr_path(draft_adr.adr_replacing) %>"><%= draft_adr.adr_replacing.title %></a>
         <% end %>
       </span>
     </h3>

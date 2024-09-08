@@ -1,12 +1,20 @@
 class AcceptedAdr
-  def self.find(external_id:,account:)
+  def self.search(external_id:,account:)
     adr = DataModel::Adr.first(Sequel.lit("external_id = ? and account_id = ? and accepted_at is not null",external_id,account.id))
-
-    if !adr
-      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{external_id}"
+    if adr.nil?
+      return nil
     end
     AcceptedAdr.new(adr:)
   end
+  def self.find(external_id:,account:)
+    accepted_adr = self.search(external_id:,account:)
+    if accepted_adr.nil?
+      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{external_id}"
+    end
+    accepted_adr
+  end
+
+  def title = @adr.title
 
   def initialize(adr:)
     @adr = adr

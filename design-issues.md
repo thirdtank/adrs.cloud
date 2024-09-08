@@ -14,7 +14,6 @@ set of assertions and testing stuff could be done that uses the infra fromp play
 
 ## SQL/Data Layer is nowhere near as ergonomic as Active Record
 
-* overriding create() is annoying
 * having to figure out the associations is annoying
 * schema stuff is annoying
 
@@ -26,7 +25,6 @@ Ideally:
   - sets created\_at
   - allows / requires commenting
 - A "model" should, automatically:
-  - return itself with its generated info from create
   - have associations on it, based on schema (explicit, but pre-generated)
   - allow rich type conversion to/from column type
 - Scheam ergonomics

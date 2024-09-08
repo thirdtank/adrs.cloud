@@ -5,7 +5,7 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
       it "renders the EditDraftAdrByExternalIdPage" do
         adr = create(:adr)
         adr.title = "aaaaa"
-        form = EditDraftAdrWithExternalIdForm.from_adr(adr)
+        form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: adr.title })
 
         result = described_class.new.handle!(form: form, account: adr.account, xhr: false, flash: empty_flash)
 
@@ -17,7 +17,7 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
     context "no constraint violations" do
       it "redirects to the AdrsByExternalIdPage" do
         adr = create(:adr)
-        form = EditDraftAdrWithExternalIdForm.from_adr(adr)
+        form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: adr.title })
 
         result = described_class.new.handle!(form: form, account: adr.account, xhr: false, flash: empty_flash)
 
@@ -30,7 +30,7 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
       it "renders the Adr::ErrorMessagesComponent with status 422" do
         adr = create(:adr)
         adr.title = "aaaaa"
-        form = EditDraftAdrWithExternalIdForm.from_adr(adr)
+        form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: adr.title })
 
         result = described_class.new.handle!(form: form, account: adr.account, xhr: true, flash: empty_flash)
 
@@ -43,7 +43,7 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
     context "no constraint violations" do
       it "returns an HTTP 200" do
         adr = create(:adr)
-        form = EditDraftAdrWithExternalIdForm.from_adr(adr)
+        form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: adr.title })
 
         result = described_class.new.handle!(form: form, account: adr.account, xhr: true, flash: empty_flash)
 
