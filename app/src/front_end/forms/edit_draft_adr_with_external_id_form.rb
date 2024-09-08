@@ -5,7 +5,6 @@ class EditDraftAdrWithExternalIdForm < AppForm
   def new_record? = false
 
   def self.from_adr(adr)
-    tag_serializer = Actions::Adrs::TagSerializer.new
     self.new(
       params: {
         external_id: adr.external_id,
@@ -17,7 +16,7 @@ class EditDraftAdrWithExternalIdForm < AppForm
         achieve: adr.achieve,
         accepting: adr.accepting,
         because: adr.because,
-        tags: tag_serializer.from_array(adr.tags),
+        tags: Tags.from_array(array: adr.tags).to_s,
         refines_adr_external_id: adr.refines_adr&.external_id,
       }
     )

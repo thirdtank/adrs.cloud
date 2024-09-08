@@ -19,8 +19,6 @@ module Brut
   end
   module BackEnd
     autoload(:Result, "brut/back_end/result")
-    autoload(:Action, "brut/back_end/action")
-    autoload(:Actions, "brut/back_end/action")
     autoload(:Validators, "brut/back_end/validator")
     autoload(:Error, "brut/back_end/error")
     autoload(:Errors, "brut/back_end/error")

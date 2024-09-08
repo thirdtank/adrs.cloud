@@ -13,8 +13,7 @@ class AcceptedAdr
   end
 
   def update_tags(form:)
-    tag_serializer ||= Actions::Adrs::TagSerializer.new
-    @adr.update(tags: tag_serializer.from_string(form.tags))
+    @adr.update(tags: Tags.from_string(string: form.tags).to_a)
   end
 
   def stop_sharing!

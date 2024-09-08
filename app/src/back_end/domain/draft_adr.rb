@@ -70,8 +70,6 @@ class DraftAdr
     end
     return form if form.constraint_violations?
 
-    tag_serializer = Actions::Adrs::TagSerializer.new
-
     refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: @adr.account.id]
     AppDataModel.transaction do
       @adr.update(title: form.title,
@@ -82,7 +80,7 @@ class DraftAdr
                  achieve: form.achieve,
                  accepting: form.accepting,
                  because: form.because,
-                 tags: tag_serializer.from_string(form.tags),
+                 tags: Tags.from_string(string: form.tags).to_a,
                  refines_adr_id: refines_adr&.id,
                 )
       replaced_adr = DataModel::Adr[external_id: form.replaced_adr_external_id, account_id: @adr.account.id]

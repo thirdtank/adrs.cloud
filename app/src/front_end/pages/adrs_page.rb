@@ -5,11 +5,7 @@ class AdrsPage < AppPage
   def initialize(account:, flash:, tag: nil)
     @info_message = flash[:notice]
     @tag          = tag
-    @adrs         = if @tag.nil?
-                      account.adrs
-                    else
-                      Actions::Adrs::Search.new.by_tag(account: account, tag: @tag)
-                    end
+    @adrs         = AccountAdrs.find_all(account:,tag:).adrs
   end
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)
   def replaced_adrs = @adrs.select(&:replaced?).sort_by { |adr|
