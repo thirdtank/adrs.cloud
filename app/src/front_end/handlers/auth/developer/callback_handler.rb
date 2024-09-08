@@ -4,7 +4,7 @@ module Auth
       def handle!(email:, flash:, session:)
         dev_only_account = DeveloperOnlyAccount.find(email:)
         if dev_only_account.exists?
-          session["user_id"] = dev_only_account.session_id
+          session.login!(dev_only_account.session_id)
           redirect_to(AdrsPage)
         else
           flash[:error] = "auth.no_account"

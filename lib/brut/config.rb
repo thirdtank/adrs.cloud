@@ -245,6 +245,14 @@ class Brut::Config
         Brut::FrontEnd::Routing.new
       )
 
+      c.store(
+        "session_class",
+        Class,
+        "Class to use when wrapping the Rack session",
+        Brut::FrontEnd::Session,
+        allow_app_override: true,
+      )
+
     end
   end
 end

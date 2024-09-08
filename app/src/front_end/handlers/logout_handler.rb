@@ -1,6 +1,6 @@
 class LogoutHandler < AppHandler
   def handle!(flash:, session:)
-    session.delete("user_id")
+    session.logout!
 
     flash[:notice] = "auth.logged_out"
     redirect_to(HomePage)

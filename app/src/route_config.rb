@@ -3,6 +3,7 @@ require "sinatra/base"
 require "front_end/app_view_helpers"
 require "front_end/components/app_component"
 require "front_end/pages/app_page"
+require "front_end/app_session"
 require "back_end/data_models/app_data_model"
 require "back_end/domain"
 require "front_end/forms/app_form"
@@ -26,12 +27,15 @@ class AdrApp < Sinatra::Base
   include Brut::SinatraHelpers
 
   before do
+
+    app_session = Brut.container.session_class.new(rack_session: session)
+
     is_auth_callback         = request.path_info.match?(/^\/auth\//)
     is_root_path             = request.path_info == "/"
     is_public_dynamic_route  = request.path_info.match?(/^\/shared_adrs\//)
     is_test_page             = request.path_info == "/end-to-end-tests"
 
-    authenticated_account = AuthenticatedAccount.find(session_id: session["user_id"])
+    authenticated_account = AuthenticatedAccount.find(session_id: app_session.logged_in_account_id)
 
     requires_login = !is_auth_callback        &&
                      !is_root_path            &&

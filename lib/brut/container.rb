@@ -43,7 +43,7 @@ class Brut::Container
   #         ```
   #         conatiner.store("tmp_dir") { |project_root| project_root / "tmp" }
   #         ```
-  def store(name,type,description,value=:use_block,&block)
+  def store(name,type,description,value=:use_block,allow_app_override: false,&block)
     # TODO: Check that value / block is used properly
     name = name.to_s
     self.validate_name!(name,type)
@@ -54,7 +54,23 @@ class Brut::Container
     end
     @container[name][:description] = description
     @container[name][:type] = type
+    @container[name][:allow_app_override] = allow_app_override
     self
+  end
+
+  def override(name,value=:use_block,&block)
+    name = name.to_s
+    if !@container[name]
+      raise ArgumentError,"#{name} has not been specified so you cannot override it"
+    end
+    if !@container[name][:allow_app_override]
+      raise ArgumentError,"#{name} does not allow the app to override it"
+    end
+    if value == :use_block
+      @container[name] = { value: nil, derive_with: block }
+    else
+      @container[name] = { value: value }
+    end
   end
 
   # Store a value that represents a path that must exist. The value will

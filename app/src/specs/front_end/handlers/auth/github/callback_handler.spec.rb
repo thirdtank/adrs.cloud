@@ -18,7 +18,7 @@ RSpec.describe Auth::Github::CallbackHandler do
                                            flash: empty_flash,
                                            session: session)
       expect(result).to be_routing_for(AdrsPage)
-      expect(session["user_id"]).to eq(account.external_id)
+      expect(session.logged_in_account_id).to eq(account.external_id)
     end
   end
   context "email does not exist" do
@@ -39,7 +39,7 @@ RSpec.describe Auth::Github::CallbackHandler do
                                            session: session)
       expect(result.class).to eq(HomePage)
       expect(flash[:error]).to eq("auth.no_account")
-      expect(session.key?("user_id")).to eq(false)
+      expect(session.logged_in?).to eq(false)
     end
   end
 end

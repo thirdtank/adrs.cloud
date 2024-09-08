@@ -69,29 +69,29 @@ module Brut::SinatraHelpers
     sinatra_app.extend(ClassMethods)
     sinatra_app.set :logging, true
     sinatra_app.before do
+      app_session = Brut.container.session_class.new(rack_session: session)
       Thread.current[:rendering_context] = {
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
       }
-      session[:_flash] ||= Brut::FrontEnd::Flash.new.to_h
+      flash = Brut::FrontEnd::Flash.from_h(app_session[:_flash])
+      app_session[:_flash] ||= flash
       Thread.current.thread_variable_set(
         :request_context,
-        Brut::RequestContext.new(env:,session:,flash:,xhr: request.xhr?)
+        Brut::RequestContext.new(env:,session:app_session,flash:,xhr: request.xhr?)
       )
     end
     sinatra_app.after do
+      app_session = Brut.container.session_class.new(rack_session: session)
       Thread.current[:rendering_context] = nil
-      flash = Brut::FrontEnd::Flash.from_h(session[:_flash])
+      flash = Brut::FrontEnd::Flash.from_h(app_session[:_flash])
       flash.age!
-      session[:_flash] = flash.to_h
+      app_session[:_flash] = flash.to_h
     end
   end
 
-  def flash
-    Brut::FrontEnd::Flash.from_h(session[:_flash])
-  end
-
-  def page(page_instance)
-    call_render = CallRenderInjectingInfo.new(page_instance)
+  # @private
+  def render_html(component_or_page_instance)
+    call_render = CallRenderInjectingInfo.new(component_or_page_instance)
     result = call_render.call_render(**Thread.current[:rendering_context])
     case result
     in Brut::FrontEnd::HttpStatus => http_status
@@ -100,9 +100,7 @@ module Brut::SinatraHelpers
       result
     end
   end
-  def component(component_instance)
-    self.page(component_instance)
-  end
+
 
   module ClassMethods
 
@@ -152,7 +150,7 @@ module Brut::SinatraHelpers
           page_class,
           request_params: params,
         )
-        page page_class.new(**constructor_args)
+        render_html page_class.new(**constructor_args)
       end
     end
 
@@ -221,11 +219,11 @@ module Brut::SinatraHelpers
         in URI => uri
           redirect to(uri.to_s)
         in Brut::FrontEnd::Component => component_instance
-          component(component_instance).to_s
+          render_html(component_instance).to_s
         in [ Brut::FrontEnd::Component => component_instance, Brut::FrontEnd::HttpStatus => http_status ]
           [
             http_status.to_i,
-            component(component_instance).to_s,
+            render_html(component_instance).to_s,
           ]
         in Brut::FrontEnd::HttpStatus => http_status
           http_status.to_i

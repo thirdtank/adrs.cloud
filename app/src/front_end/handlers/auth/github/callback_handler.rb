@@ -4,7 +4,7 @@ module Auth
       def handle!(env:, flash:, session:)
         github_linked_account = GithubLinkedAccount.find(omniauth_hash: env["omniauth.auth"])
         if github_linked_account.exists?
-          session["user_id"] = github_linked_account.session_id
+          session.login!(github_linked_account.session_id)
           redirect_to(AdrsPage)
         else
           flash[:error] = "auth.no_account"

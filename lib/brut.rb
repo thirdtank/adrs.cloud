@@ -16,6 +16,7 @@ module Brut
     autoload(:Routing, "brut/front_end/routing")
     autoload(:HttpMethod, "brut/front_end/http_method")
     autoload(:HttpStatus, "brut/front_end/http_status")
+    autoload(:Session, "brut/front_end/session")
   end
   module BackEnd
     autoload(:Result, "brut/back_end/result")
