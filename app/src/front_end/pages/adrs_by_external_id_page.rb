@@ -3,7 +3,7 @@ class AdrsByExternalIdPage < AppPage
 
   def initialize(account:, external_id:, flash:)
     @adr = DataModel::Adr[account_id: account.id, external_id: external_id]
-    @info_message = flash[:notice]
+    @info_message = flash.notice
   end
 
   def markdown(field)

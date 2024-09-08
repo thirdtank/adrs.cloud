@@ -10,7 +10,7 @@ class EditDraftAdrWithExternalIdHandler < AppHandler
           http_status(422),
         ]
       else
-        flash[:error] = :adr_invalid
+        flash.alert = :adr_invalid
         EditDraftAdrByExternalIdPage.new(
           form:,
           flash:,
@@ -22,7 +22,7 @@ class EditDraftAdrWithExternalIdHandler < AppHandler
       if xhr
         http_status(200)
       else
-        flash[:notice] = :adr_updated
+        flash.notice = :adr_updated
         redirect_to(AdrsByExternalIdPage, external_id: draft_adr.external_id)
       end
     end

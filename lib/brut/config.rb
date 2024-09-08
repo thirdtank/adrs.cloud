@@ -253,6 +253,14 @@ class Brut::Config
         allow_app_override: true,
       )
 
+      c.store(
+        "flash_class",
+        Class,
+        "Class to use to represent the Flash",
+        Brut::FrontEnd::Flash,
+        allow_app_override: true,
+      )
+
     end
   end
 end

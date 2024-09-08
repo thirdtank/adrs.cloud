@@ -7,7 +7,7 @@ module Auth
           session.login!(dev_only_account.session_id)
           redirect_to(AdrsPage)
         else
-          flash[:error] = "auth.no_account"
+          flash.alert = "auth.no_account"
           HomePage.new(flash:)
         end
       end

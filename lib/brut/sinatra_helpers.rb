@@ -73,7 +73,7 @@ module Brut::SinatraHelpers
       Thread.current[:rendering_context] = {
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
       }
-      flash = Brut::FrontEnd::Flash.from_h(app_session[:_flash])
+      flash = app_session.flash
       app_session[:_flash] ||= flash
       Thread.current.thread_variable_set(
         :request_context,
@@ -83,9 +83,9 @@ module Brut::SinatraHelpers
     sinatra_app.after do
       app_session = Brut.container.session_class.new(rack_session: session)
       Thread.current[:rendering_context] = nil
-      flash = Brut::FrontEnd::Flash.from_h(app_session[:_flash])
+      flash = app_session.flash
       flash.age!
-      app_session[:_flash] = flash.to_h
+      app_session.flash = flash
     end
   end
 

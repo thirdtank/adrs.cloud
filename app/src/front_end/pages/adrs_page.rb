@@ -3,7 +3,7 @@ class AdrsPage < AppPage
   attr_reader :info_message, :tag
 
   def initialize(account:, flash:, tag: nil)
-    @info_message = flash[:notice]
+    @info_message = flash.notice
     @tag          = tag
     @adrs         = AccountAdrs.find_all(account:,tag:).adrs
   end

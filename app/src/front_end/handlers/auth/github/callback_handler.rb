@@ -7,7 +7,7 @@ module Auth
           session.login!(github_linked_account.session_id)
           redirect_to(AdrsPage)
         else
-          flash[:error] = "auth.no_account"
+          flash.alert = "auth.no_account"
           HomePage.new(flash:)
         end
       end

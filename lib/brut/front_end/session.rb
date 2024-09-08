@@ -10,4 +10,11 @@ class Brut::FrontEnd::Session
   end
 
   def delete(key) = @rack_session.delete(key.to_s)
+
+  def flash
+    Brut.container.flash_class.from_h(self[:_flash])
+  end
+  def flash=(new_flash)
+    self[:_flash] = new_flash.to_h
+  end
 end
