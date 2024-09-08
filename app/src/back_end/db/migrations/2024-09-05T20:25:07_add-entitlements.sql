@@ -1,5 +1,5 @@
 CREATE TABLE entitlement_defaults (
-  id BIGSERIAL PRIMARY KEY,
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   external_id citext NOT NULL UNIQUE,
   internal_name text NOT NULL,
   max_non_rejected_adrs integer NOT NULL,
@@ -19,7 +19,7 @@ EXECUTE PROCEDURE generate_external_id('ent');
 CREATE UNIQUE INDEX ON entitlement_defaults(internal_name);
 
 CREATE TABLE entitlements (
-  id BIGSERIAL PRIMARY KEY,
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   entitlement_default_id BIGINT NOT NULL REFERENCES entitlement_defaults(id),
   max_non_rejected_adrs integer NULL,
   account_id BIGINT NOT NULL UNIQUE REFERENCES accounts(id),

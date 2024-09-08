@@ -5,6 +5,7 @@ require "front_end/components/app_component"
 require "front_end/pages/app_page"
 require "back_end/data_models/app_data_model"
 require "back_end/actions/app_action"
+require "back_end/domain"
 require "front_end/forms/app_form"
 require "front_end/handlers/app_handler"
 
@@ -27,23 +28,25 @@ class AdrApp < Sinatra::Base
 
   before do
     is_auth_callback         = request.path_info.match?(/^\/auth\//)
-    is_root                  = request.path_info == "/"
+    is_root_path             = request.path_info == "/"
     is_public_dynamic_route  = request.path_info.match?(/^\/shared_adrs\//)
     is_test_page             = request.path_info == "/end-to-end-tests"
 
-    @account = DataModel::Account[external_id: session["user_id"]]
-    Thread.current.thread_variable_get(:request_context)[:account] = @account
+    authenticated_account = AuthenticatedAccount.find(session_id: session["user_id"])
 
-    logged_out = @account.nil?
-    requires_login = !is_auth_callback && !is_root && !is_public_dynamic_route && !is_test_page
+    requires_login = !is_auth_callback        &&
+                     !is_root_path            &&
+                     !is_public_dynamic_route &&
+                     !is_test_page
 
     if requires_login
       logger.info "Login required"
-      if logged_out
+      if authenticated_account.exists?
+        Thread.current.thread_variable_get(:request_context)[:account] = authenticated_account.account
+        logger.info "Someone is logged in so all good"
+      else
         logger.info "No one is logged in"
         redirect to("/")
-      else
-        logger.info "Someone is logged in so all good"
       end
     else
       logger.info "Login not required"

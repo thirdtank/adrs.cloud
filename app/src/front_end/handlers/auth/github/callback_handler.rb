@@ -2,14 +2,13 @@ module Auth
   module Github
     class CallbackHandler < AppHandler
       def handle!(env:, flash:, session:)
-        action = Actions::GitHubAuth.new
-        account = action.auth(env["omniauth.auth"])
-        if account.nil?
+        github_linked_account = GithubLinkedAccount.find(omniauth_hash: env["omniauth.auth"])
+        if github_linked_account.exists?
+          session["user_id"] = github_linked_account.session_id
+          redirect_to(AdrsPage)
+        else
           flash[:error] = "auth.no_account"
           HomePage.new(flash:)
-        else
-          session["user_id"] = account.external_id
-          redirect_to(AdrsPage)
         end
       end
     end

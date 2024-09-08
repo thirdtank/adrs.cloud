@@ -1,5 +1,5 @@
 CREATE TABLE adrs (
-  id BIGSERIAL PRIMARY KEY,
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   external_id citext NOT NULL UNIQUE,
   title text NOT NULL,
   context text NULL,

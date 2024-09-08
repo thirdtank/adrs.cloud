@@ -16,7 +16,7 @@
 --     free form than replacment.  Any number of ADRs can refine an existing, accepted ADR.
 --
 CREATE TABLE proposed_adr_replacements (
-  id BIGSERIAL PRIMARY KEY,
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   replaced_adr_id bigint NOT NULL references adrs(id),
   replacing_adr_id bigint NOT NULL references adrs(id),
   created_at timestamp with time zone NOT NULL

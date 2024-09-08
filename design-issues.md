@@ -14,6 +14,26 @@ set of assertions and testing stuff could be done that uses the infra fromp play
 
 ## SQL/Data Layer is nowhere near as ergonomic as Active Record
 
+* overriding create() is annoying
+* having to figure out the associations is annoying
+* schema stuff is annoying
+
+Ideally:
+
+- Creating a table automatically:
+  - sets up a primary key
+  - optionally sets up an external id
+  - sets created\_at
+  - allows / requires commenting
+- A "model" should, automatically:
+  - return itself with its generated info from create
+  - have associations on it, based on schema (explicit, but pre-generated)
+  - allow rich type conversion to/from column type
+- Scheam ergonomics
+  - foreign keys super easy/constraints set up etc.
+  - fields not nullable by default
+
+
 ## Actions have a lot of "is the person logged in allowed to access this"
 
 * check vs call concept can help here

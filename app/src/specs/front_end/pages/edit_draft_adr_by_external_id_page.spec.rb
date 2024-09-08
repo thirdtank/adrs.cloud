@@ -5,8 +5,7 @@ RSpec.describe EditDraftAdrByExternalIdPage do
     it "shows the error message" do
       adr = create(:adr)
       page = described_class.new(account: adr.account, external_id: adr.external_id,
-                                 flash: empty_flash,
-                                 error_message: :adr_cannot_be_accepted)
+                                 flash: flash_from(error: :adr_cannot_be_accepted))
 
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
@@ -36,19 +35,6 @@ RSpec.describe EditDraftAdrByExternalIdPage do
         created_at: Time.now,
       )
       page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
-
-      rendered_html = render_and_parse(page)
-      expect(rendered_html.text).to include("Proposed Replacement for “#{adr_to_replace.title}”")
-    end
-    it "works if given an adr" do
-      adr            = create(:adr, :accepted, accepted_at: nil)
-      adr_to_replace = create(:adr, :accepted, account: adr.account)
-      DataModel::ProposedAdrReplacement.create(
-        replacing_adr_id: adr.id,
-        replaced_adr_id: adr_to_replace.id,
-        created_at: Time.now,
-      )
-      page = described_class.new(adr: adr, flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.text).to include("Proposed Replacement for “#{adr_to_replace.title}”")

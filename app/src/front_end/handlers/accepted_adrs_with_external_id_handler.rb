@@ -1,17 +1,20 @@
 class AcceptedAdrsWithExternalIdHandler < AppHandler
   def handle!(form:, account:, flash:)
-    action = Actions::Adrs::Accept.new
-    adr = action.accept(form:,account:)
+    draft_adr = DraftAdr.find(account:,external_id:form.external_id)
+
+    form = draft_adr.accept(form:)
+
     if form.constraint_violations?
+      flash[:error] = :adr_cannot_be_accepted
       EditDraftAdrByExternalIdPage.new(
-        adr:,
         form:,
         flash:,
-        error_message: :adr_cannot_be_accepted,
+        account:,
+        external_id: draft_adr.external_id,
       )
     else
       flash[:notice] = :adr_accepted
-      redirect_to(AdrsByExternalIdPage, external_id: adr.external_id)
+      redirect_to(AdrsByExternalIdPage, external_id: draft_adr.external_id)
     end
   end
 end

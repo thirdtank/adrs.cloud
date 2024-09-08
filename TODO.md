@@ -14,7 +14,8 @@ CHECK 2 - i18n Cleanup
 
           account -> entitlements -> entitlements_defaults
 
-          USER       WHAT THEY CAN DO   PLAN
+
+
 
       4 - Visual Review
           DONE: List of all parts of the app that need a visual re-think or change
