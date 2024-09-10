@@ -92,9 +92,9 @@ module Brut::SinatraHelpers
       )
     end
     sinatra_app.after do
+      flash = Thread.current.thread_variable_get(:request_context)[:flash]
       app_session = Brut.container.session_class.new(rack_session: session)
       Thread.current[:rendering_context] = nil
-      flash = app_session.flash
       flash.age!
       app_session.flash = flash
     end

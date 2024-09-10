@@ -3,4 +3,6 @@ class DataModel::Account < AppDataModel
 
   one_to_many :adrs
   one_to_one :entitlement
+
+  def deactivated? = !!self.deactivated_at
 end

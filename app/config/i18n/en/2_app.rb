@@ -9,6 +9,7 @@
           # These are snake case, which is idiomatic for Ruby.  The values
           # here are all based on DataObjectValidator's behavior
           not_enough_words: "%{field} must have at least %{minwords} words",
+          account_exists: "That account already exists",
         },
       },
     },
@@ -131,20 +132,13 @@
           because: "**Because** %{content}",
         },
       },
-      adrs: {
-        new: {
-          adr_invalid: "ADR is invalid. See below",
-        },
-        edit: {
-          adr_cannot_be_accepted: "ADR cannot be accepted. See below",
-          adr_invalid: "ADR is invalid. See below",
-          refines: "Refines",
-          proposed_replacement: "Proposed Replacement for",
-        }
+      "Admin::AccountsByExternalIdPage" => {
+        entitlements_saved: "Entitlements updated",
+        entitlements_cannot_be_saved: "Entitlements cannot be saved",
       },
-      adrs_for_tag: {
-        no_drafts: "None Drafted with tag '%{tag}'",
-        no_accepted: "None Accepted with tag '%{tag}'",
+      "Admin::HomePage" => {
+        account_created: "Account created and access granted",
+        account_deactivated: "Account has been deactivcated",
       },
     },
     components: {

@@ -91,5 +91,6 @@ class AdrApp < Sinatra::Base
   page "/admin/accounts/:external_id"
   form "/admin/new_account"
   form "/admin/account_entitlements/:external_id"
+  form "/admin/deactivated_accounts/:external_id"
 
 end

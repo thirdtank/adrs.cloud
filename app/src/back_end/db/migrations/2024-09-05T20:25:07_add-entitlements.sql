@@ -31,3 +31,7 @@ COMMENT ON TABLE entitlements IS
 
 CREATE INDEX entitlements_entitlement_default_id ON entitlements(entitlement_default_id);
 
+ALTER TABLE
+  accounts
+ADD COLUMN
+  deactivated_at TIMESTAMP WITH TIME ZONE NULL;

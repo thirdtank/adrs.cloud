@@ -1,6 +1,6 @@
 module Admin
   class NewAccountForm < AppForm
-    input :github_username, required: true
+    input :email, required: true
 
     def new_record? = true
   end

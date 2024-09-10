@@ -1,14 +1,24 @@
+<% if flash.notice? %>
+  <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+    <%= t(flash.notice) %>
+  </aside>
+<% end %>
+<% if flash.alert? %>
+  <aside role="status" class="ba bc-red-600 bg-red-900 red-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+    <%= t(flash.alert) %>
+  </aside>
+<% end %>
 <section class="mh-auto w-two-thirds">
 <h1>Admin</h1>
   <div class="flex justify-between gap-3">
     <brut-form class="flex-grow-1">
-      <%= form_tag(for: Admin::NewAccountForm,
+      <%= form_tag(for: new_account_form.class,
                    class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns") do %>
         <%= component TextFieldComponent.new(
-          label: "GitHub Username",
+          label: "Email address",
           form: new_account_form,
-          input_name: "github_username",
-          placeholder: "e.g. davetron5000",
+          input_name: "email",
+          placeholder: "e.g. pat@example.com",
           autofocus: true) %>
         <div class="mt-2 flex justify-center">
           <%= component(ButtonComponent.new(

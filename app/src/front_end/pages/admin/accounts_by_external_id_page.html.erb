@@ -1,4 +1,17 @@
+<% if flash.notice? %>
+  <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+    <%= t(flash.notice) %>
+  </aside>
+<% end %>
+<% if flash.alert? %>
+  <aside role="status" class="ba bc-red-600 bg-red-900 red-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+    <%= t(flash.alert) %>
+  </aside>
+<% end %>
 <section class="mh-auto w-two-thirds">
+  <nav class="w-100 flex items-center pa-3">
+    <a href="<%= Admin::HomePage.routing%>">&larr; <%= t(:back) %></a>
+  </nav>
   <h1><code><%= account.email %></code></h1>
   <h2>Entitlements - <%= account.entitlement.entitlement_default.internal_name %></h2>
   <brut-form>
@@ -36,13 +49,24 @@
           </tr>
         </tbody>
       </table>
-      <div class="flex justify-end mt-3">
+      <div class="flex justify-end gap-3 mt-3">
         <%= component(ButtonComponent.new(
           color: :blue,
           label: "Update Entitlements",
           icon: "access-hand-key-icon",
         )) %>
       </div>
+      <div class="flex justify-end mt-3">
+        <%= component(ButtonComponent.new(
+          color: :red,
+          size: :tiny,
+          formaction: Admin::DeactivatedAccountsWithExternalIdHandler.routing(external_id: account.external_id),
+          label: "Revoke Access",
+          icon: "lock-icon",
+          confirm: "This user will no longer be able to access their data",
+        )) %>
+      </div>
     <% end %>
   </brut-form>
 </section>
+<%= component(ConfirmationDialogComponent.new) %>

@@ -18,11 +18,13 @@ class Brut::FrontEnd::Flash
     self[:notice] = notice
   end
   def notice = self[:notice]
+  def notice? = !!self.notice
 
   def alert=(notice)
     self[:error] = notice
   end
   def alert = self[:error]
+  def alert? = !!self.alert
 
   def age!
     @age += 1
