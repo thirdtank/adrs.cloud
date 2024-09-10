@@ -1,9 +1,7 @@
 class EndToEndTestsPage < AppPage
-  def render
-    if Brut.container.project_env.test?
-      super
-    else
-      Brut::FrontEnd::HttpStatus.new(404)
+  def before_render
+    if !Brut.container.project_env.test?
+      http_status(404)
     end
   end
 end

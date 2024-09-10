@@ -3,6 +3,19 @@ require "spec_helper"
 RSpec.describe NewDraftAdrHandler do
   subject(:handler) { described_class.new }
   describe "#handle!" do
+    context "limit on adrs exceeded" do
+      it "returns a 403 as this should never have been posted to" do
+        account = create(:account)
+        account.entitlement.update(max_non_rejected_adrs: 3)
+        create(:adr, account: account)
+        create(:adr, account: account)
+        create(:adr, account: account)
+
+        form = NewDraftAdrForm.new
+        result = handler.handle!(form:,account:,flash: empty_flash)
+        expect(result.to_i).to eq(403)
+      end
+    end
     context "there are constraint violations" do
       it "has violations on the form, an error message in the flash, and re-renders the page" do
         account = create(:account)

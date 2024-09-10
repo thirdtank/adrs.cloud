@@ -29,21 +29,43 @@ RSpec.describe AdrsPage do
   end
   context "showing all ADRs" do
     context "drafts" do
-      it "shows the drafts table" do
-        account = create(:account)
-        adrs = [
-          create(:adr, account: account),
-          create(:adr, account: account),
-          create(:adr, account: account)
-        ]
-        page = described_class.new(account: account, flash: empty_flash)
-        rendered_html = render_and_parse(page)
-        expect(rendered_html.text).not_to include("None Drafted")
-        html_locator = Support::HtmlLocator.new(rendered_html)
-        table = html_locator.table_captioned("Draft ADRs")
-        rows = table.css("tbody tr")
-        expect(rows.length).to eq(adrs.length + 1)
-        expect(rows[adrs.length].text).to include("Add a new one")
+      context "user is entitled to add more ADRs" do
+        it "shows the drafts table" do
+          account = create(:account)
+          adrs = [
+            create(:adr, account: account),
+            create(:adr, account: account),
+            create(:adr, account: account)
+          ]
+          page = described_class.new(account: account, flash: empty_flash)
+          rendered_html = render_and_parse(page)
+          expect(rendered_html.text).not_to include("None Drafted")
+          html_locator = Support::HtmlLocator.new(rendered_html)
+          table = html_locator.table_captioned("Draft ADRs")
+          rows = table.css("tbody tr")
+          expect(rows.length).to eq(adrs.length + 1)
+          expect(rows[adrs.length].text).to include("Add a new one")
+        end
+      end
+      context "user is not entitled to add more ADRs" do
+        it "shows the drafts table" do
+          account = create(:account)
+          account.entitlement.update(max_non_rejected_adrs: 3)
+          adrs = [
+            create(:adr, account: account),
+            create(:adr, account: account),
+            create(:adr, account: account)
+          ]
+          page = described_class.new(account: account, flash: empty_flash)
+          rendered_html = render_and_parse(page)
+          expect(rendered_html.text).not_to include("None Drafted")
+          html_locator = Support::HtmlLocator.new(rendered_html)
+          table = html_locator.table_captioned("Draft ADRs")
+          rows = table.css("tbody tr")
+          expect(rows.length).to eq(adrs.length + 1)
+          expect(rows[adrs.length].text).not_to include("Add a new one")
+          expect(rows[adrs.length].text).to     include("You&#39;ve reached your plan limit")
+        end
       end
     end
     context "accepted adrs" do

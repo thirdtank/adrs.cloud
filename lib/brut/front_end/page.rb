@@ -1,10 +1,24 @@
 # A page is a component that has a layout and thus is intended to be
 # an entire web page, not just a fragment.
 class Brut::FrontEnd::Page < Brut::FrontEnd::Component
+  include Brut::FrontEnd::HandlingResults
   uses :layout_locator
   uses :page_locator
 
   def layout = "default"
+
+  def before_render = nil
+
+  def handle!
+    case before_render
+    in URI => uri
+      uri
+    in Brut::FrontEnd::HttpStatus => http_status
+      http_status
+    else
+      render
+    end
+  end
 
   # Overrides component's render to add the concept of a layout.
   # A layout is an HTML/ERB file that will contain this page's contents.

@@ -4,7 +4,10 @@ class AdrsByExternalIdPage < AppPage
   def initialize(account:, external_id:, flash:)
     @adr = DataModel::Adr[account_id: account.id, external_id: external_id]
     @info_message = flash.notice
+    @can_add_new  = AccountEntitlements.new(account:).can_add_new?
   end
+
+  def can_add_new? = @can_add_new
 
   def markdown(field)
     value = t("fields.#{field}", content: adr.send(field))

@@ -132,6 +132,7 @@
               size: "normal",
               variant: :left,
               formaction: ReplacedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
+              disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
               color: "red",
               label: t(:replace),
               icon: "change-icon"
@@ -142,6 +143,7 @@
               size: "normal",
               variant: :right,
               formaction: RefinedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
+              disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
               color: "purple",
               label: t(:refine),
               icon: "adjust-control-icon"

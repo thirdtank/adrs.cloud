@@ -6,6 +6,10 @@ class AdrsPage < AppPage
     @info_message = flash.notice
     @tag          = tag
     @adrs         = AccountAdrs.find_all(account:,tag:).adrs
+
+    num_non_rejected_adrs = @adrs.length - self.rejected_adrs.length
+
+    @can_add_new  = AccountEntitlements.new(account:).can_add_new?
   end
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)
   def replaced_adrs = @adrs.select(&:replaced?).sort_by { |adr|
@@ -15,5 +19,7 @@ class AdrsPage < AppPage
   def rejected_adrs = @adrs.select(&:rejected?).sort_by(&:rejected_at)
 
   def tag? = !!@tag
+
+  def can_add_new? = @can_add_new
 
 end

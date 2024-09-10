@@ -13,6 +13,7 @@ module Brut
     autoload(:Flash, "brut/front_end/flash")
     autoload(:Form, "brut/front_end/form")
     autoload(:Handler, "brut/front_end/handler")
+    autoload(:HandlingResults, "brut/front_end/handling_results")
     autoload(:Routing, "brut/front_end/routing")
     autoload(:HttpMethod, "brut/front_end/http_method")
     autoload(:HttpStatus, "brut/front_end/http_status")

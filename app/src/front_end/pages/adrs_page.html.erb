@@ -98,7 +98,11 @@
       <% end %>
       <tr>
         <td class="tc pa-2" colspan="3">
-          <a class="f-3 blue-400 fw-5" href="<%= NewDraftAdrPage.routing %>"><%= t(:add_new) %></a>
+          <% if can_add_new? %>
+            <a class="f-3 blue-400 fw-5" href="<%= NewDraftAdrPage.routing %>"><%= t(:add_new) %></a>
+          <% else %>
+            <%= t(:add_new_limit_exceeded) %>
+          <% end %>
         </td>
       </tr>
     </tbody>

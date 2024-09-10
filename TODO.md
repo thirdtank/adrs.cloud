@@ -7,17 +7,14 @@ CHECK 2 - i18n Cleanup
           DONE: all strings are i18n'ed
           DONE: i18n.rb is set up in a meaningful way that makes more sense than what is now
 
-      3 - Limits on accounts
+CHECK 3 - Limits on accounts
           DONE: An account can be limited to only 5 ADRs (the limit can be changed per-account)
-          DONE: Admin UI to allow new accounts + adjust limits
           DONE: limit is not a set of attributes on accounts
 
-          account -> entitlements -> entitlements_defaults
+      4 - Admin UI
+          DONE: Admin UI to allow new accounts + adjust limits
 
-
-
-
-      4 - Visual Review
+      5 - Visual Review
           DONE: List of all parts of the app that need a visual re-think or change
 
 What is this going to be / criteria for launch?

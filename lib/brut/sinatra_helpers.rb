@@ -150,7 +150,16 @@ module Brut::SinatraHelpers
           page_class,
           request_params: params,
         )
-        render_html page_class.new(**constructor_args)
+        page_instance = page_class.new(**constructor_args)
+        result = page_instance.handle!
+        case result
+        in URI => uri
+          redirect to(uri.to_s)
+        in Brut::FrontEnd::HttpStatus => http_status
+          http_status.to_i
+        else
+          result
+        end
       end
     end
 
@@ -182,7 +191,7 @@ module Brut::SinatraHelpers
       route      = Brut.container.routing.register_form(path)
       handler_class = route.handler_class
       form_class    = route.form_class
-      self.define_handled_route(route,handler_class,:handle!,form_class)
+      self.define_handled_route(route,handler_class,form_class)
     end
 
     # When you need to respond to a given path/method, but it's not a page nor a form.  For example, webhooks often
@@ -192,12 +201,12 @@ module Brut::SinatraHelpers
     def path(path, method:)
       route         = Brut.container.routing.register_path(path, method: Brut::FrontEnd::HttpMethod.new(method))
       handler_class = route.handler_class
-      self.define_handled_route(route,handler_class,:handle!)
+      self.define_handled_route(route,handler_class)
     end
 
   private
 
-    def define_handled_route(brut_route,handler_class,method_name,form_class=nil)
+    def define_handled_route(brut_route,handler_class,form_class=nil)
 
       method = brut_route.method.to_s.upcase
       path   = brut_route.path_template
@@ -211,7 +220,7 @@ module Brut::SinatraHelpers
                  form_class.new(params: params)
                end
 
-        process_args = request_context.as_method_args(handler,method_name,request_params: params,form: form)
+        process_args = request_context.as_method_args(handler,:handle!,request_params: params,form: form)
 
         result = handler.handle!(**process_args)
 

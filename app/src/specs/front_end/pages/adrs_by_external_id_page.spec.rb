@@ -68,6 +68,29 @@ RSpec.describe AdrsByExternalIdPage do
     end
   end
   context "accepted, not replaced" do
+    context "ADR limit exceeded" do
+      it "the Replace and Refine buttons are disabled" do
+        adr = create(:adr, :accepted)
+        adr.account.entitlement.update(max_non_rejected_adrs: 3)
+        create(:adr, account: adr.account)
+        create(:adr, account: adr.account)
+
+        page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
+
+        parsed_html = render_and_parse(page)
+
+        expect(parsed_html.text).to include("Accepted")
+
+        replace_button = parsed_html.css("button[aria-label='Replace'][disabled]")[0]
+        expect(replace_button).not_to eq(nil)
+        expect(replace_button[:title]).to eq("You&#39;ve reached your plan limit")
+
+        refine_button = parsed_html.css("button[aria-label='Refine'][disabled]")[0]
+        expect(refine_button).not_to eq(nil)
+        expect(refine_button[:title]).to eq("You&#39;ve reached your plan limit")
+
+      end
+    end
     it "shows that it was accepted and allows replacement and refinement" do
       adr  = create(:adr, :accepted)
 

@@ -1,5 +1,8 @@
 class DraftAdr
   def self.create(account:)
+    if !AccountEntitlements.new(account:).can_add_new?
+      raise Brut::BackEnd::Errors::Bug, "#{account.external_id} has reached its plan limit - this should not have been called"
+    end
     adr = DataModel::Adr.new(created_at: Time.now, account: account)
     DraftAdr.new(adr:)
   end

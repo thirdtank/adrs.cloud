@@ -37,6 +37,7 @@
         adr_invalid: "ADR cannot be created. See below.",
         tags_updated: "Tags Updated",
         sharing_stopped: "Sharing Stopped",
+        add_new_limit_exceeded: "You've reached your plan limit",
         auth: {
           no_account: "No account with that email",
           logged_out: "You have been logged out",

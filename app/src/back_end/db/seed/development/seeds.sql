@@ -1,5 +1,14 @@
 INSERT INTO accounts (email, created_at) VALUES( 'davec@naildrivin5.com',now());
-
+INSERT INTO entitlement_defaults(internal_name,max_non_rejected_adrs,created_at) VALUES('basic',20,now());
+INSERT INTO entitlements(entitlement_default_id,max_non_rejected_adrs,account_id,created_at)
+select
+  entitlement_defaults.id,
+  19,
+  accounts.id,
+  now()
+FROM
+  accounts, entitlement_defaults
+;
 
 --
 -- Data for Name: adrs; Type: TABLE DATA; Schema: public; Owner: postgres

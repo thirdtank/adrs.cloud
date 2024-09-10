@@ -13,8 +13,13 @@ class AccountAdrs
     self.new(adrs:)
   end
 
+  def self.num_non_rejected(account:)
+    account.adrs_dataset.where(rejected_at: nil).count
+  end
+
   attr_reader :adrs
   def initialize(adrs:)
     @adrs = adrs
   end
+  def size = adrs.size
 end
