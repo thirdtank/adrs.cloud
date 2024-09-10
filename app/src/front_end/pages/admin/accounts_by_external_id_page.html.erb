@@ -1,0 +1,48 @@
+<section class="mh-auto w-two-thirds">
+  <h1><code><%= account.email %></code></h1>
+  <h2>Entitlements - <%= account.entitlement.entitlement_default.internal_name %></h2>
+  <brut-form>
+    <%= form_tag(action: form.class.routing(external_id: account.external_id),
+                 method: :post) do %>
+      <table class="collapse w-100">
+        <thead>
+          <tr>
+            <th class="bb br tl f-3 pa-2">Entitlement</th>
+            <th class="bb br tl f-3 pa-2"><%= account.entitlement.entitlement_default.internal_name %></th>
+            <th class="bb br tl f-3 pa-2">Account-specific Value</th>
+            <th class="bb    tr f-3 pa-2 bg-gray-800 fw-bold">Effective Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="bb br tl pa-2"><label for="max_non_rejected_adrs">Min Non-Rejected ADRs</label></th>
+            <td class="bb br tl pa-2">
+              <adr-entitlement-default entitlement="max_non_rejected_adrs">
+              <%= account.entitlement.entitlement_default.max_non_rejected_adrs %>
+              </adr-entitlement-default>
+            </td>
+            <td class="bb br tl pa-2">
+              <adr-entitlement-override entitlement="max_non_rejected_adrs">
+                <%= component(TextFieldComponent.new(label: { id: "max_non_rejected_adrs" },
+                                                     form: form,
+                                                     input_name: :max_non_rejected_adrs)) %>
+              </adr-entitlement-override>
+            </td>
+            <td class="bb    tr pa-2 bg-gray-800 f-3 fw-bold">
+              <adr-entitlement-effective show-warnings="max_non_rejected_adrs" entitlement="max_non_rejected_adrs">
+                <%= effective(:max_non_rejected_adrs) %>
+              </adr-entitlement-effective>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="flex justify-end mt-3">
+        <%= component(ButtonComponent.new(
+          color: :blue,
+          label: "Update Entitlements",
+          icon: "access-hand-key-icon",
+        )) %>
+      </div>
+    <% end %>
+  </brut-form>
+</section>

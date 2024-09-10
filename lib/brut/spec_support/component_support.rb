@@ -17,7 +17,7 @@ module Brut::SpecSupport::ComponentSupport
   end
 
   def routing_for(klass,**args)
-    Brut.container.routing.for(klass,**args)
+    Brut.container.routing.uri(klass,**args)
   end
 
   def escape_html(...)

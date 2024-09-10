@@ -42,6 +42,7 @@ class ButtonComponent < AppComponent
     when :left   then "button--variant--left"
     when :right  then "button--variant--right"
     when :middle then "button--variant--middle"
+    when :search then "button--variant--search"
     else
       raise ArgumentError.new("variant '#{@variant}' is unknown. Must be :normal, :left, :middle, :right")
     end

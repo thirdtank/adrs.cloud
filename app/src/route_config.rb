@@ -13,10 +13,7 @@ require "pp"
 
 class AdrApp < Sinatra::Base
 
-  enable :sessions
-  set :session_secret, ENV.fetch("SESSION_SECRET")
-
-  use Rack::Protection::AuthenticityToken
+  include Brut::SinatraHelpers
 
   set :public_folder, Brut.container.public_root_dir
 
@@ -24,7 +21,6 @@ class AdrApp < Sinatra::Base
     provider :github, ENV.fetch("GITHUB_CLIENT_ID"), ENV.fetch("GITHUB_CLIENT_SECRET"), scope: "read:user,user:email"
   end
 
-  include Brut::SinatraHelpers
 
   before do
 
@@ -46,6 +42,7 @@ class AdrApp < Sinatra::Base
       logger.info "Login required"
       if authenticated_account.exists?
         Thread.current.thread_variable_get(:request_context)[:account] = authenticated_account.account
+        Thread.current.thread_variable_get(:request_context)[:account_entitlements] = AccountEntitlements.new(account: authenticated_account.account)
         logger.info "Someone is logged in so all good"
       else
         logger.info "No one is logged in"
@@ -88,5 +85,11 @@ class AdrApp < Sinatra::Base
 
   form "/shared_adrs/:external_id"
   form "/private_adrs/:external_id"
+
+  page "/admin/home"
+  page "/admin/accounts"
+  page "/admin/accounts/:external_id"
+  form "/admin/new_account"
+  form "/admin/account_entitlements/:external_id"
 
 end

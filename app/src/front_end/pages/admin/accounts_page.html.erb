@@ -1,0 +1,27 @@
+<section class="mh-auto w-two-thirds">
+  <h1>Accounts</h1>
+  <% if matching_accounts.any? %>
+    <table class="collapse w-100" >
+      <thead>
+        <tr>
+          <th class="bb bc-gray-200 tl fw-bold f-3 pa-2">Email Address</th>
+          <th class="bb bc-gray-200 tl fw-bold f-3 pa-2"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% matching_accounts.each do |account| %>
+          <tr>
+            <td class="bb br bc-gray-500 pa-2">
+              <code><%= account.email %></code>
+            </td>
+            <td class="bb bc-gray-500 pa-2">
+              <a class="blue-300" href="<%= edit_account_path(account) %>">Edit</a>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="p i">None Matched '<%= search_string %>'</p>
+  <% end %>
+</section>

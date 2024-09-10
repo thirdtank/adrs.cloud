@@ -30,7 +30,7 @@ class Brut::FrontEnd::Routing
     route
   end
 
-  def for(handler_class, with_method: :any, **rest)
+  def route(handler_class)
     route = @routes.detect { |route|
       handler_class_match = route.handler_class == handler_class
       form_class_match = if route.respond_to?(:form_class)
@@ -43,9 +43,14 @@ class Brut::FrontEnd::Routing
     if !route
       raise ArgumentError,"There is no configured route for #{handler_class}"
     end
+    route
+  end
+
+  def uri(handler_class, with_method: :any, **rest)
+    route = self.route(handler_class)
     route_allowed_for_method = if with_method == :any
                                  true
-                               elsif Brut::FrontEnd::HttpMethod.new(with_method) == route.method
+                               elsif Brut::FrontEnd::HttpMethod.new(with_method) == route.http_method
                                  true
                                else
                                  false
@@ -58,20 +63,20 @@ class Brut::FrontEnd::Routing
 
   def inspect
     @routes.map { |route|
-      "#{route.method}:#{route.path} - #{route.handler_class.name}"
+      "#{route.http_method}:#{route.path_template} - #{route.handler_class.name}"
     }.join("\n")
   end
 
   def add_routing_method(route)
     handler_class = route.handler_class
     if handler_class.respond_to?(:routing)
-      raise ArgumentError,"#{handler_class} implements ::routing, which it should not"
+      raise ArgumentError,"#{handler_class} (that handles path #{route.path_template}) implements ::routing, which it should not"
     end
     form_class = route.respond_to?(:form_class) ? route.form_class : nil
     [ handler_class, form_class ].compact.each do |klass|
       klass.class_eval do
         def self.routing(**args)
-          Brut.container.routing.for(self,**args)
+          Brut.container.routing.uri(self,**args)
         end
       end
     end
@@ -81,17 +86,17 @@ class Brut::FrontEnd::Routing
 
     include SemanticLogger::Loggable
 
-    attr_reader :handler_class, :path_template, :method
+    attr_reader :handler_class, :path_template, :http_method
 
     def initialize(method,path_template)
-      method = Brut::FrontEnd::HttpMethod.new(method)
-      if ![:get, :post].include?(method.to_sym)
+      http_method = Brut::FrontEnd::HttpMethod.new(method)
+      if ![:get, :post].include?(http_method.to_sym)
         raise ArgumentError,"Only GET and POST are supported. '#{method}' is not"
       end
       if path_template !~ /^\//
         raise ArgumentError,"Routes must start with a slash: '#{path_template}'"
       end
-      @method        = method
+      @http_method   = http_method
       @path_template = path_template
       @handler_class = self.locate_handler_class(self.suffix,self.preposition)
     end
@@ -101,7 +106,12 @@ class Brut::FrontEnd::Routing
         if path_part =~ /^:(.+)$/
           param_name = $1.to_sym
           if !query_string_params.key?(param_name)
-            raise ArgumentError,"path for #{@handler_class} requires '#{param_name}' as a path parameter, but it was not specified to #path. Got: #{query_string_params.keys.map(&:to_s).join(", ")}"
+            query_string_params_for_message = if query_string_params.keys.any?
+                                                query_string_params.keys.map(&:to_s).join(", ")
+                                              else
+                                                "no params"
+                                              end
+            raise ArgumentError,"path for #{@handler_class} requires '#{param_name}' as a path parameter, but it was not specified to #path. Got #{query_string_params_for_message}"
           end
           query_string_params.delete(param_name)
         else
@@ -139,7 +149,7 @@ class Brut::FrontEnd::Routing
       }
       part_names[-1] += suffix
       part_names.inject(Module) { |mod,path_element|
-        mod.const_get(path_element)
+        mod.const_get(path_element,mod == Module)
       }
     rescue NameError => ex
       module_message = if ex.receiver == Module

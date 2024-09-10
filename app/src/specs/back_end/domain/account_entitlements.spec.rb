@@ -42,6 +42,7 @@ RSpec.describe AccountEntitlements do
         it "is false" do
           account = create(:account)
           account.entitlement.update(max_non_rejected_adrs: 2)
+          account.entitlement.entitlement_default.update(max_non_rejected_adrs: 20)
           create(:adr, account:)
           create(:adr, account:)
           create(:adr, account:, rejected_at: Time.now)
@@ -52,6 +53,7 @@ RSpec.describe AccountEntitlements do
         it "is false" do
           account = create(:account)
           account.entitlement.update(max_non_rejected_adrs: 2)
+          account.entitlement.entitlement_default.update(max_non_rejected_adrs: 20)
           create(:adr, account:)
           create(:adr, account:)
           create(:adr, account:)
@@ -63,6 +65,7 @@ RSpec.describe AccountEntitlements do
         it "is true" do
           account = create(:account)
           account.entitlement.update(max_non_rejected_adrs: 2)
+          account.entitlement.entitlement_default.update(max_non_rejected_adrs: 1)
           create(:adr, account:)
           create(:adr, account:, rejected_at: Time.now)
           create(:adr, account:, rejected_at: Time.now)

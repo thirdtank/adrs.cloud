@@ -1,4 +1,4 @@
-<label class="flex flex-column gap-1 w-100">
+<<%= container_tag %> class="flex flex-column gap-1 w-100">
   <%= component(input_component) %>
   <div class="text-field-error-label">
     <brut-constraint-violation-messages>
@@ -13,5 +13,7 @@
       <% end %>
     </brut-constraint-violation-messages>
   </div>
-  <div class="text-field-label"><%= label %></div>
-</label>
+  <% if !labeled_elsewhere? %>
+    <div class="text-field-label"><%= label %></div>
+  <% end %>
+</<%= container_tag %>>

@@ -1,6 +1,6 @@
 class NewDraftAdrHandler < AppHandler
-  def handle!(form:, account:, flash:)
-    if !AccountEntitlements.new(account:).can_add_new?
+  def handle!(form:, account:, flash:, account_entitlements:)
+    if !account_entitlements.can_add_new?
       return http_status(403)
     end
 
@@ -9,7 +9,7 @@ class NewDraftAdrHandler < AppHandler
 
     if form.constraint_violations?
       flash.alert = :adr_invalid
-      NewDraftAdrPage.new(form:,account:,flash:)
+      NewDraftAdrPage.new(form:,account:,flash:, account_entitlements:)
     else
       flash.notice = :adr_created
       redirect_to(EditDraftAdrByExternalIdPage, external_id: draft_adr.external_id)

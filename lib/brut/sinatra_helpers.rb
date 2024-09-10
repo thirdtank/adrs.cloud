@@ -67,6 +67,17 @@ module Brut::SinatraHelpers
 
   def self.included(sinatra_app)
     sinatra_app.extend(ClassMethods)
+
+    sinatra_app.use Rack::Session::Cookie,
+      key: "rack.session",
+      path: "/",
+      expire_after: 31_536_000,
+      same_site: :lax, # this allows links from other domains to send our cookies to us,
+                       # but only if such links are direct/obvious to the user.
+      secret: ENV.fetch("SESSION_SECRET")
+
+    sinatra_app.use Rack::Protection::AuthenticityToken
+
     sinatra_app.set :logging, true
     sinatra_app.before do
       app_session = Brut.container.session_class.new(rack_session: session)
@@ -208,7 +219,7 @@ module Brut::SinatraHelpers
 
     def define_handled_route(brut_route,handler_class,form_class=nil)
 
-      method = brut_route.method.to_s.upcase
+      method = brut_route.http_method.to_s.upcase
       path   = brut_route.path_template
 
       route method, path do

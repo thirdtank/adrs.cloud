@@ -12,7 +12,7 @@ RSpec.describe NewDraftAdrHandler do
         create(:adr, account: account)
 
         form = NewDraftAdrForm.new
-        result = handler.handle!(form:,account:,flash: empty_flash)
+        result = handler.handle!(form:,account:,flash: empty_flash, account_entitlements: AccountEntitlements.new(account:))
         expect(result.to_i).to eq(403)
       end
     end
@@ -22,7 +22,7 @@ RSpec.describe NewDraftAdrHandler do
         form = NewDraftAdrForm.new(params: { title: "aaaaaaaaa"})
 
         flash = empty_flash
-        result = handler.handle!(form: , account: , flash: )
+        result = handler.handle!(form: , account: , flash:, account_entitlements: AccountEntitlements.new(account:) )
 
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:title, key: :not_enough_words)
@@ -37,7 +37,7 @@ RSpec.describe NewDraftAdrHandler do
         form = NewDraftAdrForm.new(params: { title: "This is a test"})
         flash = empty_flash
 
-        result = handler.handle!(form:,account:,flash:)
+        result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
         adr = DataModel::Adr.last
         expect(adr.title).to eq("This is a test")
@@ -53,7 +53,7 @@ RSpec.describe NewDraftAdrHandler do
             form = NewDraftAdrForm.new(params: { title: "This is a test", refines_adr_external_id: adr_being_refined.external_id})
             flash = empty_flash
 
-            result = handler.handle!(form:,account:,flash:)
+            result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
             adr = DataModel::Adr.last
             expect(adr.title).to eq("This is a test")
@@ -69,7 +69,7 @@ RSpec.describe NewDraftAdrHandler do
             form = NewDraftAdrForm.new(params: { title: "This is a test", refines_adr_external_id: adr_being_refined.external_id})
             flash = empty_flash
 
-            result = handler.handle!(form:,account:,flash:)
+            result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
             adr = DataModel::Adr.last
             expect(adr.title).to eq("This is a test")
@@ -87,7 +87,7 @@ RSpec.describe NewDraftAdrHandler do
             form = NewDraftAdrForm.new(params: { title: "This is a test", replaced_adr_external_id: adr_being_replaced.external_id})
             flash = empty_flash
 
-            result = handler.handle!(form:,account:,flash:)
+            result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
             adr = DataModel::Adr.last
             expect(adr.title).to eq("This is a test")
@@ -103,7 +103,7 @@ RSpec.describe NewDraftAdrHandler do
             form = NewDraftAdrForm.new(params: { title: "This is a test", replaced_adr_external_id: adr_being_replaced.external_id})
             flash = empty_flash
 
-            result = handler.handle!(form:,account:,flash:)
+            result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
             adr = DataModel::Adr.last
             expect(adr.title).to eq("This is a test")

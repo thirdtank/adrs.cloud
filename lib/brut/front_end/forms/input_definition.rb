@@ -59,6 +59,8 @@ class Brut::FrontEnd::Forms::InputDefinition
              type
            end
 
+    type = type.to_s
+
     @max       = type!( max       , Numeric       , "max")
     @maxlength = type!( maxlength , Numeric       , "maxlength")
     @min       = type!( min       , Numeric       , "min")

@@ -11,7 +11,7 @@
           badInput: "%{field} is the wrong type of data",
           patternMismatch: "%{field} isn't in the right format",
           rangeOverflow: "%{field} is too big",
-          rangeUnderflow: "%{field} s too small",
+          rangeUnderflow: "%{field} is too small",
           stepMismatch: "%{field} is not a valid value in the range",
           tooLong: "%{field} is too long",
           tooShort: "%{field} is too short",
