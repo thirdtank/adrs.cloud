@@ -24,19 +24,50 @@ class Brut::FrontEnd::Forms::Input
                                        :type
 
   def value=(new_value)
+    value_missing = new_value.nil? || (new_value.kind_of?(String) && new_value.strip == "")
     missing = if self.required
-                new_value.nil? || (new_value.kind_of?(String) && new_value.strip == "")
+                value_missing
               else
                 false
               end
-    too_short = if self.minlength && !missing
+    too_short = if self.minlength && !value_missing
                   new_value.length < self.minlength
                 else
                   false
                 end
+
+    too_long = if self.maxlength && !value_missing
+                 new_value.length > self.maxlength
+               else
+                 false
+               end
+
+    type_mismatch = false # TBD
+
+    range_overflow = if self.min && !value_missing && !type_mismatch
+                       new_value.to_i > self.min
+                     else
+                       false
+                     end
+
+    range_underflow = if self.max && !value_missing && !type_mismatch
+                       new_value.to_i < self.min
+                     else
+                       false
+                     end
+
+    pattern_mismatch = false
+    step_mismatch = false
+
     @validity_state = Brut::FrontEnd::Forms::ValidityState.new(
       value_missing: missing,
-      too_short: too_short
+      too_short: too_short,
+      too_long: too_short,
+      range_overflow: range_overflow,
+      range_underflow: range_underflow,
+      pattern_mismatch: pattern_mismatch,
+      step_mismatch: step_mismatch,
+      type_mismatch: type_mismatch,
     )
     @value = new_value
   end

@@ -37,6 +37,7 @@ RSpec.configure do |config|
       metadata[:handler] = true
     end
   end
+  config.include Brut::SpecSupport::GeneralSupport
   config.include Brut::SpecSupport::ComponentSupport, component: true
   config.include Brut::SpecSupport::HandlerSupport, handler: true
   config.around do |example|
@@ -48,6 +49,8 @@ RSpec.configure do |config|
       }
     end
     Sequel::Model.db.transaction do
+      # XXX:
+      create(:entitlement_default, internal_name: "basic")
       example.run
       raise Sequel::Rollback
     end

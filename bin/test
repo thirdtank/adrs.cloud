@@ -165,13 +165,16 @@ class Command
           end
         end
       end
+      if files_missing.empty?
+        log "All tests exists!"
+      else
+        if @options[:show_scaffold]
+          files_missing_args = files_missing.map { |file|
+            '             "' + Shellwords.escape(file.to_s) + '"'
+          }.join(" \\\n")
 
-      if @options[:show_scaffold]
-        files_missing_args = files_missing.map { |file|
-          '"' + Shellwords.escape(file.to_s) + '"'
-        }.join(" ")
-
-        log "Run this command to generate empty tests:\n\nbin/scaffold #{files_missing_args}"
+          log "Run this command to generate empty tests:\n\nbin/scaffold test \\\n#{files_missing_args}"
+        end
       end
 
       0

@@ -3,7 +3,6 @@ class AppComponent < Brut::FrontEnd::Component
 end
 require_relative "text_field_component"
 require_relative "button_component"
-require_relative "adrs"
 require_relative "confirmation_dialog_component"
 require_relative "markdown_string_component"
 
