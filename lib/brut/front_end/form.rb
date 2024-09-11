@@ -33,7 +33,7 @@ module Brut::FrontEnd::FormInputDeclaration
     end
   end
 
-  def input_definitions = @input_definitions
+  def input_definitions = @input_definitions || {}
 end
 
 class Brut::FrontEnd::Form
