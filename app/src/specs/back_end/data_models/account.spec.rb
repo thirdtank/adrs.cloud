@@ -1,5 +1,4 @@
 require "spec_helper"
-require "back_end/data_models/account"
 
 RSpec.describe DataModel::Account do
   describe "::create" do

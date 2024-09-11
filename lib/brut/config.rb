@@ -115,6 +115,13 @@ class Brut::Config
         project_root / "app" / "src"
       end
 
+      c.store_ensured_path(
+        "app_specs_dir",
+        "Path to root of where all the app's specs/tests are"
+      ) do |app_src_dir|
+        app_src_dir / "specs"
+      end
+
       c.store_required_path(
         "front_end_src_dir",
         "Path to the root of the front end layer for the app"
@@ -127,6 +134,20 @@ class Brut::Config
         "Path to where components classes and templates are stored"
       ) do |front_end_src_dir|
         front_end_src_dir / "components"
+      end
+
+      c.store_required_path(
+        "forms_src_dir",
+        "Path to where form classes are stored"
+      ) do |front_end_src_dir|
+        front_end_src_dir / "forms"
+      end
+
+      c.store_required_path(
+        "handlers_src_dir",
+        "Path to where handlers are stored"
+      ) do |front_end_src_dir|
+        front_end_src_dir / "handlers"
       end
 
       c.store_required_path(
@@ -155,13 +176,6 @@ class Brut::Config
         "Path to the root of the back end layer for the app"
       ) do |app_src_dir|
         app_src_dir / "back_end"
-      end
-
-      c.store_ensured_path(
-        "tests_dir",
-        "Path to root of where all tests are"
-      ) do |app_src_dir|
-        app_src_dir / "tests"
       end
 
       c.store_ensured_path(

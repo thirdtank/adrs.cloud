@@ -11,8 +11,11 @@ CHECK 3 - Limits on accounts
           DONE: An account can be limited to only 5 ADRs (the limit can be changed per-account)
           DONE: limit is not a set of attributes on accounts
 
-      4 - Admin UI
+CHECK 4 - Admin UI
           DONE: Admin UI to allow new accounts + adjust limits
+
+      5 - Tests
+          DONE: can audit which classes  have no tests
 
       5 - Visual Review
           DONE: List of all parts of the app that need a visual re-think or change
