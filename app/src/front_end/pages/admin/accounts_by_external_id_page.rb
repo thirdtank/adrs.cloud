@@ -21,10 +21,6 @@ module Admin
       end
     end
 
-    def or_none(value)
-      value || "NONE"
-    end
-
     def effective(method)
       override = @account.entitlement.send(method)
       if override.nil?
