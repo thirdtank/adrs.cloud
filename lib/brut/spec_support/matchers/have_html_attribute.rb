@@ -1,10 +1,10 @@
 RSpec::Matchers.define :have_html_attribute do |attribute|
   if attribute.kind_of?(Hash)
     if attribute.keys.length != 1
-      raise "have_html_attribute requires a single hash with a single key. Received #{attribute.keys.length} keys: '#{attribute.keys.map(&:to_s).join(", ")}'"
+      raise "have_html_attribute requires a single hash with a single key, or a single symbol/string. Received #{attribute.keys.length} keys: '#{attribute.keys.map(&:to_s).join(", ")}'"
     end
-  else
-    raise "have_html_attribute requires a single hash with a single key. Received a #{attribute.class}"
+  elsif !attribute.kind_of?(Symbol) && !attribute.kind_of?(String)
+    raise "have_html_attribute requires a single hash with a single key, or a single symbol/string. Received a #{attribute.class}"
   end
 
   match do |result|
@@ -16,7 +16,11 @@ RSpec::Matchers.define :have_html_attribute do |attribute|
   end
 
   failure_message_when_negated do |result|
-    "Found attribute '#{attribute.keys.first}' with value '#{attribute.values.first}'"
+    if attribute.kind_of?(Hash)
+      "Found attribute '#{attribute.keys.first}' with value '#{attribute.values.first}'"
+    else
+      "Found attribute '#{attribute}' when not expecting it #{result.to_html}"
+    end
   end
 end
 
@@ -38,15 +42,22 @@ class Brut::SpecSupport::Matchers::HaveHTMLAttribute
       @error = "Received a #{result.class} instead of a NodeSet or Element, as could be returned by `.css(...)`"
     end
     if !@error
-      attribute_name  = attribute.keys.first.to_s
-      attribute_value = attribute.values.first
+      if attribute.kind_of?(Hash)
+        attribute_name  = attribute.keys.first.to_s
+        attribute_value = attribute.values.first
+      else
+        attribute_name = attribute.to_s
+        attribute_value = :any
+      end
 
       nokogiri_attribute = result.attribute(attribute_name)
       if nokogiri_attribute
-        found_value = result.attribute(attribute_name).value
+        if attribute_value != :any
+          found_value = result.attribute(attribute_name).value
 
-        if found_value != attribute.values.first
-          @error = "Value for '#{attribute_name}' was '#{found_value}'. Expected '#{attribute_value}'"
+          if found_value != attribute.values.first
+            @error = "Value for '#{attribute_name}' was '#{found_value}'. Expected '#{attribute_value}'"
+          end
         end
       else
         @error = "Did not find attribute '#{attribute_name}' on element.  Found: #{result.attributes.keys.join(", ")}"

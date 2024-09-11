@@ -1,5 +1,9 @@
 # Design Issues
 
+## Testing Components and Pages
+
+Need better support for html parsing and whatnot
+
 ## End-to-End Testing
 
 My spike works, but it's not that great. It doesn't seem to really address the issues faced by other tools.
