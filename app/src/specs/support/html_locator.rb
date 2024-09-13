@@ -27,7 +27,7 @@ class Support::HtmlLocator
   def element!(css_selector)
     element = @nokogiri_node.css(css_selector)
     if (element.kind_of?(Nokogiri::XML::NodeSet))
-      expect(element.length).to eq(1)
+      expect(element.length).to eq(1),"#{css_selector}:\n\n#{@nokogiri_node.to_html}"
       return element.first
     else
       expect([Nokogiri::XML::Node, Nokogiri::XML::Element]).to include(element.class)
