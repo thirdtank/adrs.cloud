@@ -6,7 +6,7 @@ class EditDraftAdrWithExternalIdHandler < AppHandler
     if form.constraint_violations?
       if xhr
         [
-          Adrs::ErrorMessagesComponent.new(form:),
+          ErrorMessagesComponent.new(form:),
           http_status(422),
         ]
       else

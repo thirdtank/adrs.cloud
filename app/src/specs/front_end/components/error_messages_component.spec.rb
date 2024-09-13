@@ -1,5 +1,5 @@
 require "spec_helper"
-RSpec.describe Adrs::ErrorMessagesComponent do
+RSpec.describe ErrorMessagesComponent do
   it "should show error message" do
     form = Class.new(Brut::FrontEnd::Form) {
       input :foo
@@ -16,6 +16,4 @@ RSpec.describe Adrs::ErrorMessagesComponent do
     expect(html.text.strip).to eq("This field must have at least 10 words")
 
   end
-
-  xit "should not be in the Adrs package"
 end

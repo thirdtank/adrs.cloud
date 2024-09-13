@@ -35,7 +35,7 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
         result = described_class.new.handle!(form: form, account: adr.account, xhr: true, flash: empty_flash)
 
         expect(result.class).to eq(Array)
-        expect(result[0].class).to eq(Adrs::ErrorMessagesComponent)
+        expect(result[0].class).to eq(ErrorMessagesComponent)
         expect(result[0].form).to eq(form)
         expect(result[1].to_i).to eq(422)
       end

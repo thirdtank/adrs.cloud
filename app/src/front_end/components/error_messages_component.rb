@@ -1,4 +1,4 @@
-class Adrs::ErrorMessagesComponent < AppComponent
+class ErrorMessagesComponent < AppComponent
   attr_reader :form
   def initialize(form:)
     @form = form

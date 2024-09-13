@@ -12,8 +12,6 @@
     <% constraint_violations.each do |constraint| %>
       <% if !constraint.client_side? %>
         <brut-constraint-violation-message>
-          <% puts constraint %>
-          <% puts constraint.context %>
           <%= t("cv.be.#{constraint}", **constraint.context).capitalize %>
         </brut-constraint-violation-message>
       <% end %>
