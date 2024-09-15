@@ -106,12 +106,12 @@ end}
 
         if @options[:dry_run]
           puts code
-          return 0
-        end
+        else
 
-        FileUtils.mkdir_p destination.dirname
-        File.open(destination,"w") do |file|
-          file.puts code
+          FileUtils.mkdir_p destination.dirname
+          File.open(destination,"w") do |file|
+            file.puts code
+          end
         end
       end
 
@@ -131,6 +131,7 @@ def find_classes(ast,current_modules = [])
   new_module = nil
   if ast.kind_of?(Prism::ClassNode)
     classes << [ current_modules, ast ]
+    new_module = ast
   elsif ast.kind_of?(Prism::ModuleNode)
     new_module = ast
   end

@@ -1,4 +1,15 @@
 class DraftAdr
+
+  class AcceptedAdrValidator < Brut::BackEnd::Validators::FormValidator
+    validate :context   , required: true , minlength: 10
+    validate :facing    , required: true , minlength: 10
+    validate :decision  , required: true , minlength: 10
+    validate :neglected , required: true , minlength: 10
+    validate :achieve   , required: true , minlength: 10
+    validate :accepting , required: true , minlength: 10
+    validate :because   , required: true , minlength: 10
+  end
+
   def self.create(account:)
     if !AccountEntitlements.new(account:).can_add_new?
       raise Brut::BackEnd::Errors::Bug, "#{account.external_id} has reached its plan limit - this should not have been called"
@@ -11,7 +22,7 @@ class DraftAdr
     adr = DataModel::Adr[external_id: external_id, account: account, accepted_at: nil, rejected_at: nil]
 
     if !adr
-      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{external_id}"
+      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have a draft ADR with ID #{external_id}"
     end
     DraftAdr.new(adr:)
   end
@@ -19,7 +30,7 @@ class DraftAdr
   attr_reader :form
 
   def initialize(adr:)
-    @adr  = adr
+    @adr = adr
   end
 
   def external_id   =  @adr.external_id
@@ -45,6 +56,9 @@ class DraftAdr
   end
 
   def accept(form:)
+    if !form.respond_to?(:external_id)
+      raise Brut::BackEnd::Errors::Bug,"#{self.class}#accept must be given an existing ADR, but #{form.class} does not respond to #external_id"
+    end
     AppDataModel.transaction do
       form = self.save(form:)
       if form.constraint_violations?
@@ -67,16 +81,6 @@ class DraftAdr
     form
   end
 
-  class AcceptedAdrValidator < Brut::BackEnd::Validators::FormValidator
-    validate :context   , required: true , minlength: 10
-    validate :facing    , required: true , minlength: 10
-    validate :decision  , required: true , minlength: 10
-    validate :neglected , required: true , minlength: 10
-    validate :achieve   , required: true , minlength: 10
-    validate :accepting , required: true , minlength: 10
-    validate :because   , required: true , minlength: 10
-  end
-
   def reject!
     if @adr.accepted?
       raise Brut::BackEnd::Errors::Bug, "ADR #{@adr.external_id} has been accepted - this method should not have been called"
@@ -87,13 +91,20 @@ class DraftAdr
   end
 
   def save(form:)
+
+    external_id_cannot_change_between_calls!(form)
+
     if form.title.to_s.strip !~ /\s+/
       form.server_side_constraint_violation(input_name: :title, key: :not_enough_words, context: { minwords: 2 })
     end
-    return form if form.constraint_violations?
 
-    refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: @adr.account.id]
+    if form.constraint_violations?
+      return form
+    end
+
+
     AppDataModel.transaction do
+      new_adr = @adr.external_id.nil?
       @adr.update(title: form.title,
                  context: form.context,
                  facing: form.facing,
@@ -103,18 +114,63 @@ class DraftAdr
                  accepting: form.accepting,
                  because: form.because,
                  tags: Tags.from_string(string: form.tags).to_a,
-                 refines_adr_id: refines_adr&.id,
                 )
-      replaced_adr = DataModel::Adr[external_id: form.replaced_adr_external_id, account_id: @adr.account.id]
-      if replaced_adr
-        DataModel::ProposedAdrReplacement.create(
-          replacing_adr_id: @adr.id,
-          replaced_adr_id: replaced_adr.id,
-          created_at: Time.now,
-        )
+
+      if new_adr
+        propose_replacement_adr(form)
+        refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: @adr.account.id]
+        @adr.update(refines_adr_id: refines_adr&.id)
+      else
+        replaced_adr_may_not_change!(form)
+        refined_adr_may_not_change!(form)
       end
     end
     form
   end
-end
 
+private
+
+  def propose_replacement_adr(form)
+    if !form.replaced_adr_external_id.nil?
+      accepted_adr_to_replace = AcceptedAdr.search(external_id: form.replaced_adr_external_id, account: @adr.account)
+      adr_to_replace_must_exist!(accepted_adr_to_replace,form)
+      accepted_adr_to_replace.propose_replacement(@adr)
+    end
+  end
+
+  def replaced_adr_may_not_change!(form)
+    form_replaced_adr_external_id     = form.replaced_adr_external_id
+    proposed_replaced_adr_external_id = @adr.proposed_to_replace_adr&.external_id
+
+    if !form_replaced_adr_external_id.nil? &&
+        form_replaced_adr_external_id != proposed_replaced_adr_external_id
+      raise Brut::BackEnd::Errors::Bug,"#{@adr.external_id} is proposed to replace #{proposed_replaced_adr_external_id || 'nothing'}, however the provided form has #{form_replaced_adr_external_id || 'nothing'} as the proposed replacement."
+    end
+  end
+  def refined_adr_may_not_change!(form)
+    form_refines_adr_external_id = form.refines_adr_external_id
+    refines_adr_external_id      = @adr.refines_adr&.external_id
+
+    if !form_refines_adr_external_id.nil? &&
+        form_refines_adr_external_id != refines_adr_external_id
+      raise Brut::BackEnd::Errors::Bug,"#{@adr.external_id} is refines #{refines_adr_external_id || 'nothing'}, however the provided form has #{form_refines_adr_external_id || 'nothing'} as the refinement."
+    end
+  end
+
+  def adr_to_replace_must_exist!(accepted_adr_to_replace,form)
+    if accepted_adr_to_replace.nil?
+      raise Brut::BackEnd::Errors::Bug,"New ADR is proposed to replace #{form.replaced_adr_external_id}, however, that ADR does not exist in this account"
+    end
+  end
+
+  def external_id_cannot_change_between_calls!(form)
+    if @adr.external_id.nil?
+      if form.respond_to?(:external_id)
+        raise Brut::BackEnd::Errors::Bug,"#{self.class} was created for a new ADR, but attempting to save #{form.class} / #{form.external_id}"
+      end
+    elsif @adr.external_id != form.external_id
+      raise Brut::BackEnd::Errors::Bug,"#{self.class} was created with #{@adr.external_id} but attempting to save #{form.external_id}"
+    end
+  end
+
+end

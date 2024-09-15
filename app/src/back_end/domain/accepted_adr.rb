@@ -32,4 +32,12 @@ class AcceptedAdr
     random_hex = SecureRandom.hex
     @adr.update(shareable_id: "padr_#{random_hex}")
   end
+
+  def propose_replacement(adr)
+    DataModel::ProposedAdrReplacement.create(
+      replacing_adr_id: adr.id,
+      replaced_adr_id: @adr.id,
+      created_at: Time.now,
+    )
+  end
 end
