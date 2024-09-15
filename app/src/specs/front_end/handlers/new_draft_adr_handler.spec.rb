@@ -80,37 +80,19 @@ RSpec.describe NewDraftAdrHandler do
         end
       end
       context "there is a replaced_adr_external_id" do
-        context "this account cannot access it" do
-          it "does not create a proposed_adr_replacement" do
-            adr_being_replaced = create(:adr, :accepted)
-            account = create(:account)
-            form = NewDraftAdrForm.new(params: { title: "This is a test", replaced_adr_external_id: adr_being_replaced.external_id})
-            flash = empty_flash
+        it "creates a proposed_adr_replacement" do
+          adr_being_replaced = create(:adr, :accepted)
+          account = adr_being_replaced.account
+          form = NewDraftAdrForm.new(params: { title: "This is a test", replaced_adr_external_id: adr_being_replaced.external_id})
+          flash = empty_flash
 
-            result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
+          result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
-            adr = DataModel::Adr.last
-            expect(adr.title).to eq("This is a test")
-            expect(adr.proposed_to_replace_adr).to eq(nil)
-            expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
-            expect(flash[:notice]).to eq(:adr_created)
-          end
-        end
-        context "this account can access it" do
-          it "creates a proposed_adr_replacement" do
-            adr_being_replaced = create(:adr, :accepted)
-            account = adr_being_replaced.account
-            form = NewDraftAdrForm.new(params: { title: "This is a test", replaced_adr_external_id: adr_being_replaced.external_id})
-            flash = empty_flash
-
-            result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
-
-            adr = DataModel::Adr.last
-            expect(adr.title).to eq("This is a test")
-            expect(adr.proposed_to_replace_adr).to eq(adr_being_replaced)
-            expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
-            expect(flash[:notice]).to eq(:adr_created)
-          end
+          adr = DataModel::Adr.last
+          expect(adr.title).to eq("This is a test")
+          expect(adr.proposed_to_replace_adr).to eq(adr_being_replaced)
+          expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
+          expect(flash[:notice]).to eq(:adr_created)
         end
       end
     end

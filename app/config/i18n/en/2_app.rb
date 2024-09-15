@@ -33,6 +33,7 @@
         },
         adr_accepted: "ADR Accepted",
         adr_created: "ADR Created",
+        adr_updated: "ADR Updated",
         adr_rejected: "ADR Rejected",
         adr_shared: "ADR Shared",
         adr_invalid: "ADR cannot be created. See below.",

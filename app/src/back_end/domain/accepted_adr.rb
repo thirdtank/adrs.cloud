@@ -14,7 +14,8 @@ class AcceptedAdr
     accepted_adr
   end
 
-  def title = @adr.title
+  def title       = @adr.title
+  def external_id = @adr.external_id
 
   def initialize(adr:)
     @adr = adr
@@ -34,6 +35,12 @@ class AcceptedAdr
   end
 
   def propose_replacement(adr)
+    if !self.class.search(external_id: adr.external_id, account: adr.account).nil?
+      raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with an accepted ADR"
+    end
+    if adr.account != @adr.account
+      raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with another account's ADR"
+    end
     DataModel::ProposedAdrReplacement.create(
       replacing_adr_id: adr.id,
       replaced_adr_id: @adr.id,

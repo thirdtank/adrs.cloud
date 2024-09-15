@@ -1,6 +1,7 @@
 class Adrs::FormComponent < AppComponent
+
   attr_reader :form, :action_label, :form_action, :go_back_label
-  def initialize(form, action:)
+  def initialize(form, action:, external_id: nil)
     @form = form
     case action
     when :new
@@ -9,8 +10,9 @@ class Adrs::FormComponent < AppComponent
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     when :edit
+      @external_id   = external_id_required!(external_id:,action:)
       @action_label  = "Update Draft"
-      @form_action   = EditDraftAdrWithExternalIdForm.routing(external_id: @form.external_id)
+      @form_action   = EditDraftAdrWithExternalIdForm.routing(external_id: @external_id)
       @go_back_label = "Back"
       @ajax_submit   = true
     when :replace
@@ -38,7 +40,7 @@ class Adrs::FormComponent < AppComponent
     if !@form.new_record?
       component(
         ButtonComponent.new(
-          formaction: RejectedAdrsWithExternalIdHandler.routing(external_id: @form.external_id),
+          formaction: RejectedAdrsWithExternalIdHandler.routing(external_id: @external_id),
           size: "small",
           color: "red",
           label: "Reject ADR",
@@ -53,7 +55,7 @@ class Adrs::FormComponent < AppComponent
     if !@form.new_record?
       component(
         ButtonComponent.new(
-          formaction: AcceptedAdrsWithExternalIdForm.routing(external_id: @form.external_id),
+          formaction: AcceptedAdrsWithExternalIdForm.routing(external_id: @external_id),
           size: "small",
           color: "green",
           label: "Accept ADR",
@@ -63,5 +65,15 @@ class Adrs::FormComponent < AppComponent
       )
     end
   end
+
+private
+
+  def external_id_required!(external_id:,action:)
+    if external_id.nil?
+      raise Brut::BackEnd::Errors::Bug, "You may not create a #{self.class} with action #{action} and no external_id."
+    end
+    external_id
+  end
+
 end
 

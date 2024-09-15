@@ -37,5 +37,5 @@
       <%= t(info_message) %>
     </aside>
   <% end %>
-  <%= component Adrs::FormComponent.new(form, action: :edit) %>
+  <%= component Adrs::FormComponent.new(form, action: :edit, external_id: @draft_adr.external_id) %>
 </section>

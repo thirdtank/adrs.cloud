@@ -48,7 +48,6 @@ RSpec.describe DraftAdr do
         adr = create(:adr)
         account = adr.account
         params = {
-          external_id: adr.external_id,
           title: adr.title,
           context: Faker::Lorem.sentence,
           facing:  Faker::Lorem.sentence,
@@ -58,7 +57,7 @@ RSpec.describe DraftAdr do
           accepting:  Faker::Lorem.sentence,
           because:  Faker::Lorem.sentence,
         }
-        form = AcceptedAdrsWithExternalIdForm.new(params: params)
+        form = AcceptedAdrsWithExternalIdForm.new(params:)
 
 
         result = described_class.find(account:, external_id: adr.external_id).accept(form:)
@@ -91,7 +90,6 @@ RSpec.describe DraftAdr do
         )
 
         params = {
-          external_id: adr.external_id,
           title: adr.title,
           context: Faker::Lorem.sentence,
           facing:  Faker::Lorem.sentence,
@@ -101,7 +99,7 @@ RSpec.describe DraftAdr do
           accepting:  Faker::Lorem.sentence,
           because:  Faker::Lorem.sentence,
         }
-        form = AcceptedAdrsWithExternalIdForm.new(params: params)
+        form = AcceptedAdrsWithExternalIdForm.new(params:)
 
         result = described_class.find(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
@@ -120,7 +118,7 @@ RSpec.describe DraftAdr do
       it "returns the form and does not change the ADR" do
         adr = create(:adr)
         account = adr.account
-        form = AcceptedAdrsWithExternalIdForm.new(params: { external_id: adr.external_id })
+        form = AcceptedAdrsWithExternalIdForm.new
 
         result = described_class.find(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
@@ -132,7 +130,7 @@ RSpec.describe DraftAdr do
       it "returns the form and does not change the ADR" do
         adr = create(:adr)
         account = adr.account
-        form = AcceptedAdrsWithExternalIdForm.new(params: { external_id: adr.external_id, title: "some adr title", facing: "short" })
+        form = AcceptedAdrsWithExternalIdForm.new(params: { title: "some adr title", facing: "short" })
 
         result = described_class.find(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
@@ -146,19 +144,6 @@ RSpec.describe DraftAdr do
           expect(form).to have_constraint_violation(:accepting , key: :required)
           expect(form).to have_constraint_violation(:because   , key: :required)
         end
-      end
-    end
-    context "form has a different external ID" do
-      it "raises an error" do
-        adr       = create(:adr)
-        account   = adr.account
-        other_adr = create(:adr, account: account)
-
-        form = AcceptedAdrsWithExternalIdForm.new(params: { external_id: adr.external_id, title: "some adr title", facing: "short" })
-
-        expect {
-          described_class.find(account:, external_id: other_adr.external_id).accept(form:)
-        }.to raise_error(Brut::BackEnd::Errors::Bug)
       end
     end
   end
@@ -255,7 +240,6 @@ RSpec.describe DraftAdr do
           draft_adr = described_class.create(account:)
           result = draft_adr.save(form:)
           expect {
-            form = EditDraftAdrWithExternalIdForm.new(params: params.merge(external_id: draft_adr.external_id))
             draft_adr.save(form:)
           }.not_to change {
             DataModel::ProposedAdrReplacement.count
@@ -282,7 +266,6 @@ RSpec.describe DraftAdr do
           result = draft_adr.save(form:)
           expect {
             form = EditDraftAdrWithExternalIdForm.new(params: params.merge({
-              external_id: draft_adr.external_id,
               replaced_adr_external_id: other_adr.external_id,
             }))
             draft_adr.save(form:)
@@ -312,18 +295,6 @@ RSpec.describe DraftAdr do
           expect(form).to have_constraint_violation(:title, key: :not_enough_words)
         end
       end
-      context "form has an external ID" do
-        it "raises an error" do
-          adr       = create(:adr)
-          account   = adr.account
-
-          form = AcceptedAdrsWithExternalIdForm.new(params: { external_id: adr.external_id, title: "some adr title", facing: "short" })
-
-          expect {
-            described_class.create(account:).save(form:)
-          }.to raise_error(Brut::BackEnd::Errors::Bug)
-        end
-      end
     end
     context "updating existing ADR" do
       context "form has no constraint violations" do
@@ -331,7 +302,6 @@ RSpec.describe DraftAdr do
           adr = create(:adr)
           account = adr.account
           params = {
-            external_id: adr.external_id,
             title: Faker::Lorem.sentence,
             context: Faker::Lorem.sentence,
             facing:  Faker::Lorem.sentence,
@@ -341,7 +311,7 @@ RSpec.describe DraftAdr do
             accepting:  Faker::Lorem.sentence,
             because:  Faker::Lorem.sentence,
           }
-          form = EditDraftAdrWithExternalIdForm.new(params: params)
+          form = EditDraftAdrWithExternalIdForm.new(params:)
 
           draft_adr = described_class.find(account:, external_id: adr.external_id)
           result = draft_adr.save(form:)
@@ -377,11 +347,10 @@ RSpec.describe DraftAdr do
             )
 
             params = {
-              external_id: adr.external_id,
               title: Faker::Lorem.sentence,
               replaced_adr_external_id: other_adr.external_id
             }
-            form = EditDraftAdrWithExternalIdForm.new(params: params)
+            form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
               described_class.find(account:, external_id: adr.external_id).save(form:)
@@ -394,11 +363,10 @@ RSpec.describe DraftAdr do
             account = adr_to_replace.account
             adr = create(:adr, account: account)
             params = {
-              external_id: adr.external_id,
               title: Faker::Lorem.sentence,
               replaced_adr_external_id: adr_to_replace.external_id
             }
-            form = EditDraftAdrWithExternalIdForm.new(params: params)
+            form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
               described_class.find(account:, external_id: adr.external_id).save(form:)
@@ -413,11 +381,10 @@ RSpec.describe DraftAdr do
             other_adr     = create(:adr, :accepted, account: account)
 
             params = {
-              external_id: adr.external_id,
               title: Faker::Lorem.sentence,
               refines_adr_external_id: other_adr.external_id,
             }
-            form = EditDraftAdrWithExternalIdForm.new(params: params)
+            form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
               described_class.find(account:, external_id: adr.external_id).save(form:)
@@ -431,11 +398,10 @@ RSpec.describe DraftAdr do
             adr           = create(:adr, account: account)
 
             params = {
-              external_id: adr.external_id,
               title: Faker::Lorem.sentence,
               refines_adr_external_id: adr_to_refine.external_id,
             }
-            form = EditDraftAdrWithExternalIdForm.new(params: params)
+            form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
               described_class.find(account:, external_id: adr.external_id).save(form:)
@@ -447,7 +413,7 @@ RSpec.describe DraftAdr do
         it "returns the form and does not change the ADR" do
           adr = create(:adr)
           account = adr.account
-          form = EditDraftAdrWithExternalIdForm.new(params: {external_id: adr.external_id})
+          form = EditDraftAdrWithExternalIdForm.new
 
           result = described_class.find(account:,external_id: adr.external_id).save(form:)
           expect(result).to be(form)
@@ -459,25 +425,12 @@ RSpec.describe DraftAdr do
         it "returns the form and does not change the ADR" do
           adr = create(:adr)
           account = adr.account
-          form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: "title" })
+          form = EditDraftAdrWithExternalIdForm.new(params: { title: "title" })
 
           result = described_class.find(account:, external_id: adr.external_id).save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(true)
           expect(form).to have_constraint_violation(:title, key: :not_enough_words)
-        end
-      end
-      context "form has a different external ID" do
-        it "raises an error" do
-          adr       = create(:adr)
-          account   = adr.account
-          other_adr = create(:adr, account: account)
-
-          form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: "some adr title", facing: "short" })
-
-          expect {
-            described_class.find(account:, external_id: other_adr.external_id).save(form:)
-          }.to raise_error(Brut::BackEnd::Errors::Bug)
         end
       end
     end

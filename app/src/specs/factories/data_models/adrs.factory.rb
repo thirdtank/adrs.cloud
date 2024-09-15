@@ -14,5 +14,15 @@ FactoryBot.define do
 
       accepted_at { Time.now }
     end
+    trait :private do
+      accepted
+
+      shareable_id { nil }
+    end
+    trait :shared do
+      accepted
+
+      shareable_id { SecureRandom.uuid }
+    end
   end
 end

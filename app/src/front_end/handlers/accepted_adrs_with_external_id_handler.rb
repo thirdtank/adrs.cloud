@@ -1,6 +1,6 @@
 class AcceptedAdrsWithExternalIdHandler < AppHandler
-  def handle!(form:, account:, flash:)
-    draft_adr = DraftAdr.find(account:,external_id:form.external_id)
+  def handle!(form:, external_id:, account:, flash:)
+    draft_adr = DraftAdr.find(account:,external_id:)
 
     form = draft_adr.accept(form:)
 

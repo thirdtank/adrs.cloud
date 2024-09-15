@@ -25,7 +25,7 @@ COMMANDS
 
 OPTIONS
 }
-    parser.on("--[no]-rebuild", "If set, the entire schema is rebuilt before tests run (default #{options[:rebuild]})") do |value|
+    parser.on("--[no-]rebuild", "If set, the entire schema is rebuilt before tests run (default #{options[:rebuild]})") do |value|
       options[:rebuild] = !!value
     end
     parser.on("--audit-type=[FILE_TYPE]", "If set, only audit files of this type" ) do |value|

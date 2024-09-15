@@ -35,6 +35,8 @@ class RichString
 
   def to_s = @string
   def to_str = self.to_s
+
+  def to_s_or_nil = @string.empty? ? nil : self.to_s
 end
 
 class CallRenderInjectingInfo

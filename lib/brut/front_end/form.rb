@@ -45,7 +45,7 @@ class Brut::FrontEnd::Form
   # Create an instance of this form, optionally initialized with
   # the given values for its params.
   def initialize(params: {})
-    params = params.to_h
+    params = convert_to_string_or_nil(params.to_h)
     unknown_params = params.keys.map(&:to_s).reject { |key|
       self.class.input_definitions.key?(key)
     }
@@ -98,6 +98,23 @@ class Brut::FrontEnd::Form
 private
 
   def params_empty?(params) = params.nil? || params.empty?
+
+  def convert_to_string_or_nil(hash)
+    hash.each do |key,value|
+      case value
+      in Hash then convert_to_string_or_nil(value)
+      in String then hash[key] = RichString.new(value).to_s_or_nil
+      in Numeric then hash[key] = value.to_s
+      in NilClass then # it's fine
+      else
+        if Brut.container.project_env.test?
+          raise ArgumentError, "Got #{value.class} for #{key} in params hash, which is not expected"
+        else
+          logger.warn("Got #{value.class} for #{key} in params hash, which is not expected")
+        end
+      end
+    end
+  end
 
 end
 

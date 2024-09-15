@@ -39,9 +39,8 @@ class DraftAdr
   def adr_refining  =  @adr.refines_adr
   def adr_replacing =  @adr.proposed_to_replace_adr
 
-  def to_h
+  def to_params
     {
-      external_id: @adr.external_id,
       title: @adr.title,
       context: @adr.context,
       facing: @adr.facing,
@@ -56,9 +55,6 @@ class DraftAdr
   end
 
   def accept(form:)
-    if !form.respond_to?(:external_id)
-      raise Brut::BackEnd::Errors::Bug,"#{self.class}#accept must be given an existing ADR, but #{form.class} does not respond to #external_id"
-    end
     AppDataModel.transaction do
       form = self.save(form:)
       if form.constraint_violations?
@@ -91,8 +87,6 @@ class DraftAdr
   end
 
   def save(form:)
-
-    external_id_cannot_change_between_calls!(form)
 
     if form.title.to_s.strip !~ /\s+/
       form.server_side_constraint_violation(input_name: :title, key: :not_enough_words, context: { minwords: 2 })
@@ -162,15 +156,4 @@ private
       raise Brut::BackEnd::Errors::Bug,"New ADR is proposed to replace #{form.replaced_adr_external_id}, however, that ADR does not exist in this account"
     end
   end
-
-  def external_id_cannot_change_between_calls!(form)
-    if @adr.external_id.nil?
-      if form.respond_to?(:external_id)
-        raise Brut::BackEnd::Errors::Bug,"#{self.class} was created for a new ADR, but attempting to save #{form.class} / #{form.external_id}"
-      end
-    elsif @adr.external_id != form.external_id
-      raise Brut::BackEnd::Errors::Bug,"#{self.class} was created with #{@adr.external_id} but attempting to save #{form.external_id}"
-    end
-  end
-
 end

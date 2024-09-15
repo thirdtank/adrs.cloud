@@ -6,7 +6,7 @@ RSpec.describe Admin::AccountEntitlementsWithExternalIdHandler do
       it "re-renders the page with the errors" do
         account = create(:account)
         form = Admin::AccountEntitlementsWithExternalIdForm.new(params: {
-          max_non_rejected_adrs: -1,
+          max_non_rejected_adrs: "-1",
           external_id: account.external_id
         })
         result = handler.handle!(form:,external_id: account.external_id,flash: empty_flash)
