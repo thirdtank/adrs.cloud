@@ -3,7 +3,7 @@ module Admin
     def handle!(form:, external_id:, flash:)
       form = AccountEntitlements.find(external_id:).update(form:)
       if form.constraint_violations?
-        Admin::AccountsByExternalIdPage.new(form:,flash:)
+        Admin::AccountsByExternalIdPage.new(form:,flash:,external_id:)
       else
         flash.notice = :entitlements_saved
         redirect_to(Admin::AccountsByExternalIdPage, external_id:)

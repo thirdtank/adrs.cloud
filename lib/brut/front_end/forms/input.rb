@@ -44,13 +44,13 @@ class Brut::FrontEnd::Forms::Input
 
     type_mismatch = false # TBD
 
-    range_overflow = if self.min && !value_missing && !type_mismatch
-                       new_value.to_i > self.min
+    range_overflow = if self.max && !value_missing && !type_mismatch
+                       new_value.to_i > self.max
                      else
                        false
                      end
 
-    range_underflow = if self.max && !value_missing && !type_mismatch
+    range_underflow = if self.min && !value_missing && !type_mismatch
                        new_value.to_i < self.min
                      else
                        false
