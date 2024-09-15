@@ -16,6 +16,10 @@ RSpec.describe DataModel::Adr do
         adr = create(:adr, shareable_id: "asdfasdfasdf")
         expect(adr.tags).to include("shared")
       end
+      it "omits 'shared' in the tags if asked" do
+        adr = create(:adr, shareable_id: "asdfasdfasdf")
+        expect(adr.tags(phony_shared:false)).not_to include("shared")
+      end
     end
     context "adr is not shared" do
       it "does not include 'shared' in the tags" do

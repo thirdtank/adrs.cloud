@@ -1,11 +1,11 @@
 class DeveloperOnlyAccount < AuthenticatedAccount
-  def self.find(email:)
+  def self.search(email:)
     if Brut.container.project_env.production?
       return nil
     end
     account = DataModel::Account[email: email]
     if account.nil?
-      NoAccount
+      nil
     else
       self.new(account:)
     end

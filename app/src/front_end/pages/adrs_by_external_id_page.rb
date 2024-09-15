@@ -26,5 +26,7 @@ class AdrsByExternalIdPage < AppPage
 
   def accepted_i18n_key = adr.replaced? ? :originally_accepted : :accepted
 
+  def tags = Tags.from_array(array: adr.tags(phony_shared: false))
+
 end
 

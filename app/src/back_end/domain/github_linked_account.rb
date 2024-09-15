@@ -1,5 +1,5 @@
 class GithubLinkedAccount < AuthenticatedAccount
-  def self.find_from_omniauth_hash(omniauth_hash:)
+  def self.search_from_omniauth_hash(omniauth_hash:)
     provider = omniauth_hash["provider"]
     if provider.to_s.downcase != "github"
       raise "#{self.class} was asked to process a '#{provider}' provider, not 'github'"
@@ -14,10 +14,10 @@ class GithubLinkedAccount < AuthenticatedAccount
     if email == ""
       raise "Problem with GitHub auth: we did not get an email from 'info':\n#{omniauth_hash['info']}"
     end
-    self.find(email:)
+    self.search(email:)
   end
 
-  def self.find(email: nil, external_id:nil)
+  def self.search(email: nil, external_id:nil)
     if email.nil? && external_id.nil?
       raise ArgumentError,"You must provide either email or external_id"
     elsif !email.nil? && !external_id.nil?
@@ -29,9 +29,9 @@ class GithubLinkedAccount < AuthenticatedAccount
                 DataModel::Account[external_id: external_id]
               end
     if account.nil?
-      NoAccount
+      nil
     elsif account.deactivated?
-      NoAccount
+      DeactivateAccount.new(account:)
     else
       self.new(account:)
     end
@@ -39,9 +39,13 @@ class GithubLinkedAccount < AuthenticatedAccount
 
   def self.create(form:)
     email = form.email.to_s.downcase.strip
-    existing_account = self.find(email:)
-    if existing_account.exists?
-      form.server_side_constraint_violation(input_name: :email, key: :account_exists)
+    existing_account = self.search(email:)
+    if existing_account
+      if existing_account.active?
+        form.server_side_constraint_violation(input_name: :email, key: :account_exists)
+      else
+        form.server_side_constraint_violation(input_name: :email, key: :account_deactivated)
+      end
     end
     if form.constraint_violations?
       return form

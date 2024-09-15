@@ -1,5 +1,5 @@
 class AccountAdrs
-  def self.find_all(account:, tag: nil)
+  def self.search(account:, tag: nil)
     adrs = if tag.nil?
              account.adrs
            else

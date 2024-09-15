@@ -181,7 +181,7 @@
                      class: "mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white") do %>
           <label class="flex flex-column gap-1 w-100">
             <div class="textarea-container">
-              <textarea name="tags" class="textarea"><%= adr.tags.join(", ") %></textarea>
+              <textarea name="tags" class="textarea"><%= tags.to_s %></textarea>
             </div>
             <span class="sr-only">Tags</span>
             <p class="p f-1 i ma-0">Separate tags by commas or new lines. Tags are case-insensitive</p>

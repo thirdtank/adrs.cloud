@@ -14,10 +14,10 @@ class DataModel::Adr < AppDataModel
 
   one_to_many :refined_by_adrs, class: "DataModel::Adr", key: :refines_adr_id
 
-  def tags
+  def tags(phony_shared: true)
     tags_value = self[:tags] || []
 
-    if self.shared?
+    if self.shared? && phony_shared
       tags_value + [ self.class.phony_tag_for_shared ]
     else
       tags_value

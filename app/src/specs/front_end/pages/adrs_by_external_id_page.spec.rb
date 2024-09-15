@@ -144,8 +144,8 @@ RSpec.describe AdrsByExternalIdPage do
     end
   end
   context "shared" do
-    it "disables the public button, enables the private one" do
-      adr  = create(:adr, :accepted, shareable_id: "some-id")
+    it "disables the public button, enables the private one and omits 'shared' from the tag editor" do
+      adr  = create(:adr, :accepted, shareable_id: "some-id", tags: [ "foo", "bar" ])
 
       page = described_class.new(account: adr.account,
                                  external_id: adr.external_id,
@@ -162,6 +162,9 @@ RSpec.describe AdrsByExternalIdPage do
       expect(element.text.strip).to eq("Share")
       element = html_locator.element!("button[title='Stop Sharing']")
       expect(element).not_to have_html_attribute(disabled: true)
+
+      element = html_locator.element!("adr-tag-editor-edit textarea")
+      expect(element.text).to eq(Tags.from_array(array: adr.tags(phony_shared: false)).to_s)
     end
   end
   context "private" do

@@ -2,9 +2,18 @@ FactoryBot.define do
   factory :account, class: "DataModel::Account" do
     email { Faker::Internet.unique.email }
     created_at { Time.now }
+
     transient do
       create_entitlement { true }
     end
+
+    trait :deactivated do
+      deactivated_at { Time.now }
+    end
+    trait :active do
+      deactivated_at { nil }
+    end
+
     callback(:after_create) do |account, context|
       if context.create_entitlement
         create(:entitlement, account: account, max_non_rejected_adrs: 10)

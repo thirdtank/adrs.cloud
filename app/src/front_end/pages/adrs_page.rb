@@ -5,7 +5,7 @@ class AdrsPage < AppPage
   def initialize(account:, flash:, tag: nil)
     @info_message = flash.notice
     @tag          = tag
-    @adrs         = AccountAdrs.find_all(account:,tag:).adrs
+    @adrs         = AccountAdrs.search(account:,tag:).adrs
 
     num_non_rejected_adrs = @adrs.length - self.rejected_adrs.length
 

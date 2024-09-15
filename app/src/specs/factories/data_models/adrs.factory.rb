@@ -1,8 +1,10 @@
 FactoryBot.define do
   factory :adr, class: "DataModel::Adr" do
     account
-    title { Faker::Book.unique.title }
-    created_at { Time.now }
+    sequence(:title) { |n| Faker::Book.title + ", Part #{n}" }
+    created_at  { Time.now }
+    rejected_at { nil }
+
     trait :accepted do
       context   { Faker::Hipster.paragraph }
       facing    { Faker::Hipster.paragraph }
@@ -14,6 +16,11 @@ FactoryBot.define do
 
       accepted_at { Time.now }
     end
+
+    trait :rejected do
+      rejected_at { Time.now }
+    end
+
     trait :private do
       accepted
 
