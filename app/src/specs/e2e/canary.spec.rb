@@ -1,0 +1,64 @@
+require "spec_helper"
+require "playwright"
+
+RSpec.describe "e2e canary" do
+  xit "login works" do
+    account = create(:account)
+    page = browser.new_page
+    page.goto("http://0.0.0.0:6502/")
+    button = page.locator("form[action='/auth/developer'] button")
+    button.click
+
+    field = page.locator("input[name=email]")
+    field.fill(account.email)
+    button = page.locator("form button")
+    button.click
+    expect(page.locator("h1")).to have_text("ADRs")
+  end
+
+  it "can create and edit an ADR" do
+    account = create(:account)
+    page = browser.new_page
+    page.default_timeout = 5_000
+    page.goto("http://0.0.0.0:6502/")
+    button = page.locator("form[action='/auth/developer'] button")
+    button.click
+
+    field = page.locator("input[name=email]")
+    field.fill(account.email)
+    button = page.locator("form button")
+    button.click
+    expect(page.locator("h1")).to have_text("ADRs")
+
+    link = page.locator("a[href='#{NewDraftAdrPage.routing}']")
+    link.click
+
+    submit_button = page.locator("form button[title='Save Draft']")
+
+    submit_button.click
+
+    title_field = page.locator("label", has: page.locator("input[name='title']"))
+    expect(title_field).to have_text("This field is required")
+
+    title_field.fill("SHORT")
+    submit_button.click
+
+    error = page.locator("aside[role=alert]")
+    expect(error).to have_text("ADR cannot be created")
+    expect(title_field).to have_text("This field must have at least 2 words")
+
+    title_field.fill("Proper Title")
+    submit_button.click
+
+    info = page.locator("aside[role=status]")
+    expect(info).to have_text("ADR Created")
+
+    back_link = page.get_by_text("Back")
+    back_link.click
+
+    table = page.locator("table", has: page.locator("caption", hasText: "Draft ADRs"))
+
+    expect(table).to have_text("Proper Title")
+  end
+
+end

@@ -5,7 +5,8 @@ SHELL [ "/bin/bash", "-o", "pipefail", "-c" ]
 ENV DEBIAN_FRONTEND noninteractive
 # These packages are needed to set up other repos to install other
 # packages and/or are useful in installing other software
-RUN apt-get -y update && \
+RUN apt-get -y clean && \
+    apt-get -y update && \
     apt-get install --quiet --yes ca-certificates curl gnupg
 
 # Install Docker itself. Note that this is installed only what is needed to run
@@ -40,9 +41,16 @@ RUN echo "gem: --no-document" >> ~/.gemrc && \
     gem update --system && \
     gem install bundler
 
+# Install playwright and the chromium browser only
+RUN gem install playwright-ruby-client && \
+    ruby -r 'playwright' -e 'puts Playwright::COMPATIBLE_PLAYWRIGHT_VERSION.strip' > /tmp/playwright-version.txt && \
+    echo "npm install -g playwright@`cat /tmp/playwright-version.txt`" | sh && \
+    playwright install --with-deps chromium
+
 # Install the Heroku Toolbelt - using this because they say ARM requires this method
 # Based on https://devcenter.heroku.com/articles/heroku-cli#install-with-npm
 RUN npm install -g heroku
+
 
 ENV EDITOR=vim
 RUN apt-get install -y vim && \

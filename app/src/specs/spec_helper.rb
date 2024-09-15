@@ -12,6 +12,11 @@ require "factory_bot"
 require "faker"
 require "nokogiri"
 
+require "socket"
+require "timeout"
+require "playwright"
+require "playwright/test"
+
 require_relative "support"
 
 Faker::Config.locale = :en
@@ -25,6 +30,70 @@ FactoryBot.find_definitions
 
 SemanticLogger.default_level = ENV.fetch("LOGGER_LEVEL_FOR_TESTS","warn")
 
+class TestServer
+  def self.instance
+    @instance ||= TestServer.new(bin_dir: Brut.container.project_root / "bin",
+                                 tmp_dir: Brut.container.tmp_dir)
+  end
+
+  def initialize(bin_dir:,tmp_dir:)
+    @bin_dir = bin_dir
+    @tmp_dir = tmp_dir
+    @thread  = nil
+  end
+
+  def start
+    if !@thread.nil?
+      puts "already started server"
+      return
+    end
+    @thread = Thread.new do
+      puts "server starting"
+      system "#{@bin_dir}/build-and-run"
+    end
+    if is_port_open?("0.0.0.0",6502)
+      puts "server started"
+    else
+      raise "Problem: server never started"
+    end
+  end
+
+  def stop
+    puts "server already stopped"
+    return if @thread.nil?
+    pid = File.read(@tmp_dir / "pidfile").chomp
+    puts "killing server nicely"
+    system "kill #{pid}"
+    result = @thread.join(2)
+    if result.nil?
+      puts "server did not die after 2 seconds. Trying -9"
+      system "kill -9 #{pid}"
+    else
+      puts "server stopped it seems"
+    end
+    @thread = nil
+  end
+
+private
+
+  def is_port_open?(ip, port)
+    begin
+      Timeout::timeout(5) do
+        loop do
+          begin
+            s = TCPSocket.new(ip, port)
+            s.close
+            return true
+          rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
+            sleep(0.1)
+          end
+        end
+      rescue Timeout::Error
+      end
+      false
+    end
+  end
+end
 RSpec.configure do |config|
 
   config.define_derived_metadata do |metadata|
@@ -36,27 +105,49 @@ RSpec.configure do |config|
     if metadata[:described_class].to_s =~ /[a-z0-9]Handler$/
       metadata[:handler] = true
     end
+    relative_path = Pathname(metadata[:absolute_file_path]).relative_path_from(Brut.container.app_specs_dir)
+    if relative_path.split[0].to_s == "e2e"
+      metadata[:e2e] = true
+    end
   end
   config.include Brut::SpecSupport::GeneralSupport
   config.include Brut::SpecSupport::ComponentSupport, component: true
   config.include Brut::SpecSupport::HandlerSupport, handler: true
+  config.include Playwright::Test::Matchers, e2e: true
   config.around do |example|
+
     rendering_context = Thread.current[:rendering_context]
-    is_component = example.metadata[:component]
+    is_component      = example.metadata[:component]
+    is_e2e            = example.metadata[:e2e]
+
     if is_component
       Thread.current[:rendering_context] = {
         csrf_token: "test-csrf-token"
       }
     end
-    Sequel::Model.db.transaction do
-      # XXX:
-      create(:entitlement_default, internal_name: "basic")
-      example.run
-      raise Sequel::Rollback
+    if is_e2e
+      TestServer.instance.start
+      Playwright.create(playwright_cli_executable_path: "./node_modules/.bin/playwright") do |playwright|
+        playwright.chromium.launch(headless: true) do |browser|
+          example.example_group.let(:browser) { browser }
+          example.run
+        end
+      end
+    else
+      Sequel::Model.db.transaction do
+        # XXX:
+        create(:entitlement_default, internal_name: "basic")
+        example.run
+        raise Sequel::Rollback
+      end
     end
     if is_component
       Thread.current[:rendering_context] = rendering_context
     end
+  end
+
+  config.after(:suite) do
+    TestServer.instance.stop
   end
 
   config.expect_with :rspec do |expectations|

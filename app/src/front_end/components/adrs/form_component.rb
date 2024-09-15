@@ -4,6 +4,7 @@ class Adrs::FormComponent < AppComponent
   def initialize(form, action:, external_id: nil)
     @form = form
     case action
+      # XXX: i18n these labels
     when :new
       @action_label  = "Save Draft"
       @form_action   = NewDraftAdrForm.routing

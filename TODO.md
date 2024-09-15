@@ -1,5 +1,13 @@
 # One Week Sprint
 
+      1 - Real E2E tests
+          DONE: Major flows tested via conventional e2e tests
+
+      2 - Visual Review
+          DONE: List of all parts of the app that need a visual re-think or change
+
+## 2024-09-02
+
 CHECK 1 - Vim Projectionist setup
           DONE: Can use vim :A and friends to switch back and forth
 
@@ -14,11 +22,9 @@ CHECK 3 - Limits on accounts
 CHECK 4 - Admin UI
           DONE: Admin UI to allow new accounts + adjust limits
 
-      5 - Tests
+CHECK 5 - Tests
           DONE: can audit which classes  have no tests
 
-      5 - Visual Review
-          DONE: List of all parts of the app that need a visual re-think or change
 
 What is this going to be / criteria for launch?
 
