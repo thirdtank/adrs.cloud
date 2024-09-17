@@ -10,7 +10,7 @@ require_relative "brut_cli"
 
 def parse_options
   options = {
-    rebuild: false,
+    rebuild: :use_default,
     show_scaffold: false,
   }
   OptionParser.new do |parser|
@@ -20,12 +20,13 @@ Manage and run tests in the app
 
 COMMANDS
 
-    run   - runs tests (this is the default when no command given)
+    run   - runs non e2e tests (this is the default when no command given)
+    e2e   - runs e2e tests
     audit - show a list of all files without a corresponding test file 
 
 OPTIONS
 }
-    parser.on("--[no-]rebuild", "If set, the entire schema is rebuilt before tests run (default #{options[:rebuild]})") do |value|
+    parser.on("--[no-]rebuild", "If set, the entire schema is rebuilt before tests run (default true for e2e, false otherwise)") do |value|
       options[:rebuild] = !!value
     end
     parser.on("--audit-type=[FILE_TYPE]", "If set, only audit files of this type" ) do |value|
@@ -44,6 +45,7 @@ class Command
   def self.from_string(string, args:, options:)
     case string
     when "run"   then Run.new(args:, options:)
+    when "e2e"   then RunE2E.new(args:, options:)
     when "audit" then Audit.new(args:,options:)
     else
       nil
@@ -63,11 +65,15 @@ class Command
         "-I", Brut.container.app_specs_dir,
         "-I", Brut.container.app_src_dir,
         "-I lib/", # not needed when Brut is gemified
+        "--tag ~e2e",
         "-P \"**/*.spec.rb\"",
       ].join(" ")
     end
 
     def call
+      if @options[:rebuild] == :use_default
+        @options[:rebuild] = false
+      end
       if @options[:rebuild]
         log "Rebuilding test database schema"
         system! "bin/db rebuild --app-env=test"
@@ -85,6 +91,25 @@ class Command
     rescue SystemExit => ex
       log ex.message
       1
+    end
+  end
+
+  class RunE2E < Run
+    def rspec_command
+      [
+        "bin/rspec",
+        "-I", Brut.container.app_specs_dir,
+        "-I", Brut.container.app_src_dir,
+        "-I lib/", # not needed when Brut is gemified
+        "--tag e2e",
+        "-P \"**/*.spec.rb\"",
+      ].join(" ")
+    end
+    def call
+      if @options[:rebuild] == :use_default
+        @options[:rebuild] = true
+      end
+      super
     end
   end
 

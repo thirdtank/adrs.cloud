@@ -6,10 +6,48 @@ Need better support for html parsing and whatnot
 
 ## End-to-End Testing
 
-My spike works, but it's not that great. It doesn't seem to really address the issues faced by other tools.
+I have Playwright working, but it super sucks in a lot of ways:
 
-I wonder if a better solution is to use https://playwright-ruby-client.vercel.app/docs/api/browser#new\_page but not capybara.  In theory, a better
-set of assertions and testing stuff could be done that uses the infra fromp playwright without it's shitty API.
+* Failing tests provide no context
+* locating stuff and asserting is awkward and sucks, especially if using i18n
+
+What is the general philosophy of end2end testing?
+
+* Do stuff in the language/level of the user
+  - Pro: many of these tools want to do this
+  - Pro: Done well, this can be resistent to small changes in the UI
+  - Con: Overall lack of precision in what is actually happening in the test
+  - Con: Impedence mismatch between the actual UI and what you are trying to achieve - no matter what, you need
+         to locate an element and do stuff to it or assert its state.  Indirection through accessibility roles doesn't
+         see helpful
+* Manipulate the UI to prodice behavior of the entire integrated system
+  - Pro: Direct and explicit - clear link between the actualy HTML and the test
+  - Con: Susceptible to breakages when actual functionlity doesn't break if you over-specify locators or assertions
+
+For me, the second option makes the most sense.  It is real: we have a web app whose UI is HTML and we need to manipulate that HTML to
+produce behavior that we then test.
+
+As such:
+
+* locators should be CSS selectors.
+* two ways of locating:
+  - find content that should be there in order to take an action.  If missing, this is an error
+  - assert that content is there after an action was taken. If missing, this is a test failure
+* error reporting:
+  - what were we looking for
+  - what was there
+  - what was close
+    e.g. found the element, content was X and not Y
+    e.g. wanted input[type=foo] which wasn't there, but there were other input[type=\*] there
+
+### Rich Test Failures
+
+* What did we expect
+* What did we find
+* Why did we expect what we did
+* What else did we find that's useful
+
+- Formatted for terminal and/or browser
 
 ## Logic useful to front-end and back-end - where does it go?
 

@@ -1,21 +1,6 @@
 require "spec_helper"
-require "playwright"
 
-RSpec.describe "e2e canary" do
-  xit "login works" do
-    account = create(:account)
-    page = browser.new_page
-    page.goto("http://0.0.0.0:6502/")
-    button = page.locator("form[action='/auth/developer'] button")
-    button.click
-
-    field = page.locator("input[name=email]")
-    field.fill(account.email)
-    button = page.locator("form button")
-    button.click
-    expect(page.locator("h1")).to have_text("ADRs")
-  end
-
+RSpec.describe "Create and Edit an ADR" do
   it "can create and edit an ADR" do
     account = create(:account)
     page = browser.new_page
