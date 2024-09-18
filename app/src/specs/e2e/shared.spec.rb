@@ -5,10 +5,7 @@ RSpec.describe "ADRs can be shared or not" do
     account = create(:account)
     adr = create(:adr, :accepted, account: account)
 
-    page = browser.new_page
-    page.default_timeout = 5_000
-
-    page.goto("http://0.0.0.0:6502/")
+    page.goto("/")
     button = page.locator("form[action='/auth/developer'] button")
     button.click
 
@@ -41,7 +38,7 @@ RSpec.describe "ADRs can be shared or not" do
 
     button = page.locator("form[action='/auth/developer'] button") # ensure page loads and we are logged out
 
-    page.goto("http://0.0.0.0:6502" + shareable_href)
+    page.goto(shareable_href)
     expect(page.locator("h2")).to have_text(adr.title)
     expect(page.locator("section[aria-label='context']")).to   have_text(adr.context)
     expect(page.locator("section[aria-label='facing']")).to    have_text(adr.facing)
@@ -53,7 +50,7 @@ RSpec.describe "ADRs can be shared or not" do
     expect(page.locator("h3", hasText: 'Accepted')).to         have_text(adr.accepted_at.to_s)
     expect(page.locator("button").count).to eq(0)
 
-    page.goto("http://0.0.0.0:6502/")
+    page.goto("/")
     button = page.locator("form[action='/auth/developer'] button")
     button.click
 

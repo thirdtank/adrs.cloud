@@ -3,9 +3,7 @@ require "spec_helper"
 RSpec.describe "Create and Edit an ADR" do
   it "can create and edit an ADR" do
     account = create(:account)
-    page = browser.new_page
-    page.default_timeout = 5_000
-    page.goto("http://0.0.0.0:6502/")
+    page.goto("/")
     button = page.locator("form[action='/auth/developer'] button")
     button.click
 

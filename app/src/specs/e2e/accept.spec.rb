@@ -8,9 +8,7 @@ RSpec.describe "Accept an ADR" do
                  accepted_at: nil, # but not accepted
                  context: nil)     # and without a context, which we'll fill in an expected to be saved
 
-    page = browser.new_page
-    page.default_timeout = 5_000
-    page.goto("http://0.0.0.0:6502/")
+    page.goto("/")
     button = page.locator("form[action='/auth/developer'] button")
     button.click
 

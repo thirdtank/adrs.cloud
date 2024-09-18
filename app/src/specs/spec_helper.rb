@@ -129,8 +129,18 @@ RSpec.configure do |config|
       TestServer.instance.start
       Playwright.create(playwright_cli_executable_path: "./node_modules/.bin/playwright") do |playwright|
         playwright.chromium.launch(headless: true) do |browser|
-          example.example_group.let(:browser) { browser }
+          context_options = {
+            baseURL: "http://0.0.0.0:6502/",
+          }
+          if ENV["E2E_RECORD_VIDEOS"]
+            context_options[:record_video_dir] =  Brut.container.project_root / "videos"
+          end
+          browser_context = browser.new_context(**context_options)
+          browser_context.default_timeout = (ENV["E2E_TIMEOUT_MS"] || 5_000).to_i
+          example.example_group.let(:page) { browser_context.new_page }
           example.run
+          browser_context.close
+          browser.close
         end
       end
     else
