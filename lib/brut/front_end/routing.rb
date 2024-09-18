@@ -23,6 +23,13 @@ class Brut::FrontEnd::Routing
     route
   end
 
+  def register_handler_only(path)
+    route = FormHandlerRoute.new(path)
+    @routes << route
+    add_routing_method(route)
+    route
+  end
+
   def register_path(path, method:)
     route = Route.new(method, path)
     @routes << route
@@ -128,7 +135,7 @@ class Brut::FrontEnd::Routing
     end
 
   private
-    def locate_handler_class(suffix,preposition, allow_missing: false)
+    def locate_handler_class(suffix,preposition, on_missing: :raise)
       if @path_template == "/"
         return Module.const_get("HomePage")
       end
@@ -152,17 +159,16 @@ class Brut::FrontEnd::Routing
         mod.const_get(path_element,mod == Module)
       }
     rescue NameError => ex
-      module_message = if ex.receiver == Module
-                         "Could not find"
-                       else
-                         "Module '#{ex.receiver}' did not have"
-                       end
-      message = "Cannot find page class for route '#{@path_template}', which should be #{part_names.join("::")}. #{module_message} the class or module '#{ex.name}'"
-      if allow_missing
-        logger.debug(message)
-        return nil
-      else
+      if on_missing == :raise
+        module_message = if ex.receiver == Module
+                           "Could not find"
+                         else
+                           "Module '#{ex.receiver}' did not have"
+                         end
+        message = "Cannot find page class for route '#{@path_template}', which should be #{part_names.join("::")}. #{module_message} the class or module '#{ex.name}'"
         raise message
+      else
+        nil
       end
     end
 
@@ -179,13 +185,23 @@ class Brut::FrontEnd::Routing
     def preposition = "By"
   end
 
-
   class FormRoute < Route
     attr_reader :form_class
     def initialize(path)
       super(Brut::FrontEnd::HttpMethod.new(:post),path)
-      @form_class = self.locate_handler_class("Form","With", allow_missing: true)
+      @form_class = self.locate_handler_class("Form","With")
     end
   end
+
+  class FormHandlerRoute < Route
+    def initialize(path)
+      super(Brut::FrontEnd::HttpMethod.new(:post),path)
+      unnecessary_class = self.locate_handler_class("Form","With", on_missing: nil)
+      if !unnecessary_class.nil?
+        raise ArgumentError,"#{path} should only have #{handler_class} defined, however #{unnecessary_class} was found. If #{path} should be a form submission, use `form \"#{path}\"` instead of `action \"#{path}\"`. Otherwise, delete #{unnecessary_class}"
+      end
+    end
+  end
+
 end
 

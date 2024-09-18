@@ -180,9 +180,7 @@ module Brut::SinatraHelpers
     # is instantiated and filled in with all the values it is requesting.  That form is then passed off to the
     # configured handler.  The handle! method performs whatever processing is needed.
     #
-    # The form is optional if you don't have any parameters to submit for whatever the action is.  For example, you 
-    # might have an action like `/archived_widgets/:widget_id` that you POST to in order to archive the given
-    # widget.  In this case, you can omit the form.  `:widget_id` will be made availbale to your handler.
+    # If you have no form elements and are just responding to a POST action from a browser, use `action`.
     #
     # The name of the classes are based on a convention similar to `page`:
     #
@@ -203,6 +201,18 @@ module Brut::SinatraHelpers
       handler_class = route.handler_class
       form_class    = route.form_class
       self.define_handled_route(route,handler_class,form_class)
+    end
+
+    # Declare a form action that has no associated form elements.  This is used when you need to use a button to submit to the
+    # back-end, and the route contains all the context you need. For example a post to `/approved_widgets/:id` communicates that the 
+    # Widget with ID `:id` can be approved.
+    #
+    # This is preferred over `path` because a) it's more explicit that this is handling a POST from some HTML and b) this will check
+    # to make sure there is no form defined.
+    def action(path)
+      route = Brut.container.routing.register_handler_only(path)
+      handler_class = route.handler_class
+      self.define_handled_route(route,handler_class)
     end
 
     # When you need to respond to a given path/method, but it's not a page nor a form.  For example, webhooks often

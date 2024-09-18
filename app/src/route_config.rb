@@ -58,7 +58,7 @@ class AdrApp < Sinatra::Base
     end
   end
 
-  form "/auth/developer"
+  action "/auth/developer"
   page "/developer-auth"
 
   page "/"
@@ -82,20 +82,20 @@ class AdrApp < Sinatra::Base
   form "/adr_tags/:external_id"
 
   form "/accepted_adrs/:external_id"
-  form "/rejected_adrs/:external_id"
-  form "/replaced_adrs/:existing_external_id"
-  form "/refined_adrs/:existing_external_id"
+  action "/rejected_adrs/:external_id"
+  action "/replaced_adrs/:existing_external_id"
+  action "/refined_adrs/:existing_external_id"
 
   page "/shared_adrs/:shareable_id"
 
-  form "/shared_adrs/:external_id"
-  form "/private_adrs/:external_id"
+  action "/shared_adrs/:external_id"
+  action "/private_adrs/:external_id"
 
   page "/admin/home"
   page "/admin/accounts"
   page "/admin/accounts/:external_id"
   form "/admin/new_account"
   form "/admin/account_entitlements/:external_id"
-  form "/admin/deactivated_accounts/:external_id"
+  action "/admin/deactivated_accounts/:external_id"
 
 end
