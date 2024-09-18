@@ -14,7 +14,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
           replaced_adr_id: replaced_adr.id,
           created_at: Time.now,
         )
-        page = described_class.new(shareable_id: replaced_adr.shareable_id, account: create(:account))
+        page = described_class.new(shareable_id: replaced_adr.shareable_id)
 
 
         parsed_html = render_and_parse(page)
@@ -40,7 +40,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
           replaced_adr_id: replaced_adr.id,
           created_at: Time.now,
         )
-        page = described_class.new(shareable_id: replaced_adr.shareable_id, account: create(:account))
+        page = described_class.new(shareable_id: replaced_adr.shareable_id)
 
 
         parsed_html = render_and_parse(page)
@@ -64,7 +64,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         refining_adr = create(:adr, :accepted, account: account, shareable_id: "some-id", refines_adr_id: refined_adr.id)
         refining_adr.update(external_id: "refining")
 
-        page = described_class.new(shareable_id: refining_adr.shareable_id, account: create(:account))
+        page = described_class.new(shareable_id: refining_adr.shareable_id)
 
         parsed_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
@@ -83,7 +83,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         refining_adr = create(:adr, :accepted, account: account, shareable_id: "some-id", refines_adr_id: refined_adr.id)
         refining_adr.update(external_id: "refining")
 
-        page = described_class.new(shareable_id: refining_adr.shareable_id, account: create(:account))
+        page = described_class.new(shareable_id: refining_adr.shareable_id)
 
         parsed_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
@@ -97,7 +97,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
     it "shows that it was accepted and allows replacement and refinement" do
       adr = create(:adr, :accepted, shareable_id: "some-other-id-etc", because: "Because *this* is a test of `markdown`")
 
-      page = described_class.new(shareable_id: adr.shareable_id, account: create(:account))
+      page = described_class.new(shareable_id: adr.shareable_id)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
@@ -109,7 +109,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
   end
   it "blows up if id is nil" do
     expect {
-      described_class.new(shareable_id: nil, account: create(:account))
+      described_class.new(shareable_id: nil)
     }.to raise_error(ArgumentError)
   end
 end
