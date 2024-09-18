@@ -6,6 +6,7 @@ module Brut::FrontEnd::Components
   autoload(:Input,"brut/front_end/components/input")
   autoload(:Inputs,"brut/front_end/components/input")
   autoload(:I18nTranslations,"brut/front_end/components/i18n_translations")
+  autoload(:PageIdentifier,"brut/front_end/components/page_identifier")
 end
 # A Component is the top level class for managing the rendering of 
 # content.  A component is essentially an ERB template and a class whose

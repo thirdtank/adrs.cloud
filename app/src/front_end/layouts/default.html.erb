@@ -6,6 +6,7 @@
     <link href="Copyright (c) 2024 David Bryant Copeland, All Rights Reserved" rel="copyright">
     <title><%= t(:title) %></title>
     <meta content="website" property="og:type">
+    <%= component(Brut::FrontEnd::Components::PageIdentifier.new(self.page_name)) %>
   </head>
   <link rel="stylesheet" href="<%= asset_path('/css/styles.css') %>">
   <script defer src="<%= asset_path('/js/app.js') %>"></script>

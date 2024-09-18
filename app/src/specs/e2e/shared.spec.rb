@@ -31,6 +31,9 @@ RSpec.describe "ADRs can be shared or not" do
     button = page.locator("form[action='/auth/developer'] button") # ensure page loads and we are logged out
 
     page.goto(shareable_href)
+
+    expect(page).to be_page_for(SharedAdrsByShareableIdPage)
+
     expect(page.locator("h2")).to have_text(adr.title)
     expect(page.locator("section[aria-label='context']")).to   have_text(adr.context)
     expect(page.locator("section[aria-label='facing']")).to    have_text(adr.facing)

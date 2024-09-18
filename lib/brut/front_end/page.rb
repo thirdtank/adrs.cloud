@@ -43,6 +43,8 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
     ]
   end
 
+  def page_name = self.class.name
+
 
 private
 

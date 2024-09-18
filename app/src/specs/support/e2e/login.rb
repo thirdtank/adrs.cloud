@@ -10,7 +10,7 @@ module Support
         field.fill(account.email)
         button = page.locator("form button")
         button.click
-        expect(page.locator("h1")).to have_text("ADRs")
+        expect(page).to be_page_for(AdrsPage)
       end
     end
   end
