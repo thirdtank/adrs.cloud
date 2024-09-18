@@ -1,17 +1,10 @@
 require "spec_helper"
 
 RSpec.describe "Create and Edit an ADR" do
+  include Support::E2E::Login
   it "can create and edit an ADR" do
     account = create(:account)
-    page.goto("/")
-    button = page.locator("form[action='/auth/developer'] button")
-    button.click
-
-    field = page.locator("input[name=email]")
-    field.fill(account.email)
-    button = page.locator("form button")
-    button.click
-    expect(page.locator("h1")).to have_text("ADRs")
+    login(page:,account:)
 
     link = page.locator("a[href='#{NewDraftAdrPage.routing}']")
     link.click

@@ -1,20 +1,12 @@
 require "spec_helper"
 
 RSpec.describe "ADRs can be shared or not" do
+  include Support::E2E::Login
   it "can be shared" do
     account = create(:account)
     adr = create(:adr, :accepted, account: account)
 
-    page.goto("/")
-    button = page.locator("form[action='/auth/developer'] button")
-    button.click
-
-    field = page.locator("input[name=email]")
-    field.fill(account.email)
-    button = page.locator("form button")
-    button.click
-
-    expect(page.locator("h1")).to have_text("ADRs")
+    login(page:,account:)
 
     link = page.locator("a[href='#{AdrsByExternalIdPage.routing(external_id: adr.external_id)}']")
     link.click

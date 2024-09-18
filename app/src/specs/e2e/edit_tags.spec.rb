@@ -1,19 +1,11 @@
 require "spec_helper"
 
 RSpec.describe "Edit tags for an ADR" do
+  include Support::E2E::Login
   it "can add and remove tags" do
     account = create(:account)
     adr = create(:adr, :accepted, account: account, tags: [ "foo" ])
-
-    page.goto("/")
-    button = page.locator("form[action='/auth/developer'] button")
-    button.click
-
-    field = page.locator("input[name=email]")
-    field.fill(account.email)
-    button = page.locator("form button")
-    button.click
-    expect(page.locator("h1")).to have_text("ADRs")
+    login(page:,account:)
 
     view_link = page.locator("a[href='#{AdrsByExternalIdPage.routing(external_id: adr.external_id)}']")
     view_link.click
