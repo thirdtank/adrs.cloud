@@ -1,24 +1,4 @@
-module Brut
-  module Backend
-    class SeedData
-      def self.inherited(seed_data_klass)
-        @classes ||= []
-        @classes << seed_data_klass
-      end
-      def self.classes = @classes || []
-    end
-  end
-end
-require "factory_bot"
-require "faker"
-Faker::Config.locale = :en
-FactoryBot.definition_file_paths = [
-  Brut.container.app_src_dir / "specs" / "factories"
-]
-FactoryBot.define do
-  to_create { |instance| instance.save }
-end
-FactoryBot.find_definitions
+require "brut/back_end/seed_data"
 
 class One < Brut::Backend::SeedData
   include FactoryBot::Syntax::Methods

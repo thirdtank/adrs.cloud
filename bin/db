@@ -77,12 +77,9 @@ class Command
       Dir["#{seeds_dir}/*.rb"].each do |file|
         require file
       end
-      DB.transaction do
-        Brut::Backend::SeedData.classes.each do |klass|
-          puts "Seeding from #{klass}"
-          klass.new.seed!
-        end
-      end
+      seed_data = Brut::Backend::SeedData.new
+      seed_data.setup!
+      seed_data.load_seeds!
     end
   end
 

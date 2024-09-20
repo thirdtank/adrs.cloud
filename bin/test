@@ -11,6 +11,7 @@ require_relative "brut_cli"
 def parse_options
   options = {
     rebuild: :use_default,
+    rebuild_after: :use_default,
     show_scaffold: false,
   }
   OptionParser.new do |parser|
@@ -28,6 +29,9 @@ OPTIONS
 }
     parser.on("--[no-]rebuild", "If set, the entire schema is rebuilt before tests run (default true for e2e, false otherwise)") do |value|
       options[:rebuild] = !!value
+    end
+    parser.on("--[no-]rebuild-after", "If set, the entire schema is rebuilt after tests run (default true for e2e, false otherwise)") do |value|
+      options[:rebuild_after] = !!value
     end
     parser.on("--audit-type=[FILE_TYPE]", "If set, only audit files of this type" ) do |value|
       options[:audit_type] = value.to_sym
@@ -74,9 +78,12 @@ class Command
       if @options[:rebuild] == :use_default
         @options[:rebuild] = false
       end
+      if @options[:rebuild_after] == :use_default
+        @options[:rebuild_after] = false
+      end
       if @options[:rebuild]
         log "Rebuilding test database schema"
-        system! "bin/db rebuild --app-env=test"
+        system! "bin/db rebuild --app-env=test > /tmp/build-test-schema.log"
       end
       if @args.empty?
         log "Running all tests"
@@ -86,6 +93,10 @@ class Command
           '"' + Shellwords.escape(_) + '"'
         }.join(" ")
         system! "#{rspec_command} #{test_args}"
+      end
+      if @options[:rebuild_after]
+        log "Re-Rebuilding test database schema"
+        system! "bin/db rebuild --app-env=test > tmp/rebuild-test-schema.log"
       end
       0
     rescue SystemExit => ex
@@ -108,6 +119,9 @@ class Command
     def call
       if @options[:rebuild] == :use_default
         @options[:rebuild] = true
+      end
+      if @options[:rebuild_after] == :use_default
+        @options[:rebuild_after] = true
       end
       super
     end

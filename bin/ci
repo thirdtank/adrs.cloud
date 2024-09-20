@@ -6,7 +6,7 @@ echo "[ bin/ci ] Running non E2E tests"
 bin/test run --rebuild
 
 echo "[ bin/ci ] Running E2E tests"
-bin/test e2e --rebuild
+bin/test e2e --rebuild --rebuild-after
 
 echo "[ bin/ci ] Analyzing Ruby gems for"
 echo "[ bin/ci ] security vulnerabilities"

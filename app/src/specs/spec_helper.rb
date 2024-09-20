@@ -4,12 +4,6 @@ Bundler.require
 require_relative "../../boot"
 require "brut/spec_support"
 
-# Because FactoryBot 6.4.6 has a bug where it is not properly
-# requiring active support, active supporot must be required first,
-# then factory bot.  When 6.4.7 is released, this can be removed. See Gemfile
-require "active_support"
-require "factory_bot"
-require "faker"
 require "nokogiri"
 
 require "socket"
@@ -19,16 +13,8 @@ require "playwright/test"
 
 require_relative "support"
 
-Faker::Config.locale = :en
-FactoryBot.definition_file_paths = [
-  Brut.container.app_src_dir / "specs" / "factories"
-]
-FactoryBot.define do
-  to_create { |instance| instance.save }
-end
-FactoryBot.find_definitions
-
 SemanticLogger.default_level = ENV.fetch("LOGGER_LEVEL_FOR_TESTS","warn")
+Brut::SpecSupport::FactoryBot.new.setup!
 
 class TestServer
   def self.instance
