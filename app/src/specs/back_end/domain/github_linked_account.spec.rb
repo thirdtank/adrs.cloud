@@ -164,7 +164,7 @@ RSpec.describe GithubLinkedAccount do
           DataModel::Account.count
         }.by(1)
 
-        new_account = DataModel::Account[email: form.email]
+        new_account = DataModel::Account.find!(email: form.email)
 
         expect(result).not_to be(form)
         expect(form.constraint_violations?).to eq(false)

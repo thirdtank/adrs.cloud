@@ -3,7 +3,7 @@ class DeveloperOnlyAccount < AuthenticatedAccount
     if Brut.container.project_env.production?
       return nil
     end
-    account = DataModel::Account[email: email]
+    account = DataModel::Account.find(email:)
     if account.nil?
       nil
     else

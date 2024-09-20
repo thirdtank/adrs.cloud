@@ -19,7 +19,7 @@ class DraftAdr
   end
 
   def self.find(external_id:,account:)
-    adr = DataModel::Adr[external_id: external_id, account: account, accepted_at: nil, rejected_at: nil]
+    adr = DataModel::Adr.find!(external_id:, account:, accepted_at: nil, rejected_at: nil)
 
     if !adr
       raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have a draft ADR with ID #{external_id}"
@@ -112,7 +112,8 @@ class DraftAdr
 
       if new_adr
         propose_replacement_adr(form)
-        refines_adr = DataModel::Adr[external_id: form.refines_adr_external_id, account_id: @adr.account.id]
+        # XXX
+        refines_adr = DataModel::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
         @adr.update(refines_adr_id: refines_adr&.id)
       else
         replaced_adr_may_not_change!(form)

@@ -8,7 +8,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
         form = AcceptedAdrsWithExternalIdForm.new
         expect {
           handler.handle!(form:,account:,external_id: "foobar", flash:empty_flash)
-        }.to raise_error(Brut::BackEnd::Errors::NotFound)
+        }.to raise_error(Sequel::NoMatchingRow)
       end
     end
     context "adr exists" do
@@ -19,7 +19,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
           form = AcceptedAdrsWithExternalIdForm.new
           expect {
             handler.handle!(form:,account:,external_id: adr.external_id, flash: empty_flash)
-          }.to raise_error(Brut::BackEnd::Errors::NotFound)
+          }.to raise_error(Sequel::NoMatchingRow)
         end
       end
       context "account can access it" do
@@ -91,7 +91,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
 
               expect {
                 handler.handle!(form:,account:,flash:empty_flash, external_id: adr.external_id )
-              }.to raise_error(Brut::BackEnd::Errors::NotFound)
+              }.to raise_error(Sequel::NoMatchingRow)
             end
           end
           context "it is intended to replace another ADR that is accepted" do

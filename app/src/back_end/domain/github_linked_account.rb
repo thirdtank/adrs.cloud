@@ -24,9 +24,9 @@ class GithubLinkedAccount < AuthenticatedAccount
       raise ArgumentError, "You may not provide both email and external_id"
     end
     account = if email
-                DataModel::Account[email: email]
+                DataModel::Account.find(email: email)
               else
-                DataModel::Account[external_id: external_id]
+                DataModel::Account.find(external_id:)
               end
     if account.nil?
       nil

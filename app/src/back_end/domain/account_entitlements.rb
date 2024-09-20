@@ -1,6 +1,6 @@
 class AccountEntitlements
   def self.find(external_id:)
-    self.new(account:DataModel::Account[external_id: external_id])
+    self.new(account:DataModel::Account.find!(external_id:))
   end
 
 
@@ -12,7 +12,7 @@ class AccountEntitlements
     if !@account.entitlement.nil?
       raise Brut::BackEnd::Errors::Bug,"#{@account.external_id} already has entitlements"
     end
-    default = DataModel::EntitlementDefault[internal_name: "basic"]
+    default = DataModel::EntitlementDefault.find!(internal_name: "basic")
     DataModel::Entitlement.create(account: @account, entitlement_default: default, created_at: Time.now)
   end
 

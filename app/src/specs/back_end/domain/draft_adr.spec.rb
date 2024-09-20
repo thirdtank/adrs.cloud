@@ -26,7 +26,7 @@ RSpec.describe DraftAdr do
           account = create(:account)
           expect {
             draft_adr = described_class.find(account:, external_id: adr.external_id)
-          }.to raise_error(Brut::BackEnd::Errors::NotFound)
+          }.to raise_error(Sequel::NoMatchingRow)
         end
       end
     end
@@ -35,7 +35,7 @@ RSpec.describe DraftAdr do
         account = create(:account)
         expect {
           draft_adr = described_class.find(account:, external_id: "foobar")
-        }.to raise_error(Brut::BackEnd::Errors::NotFound)
+        }.to raise_error(Sequel::NoMatchingRow)
       end
     end
   end
@@ -180,7 +180,7 @@ RSpec.describe DraftAdr do
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(false)
 
-          adr = DataModel::Adr[external_id: draft_adr.external_id]
+          adr = DataModel::Adr.find!(external_id: draft_adr.external_id)
           expect(adr).not_to eq(nil)
 
           aggregate_failures do
@@ -217,7 +217,7 @@ RSpec.describe DraftAdr do
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(false)
 
-          adr = DataModel::Adr[external_id: draft_adr.external_id]
+          adr = DataModel::Adr.find!(external_id: draft_adr.external_id)
           expect(adr).not_to eq(nil)
           expect(adr.proposed_to_replace_adr).to eq(adr_to_replace)
         end

@@ -107,9 +107,4 @@ RSpec.describe SharedAdrsByShareableIdPage do
       expect(html_locator.element!("[aria-label='because']").inner_html).to include("Because <em>this</em> is a test of <code>markdown</code>")
     end
   end
-  it "blows up if id is nil" do
-    expect {
-      described_class.new(shareable_id: nil)
-    }.to raise_error(ArgumentError)
-  end
 end

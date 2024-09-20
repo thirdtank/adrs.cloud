@@ -2,10 +2,7 @@ class SharedAdrsByShareableIdPage < AppPage
   attr_reader :adr
 
   def initialize(shareable_id:)
-    if shareable_id.nil?
-      raise ArgumentError,"shareable_id may not be nil"
-    end
-    @adr = DataModel::Adr[shareable_id: shareable_id]
+    @adr = DataModel::Adr.find!(shareable_id:)
   end
 
   def markdown(field)

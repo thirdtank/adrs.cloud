@@ -1,11 +1,14 @@
 # One Week Sprint
 
-      1 - Real E2E tests
+CHECK 1 - Real E2E tests
           DONE: Major flows tested via conventional e2e tests
 
       2 - Visual Review
           DONE: List of all parts of the app that need a visual re-think or change
 
+      3 - Data Layer Review
+          DONE: consolidate and normalize looking up data and knowing when it
+                will fail vs. return nil/empty
 ## 2024-09-02
 
 CHECK 1 - Vim Projectionist setup

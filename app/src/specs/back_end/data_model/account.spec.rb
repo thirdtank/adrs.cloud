@@ -8,5 +8,4 @@ RSpec.describe DataModel::Account do
       expect(account.id).not_to eq(nil)
     end
   end
-
 end

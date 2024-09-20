@@ -8,7 +8,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
         account = create(:account)
         expect {
           handler.handle!(external_id: "foobar", account: account, flash: empty_flash)
-        }.to raise_error(Brut::BackEnd::Errors::NotFound)
+        }.to raise_error(Sequel::NoMatchingRow)
       end
     end
     context "adr exists" do
@@ -18,7 +18,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
           account = create(:account)
           expect {
             handler.handle!(external_id: adr.external_id, account: account, flash: empty_flash)
-          }.to raise_error(Brut::BackEnd::Errors::NotFound)
+          }.to raise_error(Sequel::NoMatchingRow)
         end
 
       end
@@ -28,7 +28,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
           account = adr.account
           expect {
             handler.handle!(external_id: adr.external_id, account: account, flash: empty_flash)
-          }.to raise_error(Brut::BackEnd::Errors::NotFound)
+          }.to raise_error(Sequel::NoMatchingRow)
         end
       end
       context "adr has not been accepted" do
@@ -57,7 +57,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
 
             expect {
               handler.handle!(external_id: adr.external_id, account: , flash: empty_flash)
-            }.to raise_error(Brut::BackEnd::Errors::NotFound)
+            }.to raise_error(Sequel::NoMatchingRow)
           end
         end
       end

@@ -8,6 +8,9 @@ def AppDataModel.transaction(opts=:use_default,&block)
   end
   Sequel::Model.db.transaction(opts,&block)
 end
+def AppDataModel.find!(...)
+  self.first!(...)
+end
 require_relative "account"
 require_relative "adr"
 require_relative "proposed_adr_replacement"
