@@ -12,7 +12,6 @@ RSpec.describe SharedAdrsByShareableIdPage do
         DB::ProposedAdrReplacement.new(
           replacing_adr_id: replacing_adr.id,
           replaced_adr_id: replaced_adr.id,
-          created_at: Time.now,
         )
         page = described_class.new(shareable_id: replaced_adr.shareable_id)
 
@@ -38,7 +37,6 @@ RSpec.describe SharedAdrsByShareableIdPage do
         DB::ProposedAdrReplacement.new(
           replacing_adr_id: replacing_adr.id,
           replaced_adr_id: replaced_adr.id,
-          created_at: Time.now,
         )
         page = described_class.new(shareable_id: replaced_adr.shareable_id)
 

@@ -13,7 +13,7 @@ class AccountEntitlements
       raise Brut::BackEnd::Errors::Bug,"#{@account.external_id} already has entitlements"
     end
     default = DB::EntitlementDefault.find!(internal_name: "basic")
-    DB::Entitlement.create(account: @account, entitlement_default: default, created_at: Time.now)
+    DB::Entitlement.create(account: @account, entitlement_default: default)
   end
 
 

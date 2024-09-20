@@ -7,10 +7,12 @@ module DB
   end
 end
 AppDataModel = Class.new(Sequel::Model)
+
 Sequel::Model.db.extension :pg_array
-def AppDataModel.find!(...)
-  self.first!(...)
-end
+Sequel::Model.plugin :external_id, global_prefix: "ad"
+Sequel::Model.plugin :find_bang
+Sequel::Model.plugin :created_at
+
 require_relative "account"
 require_relative "adr"
 require_relative "proposed_adr_replacement"

@@ -52,7 +52,7 @@ class GithubLinkedAccount < AuthenticatedAccount
     end
 
     DB.transaction do
-      account = DB::Account.create(email:,created_at:Time.now)
+      account = DB::Account.create(email:)
       AccountEntitlements.new(account:).grant_for_new_user
       self.new(account:account)
     end

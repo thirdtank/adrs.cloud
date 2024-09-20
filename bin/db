@@ -20,6 +20,7 @@ COMMANDS
   migrate       - apply any outstanding migrations
   rebuild       - drops, then creates the db, then runs migrations
   status        - report on the status of the database and its migrations
+  seeds         - load seed data
   new-migration - creates a new migration file. Arguments are the name/description of the migration
 
 OPTIONS
@@ -27,8 +28,8 @@ OPTIONS
     parser.on("--app-env=ENV","Env for the app. Must be development, test, or production") do |value|
       options[:app_env] = value
     end
-    parser.on("--[no-]seeds", "If set, will load seed data when migrating or rebuilding the database") do |value|
-      options[:load_seeds] = value
+    parser.on("--seeds","For rebuild only, load seeds after rebuild") do |value|
+      options[:load_seeds] = !!value
     end
 
   end.parse!
@@ -38,15 +39,15 @@ end
 options = parse_options
 
 class Command
-  def self.from_string(string, database_url:, args:, options:)
-    database_uri = URI(database_url)
+  def self.from_string(string)
     case string
-    when "create"        then Create.new(database_uri: database_uri, args: args, options: options)
-    when "drop"          then Drop.new(database_uri: database_uri, args: args, options: options)
-    when "migrate"       then Migrate.new(database_uri: database_uri, args: args, options: options)
-    when "new-migration" then NewMigration.new(database_uri: database_uri, args: args, options: options)
-    when "status"        then Status.new(database_uri: database_uri, args: args, options: options)
-    when "rebuild"       then Rebuild.new(database_uri: database_uri, args: args, options: options)
+    when "create"        then Create
+    when "drop"          then Drop
+    when "migrate"       then Migrate
+    when "new-migration" then NewMigration
+    when "status"        then Status
+    when "rebuild"       then Rebuild
+    when "seeds"         then Seed
     else
       nil
     end
@@ -55,6 +56,9 @@ class Command
     raise
   end
 
+  def self.default_env = nil
+  def self.boot_app? = false
+
   def initialize(database_uri:, args:, options:)
     @database_uri  = database_uri
     @database_name = @database_uri.path.gsub(/^\//,"")
@@ -62,11 +66,37 @@ class Command
     @options       = options
   end
 
+  class Seed < Command
+    def self.boot_app? = true
+
+    def initialize(database_uri:,args:,options:)
+    end
+
+    def call
+      seeds_dir = Brut.container.db_seeds_dir
+      Dir["#{seeds_dir}/*.rb"].each do |file|
+        require file
+      end
+      DB.transaction do
+        Brut::Backend::SeedData.classes.each do |klass|
+          puts "Seeding from #{klass}"
+          klass.new.seed!
+        end
+      end
+    end
+  end
+
   class Rebuild < Command
     def call
       Drop.new(database_uri: @database_uri, args: @args, options: @options).call
       Create.new(database_uri: @database_uri, args: @args, options: @options).call
       Migrate.new(database_uri: @database_uri, args: @args, options: @options).call
+      if @options[:load_seeds]
+        puts "Loading seed data"
+        exec("#{$0} seeds --app-env=#{@options[:app_env]}")
+      else
+        puts "NOT Loading seed data, use --load-seeds if you want that"
+      end
     end
   end
 
@@ -155,7 +185,6 @@ class Command
     ]
     def call
       migrations_dir = Brut.container.migrations_dir
-      seeds_dir = Brut.container.db_seeds_dir / @options[:app_env]
       if !migrations_dir.exist?
         puts "#{migrations_dir} doesn't exist"
         return
@@ -188,22 +217,6 @@ class Command
             raise "#{file} is not named according to convention"
           end
         end
-        if seeds_dir.exist?
-          if @options[:load_seeds]
-            puts "Loading seeds from #{seeds_dir}"
-            connection.transaction do
-              Dir["#{seeds_dir}/*.sql"].each do |file|
-                puts "Loading #{file}..."
-                sql = File.read(file)
-                connection.run(sql)
-              end
-            end
-          else
-            puts "Not loading seeds"
-          end
-        else
-          puts "#{seeds_dir} doesn't exist"
-        end
       ensure
         connection.disconnect
       end
@@ -211,6 +224,7 @@ class Command
   end
 
   class NewMigration < Command
+    def self.default_env = "development"
     def call
       if @args.length == 0
         raise "You must provide a name"
@@ -268,16 +282,26 @@ if ARGV[0].to_s.strip == ""
   exit 1
 end
 
-if options[:app_env].to_s.strip == ""
+
+command_klass = Command.from_string(ARGV[0])
+ENV["RACK_ENV"] = (options[:app_env] || command_klass.default_env).to_s.strip
+
+if ENV["RACK_ENV"] == ""
   log "--app-env is required"
   exit 1
 end
 
+if command_klass.boot_app?
+  require "bundler"
+  Bundler.require
+  $LOAD_PATH << File.join(__dir__,"..","lib")
+  require_relative "../app/boot"
+else
+  require_relative "brut_cli"
+end
 
-ENV["RACK_ENV"] = options[:app_env]
-require_relative "brut_cli"
+command = command_klass.new(database_uri: URI(ENV["DATABASE_URL"]), args: ARGV[1..-1],options: options)
 
-command = Command.from_string(ARGV[0],database_url: ENV["DATABASE_URL"], args: ARGV[1..-1],options: options)
 if !command
   log "'#{ARGV[0]}' is not a supported command"
   exit 1

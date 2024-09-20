@@ -1,4 +1,5 @@
 class DB::Adr < AppDataModel
+  has_external_id :adr
   many_to_one :account
 
   # This is the ADR this model is replacing

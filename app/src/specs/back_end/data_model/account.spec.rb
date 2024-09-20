@@ -4,7 +4,7 @@ RSpec.describe DB::Account do
   describe "::create" do
     it "returns a new instance using the generated ID" do
       account = create(:account)
-      account = described_class.create(email: Faker::Internet.unique.email, created_at: Time.now)
+      account = described_class.create(email: Faker::Internet.unique.email)
       expect(account.id).not_to eq(nil)
     end
   end

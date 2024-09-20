@@ -32,7 +32,6 @@ RSpec.describe EditDraftAdrByExternalIdPage do
       DB::ProposedAdrReplacement.create(
         replacing_adr_id: adr.id,
         replaced_adr_id: adr_to_replace.id,
-        created_at: Time.now,
       )
       page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
 

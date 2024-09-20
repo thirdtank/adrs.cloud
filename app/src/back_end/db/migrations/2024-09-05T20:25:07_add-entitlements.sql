@@ -9,12 +9,12 @@ CREATE TABLE entitlement_defaults (
 COMMENT ON TABLE entitlement_defaults IS
   'Each row represents a collection of default values of entitles, for example, a "plan" for new users. It serves as default values that can be changed for everyone, e.g. make the plus plan allow 200 ADRs, however account-by-account values can be overridden by the entitlements table';
 
-CREATE TRIGGER
-  entitlement_defaults_external_id
-BEFORE INSERT ON
-  entitlement_defaults
-FOR EACH ROW
-EXECUTE PROCEDURE generate_external_id('ent');
+-- CREATE TRIGGER
+--   entitlement_defaults_external_id
+-- BEFORE INSERT ON
+--   entitlement_defaults
+-- FOR EACH ROW
+-- EXECUTE PROCEDURE generate_external_id('ent');
 
 CREATE UNIQUE INDEX ON entitlement_defaults(internal_name);
 

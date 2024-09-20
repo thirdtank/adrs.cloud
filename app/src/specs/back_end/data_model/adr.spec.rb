@@ -5,7 +5,7 @@ RSpec.describe DB::Adr do
   describe "::create" do
     it "returns a new instance using the generated ID" do
       account = create(:account)
-      adr = described_class.create(title: "This is a test",account_id: account.id, created_at: Time.now)
+      adr = described_class.create(title: "This is a test",account_id: account.id)
       expect(adr.id).not_to eq(nil)
     end
   end

@@ -14,7 +14,7 @@ class DraftAdr
     if !AccountEntitlements.new(account:).can_add_new?
       raise Brut::BackEnd::Errors::Bug, "#{account.external_id} has reached its plan limit - this should not have been called"
     end
-    adr = DB::Adr.new(created_at: Time.now, account: account)
+    adr = DB::Adr.new(account: account)
     DraftAdr.new(adr:)
   end
 

@@ -36,7 +36,6 @@ RSpec.describe AdrsByExternalIdPage do
       DB::ProposedAdrReplacement.new(
         replacing_adr_id: replacing_adr.id,
         replaced_adr_id: replaced_adr.id,
-        created_at: Time.now,
       )
 
       page = described_class.new(account: account,

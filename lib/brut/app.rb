@@ -45,7 +45,6 @@ class Brut::App
       app_organization: self.organization,
     )
 
-
     project_root = Brut.container.project_root
     project_env = Brut.container.project_env
 

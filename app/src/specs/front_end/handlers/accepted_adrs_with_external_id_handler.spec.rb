@@ -114,7 +114,6 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
               DB::ProposedAdrReplacement.create(
                 replacing_adr_id: adr.id,
                 replaced_adr_id: adr_to_replace.id,
-                created_at: Time.now,
               )
 
               result = handler.handle!(form:,account:,flash:,external_id: adr.external_id)

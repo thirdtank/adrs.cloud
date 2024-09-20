@@ -44,7 +44,6 @@ class AcceptedAdr
     DB::ProposedAdrReplacement.create(
       replacing_adr_id: adr.id,
       replaced_adr_id: @adr.id,
-      created_at: Time.now,
     )
   end
 end

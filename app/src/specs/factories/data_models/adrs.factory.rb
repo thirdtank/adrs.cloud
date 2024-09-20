@@ -2,7 +2,6 @@ FactoryBot.define do
   factory :adr, class: "DB::Adr" do
     account
     sequence(:title) { |n| Faker::Book.title + ", Part #{n}" }
-    created_at  { Time.now }
     rejected_at { nil }
 
     trait :accepted do

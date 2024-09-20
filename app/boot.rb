@@ -13,6 +13,5 @@ $: << File.join(Brut.container.project_root,"app","src")
 require "app"
 
 App.new.boot!
-
 require "route_config"
 

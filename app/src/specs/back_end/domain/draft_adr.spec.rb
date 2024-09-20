@@ -85,8 +85,7 @@ RSpec.describe DraftAdr do
 
         DB::ProposedAdrReplacement.create(
           replacing_adr_id: adr.id,
-          replaced_adr_id: adr_to_replace.id,
-          created_at: Time.now,
+          replaced_adr_id: adr_to_replace.id
         )
 
         params = {
@@ -343,7 +342,6 @@ RSpec.describe DraftAdr do
             DB::ProposedAdrReplacement.create(
               replacing_adr_id: adr.id,
               replaced_adr_id: adr_to_replace.id,
-              created_at: Time.now,
             )
 
             params = {

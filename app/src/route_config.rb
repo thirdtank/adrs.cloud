@@ -9,8 +9,6 @@ require "back_end/domain"
 require "front_end/forms/app_form"
 require "front_end/handlers/app_handler"
 
-require "pp"
-
 class AdrApp < Sinatra::Base
 
   include Brut::SinatraHelpers

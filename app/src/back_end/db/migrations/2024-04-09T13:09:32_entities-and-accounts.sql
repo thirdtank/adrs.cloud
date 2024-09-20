@@ -28,9 +28,9 @@ CREATE TABLE
 COMMENT ON TABLE accounts IS
   'Stores individual user accounts, used for authentication';
 
-CREATE TRIGGER
-  accounts_external_id
-BEFORE INSERT ON
-  accounts
-FOR EACH ROW
-EXECUTE PROCEDURE generate_external_id('ac');
+-- CREATE TRIGGER
+--   accounts_external_id
+-- BEFORE INSERT ON
+--   accounts
+-- FOR EACH ROW
+-- EXECUTE PROCEDURE generate_external_id('ac');

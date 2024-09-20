@@ -6,13 +6,11 @@ RSpec.describe DB::Entitlement do
 
     expect {
       described_class.create(account_id: account.id,
-                             entitlement_default_id: default.id,
-                             created_at: Time.now)
+                             entitlement_default_id: default.id)
     }.not_to raise_error
     expect {
       described_class.create(account_id: account.id,
-                             entitlement_default_id: default.id,
-                             created_at: Time.now)
+                             entitlement_default_id: default.id)
     }.to raise_error(/entitlements_account_id_key/)
   end
 end

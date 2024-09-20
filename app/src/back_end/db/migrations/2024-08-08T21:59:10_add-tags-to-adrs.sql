@@ -1,4 +1,3 @@
--- Put your SQL here
 ALTER TABLE
   adrs
 ADD COLUMN
