@@ -9,7 +9,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         replacing_adr = create(:adr, :accepted, account: account)
         replaced_adr  = create(:adr, :accepted, account: account, shareable_id: "some-id", replaced_by_adr_id: replacing_adr.id)
 
-        DataModel::ProposedAdrReplacement.new(
+        DB::ProposedAdrReplacement.new(
           replacing_adr_id: replacing_adr.id,
           replaced_adr_id: replaced_adr.id,
           created_at: Time.now,
@@ -35,7 +35,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         replacing_adr = create(:adr, :accepted, account: account, shareable_id: "some-other-id", )
         replaced_adr  = create(:adr, :accepted, account: account, shareable_id: "some-id", replaced_by_adr_id: replacing_adr.id)
 
-        DataModel::ProposedAdrReplacement.new(
+        DB::ProposedAdrReplacement.new(
           replacing_adr_id: replacing_adr.id,
           replaced_adr_id: replaced_adr.id,
           created_at: Time.now,

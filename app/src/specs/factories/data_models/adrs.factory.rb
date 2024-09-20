@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :adr, class: "DataModel::Adr" do
+  factory :adr, class: "DB::Adr" do
     account
     sequence(:title) { |n| Faker::Book.title + ", Part #{n}" }
     created_at  { Time.now }

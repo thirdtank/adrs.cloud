@@ -1,6 +1,6 @@
 class AcceptedAdr
   def self.search(external_id:,account:)
-    adr = DataModel::Adr.first(Sequel.lit("external_id = ? and account_id = ? and accepted_at is not null",external_id,account.id))
+    adr = DB::Adr.first(Sequel.lit("external_id = ? and account_id = ? and accepted_at is not null",external_id,account.id))
     if adr.nil?
       return nil
     end
@@ -41,7 +41,7 @@ class AcceptedAdr
     if adr.account != @adr.account
       raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with another account's ADR"
     end
-    DataModel::ProposedAdrReplacement.create(
+    DB::ProposedAdrReplacement.create(
       replacing_adr_id: adr.id,
       replaced_adr_id: @adr.id,
       created_at: Time.now,

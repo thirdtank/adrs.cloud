@@ -1,4 +1,4 @@
 require "spec_helper"
-RSpec.describe DataModel::ProposedAdrReplacement do
+RSpec.describe DB::ProposedAdrReplacement do
   implementation_is_trivial
 end

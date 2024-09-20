@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe DataModel::Adr do
+RSpec.describe DB::Adr do
 
   describe "::create" do
     it "returns a new instance using the generated ID" do

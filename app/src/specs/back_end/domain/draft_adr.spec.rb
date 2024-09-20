@@ -1,12 +1,12 @@
 require "spec_helper"
 RSpec.describe DraftAdr do
   describe "::create" do
-    it "creates, but does not save, a new DataModel::Adr" do
+    it "creates, but does not save, a new DB::Adr" do
       account = create(:account)
       draft_adr = nil
       expect {
         draft_adr = described_class.create(account:)
-      }.not_to change { DataModel::Adr.count }
+      }.not_to change { DB::Adr.count }
       expect(draft_adr.external_id).to eq(nil)
     end
   end
@@ -83,7 +83,7 @@ RSpec.describe DraftAdr do
         account = adr_to_replace.account
         adr = create(:adr, account: account)
 
-        DataModel::ProposedAdrReplacement.create(
+        DB::ProposedAdrReplacement.create(
           replacing_adr_id: adr.id,
           replaced_adr_id: adr_to_replace.id,
           created_at: Time.now,
@@ -180,7 +180,7 @@ RSpec.describe DraftAdr do
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(false)
 
-          adr = DataModel::Adr.find!(external_id: draft_adr.external_id)
+          adr = DB::Adr.find!(external_id: draft_adr.external_id)
           expect(adr).not_to eq(nil)
 
           aggregate_failures do
@@ -217,7 +217,7 @@ RSpec.describe DraftAdr do
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(false)
 
-          adr = DataModel::Adr.find!(external_id: draft_adr.external_id)
+          adr = DB::Adr.find!(external_id: draft_adr.external_id)
           expect(adr).not_to eq(nil)
           expect(adr.proposed_to_replace_adr).to eq(adr_to_replace)
         end
@@ -242,7 +242,7 @@ RSpec.describe DraftAdr do
           expect {
             draft_adr.save(form:)
           }.not_to change {
-            DataModel::ProposedAdrReplacement.count
+            DB::ProposedAdrReplacement.count
           }
         end
         it "if this ADR is being proposed to replace another one, and the proposed replacement changes, raises a bug" do
@@ -340,7 +340,7 @@ RSpec.describe DraftAdr do
             adr            = create(:adr, account: account)
             other_adr      = create(:adr, :accepted, account: account)
 
-            DataModel::ProposedAdrReplacement.create(
+            DB::ProposedAdrReplacement.create(
               replacing_adr_id: adr.id,
               replaced_adr_id: adr_to_replace.id,
               created_at: Time.now,

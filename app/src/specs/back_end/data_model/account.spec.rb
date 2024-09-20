@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe DataModel::Account do
+RSpec.describe DB::Account do
   describe "::create" do
     it "returns a new instance using the generated ID" do
       account = create(:account)

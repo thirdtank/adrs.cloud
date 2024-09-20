@@ -36,7 +36,7 @@ RSpec.describe AccountAdrs do
           create(:adr, :rejected, account:)
           create(:adr, :private, :accepted, account:)
 
-          results = described_class.search(account:, tag: DataModel::Adr.phony_tag_for_shared)
+          results = described_class.search(account:, tag: DB::Adr.phony_tag_for_shared)
 
           expect(results.size).to eq(2)
 

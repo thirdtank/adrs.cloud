@@ -2,7 +2,7 @@ class SharedAdrsByShareableIdPage < AppPage
   attr_reader :adr
 
   def initialize(shareable_id:)
-    @adr = DataModel::Adr.find!(shareable_id:)
+    @adr = DB::Adr.find!(shareable_id:)
   end
 
   def markdown(field)

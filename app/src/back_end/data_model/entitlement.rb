@@ -1,4 +1,4 @@
-class DataModel::Entitlement < AppDataModel
+class DB::Entitlement < AppDataModel
   raise_on_save_failure = true
 
   many_to_one :entitlement_default

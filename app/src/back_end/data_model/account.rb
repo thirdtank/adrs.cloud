@@ -1,4 +1,4 @@
-class DataModel::Account < AppDataModel
+class DB::Account < AppDataModel
   raise_on_save_failure = true
 
   one_to_many :adrs

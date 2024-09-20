@@ -2,7 +2,7 @@ class AdrsByExternalIdPage < AppPage
   attr_reader :adr, :info_message
 
   def initialize(account:, external_id:, flash:, account_entitlements:)
-    @adr = DataModel::Adr.find!(account_id: account.id, external_id:)
+    @adr = DB::Adr.find!(account_id: account.id, external_id:)
     @info_message = flash.notice
     @can_add_new  = account_entitlements.can_add_new?
   end

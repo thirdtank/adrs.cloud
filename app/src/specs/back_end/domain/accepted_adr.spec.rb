@@ -121,7 +121,7 @@ RSpec.describe AcceptedAdr do
         expect {
           accepted_adr.propose_replacement(proposed_replacement_adr)
         }.to change {
-          DataModel::ProposedAdrReplacement.count
+          DB::ProposedAdrReplacement.count
         }.by(1)
 
         adr_being_replaced.reload

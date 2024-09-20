@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :account, class: "DataModel::Account" do
+  factory :account, class: "DB::Account" do
     email { Faker::Internet.unique.email }
     created_at { Time.now }
 

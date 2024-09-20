@@ -161,10 +161,10 @@ RSpec.describe GithubLinkedAccount do
         expect {
           result = described_class.create(form:)
         }.to change {
-          DataModel::Account.count
+          DB::Account.count
         }.by(1)
 
-        new_account = DataModel::Account.find!(email: form.email)
+        new_account = DB::Account.find!(email: form.email)
 
         expect(result).not_to be(form)
         expect(form.constraint_violations?).to eq(false)

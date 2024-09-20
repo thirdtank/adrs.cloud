@@ -14,12 +14,12 @@ class DraftAdr
     if !AccountEntitlements.new(account:).can_add_new?
       raise Brut::BackEnd::Errors::Bug, "#{account.external_id} has reached its plan limit - this should not have been called"
     end
-    adr = DataModel::Adr.new(created_at: Time.now, account: account)
+    adr = DB::Adr.new(created_at: Time.now, account: account)
     DraftAdr.new(adr:)
   end
 
   def self.find(external_id:,account:)
-    adr = DataModel::Adr.find!(external_id:, account:, accepted_at: nil, rejected_at: nil)
+    adr = DB::Adr.find!(external_id:, account:, accepted_at: nil, rejected_at: nil)
 
     if !adr
       raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have a draft ADR with ID #{external_id}"
@@ -55,7 +55,7 @@ class DraftAdr
   end
 
   def accept(form:)
-    AppDataModel.transaction do
+    DB.transaction do
       form = self.save(form:)
       if form.constraint_violations?
         return form
@@ -97,7 +97,7 @@ class DraftAdr
     end
 
 
-    AppDataModel.transaction do
+    DB.transaction do
       new_adr = @adr.external_id.nil?
       @adr.update(title: form.title,
                  context: form.context,
@@ -113,7 +113,7 @@ class DraftAdr
       if new_adr
         propose_replacement_adr(form)
         # XXX
-        refines_adr = DataModel::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
+        refines_adr = DB::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
         @adr.update(refines_adr_id: refines_adr&.id)
       else
         replaced_adr_may_not_change!(form)

@@ -39,7 +39,7 @@ RSpec.describe NewDraftAdrHandler do
 
         result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
-        adr = DataModel::Adr.last
+        adr = DB::Adr.last
         expect(adr.title).to eq("This is a test")
 
         expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
@@ -55,7 +55,7 @@ RSpec.describe NewDraftAdrHandler do
 
             result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
-            adr = DataModel::Adr.last
+            adr = DB::Adr.last
             expect(adr.title).to eq("This is a test")
             expect(adr.refines_adr).to eq(nil)
             expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
@@ -71,7 +71,7 @@ RSpec.describe NewDraftAdrHandler do
 
             result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
-            adr = DataModel::Adr.last
+            adr = DB::Adr.last
             expect(adr.title).to eq("This is a test")
             expect(adr.refines_adr).to eq(adr_being_refined)
             expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
@@ -88,7 +88,7 @@ RSpec.describe NewDraftAdrHandler do
 
           result = handler.handle!(form:,account:,flash:, account_entitlements: AccountEntitlements.new(account:))
 
-          adr = DataModel::Adr.last
+          adr = DB::Adr.last
           expect(adr.title).to eq("This is a test")
           expect(adr.proposed_to_replace_adr).to eq(adr_being_replaced)
           expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)

@@ -1,5 +1,5 @@
 require "spec_helper"
-RSpec.describe DataModel::Entitlement do
+RSpec.describe DB::Entitlement do
   it "should not allow more than one per account" do
     default = create(:entitlement_default)
     account = create(:account, :without_entitlement)

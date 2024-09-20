@@ -1,4 +1,4 @@
 require "spec_helper"
-RSpec.describe DataModel::EntitlementDefault do
+RSpec.describe DB::EntitlementDefault do
   implementation_is_trivial
 end

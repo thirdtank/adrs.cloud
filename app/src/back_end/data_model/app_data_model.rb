@@ -1,13 +1,13 @@
-module DataModel
+module DB
+  def self.transaction(opts=:use_default,&block)
+    if opts == :use_default
+      opts = Sequel::Database::OPTS
+    end
+    Sequel::Model.db.transaction(opts,&block)
+  end
 end
 AppDataModel = Class.new(Sequel::Model)
 Sequel::Model.db.extension :pg_array
-def AppDataModel.transaction(opts=:use_default,&block)
-  if opts == :use_default
-    opts = Sequel::Database::OPTS
-  end
-  Sequel::Model.db.transaction(opts,&block)
-end
 def AppDataModel.find!(...)
   self.first!(...)
 end

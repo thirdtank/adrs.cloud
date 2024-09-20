@@ -1,7 +1,7 @@
 class AuthenticatedAccount
   attr_reader :account, :session_id
   def self.search(session_id:)
-    account = DataModel::Account.find(external_id: session_id)
+    account = DB::Account.find(external_id: session_id)
     if account.nil?
       nil
     elsif account.deactivated?

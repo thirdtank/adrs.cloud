@@ -111,7 +111,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
                 # omitting tags because it doesn't matter and requires transformation to a string
               ))
               flash          = empty_flash
-              DataModel::ProposedAdrReplacement.create(
+              DB::ProposedAdrReplacement.create(
                 replacing_adr_id: adr.id,
                 replaced_adr_id: adr_to_replace.id,
                 created_at: Time.now,

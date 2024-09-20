@@ -29,7 +29,7 @@ RSpec.describe EditDraftAdrByExternalIdPage do
     it "shows the ADR proposing to be replaced" do
       adr            = create(:adr, :accepted, accepted_at: nil)
       adr_to_replace = create(:adr, :accepted, account: adr.account)
-      DataModel::ProposedAdrReplacement.create(
+      DB::ProposedAdrReplacement.create(
         replacing_adr_id: adr.id,
         replaced_adr_id: adr_to_replace.id,
         created_at: Time.now,

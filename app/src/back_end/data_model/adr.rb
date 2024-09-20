@@ -1,18 +1,18 @@
-class DataModel::Adr < AppDataModel
+class DB::Adr < AppDataModel
   many_to_one :account
 
   # This is the ADR this model is replacing
-  one_through_one :proposed_to_replace_adr, class: "DataModel::Adr",
+  one_through_one :proposed_to_replace_adr, class: "DB::Adr",
     join_table: :proposed_adr_replacements,
     left_key: :replacing_adr_id,
     right_key: :replaced_adr_id
 
   # Note, it's really one-to-one based on the DB
   # constraints, but this is how Sequel wants to model this
-  many_to_one :replaced_by_adr, class: "DataModel::Adr"
-  one_to_one :replaced_adr, class: "DataModel::Adr", key: :replaced_by_adr_id
+  many_to_one :replaced_by_adr, class: "DB::Adr"
+  one_to_one :replaced_adr, class: "DB::Adr", key: :replaced_by_adr_id
 
-  one_to_many :refined_by_adrs, class: "DataModel::Adr", key: :refines_adr_id
+  one_to_many :refined_by_adrs, class: "DB::Adr", key: :refines_adr_id
 
   def tags(phony_shared: true)
     tags_value = self[:tags] || []
