@@ -40,6 +40,7 @@ class AdrApp < Sinatra::Base
 
     if authenticated_account && authenticated_account.active?
       Thread.current.thread_variable_get(:request_context)[:account] = authenticated_account.account
+      Thread.current.thread_variable_get(:request_context)[:authenticated_account] = authenticated_account
       Thread.current.thread_variable_get(:request_context)[:account_entitlements] = AccountEntitlements.new(account: authenticated_account.account)
       logged_in = true
       logger.info "Someone is logged in"

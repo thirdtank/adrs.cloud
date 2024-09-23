@@ -20,4 +20,26 @@ class AuthenticatedAccount
   end
   def active? = true
 
+  class Findable
+    def initialize(klass,**args)
+      @klass = klass
+      @args = args
+    end
+
+    def find!(**args)
+      @klass.find(**(args.merge(@args)))
+    end
+    def find(**args)
+      @klass.search(**(args.merge(@args)))
+    end
+  end
+
+  def accepted_adrs
+    Findable.new(AcceptedAdr,account:)
+  end
+
+  def entitlements
+    AccountEntitlements.new(account:)
+  end
+
 end

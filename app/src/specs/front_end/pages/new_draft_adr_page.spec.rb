@@ -12,7 +12,7 @@ RSpec.describe NewDraftAdrPage do
       form = NewDraftAdrForm.new
       flash = empty_flash
 
-      page = described_class.new(form:, account:, flash:, account_entitlements: AccountEntitlements.new(account:))
+      page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash:)
 
       result = render_and_parse(page)
       expect(result.kind_of?(URI)).to eq(true)
@@ -26,7 +26,7 @@ RSpec.describe NewDraftAdrPage do
       form = NewDraftAdrForm.new(params: { title: "AAA" })
       form.server_side_constraint_violation(input_name: "title", key: :required)
 
-      page = described_class.new(form:, account:, flash: empty_flash, account_entitlements: AccountEntitlements.new(account:))
+      page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
@@ -40,7 +40,7 @@ RSpec.describe NewDraftAdrPage do
       account = create(:account)
       form = NewDraftAdrForm.new
 
-      page = described_class.new(form:, account:, flash: empty_flash, account_entitlements: AccountEntitlements.new(account:))
+      page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.css("aside[role='alert']").size).to eq(0)
@@ -52,7 +52,7 @@ RSpec.describe NewDraftAdrPage do
       account = adr_being_refined.account
       form = NewDraftAdrForm.new(params: { refines_adr_external_id: adr_being_refined.external_id })
 
-      page = described_class.new(form:, account:, flash: empty_flash, account_entitlements: AccountEntitlements.new(account:))
+      page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.css("aside[role='alert']").size).to eq(0)
@@ -65,7 +65,7 @@ RSpec.describe NewDraftAdrPage do
       account = adr_being_replaced.account
       form = NewDraftAdrForm.new(params: { replaced_adr_external_id: adr_being_replaced.external_id })
 
-      page = described_class.new(form:, account:, flash: empty_flash, account_entitlements: AccountEntitlements.new(account:))
+      page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.css("aside[role='alert']").size).to eq(0)

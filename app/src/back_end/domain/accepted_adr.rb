@@ -6,6 +6,7 @@ class AcceptedAdr
     end
     AcceptedAdr.new(adr:)
   end
+
   def self.find(external_id:,account:)
     accepted_adr = self.search(external_id:,account:)
     if accepted_adr.nil?

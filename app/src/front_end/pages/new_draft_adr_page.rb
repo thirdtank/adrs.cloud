@@ -1,18 +1,17 @@
 class NewDraftAdrPage < AppPage
   attr_reader :form, :error_message, :refines_adr, :replaces_adr
-  def initialize(form: nil, account:, flash:, account_entitlements:)
+  def initialize(form: nil, authenticated_account:, flash:)
     @form                 = form || NewDraftAdrForm.new
-    @account              = account
     @flash                = flash
-    @account_entitlements = account_entitlements
+    @account_entitlements = authenticated_account.entitlements
 
     @error_message = if !@form.new? && form.constraint_violations?
                        :adr_invalid
                      else
                        nil
                      end
-    @refines_adr  = AcceptedAdr.search(external_id: @form.refines_adr_external_id,account:)
-    @replaces_adr = AcceptedAdr.search(external_id: @form.replaced_adr_external_id,account:)
+    @refines_adr  = authenticated_account.accepted_adrs.find(external_id: @form.refines_adr_external_id)
+    @replaces_adr = authenticated_account.accepted_adrs.find(external_id: @form.replaced_adr_external_id)
 
   end
 

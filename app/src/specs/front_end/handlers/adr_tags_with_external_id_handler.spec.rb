@@ -7,7 +7,7 @@ RSpec.describe AdrTagsWithExternalIdHandler do
         account = create(:account)
         form = AdrTagsWithExternalIdForm.new
         expect {
-          handler.handle!(form: form, external_id: "foobar", account: account, flash: empty_flash)
+          handler.handle!(form: form, external_id: "foobar", authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
         }.to raise_error(Brut::BackEnd::Errors::NotFound)
       end
     end
@@ -18,7 +18,7 @@ RSpec.describe AdrTagsWithExternalIdHandler do
           account = create(:account)
           form = AdrTagsWithExternalIdForm.new
           expect {
-            handler.handle!(form: form, external_id: adr.external_id, account: account, flash: empty_flash)
+            handler.handle!(form: form, external_id: adr.external_id, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
           }.to raise_error(Brut::BackEnd::Errors::NotFound)
         end
       end
@@ -29,7 +29,7 @@ RSpec.describe AdrTagsWithExternalIdHandler do
           form    = AdrTagsWithExternalIdForm.new(params: { tags: "foo, bar\nBLAH" })
           flash   = empty_flash
 
-          return_value = handler.handle!(form: , account: ,flash:, external_id: adr.external_id)
+          return_value = handler.handle!(form: , authenticated_account: AuthenticatedAccount.new(account:),flash:, external_id: adr.external_id)
 
           expect(return_value).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
 

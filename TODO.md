@@ -6,7 +6,27 @@ CHECK 1 - Real E2E tests
       2 - Visual Review
           DONE: List of all parts of the app that need a visual re-think or change
 
-      3 - Data Layer Review
+          * Sanity around page headers/navs
+          * Make it not look like shit on mobile
+          * Home page
+
+
+          DONE: At least one new feature that requires <select>, radio buttons and checkboxes
+
+          Account Settings:
+
+          * Delete Account
+          * See plan + limits
+
+          ADR search
+
+          * basic keyword
+          * exact phrase
+
+          Tag auto-complete
+
+
+CHECK 3 - Data Layer Review
           DONE: consolidate and normalize looking up data and knowing when it
                 will fail vs. return nil/empty
 ## 2024-09-02

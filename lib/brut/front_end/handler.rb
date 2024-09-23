@@ -15,4 +15,5 @@ class Brut::FrontEnd::Handler
   def handle!(**)
     raise SubclassMustImplement
   end
+
 end

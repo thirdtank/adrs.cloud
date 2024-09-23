@@ -127,7 +127,8 @@ private
 
   def propose_replacement_adr(form)
     if !form.replaced_adr_external_id.nil?
-      accepted_adr_to_replace = AcceptedAdr.search(external_id: form.replaced_adr_external_id, account: @adr.account)
+      authenticated_account = AuthenticatedAccount.new(account: @adr.account)
+      accepted_adr_to_replace = authenticated_account.accepted_adrs.find(external_id: form.replaced_adr_external_id)
       adr_to_replace_must_exist!(accepted_adr_to_replace,form)
       accepted_adr_to_replace.propose_replacement(@adr)
     end

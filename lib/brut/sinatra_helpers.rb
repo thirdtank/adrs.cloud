@@ -18,6 +18,19 @@ module Brut
       @hash[key] = value
     end
 
+    def fetch(key)
+      if self.key?(key)
+        value = self[key]
+        if value
+          return value
+        else
+          raise ArgumentError,"No key '#{key}' in #{self.class}"
+        end
+      else
+        raise ArgumentError,"Key '#{key}' is nil in #{self.class}"
+      end
+    end
+
     def [](key)
       @hash[key.to_sym]
     end
