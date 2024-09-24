@@ -92,7 +92,7 @@ class Command
         puts "Loading seed data"
         exec("#{$0} seeds --app-env=#{@options[:app_env]}")
       else
-        puts "NOT Loading seed data, use --load-seeds if you want that"
+        puts "NOT Loading seed data, use --seeds if you want that"
       end
     end
   end

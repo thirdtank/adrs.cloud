@@ -14,7 +14,7 @@ require "playwright/test"
 require_relative "support"
 
 SemanticLogger.default_level = ENV.fetch("LOGGER_LEVEL_FOR_TESTS","warn")
-Brut::SpecSupport::FactoryBot.new.setup!
+Brut::FactoryBot.new.setup!
 
 class TestServer
   def self.instance

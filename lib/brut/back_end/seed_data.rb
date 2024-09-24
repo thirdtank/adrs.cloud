@@ -1,4 +1,4 @@
-require_relative "../spec_support"
+require_relative "../factory_bot"
 module Brut
   module Backend
     class SeedData
@@ -9,7 +9,7 @@ module Brut
       def self.classes = @classes || []
 
       def setup!
-        Brut::SpecSupport::FactoryBot.new.setup!
+        Brut::FactoryBot.new.setup!
       end
 
       def load_seeds!

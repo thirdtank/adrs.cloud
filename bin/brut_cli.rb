@@ -1,5 +1,5 @@
 require "bundler"
-Bundler.setup
+Bundler.setup(:default, ENV["RACK_ENV"].to_sym)
 
 # Not needed once Brut is modularized
 BRUT_PATH = File.join(File.dirname($0),"..","lib")

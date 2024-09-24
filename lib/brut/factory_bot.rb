@@ -5,7 +5,7 @@ require "active_support"
 require "factory_bot"
 require "faker"
 
-class Brut::SpecSupport::FactoryBot
+class Brut::FactoryBot
   def setup!
     Faker::Config.locale = :en
     FactoryBot.definition_file_paths = [
