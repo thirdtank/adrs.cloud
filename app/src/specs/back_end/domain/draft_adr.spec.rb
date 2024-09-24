@@ -10,35 +10,6 @@ RSpec.describe DraftAdr do
       expect(draft_adr.external_id).to eq(nil)
     end
   end
-  describe "::find" do
-    context "adr exists" do
-      context "account has access to that adr" do
-        it "locates that adr" do
-          adr = create(:adr)
-          account = adr.account
-          draft_adr = described_class.find(account:, external_id: adr.external_id)
-          expect(draft_adr.external_id).to eq(adr.external_id)
-        end
-      end
-      context "account does not have access to that adr" do
-        it "raises not found" do
-          adr = create(:adr)
-          account = create(:account)
-          expect {
-            draft_adr = described_class.find(account:, external_id: adr.external_id)
-          }.to raise_error(Sequel::NoMatchingRow)
-        end
-      end
-    end
-    context "adr does not exist" do
-      it "raises not found" do
-        account = create(:account)
-        expect {
-          draft_adr = described_class.find(account:, external_id: "foobar")
-        }.to raise_error(Sequel::NoMatchingRow)
-      end
-    end
-  end
   describe "#to_h" do
     implementation_is_trivial
   end
@@ -60,7 +31,7 @@ RSpec.describe DraftAdr do
         form = AcceptedAdrsWithExternalIdForm.new(params:)
 
 
-        result = described_class.find(account:, external_id: adr.external_id).accept(form:)
+        result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
         expect(form.constraint_violations?).to eq(false)
 
@@ -100,7 +71,7 @@ RSpec.describe DraftAdr do
         }
         form = AcceptedAdrsWithExternalIdForm.new(params:)
 
-        result = described_class.find(account:, external_id: adr.external_id).accept(form:)
+        result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
         expect(form.constraint_violations?).to eq(false)
 
@@ -119,7 +90,7 @@ RSpec.describe DraftAdr do
         account = adr.account
         form = AcceptedAdrsWithExternalIdForm.new
 
-        result = described_class.find(account:, external_id: adr.external_id).accept(form:)
+        result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:title, key: :value_missing)
@@ -131,7 +102,7 @@ RSpec.describe DraftAdr do
         account = adr.account
         form = AcceptedAdrsWithExternalIdForm.new(params: { title: "some adr title", facing: "short" })
 
-        result = described_class.find(account:, external_id: adr.external_id).accept(form:)
+        result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
         expect(form.constraint_violations?).to eq(true)
         aggregate_failures do
@@ -149,7 +120,7 @@ RSpec.describe DraftAdr do
   describe "#reject!" do
     it "updates the rejected_at date" do
       adr = create(:adr)
-      draft_adr = DraftAdr.find(account: adr.account, external_id: adr.external_id)
+      draft_adr = DraftAdr.find!(account: adr.account, external_id: adr.external_id)
 
       draft_adr.reject!
       adr.reload
@@ -313,7 +284,7 @@ RSpec.describe DraftAdr do
           }
           form = EditDraftAdrWithExternalIdForm.new(params:)
 
-          draft_adr = described_class.find(account:, external_id: adr.external_id)
+          draft_adr = described_class.find!(account:, external_id: adr.external_id)
           result = draft_adr.save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(false)
@@ -352,7 +323,7 @@ RSpec.describe DraftAdr do
             form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
-              described_class.find(account:, external_id: adr.external_id).save(form:)
+              described_class.find!(account:, external_id: adr.external_id).save(form:)
             }.to raise_error(Brut::BackEnd::Errors::Bug)
           end
         end
@@ -368,7 +339,7 @@ RSpec.describe DraftAdr do
             form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
-              described_class.find(account:, external_id: adr.external_id).save(form:)
+              described_class.find!(account:, external_id: adr.external_id).save(form:)
             }.to raise_error(Brut::BackEnd::Errors::Bug)
           end
         end
@@ -386,7 +357,7 @@ RSpec.describe DraftAdr do
             form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
-              described_class.find(account:, external_id: adr.external_id).save(form:)
+              described_class.find!(account:, external_id: adr.external_id).save(form:)
             }.to raise_error(Brut::BackEnd::Errors::Bug)
           end
         end
@@ -403,7 +374,7 @@ RSpec.describe DraftAdr do
             form = EditDraftAdrWithExternalIdForm.new(params:)
 
             expect {
-              described_class.find(account:, external_id: adr.external_id).save(form:)
+              described_class.find!(account:, external_id: adr.external_id).save(form:)
             }.to raise_error(Brut::BackEnd::Errors::Bug)
           end
         end
@@ -414,7 +385,7 @@ RSpec.describe DraftAdr do
           account = adr.account
           form = EditDraftAdrWithExternalIdForm.new
 
-          result = described_class.find(account:,external_id: adr.external_id).save(form:)
+          result = described_class.find!(account:,external_id: adr.external_id).save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(true)
           expect(form).to have_constraint_violation(:title, key: :value_missing)
@@ -426,7 +397,7 @@ RSpec.describe DraftAdr do
           account = adr.account
           form = EditDraftAdrWithExternalIdForm.new(params: { title: "title" })
 
-          result = described_class.find(account:, external_id: adr.external_id).save(form:)
+          result = described_class.find!(account:, external_id: adr.external_id).save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(true)
           expect(form).to have_constraint_violation(:title, key: :not_enough_words)

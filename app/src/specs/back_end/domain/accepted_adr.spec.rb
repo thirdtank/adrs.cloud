@@ -1,11 +1,11 @@
 require "spec_helper"
 RSpec.describe AcceptedAdr do
-  describe "::search" do
+  describe "::find" do
     it "returns nil if the ADR cannot be found" do
       adr = create(:adr, :accepted)
       account = create(:account)
 
-      accepted_adr = AcceptedAdr.search(external_id: adr.external_id,account:)
+      accepted_adr = AcceptedAdr.find(external_id: adr.external_id,account:)
 
       expect(accepted_adr).to eq(nil)
     end
@@ -13,36 +13,9 @@ RSpec.describe AcceptedAdr do
       adr = create(:adr)
       account = adr.account
 
-      accepted_adr = AcceptedAdr.search(external_id: adr.external_id,account:)
+      accepted_adr = AcceptedAdr.find(external_id: adr.external_id,account:)
 
       expect(accepted_adr).to eq(nil)
-    end
-    it "returns an AcceptedAdr if the ADR can be found" do
-      adr = create(:adr, :accepted)
-      account = adr.account
-
-      accepted_adr = AcceptedAdr.search(external_id: adr.external_id,account:)
-
-      expect(accepted_adr).not_to         eq(nil)
-      expect(accepted_adr.external_id).to eq(adr.external_id)
-    end
-  end
-  describe "::find" do
-    it "raises an error if the ADR cannot be found" do
-      adr = create(:adr, :accepted)
-      account = create(:account)
-
-      expect {
-        AcceptedAdr.find(external_id: adr.external_id,account:)
-      }.to raise_error(Brut::BackEnd::Errors::NotFound)
-    end
-    it "raises an error if the ADR exists on the account, but is not accepted" do
-      adr = create(:adr)
-      account = adr.account
-
-      expect {
-        AcceptedAdr.find(external_id: adr.external_id,account:)
-      }.to raise_error(Brut::BackEnd::Errors::NotFound)
     end
     it "returns an AcceptedAdr if the ADR can be found" do
       adr = create(:adr, :accepted)
@@ -54,11 +27,38 @@ RSpec.describe AcceptedAdr do
       expect(accepted_adr.external_id).to eq(adr.external_id)
     end
   end
+  describe "::find!" do
+    it "raises an error if the ADR cannot be found" do
+      adr = create(:adr, :accepted)
+      account = create(:account)
+
+      expect {
+        AcceptedAdr.find!(external_id: adr.external_id,account:)
+      }.to raise_error(Brut::BackEnd::Errors::NotFound)
+    end
+    it "raises an error if the ADR exists on the account, but is not accepted" do
+      adr = create(:adr)
+      account = adr.account
+
+      expect {
+        AcceptedAdr.find!(external_id: adr.external_id,account:)
+      }.to raise_error(Brut::BackEnd::Errors::NotFound)
+    end
+    it "returns an AcceptedAdr if the ADR can be found" do
+      adr = create(:adr, :accepted)
+      account = adr.account
+
+      accepted_adr = AcceptedAdr.find!(external_id: adr.external_id,account:)
+
+      expect(accepted_adr).not_to         eq(nil)
+      expect(accepted_adr.external_id).to eq(adr.external_id)
+    end
+  end
   describe "#update_tags" do
     it "updates the tags based on the stringified version of the tags" do
       adr = create(:adr, :accepted)
 
-      accepted_adr = AcceptedAdr.find(external_id: adr.external_id,account: adr.account)
+      accepted_adr = AcceptedAdr.find!(external_id: adr.external_id,account: adr.account)
 
       accepted_adr.update_tags(form: AdrTagsWithExternalIdForm.new(params: { tags: "foo, bar, blah" }))
 
@@ -70,7 +70,7 @@ RSpec.describe AcceptedAdr do
     it "clears the shareable_id" do
       adr = create(:adr, :shared)
 
-      accepted_adr = AcceptedAdr.find(external_id: adr.external_id,account: adr.account)
+      accepted_adr = AcceptedAdr.find!(external_id: adr.external_id,account: adr.account)
 
       accepted_adr.stop_sharing!
 
@@ -83,7 +83,7 @@ RSpec.describe AcceptedAdr do
       it "sets a shareable_id" do
         adr = create(:adr, :private)
 
-        accepted_adr = AcceptedAdr.find(external_id: adr.external_id,account: adr.account)
+        accepted_adr = AcceptedAdr.find!(external_id: adr.external_id,account: adr.account)
 
         accepted_adr.share!
 
@@ -96,7 +96,7 @@ RSpec.describe AcceptedAdr do
         adr = create(:adr, :shared)
         existing_id = adr.shareable_id
 
-        accepted_adr = AcceptedAdr.find(external_id: adr.external_id,account: adr.account)
+        accepted_adr = AcceptedAdr.find!(external_id: adr.external_id,account: adr.account)
 
         accepted_adr.share!
 
@@ -113,7 +113,7 @@ RSpec.describe AcceptedAdr do
         adr_being_replaced       = create(:adr, :accepted, account:)
         proposed_replacement_adr = create(:adr, account:)
 
-        accepted_adr = AcceptedAdr.find(
+        accepted_adr = AcceptedAdr.find!(
           external_id: adr_being_replaced.external_id,
           account:
         )
@@ -133,7 +133,7 @@ RSpec.describe AcceptedAdr do
         adr_being_replaced       = create(:adr, :accepted, account:)
         proposed_replacement_adr = create(:adr, :accepted, account:)
 
-        accepted_adr = AcceptedAdr.find(
+        accepted_adr = AcceptedAdr.find!(
           external_id: adr_being_replaced.external_id,
           account:
         )
@@ -148,7 +148,7 @@ RSpec.describe AcceptedAdr do
         adr_being_replaced       = create(:adr, :accepted)
         proposed_replacement_adr = create(:adr)
 
-        accepted_adr = AcceptedAdr.find(
+        accepted_adr = AcceptedAdr.find!(
           external_id: adr_being_replaced.external_id,
           account: adr_being_replaced.account,
         )

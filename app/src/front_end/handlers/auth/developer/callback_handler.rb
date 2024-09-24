@@ -2,7 +2,7 @@ module Auth
   module Developer
     class CallbackHandler < AppHandler
       def handle!(email:, flash:, session:)
-        dev_only_account = DeveloperOnlyAccount.search(email:)
+        dev_only_account = DeveloperOnlyAccount.find(email:)
         if dev_only_account.nil?
           flash.alert = "auth.no_account"
           HomePage.new(flash:)

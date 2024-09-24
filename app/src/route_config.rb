@@ -29,7 +29,7 @@ class AdrApp < Sinatra::Base
     is_public_dynamic_route  = request.path_info.match?(/^\/shared_adrs\//) && request.get?
     is_test_page             = request.path_info == "/end-to-end-tests"
 
-    authenticated_account = AuthenticatedAccount.search(session_id: app_session.logged_in_account_id)
+    authenticated_account = AuthenticatedAccount.find(session_id: app_session.logged_in_account_id)
 
     requires_login = !is_auth_callback        &&
                      !is_root_path            &&
@@ -39,9 +39,7 @@ class AdrApp < Sinatra::Base
     logged_in = false
 
     if authenticated_account && authenticated_account.active?
-      Thread.current.thread_variable_get(:request_context)[:account] = authenticated_account.account
       Thread.current.thread_variable_get(:request_context)[:authenticated_account] = authenticated_account
-      Thread.current.thread_variable_get(:request_context)[:account_entitlements] = AccountEntitlements.new(account: authenticated_account.account)
       logged_in = true
       logger.info "Someone is logged in"
     end

@@ -1,7 +1,7 @@
 module Admin
   class AccountEntitlementsWithExternalIdHandler < AppHandler
     def handle!(form:, external_id:, flash:)
-      form = AccountEntitlements.find(external_id:).update(form:)
+      form = AccountEntitlements.find!(external_id:).update(form:)
       if form.constraint_violations?
         Admin::AccountsByExternalIdPage.new(form:,flash:,external_id:)
       else

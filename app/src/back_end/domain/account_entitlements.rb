@@ -1,5 +1,5 @@
 class AccountEntitlements
-  def self.find(external_id:)
+  def self.find!(external_id:)
     self.new(account:DB::Account.find!(external_id:))
   end
 
@@ -18,7 +18,7 @@ class AccountEntitlements
 
 
   def can_add_new?
-    AccountAdrs.num_non_rejected(account: @account) < max_non_rejected_adrs
+    @account.adrs_dataset.where(rejected_at: nil).count < max_non_rejected_adrs
   end
 
   def update(form:)

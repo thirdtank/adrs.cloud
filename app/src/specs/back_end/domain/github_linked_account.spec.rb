@@ -11,7 +11,7 @@ RSpec.describe GithubLinkedAccount do
         }
       }
       expect {
-        GithubLinkedAccount.search_from_omniauth_hash(omniauth_hash:)
+        GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
       }.to raise_error(/was asked to process a 'gitlab'/i)
     end
     it "raises an error if there is no uid" do
@@ -24,7 +24,7 @@ RSpec.describe GithubLinkedAccount do
         }
       }
       expect {
-        GithubLinkedAccount.search_from_omniauth_hash(omniauth_hash:)
+        GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
       }.to raise_error(/did not get a uid/i)
     end
     it "raises an error if there is no email" do
@@ -37,7 +37,7 @@ RSpec.describe GithubLinkedAccount do
         }
       }
       expect {
-        GithubLinkedAccount.search_from_omniauth_hash(omniauth_hash:)
+        GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
       }.to raise_error(/did not get an email/i)
     end
     context "email exists" do
@@ -51,7 +51,7 @@ RSpec.describe GithubLinkedAccount do
           }
         }
 
-        github_linked_account = GithubLinkedAccount.search_from_omniauth_hash(omniauth_hash:)
+        github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
         expect(github_linked_account).not_to eq(nil)
         expect(github_linked_account.session_id).to eq(account.external_id)
       end
@@ -66,7 +66,7 @@ RSpec.describe GithubLinkedAccount do
           }
         }
 
-        github_linked_account = GithubLinkedAccount.search_from_omniauth_hash(omniauth_hash:)
+        github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
         expect(github_linked_account).to eq(nil)
       end
     end
@@ -81,7 +81,7 @@ RSpec.describe GithubLinkedAccount do
           }
         }
 
-        github_linked_account = GithubLinkedAccount.search_from_omniauth_hash(omniauth_hash:)
+        github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
         expect(github_linked_account).not_to eq(nil)
         expect(github_linked_account.active?).to eq(false)
       end
@@ -90,7 +90,7 @@ RSpec.describe GithubLinkedAccount do
   describe "::search" do
     context "email is not in the database" do
       it "returns that it does not exist" do
-        linked_account = GithubLinkedAccount.search(email: "nope@nope.nope")
+        linked_account = GithubLinkedAccount.find(email: "nope@nope.nope")
           expect(linked_account).to eq(nil)
       end
     end
@@ -98,7 +98,7 @@ RSpec.describe GithubLinkedAccount do
       context "account is not deactivated" do
         it "returns that it exists" do
           account = create(:account, :active)
-          linked_account = GithubLinkedAccount.search(email: account.email)
+          linked_account = GithubLinkedAccount.find(email: account.email)
           expect(linked_account.account.id).to eq(account.id)
         end
       end
@@ -106,7 +106,7 @@ RSpec.describe GithubLinkedAccount do
         it "returns that it does not exist" do
           account = create(:account, :deactivated)
 
-          linked_account = GithubLinkedAccount.search(email: account.email)
+          linked_account = GithubLinkedAccount.find(email: account.email)
 
           expect(linked_account).not_to     eq(nil)
           expect(linked_account.active?).to eq(false)

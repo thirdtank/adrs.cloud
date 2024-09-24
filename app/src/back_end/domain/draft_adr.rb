@@ -18,7 +18,7 @@ class DraftAdr
     DraftAdr.new(adr:)
   end
 
-  def self.find(external_id:,account:)
+  def self.find!(external_id:,account:)
     adr = DB::Adr.find!(external_id:, account:, accepted_at: nil, rejected_at: nil)
 
     if !adr

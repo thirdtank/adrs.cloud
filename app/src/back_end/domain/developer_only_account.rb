@@ -1,5 +1,5 @@
 class DeveloperOnlyAccount < AuthenticatedAccount
-  def self.search(email:)
+  def self.find(email:)
     if Brut.container.project_env.production?
       return nil
     end

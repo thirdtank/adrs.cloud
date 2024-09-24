@@ -1,5 +1,5 @@
 class GithubLinkedAccount < AuthenticatedAccount
-  def self.search_from_omniauth_hash(omniauth_hash:)
+  def self.find_from_omniauth_hash(omniauth_hash:)
     provider = omniauth_hash["provider"]
     if provider.to_s.downcase != "github"
       raise "#{self.class} was asked to process a '#{provider}' provider, not 'github'"
@@ -14,10 +14,10 @@ class GithubLinkedAccount < AuthenticatedAccount
     if email == ""
       raise "Problem with GitHub auth: we did not get an email from 'info':\n#{omniauth_hash['info']}"
     end
-    self.search(email:)
+    self.find(email:)
   end
 
-  def self.search(email: nil, external_id:nil)
+  def self.find(email: nil, external_id:nil)
     if email.nil? && external_id.nil?
       raise ArgumentError,"You must provide either email or external_id"
     elsif !email.nil? && !external_id.nil?
@@ -39,7 +39,7 @@ class GithubLinkedAccount < AuthenticatedAccount
 
   def self.create(form:)
     email = form.email.to_s.downcase.strip
-    existing_account = self.search(email:)
+    existing_account = self.find(email:)
     if existing_account
       if existing_account.active?
         form.server_side_constraint_violation(input_name: :email, key: :account_exists)

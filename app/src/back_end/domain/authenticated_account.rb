@@ -1,6 +1,7 @@
 class AuthenticatedAccount
   attr_reader :account, :session_id
-  def self.search(session_id:)
+
+  def self.find(session_id:)
     account = DB::Account.find(external_id: session_id)
     if account.nil?
       nil
@@ -18,6 +19,7 @@ class AuthenticatedAccount
     @account    = account
     @session_id = account.external_id
   end
+
   def active? = true
 
   class Findable
@@ -27,10 +29,10 @@ class AuthenticatedAccount
     end
 
     def find!(**args)
-      @klass.find(**(args.merge(@args)))
+      @klass.find!(**(args.merge(@args)))
     end
     def find(**args)
-      @klass.search(**(args.merge(@args)))
+      @klass.find(**(args.merge(@args)))
     end
   end
 

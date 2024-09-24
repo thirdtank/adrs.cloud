@@ -1,5 +1,5 @@
 class AcceptedAdr
-  def self.search(external_id:,account:)
+  def self.find(external_id:,account:)
     adr = DB::Adr.first(Sequel.lit("external_id = ? and account_id = ? and accepted_at is not null",external_id,account.id))
     if adr.nil?
       return nil
@@ -7,8 +7,8 @@ class AcceptedAdr
     AcceptedAdr.new(adr:)
   end
 
-  def self.find(external_id:,account:)
-    accepted_adr = self.search(external_id:,account:)
+  def self.find!(external_id:,account:)
+    accepted_adr = self.find(external_id:,account:)
     if accepted_adr.nil?
       raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{external_id}"
     end
@@ -36,7 +36,7 @@ class AcceptedAdr
   end
 
   def propose_replacement(adr)
-    if !self.class.search(external_id: adr.external_id, account: adr.account).nil?
+    if !self.class.find(external_id: adr.external_id, account: adr.account).nil?
       raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with an accepted ADR"
     end
     if adr.account != @adr.account
