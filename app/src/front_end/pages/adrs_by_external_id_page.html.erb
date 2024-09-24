@@ -81,7 +81,7 @@
     <% end %>
     <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: refined_by_adrs)) %>
     <div class="pa-3 bg-gray-800 bt bc-gray-700">
-      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; <%= t(:back) %></a>
+      <a class="f-2 fw-5 blue-400" href="<%= AdrsPage.routing %>">&larr; <%= t(:back) %></a>
     </div>
   </article>
   <div class="w-quarter mv-3">

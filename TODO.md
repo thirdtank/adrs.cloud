@@ -10,7 +10,6 @@ CHECK 1 - Real E2E tests
           * Make it not look like shit on mobile
           * Home page
 
-
           DONE: At least one new feature that requires <select>, radio buttons and checkboxes
 
           Account Settings:

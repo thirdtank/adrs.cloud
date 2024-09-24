@@ -110,7 +110,7 @@
 <% else %>
   <p class="i w-100 tc"><%= t(:no_drafts) %></p>
   <% if can_add_new? %>
-    <a class="f-3 blue-400 fw-5" href="<%= NewDraftAdrPage.routing %>"><%= t(:add_new) %></a>
+    <a class="f-3 db tc blue-400 fw-5" href="<%= NewDraftAdrPage.routing %>"><%= t(:add_new) %></a>
   <% else %>
     <%= t(:add_new_limit_exceeded) %>
   <% end %>
