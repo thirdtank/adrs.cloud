@@ -5,7 +5,7 @@ RSpec.describe DraftAdr do
       account = create(:account)
       draft_adr = nil
       expect {
-        draft_adr = described_class.create(account:)
+        draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
       }.not_to change { DB::Adr.count }
       expect(draft_adr.external_id).to eq(nil)
     end
@@ -174,7 +174,7 @@ RSpec.describe DraftAdr do
           }
           form = NewDraftAdrForm.new(params: params)
 
-          draft_adr = described_class.create(account:)
+          draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
           result = draft_adr.save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(false)
@@ -183,6 +183,7 @@ RSpec.describe DraftAdr do
           expect(adr).not_to eq(nil)
 
           aggregate_failures do
+            expect(adr.account).to     eq(account)
             expect(adr.title).to       eq(params[:title])
             expect(adr.context).to     eq(params[:context])
             expect(adr.facing).to      eq(params[:facing])
@@ -211,7 +212,7 @@ RSpec.describe DraftAdr do
           }
           form = NewDraftAdrForm.new(params: params)
 
-          draft_adr = described_class.create(account:)
+          draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
           result = draft_adr.save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(false)
@@ -236,7 +237,7 @@ RSpec.describe DraftAdr do
           }
           form = NewDraftAdrForm.new(params: params)
 
-          draft_adr = described_class.create(account:)
+          draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
           result = draft_adr.save(form:)
           expect {
             draft_adr.save(form:)
@@ -261,7 +262,7 @@ RSpec.describe DraftAdr do
           }
           form = NewDraftAdrForm.new(params: params)
 
-          draft_adr = described_class.create(account:)
+          draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
           result = draft_adr.save(form:)
           expect {
             form = EditDraftAdrWithExternalIdForm.new(params: params.merge({
@@ -276,7 +277,7 @@ RSpec.describe DraftAdr do
           account = create(:account)
           form = NewDraftAdrForm.new
 
-          result = described_class.create(account:).save(form:)
+          result = described_class.create(authenticated_account: AuthenticatedAccount.new(account:)).save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(true)
           expect(form).to have_constraint_violation(:title, key: :value_missing)
@@ -288,7 +289,7 @@ RSpec.describe DraftAdr do
           account = adr.account
           form = NewDraftAdrForm.new(params: { title: "some" })
 
-          result = described_class.create(account:).save(form:)
+          result = described_class.create(authenticated_account: AuthenticatedAccount.new(account:)).save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(true)
           expect(form).to have_constraint_violation(:title, key: :not_enough_words)

@@ -4,33 +4,33 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
   describe "#handle!" do
     context "adr does not exist" do
       it "raises not found" do
-        account = create(:account)
-        form = AcceptedAdrsWithExternalIdForm.new
+        authenticated_account = create(:authenticated_account)
+        form                  = AcceptedAdrsWithExternalIdForm.new
         expect {
-          handler.handle!(form:,account:,external_id: "foobar", flash:empty_flash)
+          handler.handle!(form:,authenticated_account:,external_id: "foobar", flash:empty_flash)
         }.to raise_error(Sequel::NoMatchingRow)
       end
     end
     context "adr exists" do
       context "account does not have access to it" do
         it "raises not found" do
-          adr = create(:adr)
-          account = create(:account)
-          form = AcceptedAdrsWithExternalIdForm.new
+          authenticated_account = create(:authenticated_account)
+          adr                   = create(:adr)
+          form                  = AcceptedAdrsWithExternalIdForm.new
           expect {
-            handler.handle!(form:,account:,external_id: adr.external_id, flash: empty_flash)
+            handler.handle!(form:,authenticated_account:,external_id: adr.external_id, flash: empty_flash)
           }.to raise_error(Sequel::NoMatchingRow)
         end
       end
       context "account can access it" do
         context "there are constraint violations" do
           it "indicates errors on the form" do
-            adr     = create(:adr)
-            account = adr.account
-            form    = AcceptedAdrsWithExternalIdForm.new(params: { title: adr.title })
-            flash   = empty_flash
+            authenticated_account = create(:authenticated_account)
+            adr                   = create(:adr, account: authenticated_account.account)
+            form                  = AcceptedAdrsWithExternalIdForm.new(params: { title: adr.title })
+            flash                 = empty_flash
 
-            result = handler.handle!(form:,account:,flash:, external_id: adr.external_id)
+            result = handler.handle!(form:,authenticated_account:,flash:, external_id: adr.external_id)
 
             expect(result.class).to eq(EditDraftAdrByExternalIdPage)
             expect(result.form).to be(form)
@@ -48,9 +48,10 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
         context "there are no constraint violations" do
           context "it is not accepted" do
             it "sets accepted_at" do
-              adr = create(:adr, :accepted, accepted_at: nil)
-              account = adr.account
-              form = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
+              authenticated_account = create(:authenticated_account)
+              adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account)
+              flash                 = empty_flash
+              form                  = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
                 :title,
                 :context,
                 :facing,
@@ -61,9 +62,8 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
                 :because,
                 # omitting tags because it doesn't matter and requires transformation to a string
               ))
-              flash = empty_flash
 
-              result = handler.handle!(form:,account:,flash:,external_id: adr.external_id)
+              result = handler.handle!(form:,authenticated_account:,flash:,external_id: adr.external_id)
               expect(result).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
               expect(flash[:notice]).to eq(:adr_accepted)
               adr.reload
@@ -73,10 +73,11 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
           end
           context "it is already accepted" do
             it "raises not found" do
-              accepted_at = Time.now - 10_000
-              adr = create(:adr, :accepted, accepted_at: accepted_at)
-              account = adr.account
-              form = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
+              authenticated_account = create(:authenticated_account)
+              accepted_at           = Time.now - 10_000
+              adr                   = create(:adr, :accepted, accepted_at: accepted_at, account: authenticated_account.account)
+              flash                 = empty_flash
+              form                  = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
                 :title,
                 :context,
                 :facing,
@@ -87,19 +88,19 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
                 :because,
                 # omitting tags because it doesn't matter and requires transformation to a string
               ))
-              flash = empty_flash
 
               expect {
-                handler.handle!(form:,account:,flash:empty_flash, external_id: adr.external_id )
+                handler.handle!(form:,authenticated_account:,flash:empty_flash, external_id: adr.external_id )
               }.to raise_error(Sequel::NoMatchingRow)
             end
           end
           context "it is intended to replace another ADR that is accepted" do
             it "sets that ADR as having been replaced by this one" do
-              adr            = create(:adr, :accepted, accepted_at: nil)
-              adr_to_replace = create(:adr, :accepted, account: adr.account)
-              account        = adr.account
-              form           = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
+              authenticated_account = create(:authenticated_account)
+              adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account)
+              adr_to_replace        = create(:adr, :accepted,                   account: authenticated_account.account)
+              flash                 = empty_flash
+              form                  = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
                 :title,
                 :context,
                 :facing,
@@ -110,13 +111,12 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
                 :because,
                 # omitting tags because it doesn't matter and requires transformation to a string
               ))
-              flash          = empty_flash
               DB::ProposedAdrReplacement.create(
                 replacing_adr_id: adr.id,
                 replaced_adr_id: adr_to_replace.id,
               )
 
-              result = handler.handle!(form:,account:,flash:,external_id: adr.external_id)
+              result = handler.handle!(form:,authenticated_account:,flash:,external_id: adr.external_id)
               expect(result).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
               expect(flash[:notice]).to eq(:adr_accepted)
 

@@ -4,30 +4,31 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
   describe "#handle!" do
     context "adr does not exist" do
       it "raises not found" do
-        account = create(:account)
+        authenticated_account = create(:authenticated_account)
         expect {
-          handler.handle!(external_id: "foobar", account: account, flash: empty_flash)
+          handler.handle!(external_id: "foobar", authenticated_account: , flash: empty_flash)
         }.to raise_error(Brut::BackEnd::Errors::NotFound)
       end
     end
     context "adr exists" do
       context "account does not have access to it" do
         it "raises not found" do
-          adr = create(:adr)
-          account = create(:account)
+          authenticated_account = create(:authenticated_account)
+          adr                   = create(:adr)
+
           expect {
-            handler.handle!(external_id: adr.external_id, account: account, flash: empty_flash)
+            handler.handle!(external_id: adr.external_id, authenticated_account:, flash: empty_flash)
           }.to raise_error(Brut::BackEnd::Errors::NotFound)
         end
       end
       context "adr is shared" do
         it "sets a new shareable_id" do
-          initial_shareable_id = SecureRandom.uuid
-          adr = create(:adr, :accepted, shareable_id: initial_shareable_id)
-          account = adr.account
-          flash = empty_flash
+          authenticated_account = create(:authenticated_account)
+          initial_shareable_id  = SecureRandom.uuid
+          adr                   = create(:adr, :accepted, account: authenticated_account.account, shareable_id: initial_shareable_id)
+          flash                 = empty_flash
 
-          return_value = handler.handle!(external_id: adr.external_id, account: account, flash: flash)
+          return_value = handler.handle!(external_id: adr.external_id, authenticated_account:, flash:)
 
           adr.reload
 
@@ -39,11 +40,11 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
       end
       context "adr is not shared" do
         it "sets a shareable_id" do
-          adr = create(:adr, :accepted, shareable_id: nil)
-          account = adr.account
-          flash = empty_flash
+          authenticated_account = create(:authenticated_account)
+          adr                   = create(:adr, :accepted, account: authenticated_account.account, shareable_id: nil)
+          flash                 = empty_flash
 
-          return_value = handler.handle!(external_id: adr.external_id, account: account, flash: flash)
+          return_value = handler.handle!(external_id: adr.external_id, authenticated_account:, flash:)
 
           adr.reload
 

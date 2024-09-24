@@ -1,6 +1,6 @@
 class EditDraftAdrWithExternalIdHandler < AppHandler
-  def handle!(form:, external_id:, account:, xhr:, flash:)
-    draft_adr = DraftAdr.find(external_id:external_id, account:)
+  def handle!(form:, external_id:, authenticated_account:, xhr:, flash:)
+    draft_adr = authenticated_account.draft_adrs.find!(external_id:external_id)
     form = draft_adr.save(form:)
 
     if form.constraint_violations?
@@ -14,7 +14,7 @@ class EditDraftAdrWithExternalIdHandler < AppHandler
         EditDraftAdrByExternalIdPage.new(
           form:,
           flash:,
-          account:,
+          account: authenticated_account.account,
           external_id: draft_adr.external_id,
         )
       end

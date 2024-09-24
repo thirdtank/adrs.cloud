@@ -10,11 +10,11 @@ class DraftAdr
     validate :because   , required: true , minlength: 10
   end
 
-  def self.create(account:)
-    if !AccountEntitlements.new(account:).can_add_new?
-      raise Brut::BackEnd::Errors::Bug, "#{account.external_id} has reached its plan limit - this should not have been called"
+  def self.create(authenticated_account:)
+    if !authenticated_account.entitlements.can_add_new?
+      raise Brut::BackEnd::Errors::Bug, "#{authenticated_account.account.external_id} has reached its plan limit - this should not have been called"
     end
-    adr = DB::Adr.new(account: account)
+    adr = DB::Adr.new(account: authenticated_account.account)
     DraftAdr.new(adr:)
   end
 

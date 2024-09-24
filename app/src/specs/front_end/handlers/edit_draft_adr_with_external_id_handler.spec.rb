@@ -3,11 +3,16 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
   context "normal web request" do
     context "constraint violations" do
       it "renders the EditDraftAdrByExternalIdPage" do
-        adr = create(:adr)
+        authenticated_account = create(:authenticated_account)
+        adr = create(:adr, account: authenticated_account.account)
         adr.title = "aaaaa"
         form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
 
-        result = described_class.new.handle!(form: form, external_id: adr.external_id, account: adr.account, xhr: false, flash: empty_flash)
+        result = described_class.new.handle!(form: form,
+                                             external_id: adr.external_id,
+                                             authenticated_account:,
+                                             xhr: false,
+                                             flash: empty_flash)
 
         expect(result.class).to eq(EditDraftAdrByExternalIdPage)
         expect(result.error_message).to eq(:adr_invalid)
@@ -16,10 +21,15 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
     end
     context "no constraint violations" do
       it "redirects to the AdrsByExternalIdPage" do
-        adr = create(:adr)
+        authenticated_account = create(:authenticated_account)
+        adr = create(:adr, account: authenticated_account.account)
         form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
 
-        result = described_class.new.handle!(form: form, external_id: adr.external_id, account: adr.account, xhr: false, flash: empty_flash)
+        result = described_class.new.handle!(form: form,
+                                             external_id: adr.external_id,
+                                             authenticated_account:,
+                                             xhr: false,
+                                             flash: empty_flash)
 
         expect(result).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
       end
@@ -28,11 +38,16 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
   context "xhr request" do
     context "constraint violations" do
       it "renders the Adr::ErrorMessagesComponent with status 422" do
-        adr = create(:adr)
+        authenticated_account = create(:authenticated_account)
+        adr = create(:adr, account: authenticated_account.account)
         adr.title = "aaaaa"
         form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
 
-        result = described_class.new.handle!(form: form, external_id: adr.external_id, account: adr.account, xhr: true, flash: empty_flash)
+        result = described_class.new.handle!(form: form,
+                                             external_id: adr.external_id,
+                                             authenticated_account:,
+                                             xhr: true,
+                                             flash: empty_flash)
 
         expect(result.class).to eq(Array)
         expect(result[0].class).to eq(ErrorMessagesComponent)
@@ -42,10 +57,15 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
     end
     context "no constraint violations" do
       it "returns an HTTP 200" do
-        adr = create(:adr)
+        authenticated_account = create(:authenticated_account)
+        adr = create(:adr, account: authenticated_account.account)
         form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
 
-        result = described_class.new.handle!(form: form, external_id: adr.external_id, account: adr.account, xhr: true, flash: empty_flash)
+        result = described_class.new.handle!(form: form,
+                                             external_id: adr.external_id,
+                                             authenticated_account: authenticated_account,
+                                             xhr: true,
+                                             flash: empty_flash)
 
         expect(result.to_i).to eq(200)
       end

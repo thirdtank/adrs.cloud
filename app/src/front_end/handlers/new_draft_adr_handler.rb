@@ -4,7 +4,7 @@ class NewDraftAdrHandler < AppHandler
       return http_status(403)
     end
 
-    draft_adr = DraftAdr.create(account:authenticated_account.account)
+    draft_adr = DraftAdr.create(authenticated_account:)
     form = draft_adr.save(form:)
 
     if form.constraint_violations?

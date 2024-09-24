@@ -38,6 +38,10 @@ class AuthenticatedAccount
     Findable.new(AcceptedAdr,account:)
   end
 
+  def draft_adrs
+    Findable.new(DraftAdr,account:)
+  end
+
   def entitlements
     AccountEntitlements.new(account:)
   end

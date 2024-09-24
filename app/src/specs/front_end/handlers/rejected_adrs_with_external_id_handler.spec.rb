@@ -5,40 +5,42 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
   describe "#handle!" do
     context "adr does not exist" do
       it "raises not found" do
-        account = create(:account)
+        authenticated_account = create(:authenticated_account)
         expect {
-          handler.handle!(external_id: "foobar", account: account, flash: empty_flash)
+          handler.handle!(external_id: "foobar", authenticated_account:, flash: empty_flash)
         }.to raise_error(Sequel::NoMatchingRow)
       end
     end
     context "adr exists" do
       context "account does not have access to it" do
         it "raises not found" do
-          adr = create(:adr)
-          account = create(:account)
+          authenticated_account = create(:authenticated_account)
+          adr                   = create(:adr)
+
           expect {
-            handler.handle!(external_id: adr.external_id, account: account, flash: empty_flash)
+            handler.handle!(external_id: adr.external_id, authenticated_account:, flash: empty_flash)
           }.to raise_error(Sequel::NoMatchingRow)
         end
 
       end
       context "adr has been accepted" do
         it "raises not found" do
-          adr = create(:adr, :accepted)
-          account = adr.account
+          authenticated_account = create(:authenticated_account)
+          adr                   = create(:adr, :accepted, account: authenticated_account.account)
+
           expect {
-            handler.handle!(external_id: adr.external_id, account: account, flash: empty_flash)
+            handler.handle!(external_id: adr.external_id, authenticated_account:, flash: empty_flash)
           }.to raise_error(Sequel::NoMatchingRow)
         end
       end
       context "adr has not been accepted" do
         context "adr has not been rejected" do
           it "sets rejected_at" do
-            adr     = create(:adr)
-            account = adr.account
-            flash   = empty_flash
+            authenticated_account = create(:authenticated_account)
+            adr                   = create(:adr, account: authenticated_account.account)
+            flash                 = empty_flash
 
-            return_value = handler.handle!(external_id: adr.external_id, account: account, flash: flash)
+            return_value = handler.handle!(external_id: adr.external_id, authenticated_account:, flash:)
 
             expect(return_value).to be_routing_for(AdrsPage)
             expect(flash[:notice]).to eq(:adr_rejected)
@@ -51,12 +53,12 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
 
         context "adr has been rejected" do
           it "raises not found" do
-            rejected_at = Time.now - 10_000
-            adr = create(:adr, rejected_at: rejected_at)
-            account = adr.account
+            authenticated_account = create(:authenticated_account)
+            rejected_at           = Time.now - 10_000
+            adr                   = create(:adr, rejected_at: rejected_at, account: authenticated_account.account)
 
             expect {
-              handler.handle!(external_id: adr.external_id, account: , flash: empty_flash)
+              handler.handle!(external_id: adr.external_id, authenticated_account: , flash: empty_flash)
             }.to raise_error(Sequel::NoMatchingRow)
           end
         end

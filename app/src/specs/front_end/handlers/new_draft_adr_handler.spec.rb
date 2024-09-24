@@ -5,24 +5,26 @@ RSpec.describe NewDraftAdrHandler do
   describe "#handle!" do
     context "limit on adrs exceeded" do
       it "returns a 403 as this should never have been posted to" do
-        account = create(:account)
-        account.entitlement.update(max_non_rejected_adrs: 3)
-        create(:adr, account: account)
-        create(:adr, account: account)
-        create(:adr, account: account)
+        authenticated_account = create(:authenticated_account)
+
+        authenticated_account.account.entitlement.update(max_non_rejected_adrs: 3)
+
+        3.times do
+          create(:adr, account: authenticated_account.account)
+        end
 
         form = NewDraftAdrForm.new
-        result = handler.handle!(form:,authenticated_account: AuthenticatedAccount.new(account:),flash: empty_flash)
+        result = handler.handle!(form:,authenticated_account:,flash: empty_flash)
         expect(result.to_i).to eq(403)
       end
     end
     context "there are constraint violations" do
       it "has violations on the form, an error message in the flash, and re-renders the page" do
-        account = create(:account)
+        authenticated_account = create(:authenticated_account)
         form = NewDraftAdrForm.new(params: { title: "aaaaaaaaa"})
 
         flash = empty_flash
-        result = handler.handle!(form: , authenticated_account: AuthenticatedAccount.new(account:) , flash:)
+        result = handler.handle!(form: , authenticated_account:, flash:)
 
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:title, key: :not_enough_words)
@@ -31,16 +33,15 @@ RSpec.describe NewDraftAdrHandler do
         expect(result.form).to eq(form)
       end
     end
-    context "there are not constraint violations" do
+    context "there are no constraint violations" do
       it "saves and redirects to the edit page" do
-        account = create(:account)
+        authenticated_account = create(:authenticated_account)
         form = NewDraftAdrForm.new(params: { title: "This is a test"})
         flash = empty_flash
 
-        result = handler.handle!(form:,authenticated_account: AuthenticatedAccount.new(account:),flash:)
+        result = handler.handle!(form:,authenticated_account:,flash:)
 
         adr = DB::Adr.last
-        expect(adr.title).to eq("This is a test")
 
         expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
         expect(flash[:notice]).to eq(:adr_created)
@@ -48,12 +49,12 @@ RSpec.describe NewDraftAdrHandler do
       context "there is a refines_adr_external_id" do
         context "this account cannot access it" do
           it "sets refines_adr_id to nil" do
+            authenticated_account = create(:authenticated_account)
             adr_being_refined = create(:adr, :accepted)
-            account = create(:account)
             form = NewDraftAdrForm.new(params: { title: "This is a test", refines_adr_external_id: adr_being_refined.external_id})
             flash = empty_flash
 
-            result = handler.handle!(form:,authenticated_account: AuthenticatedAccount.new(account:),flash:)
+            result = handler.handle!(form:,authenticated_account:,flash:)
 
             adr = DB::Adr.last
             expect(adr.title).to eq("This is a test")
@@ -64,12 +65,12 @@ RSpec.describe NewDraftAdrHandler do
         end
         context "this account can access it" do
           it "saves it to the adr" do
-            adr_being_refined = create(:adr, :accepted)
-            account = adr_being_refined.account
+            authenticated_account = create(:authenticated_account)
+            adr_being_refined = create(:adr, :accepted, account: authenticated_account.account)
             form = NewDraftAdrForm.new(params: { title: "This is a test", refines_adr_external_id: adr_being_refined.external_id})
             flash = empty_flash
 
-            result = handler.handle!(form:,authenticated_account: AuthenticatedAccount.new(account:),flash:)
+            result = handler.handle!(form:,authenticated_account:,flash:)
 
             adr = DB::Adr.last
             expect(adr.title).to eq("This is a test")
@@ -81,12 +82,12 @@ RSpec.describe NewDraftAdrHandler do
       end
       context "there is a replaced_adr_external_id" do
         it "creates a proposed_adr_replacement" do
-          adr_being_replaced = create(:adr, :accepted)
-          account = adr_being_replaced.account
+          authenticated_account = create(:authenticated_account)
+          adr_being_replaced = create(:adr, :accepted, account: authenticated_account.account)
           form = NewDraftAdrForm.new(params: { title: "This is a test", replaced_adr_external_id: adr_being_replaced.external_id})
           flash = empty_flash
 
-          result = handler.handle!(form:,authenticated_account: AuthenticatedAccount.new(account:),flash:)
+          result = handler.handle!(form:,authenticated_account:,flash:)
 
           adr = DB::Adr.last
           expect(adr.title).to eq("This is a test")
