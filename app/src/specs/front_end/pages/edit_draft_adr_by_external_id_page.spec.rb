@@ -3,8 +3,11 @@ require "spec_helper"
 RSpec.describe EditDraftAdrByExternalIdPage do
   context "error message" do
     it "shows the error message" do
-      adr = create(:adr)
-      page = described_class.new(account: adr.account, external_id: adr.external_id,
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, account: authenticated_account.account)
+
+      page = described_class.new(authenticated_account:,
+                                 external_id: adr.external_id,
                                  flash: flash_from(error: :adr_cannot_be_accepted))
 
       rendered_html = render_and_parse(page)
@@ -15,10 +18,11 @@ RSpec.describe EditDraftAdrByExternalIdPage do
   end
   context "form with errors" do
     it "shows the errors" do
-      adr  = create(:adr, :accepted, accepted_at: nil)
-      form = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: "aa" })
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account)
+      form                  = EditDraftAdrWithExternalIdForm.new(params: { external_id: adr.external_id, title: "aa" })
 
-      page = described_class.new(account: adr.account, external_id: adr.external_id, form: form, flash: empty_flash)
+      page = described_class.new(authenticated_account:, external_id: adr.external_id, form: form, flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
@@ -27,13 +31,16 @@ RSpec.describe EditDraftAdrByExternalIdPage do
   end
   context "replacing an ADR" do
     it "shows the ADR proposing to be replaced" do
-      adr            = create(:adr, :accepted, accepted_at: nil)
-      adr_to_replace = create(:adr, :accepted, account: adr.account)
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account)
+      adr_to_replace        = create(:adr, :accepted,                   account: authenticated_account.account)
+
       DB::ProposedAdrReplacement.create(
         replacing_adr_id: adr.id,
         replaced_adr_id: adr_to_replace.id,
       )
-      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
+
+      page = described_class.new(authenticated_account:, external_id: adr.external_id, flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.text).to include("Proposed Replacement for “#{adr_to_replace.title}”")
@@ -41,10 +48,12 @@ RSpec.describe EditDraftAdrByExternalIdPage do
   end
   context "refining an ADR" do
     it "shows the ADR being refined" do
-      adr_being_refined = create(:adr, :accepted)
-      adr               = create(:adr, account: adr_being_refined.account, refines_adr_id: adr_being_refined.id)
+      authenticated_account = create(:authenticated_account)
+      adr_being_refined     = create(:adr, :accepted, account: authenticated_account.account)
+      adr                   = create(:adr,            account: authenticated_account.account,
+                                                      refines_adr_id: adr_being_refined.id)
 
-      page = described_class.new(account: adr.account, external_id: adr.external_id, flash: empty_flash)
+      page = described_class.new(authenticated_account:, external_id: adr.external_id, flash: empty_flash)
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.text).to include("Refines “#{adr_being_refined.title}”")

@@ -9,7 +9,7 @@ class AcceptedAdrsWithExternalIdHandler < AppHandler
       EditDraftAdrByExternalIdPage.new(
         form:,
         flash:,
-        account: authenticated_account.account,
+        authenticated_account:,
         external_id: draft_adr.external_id,
       )
     else

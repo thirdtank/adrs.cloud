@@ -62,8 +62,6 @@ class AdrApp < Sinatra::Base
 
   page "/"
 
-  page "/end-to-end-tests"
-
   path "/auth/developer/callback", method: :get
   path "/auth/github/callback", method: :get
   path "/logout", method: :get

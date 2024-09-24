@@ -3,11 +3,12 @@ require "spec_helper"
 RSpec.describe AdrsByExternalIdPage do
   context "info message" do
     it "shows the info message" do
-      adr = create(:adr)
-      page = described_class.new(account: adr.account,
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, account: authenticated_account.account)
+
+      page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id,
-                                 flash: flash_from(notice: :adr_accepted),
-                                 account_entitlements: AccountEntitlements.new(account: adr.account))
+                                 flash: flash_from(notice: :adr_accepted))
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("aside[role='status']").text.to_s.strip).to eq("ADR Accepted")
@@ -15,11 +16,12 @@ RSpec.describe AdrsByExternalIdPage do
   end
   context "draft" do
     it "shows the draft label and renders content in markdown" do
-      adr = create(:adr, because: "Because *this* is a test of `markdown`")
-      page = described_class.new(account: adr.account,
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, because: "Because *this* is a test of `markdown`", account: authenticated_account.account)
+
+      page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id,
-                                 flash: empty_flash,
-                                 account_entitlements: AccountEntitlements.new(account: adr.account))
+                                 flash: empty_flash)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("aside[role='note']").text.to_s.strip).to eq("DRAFT")
@@ -28,20 +30,18 @@ RSpec.describe AdrsByExternalIdPage do
   end
   context "replaced" do
     it "shows the replaced ADR's title and time, and replace/refine buttons are hidden" do
-      account = create(:account)
-
-      replacing_adr = create(:adr, :accepted, account: account)
-      replaced_adr  = create(:adr, :accepted, account: account, replaced_by_adr_id: replacing_adr.id)
+      authenticated_account = create(:authenticated_account)
+      replacing_adr         = create(:adr, :accepted, account: authenticated_account.account)
+      replaced_adr          = create(:adr, :accepted, replaced_by_adr_id: replacing_adr.id, account: authenticated_account.account)
 
       DB::ProposedAdrReplacement.new(
         replacing_adr_id: replacing_adr.id,
         replaced_adr_id: replaced_adr.id,
       )
 
-      page = described_class.new(account: account,
+      page = described_class.new(authenticated_account:,
                                  external_id: replaced_adr.external_id,
-                                 flash: empty_flash,
-                                 account_entitlements: AccountEntitlements.new(account:))
+                                 flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
@@ -56,17 +56,13 @@ RSpec.describe AdrsByExternalIdPage do
   end
   context "refines another ADR" do
     it "shows the replaced ADR's title and time, and replace/refine buttons are hidden" do
-      account = create(:account)
+      authenticated_account = create(:authenticated_account)
+      refined_adr           = create(:adr, :accepted, account: authenticated_account.account)
+      refining_adr          = create(:adr, :accepted, refines_adr_id: refined_adr.id, account: authenticated_account.account)
 
-      refined_adr  = create(:adr, :accepted, account: account)
-      refined_adr.update(external_id: "refined")
-      refining_adr = create(:adr, :accepted, account: account, refines_adr_id: refined_adr.id)
-      refining_adr.update(external_id: "refining")
-
-      page = described_class.new(account: account,
+      page = described_class.new(authenticated_account:,
                                  external_id: refining_adr.external_id,
-                                 flash: empty_flash,
-                                 account_entitlements: AccountEntitlements.new(account:))
+                                 flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
@@ -81,15 +77,16 @@ RSpec.describe AdrsByExternalIdPage do
   context "accepted, not replaced" do
     context "ADR limit exceeded" do
       it "the Replace and Refine buttons are disabled" do
-        adr = create(:adr, :accepted)
-        adr.account.entitlement.update(max_non_rejected_adrs: 3)
-        create(:adr, account: adr.account)
-        create(:adr, account: adr.account)
+        authenticated_account = create(:authenticated_account)
+        adr                   = create(:adr, :accepted, account: authenticated_account.account)
 
-        page = described_class.new(account: adr.account,
+        adr.account.entitlement.update(max_non_rejected_adrs: 3)
+        create(:adr, account: authenticated_account.account)
+        create(:adr, account: authenticated_account.account)
+
+        page = described_class.new(authenticated_account:,
                                    external_id: adr.external_id,
-                                   flash: empty_flash,
-                                   account_entitlements: AccountEntitlements.new(account: adr.account))
+                                   flash: empty_flash)
 
         parsed_html = render_and_parse(page)
 
@@ -106,12 +103,12 @@ RSpec.describe AdrsByExternalIdPage do
       end
     end
     it "shows that it was accepted and allows replacement and refinement" do
-      adr  = create(:adr, :accepted)
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, :accepted, account: authenticated_account.account)
 
-      page = described_class.new(account: adr.account,
+      page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id,
-                                 flash: empty_flash,
-                                 account_entitlements: AccountEntitlements.new(account: adr.account))
+                                 flash: empty_flash)
 
       parsed_html = render_and_parse(page)
 
@@ -125,12 +122,12 @@ RSpec.describe AdrsByExternalIdPage do
   end
   context "rejected" do
     it "shows that it was accepted and allows replacement and refinement" do
-      adr = create(:adr, rejected_at: Time.now)
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, rejected_at: Time.now, account: authenticated_account.account)
 
-      page = described_class.new(account: adr.account,
+      page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id,
-                                 flash: empty_flash,
-                                 account_entitlements: AccountEntitlements.new(account: adr.account))
+                                 flash: empty_flash)
 
       parsed_html = render_and_parse(page)
 
@@ -144,12 +141,15 @@ RSpec.describe AdrsByExternalIdPage do
   end
   context "shared" do
     it "disables the public button, enables the private one and omits 'shared' from the tag editor" do
-      adr  = create(:adr, :accepted, shareable_id: "some-id", tags: [ "foo", "bar" ])
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, :accepted,
+                                     shareable_id: "some-id",
+                                     tags: [ "foo", "bar" ],
+                                     account: authenticated_account.account)
 
-      page = described_class.new(account: adr.account,
+      page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id,
-                                 flash: empty_flash,
-                                 account_entitlements: AccountEntitlements.new(account: adr.account))
+                                 flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
@@ -168,12 +168,12 @@ RSpec.describe AdrsByExternalIdPage do
   end
   context "private" do
     it "disables the private button, enables the public one" do
-      adr  = create(:adr, :accepted, shareable_id: nil)
+      authenticated_account = create(:authenticated_account)
+      adr                   = create(:adr, :accepted, shareable_id: nil, account: authenticated_account.account)
 
-      page = described_class.new(account: adr.account,
+      page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id,
-                                 flash: empty_flash,
-                                 account_entitlements: AccountEntitlements.new(account: adr.account))
+                                 flash: empty_flash)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
