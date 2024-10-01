@@ -27,14 +27,12 @@ class AdrApp < Sinatra::Base
     is_auth_callback         = request.path_info.match?(/^\/auth\//)
     is_root_path             = request.path_info == "/"
     is_public_dynamic_route  = request.path_info.match?(/^\/shared_adrs\//) && request.get?
-    is_test_page             = request.path_info == "/end-to-end-tests"
 
     authenticated_account = AuthenticatedAccount.find(session_id: app_session.logged_in_account_id)
 
     requires_login = !is_auth_callback        &&
                      !is_root_path            &&
-                     !is_public_dynamic_route &&
-                     !is_test_page
+                     !is_public_dynamic_route
 
     logged_in = false
 

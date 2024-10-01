@@ -29,16 +29,14 @@ class DB::Adr < AppDataModel
     self[:tags] = tags.delete_if { |element| element.to_s.downcase == self.class.phony_tag_for_shared }
   end
 
-  def shared?   = !self.shareable_id.nil?
-  def accepted? = !self.accepted_at.nil?
-  def rejected? = !self.rejected_at.nil?
-  def replaced? = !self.replaced_by_adr.nil?
-
-  def refines_adr = self.class[id: self.refines_adr_id]
-  def refines? = !self.refines_adr.nil?
+  def shared?     = !self.shareable_id.nil?
+  def accepted?   = !self.accepted_at.nil?
+  def rejected?   = !self.rejected_at.nil?
+  def replaced?   = !self.replaced_by_adr.nil?
+  def replaced_at =  self.replaced_by_adr&.created_at
+  def refines_adr =  self.class[id: self.refines_adr_id]
+  def refines?    = !self.refines_adr.nil?
 
   def self.phony_tag_for_shared = "shared".freeze
-
-private
 
 end

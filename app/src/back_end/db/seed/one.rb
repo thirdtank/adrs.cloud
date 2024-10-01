@@ -25,13 +25,17 @@ class One < Brut::Backend::SeedData
     replacing = create(:adr, :accepted, account: account)
 
     replaced = create(:adr, :accepted, account: account, replaced_by_adr_id: replacing.id)
-    create(:adr, refines_adr_id: refined.id)
+    create(:adr, refines_adr_id: refined.id, account: account)
 
     DB::ProposedAdrReplacement.create(replaced_adr_id: replaced.id,
                                       replacing_adr_id: replacing.id)
 
-    create(:adr)
-    create(:adr, :accepted, accepted_at: nil, rejected_at: Time.now)
+    create(:adr, account: account)
+    create(:adr, account: account)
+    create(:adr, account: account)
+    create(:adr, account: account)
+    create(:adr, :accepted, account: account, accepted_at: nil, rejected_at: Time.now)
+    create(:adr, :accepted, account: account, accepted_at: nil, rejected_at: Time.now)
 
   end
 end

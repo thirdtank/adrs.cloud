@@ -132,6 +132,21 @@
   border-color: var(--mg-green-700);
   color: var(--mg-green-200);
 }
+.button.button--color--inverse_green {
+  background-color: var(--mg-green-200);
+  border-color: var(--mg-green-300);
+  color: var(--mg-green-800);
+  box-shadow: calc(0.25 * var(--mg-sp-1))
+              calc(0.25 * var(--mg-sp-1))
+              calc(0.5 * var(--mg-sp-1))
+              0
+              var(--mg-green-500)
+              ;
+}
+.button.button--color--inverse_green:active,
+.button.button--color--inverse_green:disabled {
+  box-shadow: none;
+}
 .button.button--color--blue {
   background-color: var(--mg-blue-800);
   border-color: var(--mg-blue-700);

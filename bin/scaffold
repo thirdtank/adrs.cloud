@@ -19,7 +19,8 @@ Scaffolds various types of files.
 
 COMMANDS
 
-  test - scaffolds test for the files given in args
+  test      - scaffolds test for the files given in args
+  component - scaffolds a new component given by class name
 
 OPTIONS
 }
@@ -28,6 +29,9 @@ OPTIONS
     end
     parser.on("--dry-run", "If set, no files are changed. You will see output of what would happen without this flag") do |value|
       options[:dry_run] = !!value
+    end
+    parser.on("--page", "If set, this component will be placed in pages/ to allow it to be organized with an existing page") do |value|
+      options[:page_component] = !!value
     end
   end.parse!
   options
@@ -38,7 +42,8 @@ options = parse_options
 class Command
   def self.from_string(string, args:, options:)
     case string
-    when "test" then Test.new(args: args, options: options)
+    when "test" then Test.new(args:, options:)
+    when "component" then Component.new(args:,options:)
     else
       nil
     end
@@ -47,6 +52,87 @@ class Command
   def initialize(args:, options:)
     @args    = args
     @options = options
+  end
+
+  class Component < Command
+    def call
+      if @args.length != 1
+        raise "component requires exactly one argument, got #{@args.length}"
+      end
+      class_name = RichString.new(@args[0])
+      if class_name.to_s !~ /Component$/
+        class_name = RichString.new(class_name.to_s + "Component")
+      end
+
+      relative_path = class_name.underscorized
+
+      components_src_dir   = Brut.container.components_src_dir
+      components_specs_dir = Brut.container.components_specs_dir
+
+      if @options[:page_component]
+        components_src_dir   = Brut.container.pages_src_dir
+        components_specs_dir = Brut.container.pages_specs_dir
+        if class_name.to_s !~ /::/
+          raise "component #{class_name} cannot be a page component - it must be an inner class of an existing page"
+        else
+          existing_page = RichString.new(class_name.to_s.split(/::/)[0..-2].join("::")).underscorized.to_s + ".rb"
+
+          if !(components_src_dir / existing_page).exist?
+            raise "#{existing_page} is expected to exist but does not"
+          end
+        end
+      end
+
+      source_path      = Pathname( (components_src_dir / relative_path).to_s + ".rb" )
+      html_source_path = Pathname( (components_src_dir / relative_path).to_s + ".html.erb" )
+      spec_path        = Pathname( (components_specs_dir / relative_path).to_s + ".spec.rb" )
+
+      exists = [
+        source_path,
+        html_source_path,
+        spec_path,
+      ].select(&:exist?)
+
+      if exists.any?
+        exists.each do |path|
+          log "'#{path}' exists already"
+        end
+        return 1
+      end
+
+      if @options[:dry_run]
+        puts "FileUtils.mkdir_p #{source_path.dirname}"
+        puts "FileUtils.mkdir_p #{html_source_path.dirname}"
+        puts "FileUtils.mkdir_p #{spec_path.dirname}"
+      else
+        FileUtils.mkdir_p source_path.dirname
+        FileUtils.mkdir_p html_source_path.dirname
+        FileUtils.mkdir_p spec_path.dirname
+
+        File.open(source_path,"w") do |file|
+          file.puts %{class #{class_name} < AppComponent
+  def initialize
+  end
+end}
+        end
+        File.open(html_source_path,"w") do |file|
+          file.puts "<h1>#{class_name} is ready!</h1>"
+        end
+        File.open(spec_path,"w") do |file|
+          file.puts %{require "spec_helper"
+
+RSpec.describe #{class_name} do
+  it "should have tests"
+    expect(true).to eq(false)
+  end
+end}
+        end
+      end
+      log "Component source is in        #{source_path.relative_path_from(Brut.container.project_root)}"
+      log "Component HTML template is in #{html_source_path.relative_path_from(Brut.container.project_root)}"
+      log "Component test is in          #{spec_path.relative_path_from(Brut.container.project_root)}"
+      0
+    end
   end
 
   class Test < Command

@@ -1,0 +1,14 @@
+<div class="flex flex-wrap gap-2">
+  <span><%= adr.title%></span>
+  <% tags.each do |tag| %>
+    <%= component(Adrs::TagComponent.new(tag:)) %>
+  <% end %>
+</div>
+<div class="f-1 i">
+<% if adr.replaced_by_adr %>
+  Replaced By “<a href="<%= AdrsByExternalIdPage.routing(external_id: adr.replaced_by_adr.external_id) %>" class="blue-300"><%= adr.replaced_by_adr.title %></a>”
+<% end %>
+<% if adr.replaced_adr %>
+  Replaced “<a href="<%= AdrsByExternalIdPage.routing(external_id: adr.replaced_adr.external_id) %>" class="blue-300"><%= adr.replaced_adr.title %></a>”
+<% end %>
+</div>

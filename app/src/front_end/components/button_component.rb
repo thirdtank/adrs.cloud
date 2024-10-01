@@ -12,6 +12,7 @@ class ButtonComponent < AppComponent
                  value: false,
                  confirm_dialog: nil,
                  variant: :normal,
+                 width: :minimum,
                  type: nil)
     @size                 =   size
     @color                =   color
@@ -24,6 +25,7 @@ class ButtonComponent < AppComponent
     @value                =   value
     @type                 =   type
     @variant              =   variant
+    @width                =   width
 
     disabled_message = disabled.kind_of?(String) ? disabled : nil
     @title                =   if @disabled
@@ -45,6 +47,14 @@ class ButtonComponent < AppComponent
     when :search then "button--variant--search"
     else
       raise ArgumentError.new("variant '#{@variant}' is unknown. Must be :normal, :left, :middle, :right")
+    end
+  end
+
+  def width_class
+    if @width == :full
+      "w-100"
+    else
+      ""
     end
   end
 end

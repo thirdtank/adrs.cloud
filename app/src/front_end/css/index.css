@@ -10,6 +10,10 @@
   width: 25%;
 }
 
+.h-3-half {
+  height: calc(2.5 * var(--mg-sp-3));
+}
+
 .text-glow {
   text-shadow: currentColor 0px 0px 8px;
 }
@@ -55,6 +59,11 @@
   background-color: white;
 }
 
+.text-field--small {
+  font-size: var(--mg-fs-2);
+  padding: var(--mg-sp-2);
+}
+
 .text-field::placeholder {
   /** Placeholder text should be obviously different, so make it smaller size */
   font-size: var(--mg-fs-2);
@@ -81,6 +90,9 @@
   padding-bottom: calc(1.75 * var(--mg-sp-2));
   font-weight: 300;
   font-size: var(--mg-fs-2);
+}
+.text-field-label--small {
+  font-size: var(--mg-fs-1);
 }
 
 .text-field-error-label {
@@ -161,4 +173,42 @@ brut-ajax-submit[submitted] [data-submitted-icon] {
 
 brut-constraint-violation-message ~ brut-constraint-violation-message::before {
   content: ", ";
+}
+
+table.striped tbody tr:nth-child(odd) {
+  background-color: var(--mg-gray-800);
+}
+
+brut-tabs.adr-page-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mg-sp-2);
+  padding-left: var(--mg-sp-3);
+}
+
+brut-tabs.adr-page-tabs [role=tab] {
+  cursor: pointer;
+  height: calc(2.5 * var(--mg-sp-3));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-decoration: none;
+  padding: var(--mg-sp-2);
+  padding-left: var(--mg-sp-3);
+  padding-right: var(--mg-sp-3);
+  border-bottom-left-radius: var(--mg-bw-4);
+  border-top-left-radius: var(--mg-bw-4);
+  color: var(--mg-gray-800);
+  background-color: none;
+  text-align: right;
+}
+brut-tabs.adr-page-tabs [role=tab]:hover {
+  color: var(--mg-gray-700);
+  background-color: var(--mg-gray-300);
+}
+
+brut-tabs.adr-page-tabs [role=tab][aria-selected=true],
+brut-tabs.adr-page-tabs [role=tab][aria-selected=true]:hover {
+  color: var(--mg-gray-100);
+  background-color: var(--mg-gray-900);
 }

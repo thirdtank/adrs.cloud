@@ -46,12 +46,14 @@
         }
       },
       AdrsPage: {
+        view_share_page: "Shareable Link",
         adrs: "ADRs",
         adrs_tagged: "ADRs tagged %{block}",
         name: "Name",
         accepted_on: "Accepted On",
         created_on: "Created On",
         rejected_on: "Rejected On",
+        replaced_on: "Replaced On",
         replaced_by: "Replaced By",
         actions: "Actions",
         no_drafts: "None Drafted",

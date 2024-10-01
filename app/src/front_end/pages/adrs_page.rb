@@ -1,8 +1,8 @@
 class AdrsPage < AppPage
 
-  attr_reader :info_message, :tag
+  attr_reader :info_message, :tag, :tab
 
-  def initialize(authenticated_account:, flash:, tag: nil)
+  def initialize(authenticated_account:, flash:, tag: nil, tab: "accepted")
     @info_message = flash.notice
     @tag          = tag
     @adrs         = authenticated_account.adrs.search(tag:)
@@ -10,7 +10,11 @@ class AdrsPage < AppPage
     num_non_rejected_adrs = @adrs.length - self.rejected_adrs.length
 
     @can_add_new  = authenticated_account.entitlements.can_add_new?
+    @tab          = tab.to_sym
   end
+
+  def filtered_by_tag? = !!@tag
+
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)
   def replaced_adrs = @adrs.select(&:replaced?).sort_by { |adr|
     adr.replaced_by_adr.accepted_at
@@ -18,8 +22,10 @@ class AdrsPage < AppPage
   def draft_adrs    = @adrs.reject(&:accepted?).reject(&:rejected?).sort_by(&:created_at)
   def rejected_adrs = @adrs.select(&:rejected?).sort_by(&:rejected_at)
 
-  def tag? = !!@tag
-
   def can_add_new? = @can_add_new
 
 end
+require_relative "adrs_page/tab_panel_component"
+require_relative "adrs_page/tab_component"
+require_relative "adrs_page/adr_title_component"
+

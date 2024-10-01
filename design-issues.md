@@ -1,5 +1,14 @@
 # Design Issues
 
+## Local Components
+
+If a page needs components just to be more organized, or for re-use that is just within the page, it would be nice if that could happen without it going into the main components folder.
+
+Options:
+
+* dir for the page, e.g. `app/src/front_end/pages/adrs_page/foo_component.{rb,.html.erb}`
+
+
 ## Testing Components and Pages
 
 Need better support for html parsing and whatnot

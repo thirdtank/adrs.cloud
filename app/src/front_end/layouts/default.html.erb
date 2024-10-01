@@ -10,19 +10,11 @@
   </head>
   <link rel="stylesheet" href="<%= asset_path('/css/styles.css') %>">
   <script defer src="<%= asset_path('/js/app.js') %>"></script>
-  <% if Brut.container.project_env.test? %>
-    <script defer src="<%= asset_path('/js/end-to-end-tests.js') %>"></script>
-  <% end %>
-  <style>
-  </style>
 
   <%= component(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.fe")) %>
   <%= component(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.this_field")) %>
 
   <body class="bg-gray-900 gray-200 ff-sans">
-    <nav class="w-100 flex items-center justify-end pa-3">
-      <a href="<%= LogoutHandler.routing%>"><%= t(:logout) %></a>
-    </nav>
     <%= yield %>
   </body>
 </html>

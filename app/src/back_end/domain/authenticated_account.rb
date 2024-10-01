@@ -37,6 +37,11 @@ class AuthenticatedAccount
   end
 
   class AdrsFindable < Findable
+    def all
+      account = @args.fetch(:account)
+      account.adrs
+    end
+
     def search(tag:nil)
       account = @args.fetch(:account)
       adrs = if tag.nil?

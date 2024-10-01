@@ -25,6 +25,11 @@
           too_short: "%{field} is too short; must be at least %{minlength} characters",
         },
       },
+      timestamp: { # strftime formats
+        full: "%Y-%m-%d %H:%M:%S",
+        date: "%a, %b %e, %Y",
+        date_no_year: "%a, %b %e",
+      },
       diagnostics: { # This is to help diagnose issues with the translation system and is not
         # intended to store real strings to be used by your app
         has_interpolations: "Test %{interp} Test",

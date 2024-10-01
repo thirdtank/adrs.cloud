@@ -21,13 +21,25 @@ class Brut::FrontEnd::Component
   uses :asset_path_resolver
 
   class TemplateLocator
-    def initialize(path:, extension:)
-      @path = Pathname(path)
+    def initialize(paths:, extension:)
+      @paths = Array(paths).map { |path| Pathname(path) }
       @extension = extension
     end
 
     def locate(base_name)
-      @path / "#{base_name}.#{@extension}"
+      paths_to_try = @paths.map { |path|
+        path / "#{base_name}.#{@extension}"
+      }
+      paths_found = paths_to_try.select { |path|
+        path.exist?
+      }
+      if paths_found.empty?
+        raise "Could not locate template for #{base_name}. Tried: #{paths_to_try.map(&:to_s).join(', ')}"
+      end
+      if paths_found.length > 1
+        raise "Found more than one valid pat for #{base_name}.  You must rename your files to disambiguate them. These paths were all found: #{paths_found.map(&:to_s).join(', ')}"
+      end
+      return paths_found[0]
     end
   end
 
@@ -52,6 +64,8 @@ class Brut::FrontEnd::Component
       end
     end
   end
+
+  attr_writer :yielded_block
 
   # The core method of a component. This is expected to return
   # a string to be sent as a response to an HTTP request.
@@ -78,7 +92,10 @@ class Brut::FrontEnd::Component
     # Render a component. This is the primary way in which
     # view re-use happens.  The component instance will be able to locate its
     # HTML template and render itself.
-    def component(component_instance)
+    def component(component_instance,&block)
+      if !block.nil?
+        component_instance.yielded_block = block
+      end
       call_render = CallRenderInjectingInfo.new(component_instance)
       Brut::FrontEnd::Templates::HTMLSafeString.from_string(
         call_render.call_render(**Thread.current[:rendering_context])
@@ -98,6 +115,17 @@ class Brut::FrontEnd::Component
     # Render a form that should include CSRF protection.
     def form_tag(**attributes,&block)
       component(Brut::FrontEnd::Components::FormTag.new(**attributes,&block))
+    end
+
+    def format_timestamp(timestamp,format: :full, skip_year_if_same: true)
+      keys = [
+        "general.timestamp.#{format}"
+      ]
+      if timestamp.year == Time.now.year && skip_year_if_same
+        keys.unshift(keys[0] + "_no_year")
+      end
+      format = t_direct(keys)
+      timestamp.strftime(format)
     end
   end
   include Helpers
