@@ -1,5 +1,9 @@
 <% if confirmation_message %>
-<brut-confirm message="<%= confirmation_message %>" show-warnings="<%= label %>" dialog-id="<%= confirm_dialog %>">
+<brut-confirm
+  message="<%= confirmation_message %>"
+  show-warnings="<%= label %>"
+  class="<%= width_class %>"
+  dialog-id="<%= confirm_dialog %>">
 <% end %>
 <button 
   <% if type %>
@@ -10,6 +14,9 @@
   <% end %>
   <% if disabled %>
       disabled
+  <% end %>
+  <% if aria_label %>
+      aria-label="<%= aria_label %>"
   <% end %>
   <% if value %>
       value="<%= value %>"

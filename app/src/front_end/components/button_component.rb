@@ -1,9 +1,21 @@
 class ButtonComponent < AppComponent
-  attr_reader :size, :color, :label, :icon, :confirmation_message, :confirm_dialog, :type, :formaction, :disabled, :value, :title
+  attr_reader :size,
+              :color,
+              :label,
+              :aria_label,
+              :icon,
+              :confirmation_message,
+              :confirm_dialog,
+              :type,
+              :formaction,
+              :disabled,
+              :value,
+              :title
 
   def initialize(size: :normal,
                  color: "gray",
                  label:,
+                 aria_label: nil,
                  icon: false,
                  formaction: nil,
                  title: nil,
@@ -17,6 +29,7 @@ class ButtonComponent < AppComponent
     @size                 =   size
     @color                =   color
     @label                =   label
+    @aria_label           =   aria_label
     @icon                 =   icon
     @formaction           =   formaction
     @disabled             = !!disabled
@@ -32,6 +45,8 @@ class ButtonComponent < AppComponent
                                 disabled_message
                               elsif title
                                 title
+                              elsif aria_label
+                                aria_label
                               else
                                 label
                               end

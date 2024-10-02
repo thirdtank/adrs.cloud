@@ -1,205 +1,235 @@
 <% if info_message %>
-  <aside role="status" class="ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3">
+  <p role="status">
     <%= t(info_message) %>
-  </aside>
+  </p>
 <% end %>
-<div class="flex items-start gap-3 justify-center">
-  <div role="none" class="w-quarter"></div>
-  <article class="w-50 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
-    <div class="pa-3 bg-gray-800 bb bc-gray-700">
-      <a class="f-2 fw-5 blue-400" href="/adrs">&larr; <%= t(:view_all) %></a>
-    </div>
-    <% if draft? %>
-      <aside role="note" class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-4 right--3" style="transform: rotate(33deg);">
-      <%= t(:draft) %>
-      </aside>
-    <% end %>
-    <h2 class="tc measure-narrow ph-1 mh-auto lh-title fs-5 mt-3 mb-1 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
-    <div class="tc f-1 mb-3">
-      <% if adr.replaced? %>
-        <h3 class="lh-title f-3 fw-5 pa-2 mh-3 ba br-2 bc-red-300 red-900 bg-red-300 flex items-center gap-3">
-          <div class="w-3">
-          <%= svg("change-icon") %>
-          </div>
-          <div class="tl">
-            <div class="f-2">
-              Replaced <time class="fw-6" datetime="<%= adr.replaced_by_adr.accepted_at %>"><%= adr.replaced_by_adr.accepted_at %></time> by
-            </div>
-            <a class="db red-900" href="<%= adr_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
-          </div>
-        </h3>
-      <% end %>
-      <% if adr.accepted? %>
-        <h3 class="lh-title fw-5 pa-2 mh-3 ba br-2 
-          <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' %>
-          ">
-          <%= t_html(accepted_i18n_key) do %>
-            <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
+<section class="flex w-100">
+  <nav class="bg-gray-800 gray-100 w-6 h-100vh flex flex-column justify-between">
+    <div class="flex flex-column overflow-y-scroll">
+      <div class="pa-3 w-100 pt-4 bg-gray-200 gray-800">
+        <header class="flex items-center gap-2">
+          <span class="w-3">
+            <%= svg("architectural-icon") %>
+          </span>
+          <h1 class="f-4 ma-0"><%= t(:adrpg) %></h1>
+        </header>
+        <a class="f-2 fw-5 blue-800 db pt-3" href="<%= AdrsPage.routing %>">&larr; <%= t(:view_all) %></a>
+      </div>
+      <div class="ph-3 bt bc-gray-500 pv-2">
+        <div class="flex flex-column gap-3 items-end mt-1 pb-3 bb bc-gray-600">
+        <% if editable? %>
+          <a class="db mt-3 w-100 tc pv-2 ba br-1 bc-blue-500 f-2 fw-5 blue-400" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>"><%= t(:edit_adr) %></a>
+        <% elsif accepted? %>
+          <%= form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2 w-100") do %>
+            <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+            <fieldset class="bn pa-0 ma-0 flex w-100 items-center">
+
+              <%= component(ButtonComponent.new(
+                size: "tiny",
+                formaction: SharedAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
+                disabled: shared? ? t(:already_shared) : false,
+                color: "orange",
+                variant: :left,
+                label: t(:share),
+                confirm: t(:share_confirm),
+                width: :full,
+                icon: "globe-network-icon")) %>
+
+              <%= component(ButtonComponent.new(
+                size: "tiny",
+                formaction: PrivateAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
+                disabled: private? ? t(:not_shared) : false,
+                color: "blue",
+                variant: :right,
+                label: t(:stop_sharing_short),
+                aria_label: t(:stop_sharing),
+                confirm: t_html(:stop_share_confirm),
+                width: :full,
+                icon: "lock-icon")) %>
+
+            </fieldset>
+            <% if shared? %>
+              <a class="blue-300 db flex items-center justify-end gap-1 pr-1 w-100" target="_blank" href="<%= SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id) %>">
+                <span class="tdu f-1"><%= t(:view_share_page) %></span>
+                <div class="w-1" role="img" aria-description="<%= t("aria.external_link_icon") %>"><%= svg("external-link-icon") %></div>
+              </a>
+            <% end %>
           <% end %>
-        </h3>
-      <% end %>
-      <% if !adr.replaced_adr.nil? %>
-        <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900">
-          <%= t_html(:replaces) do %>
-            <a class="green-300" href="<%= adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
+          <% if !adr.replaced? %>
+            <%= form_tag(method: "post", class:"flex items-center w-100") do %>
+              <input type="hidden" name="external_id" value="<%= adr.external_id %>">
+              <%= component(
+                ButtonComponent.new(
+                  size: "tiny",
+                  variant: :left,
+                  formaction: ReplacedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
+                  disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
+                  color: "red",
+                  width: :full,
+                  label: t(:replace),
+                  icon: "change-icon"
+                )
+              ) %>
+              <%= component(
+                ButtonComponent.new(
+                  size: "tiny",
+                  variant: :right,
+                  formaction: RefinedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
+                  disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
+                  color: "purple",
+                  width: :full,
+                  label: t(:refine),
+                  icon: "adjust-control-icon"
+                )
+              ) %>
+            <% end %>
           <% end %>
-        </h3>
-      <% end %>
-      <% if adr.rejected? %>
-      <h3 class="lh-title fw-5 pa-2 mh-3 ba br-2 bc-red-200 red-800 bg-red-200">
-        <%= t_html(:rejected) do %>
-          <time class="fw-6" datetime="<%= adr.created_at %>"><%= adr.rejected_at %></time>
         <% end %>
-      </h3>
-      <% end %>
-      <%= t_html(:created) do %>
-        <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
-      <% end %>
-    </div>
-    <section aria-label="context" class="rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
-    <section aria-label="facing" class="rendered-markdown ph-3"><%= markdown(:facing) %></section>
-    <div class="ph-3 f-3 bt bb <%= adr.accepted_at.nil? ? 'bc-yellow-600 bg-yellow-800 yellow-100' : 'bc-green-600 bg-green-800 green-200' %>">
-      <section aria-label="decision" class="rendered-markdown ph-3 fw-5"><%= markdown(:decision) %></section>
-    </div>
-    <section aria-label="neglected" class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:neglected) %></section>
-    <section aria-label="achieve" class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:achieve) %></section>
-    <section aria-label="accepting" class="rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:accepting) %></section>
-    <section aria-label="because" class="rendered-markdown ph-3"><%= markdown(:because) %></section>
-    <% if adr.refines? %>
-      <section class="bt bc-gray-800">
-      <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-blue-800 blue-300 bg-blue-900 flex items-center gap-2">
-        <div class="w-2">
-          <%= svg("adjust-control-icon") %>
         </div>
-        <div class="tl">
-          <%= t_html(:refines) do %>
-            <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
-          <% end %>
-        </div>
-      </h3>
-      </section>
-    <% end %>
-    <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: refined_by_adrs)) %>
-    <div class="pa-3 bg-gray-800 bt bc-gray-700">
-      <a class="f-2 fw-5 blue-400" href="<%= AdrsPage.routing %>">&larr; <%= t(:back) %></a>
-    </div>
-  </article>
-  <div class="w-quarter mv-3">
-    <div style="visibility: hidden" role="none" class="pa-3">
-      <span class="f-2 fw-5">hidden</span>
-    </div>
-    <nav class="flex flex-column gap-3 mt-1 bb bc-gray-600 pb-3 mr-3">
-    <% if editable? %>
-      <a class="f-2 fw-5 blue-400" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>"><%= t(:edit) %></a>
-    <% elsif adr.accepted? %>
-      <%= form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2") do %>
-        <input type="hidden" name="external_id" value="<%= adr.external_id %>">
-        <fieldset class="bn pa-0 ma-0 flex items-center">
-
-          <%= component(ButtonComponent.new(
-            size: "small",
-            formaction: SharedAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
-            variant: :left,
-            disabled: shared? ? t(:already_shared) : false,
-            color: "orange",
-            label: t(:share),
-            confirm: t(:share_confirm),
-            icon: "globe-network-icon")) %>
-
-          <%= component(ButtonComponent.new(
-            size: "small",
-            formaction: PrivateAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
-            variant: :right,
-            disabled: private? ? t(:not_shared) : false,
-            color: "blue",
-            label: t(:stop_sharing),
-            confirm: t(:stop_share_confirm),
-            icon: "lock-icon")) %>
-
-        </fieldset>
-        <% if shared? %>
-          <a class="blue-300 db flex items-center justify-start gap-1 pl-2" target="_blank" href="<%= SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id) %>">
-            <span class="tdu f-1"><%= t(:view_share_page) %></span>
-            <div class="w-1" role="img" aria-description="<%= t("aria.external_link_icon") %>"><%= svg("external-link-icon") %></div>
-          </a>
-        <% end %>
-      <% end %>
-      <% if !adr.replaced? %>
-        <%= form_tag(method: "post", class:"flex items-center") do %>
-          <input type="hidden" name="external_id" value="<%= adr.external_id %>">
-          <%= component(
-            ButtonComponent.new(
-              size: "normal",
-              variant: :left,
-              formaction: ReplacedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
-              disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
-              color: "red",
-              label: t(:replace),
-              icon: "change-icon"
-            )
-          ) %>
-          <%= component(
-            ButtonComponent.new(
-              size: "normal",
-              variant: :right,
-              formaction: RefinedAdrsWithExistingExternalIdHandler.routing(existing_external_id: adr.external_id),
-              disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
-              color: "purple",
-              label: t(:refine),
-              icon: "adjust-control-icon"
-            )
-          ) %>
-        <% end %>
-      <% end %>
-    <% end %>
-    </nav>
-    <adr-tag-editor show-warnings="editor">
-      <adr-tag-editor-view>
-        <div class="flex items-end justify-between mb-2 pv-3 pr-3">
-          <div>
-            <div class="f-1 fw-bold mb-3">Tags</div>
-            <div class="flex flex-wrap items-center gap-2">
-              <% if adr.tags.any? %>
-                <% adr.tags.each do |tag| %>
-                  <%= component Adrs::TagComponent.new(tag: tag) %>
-                <% end %>
-              <% else %>
-                <span class="f-1 gray-400 i"><%= t(:none) %></span>
+        <adr-tag-editor show-warnings="editor">
+          <adr-tag-editor-view>
+            <div class="flex flex-column justify-between mb-2 pv-3 gap-3">
+              <div>
+                <div class="f-1 fw-bold mb-3">Tags</div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <% if adr.tags.any? %>
+                    <% adr.tags.each do |tag| %>
+                      <%= component Adrs::TagComponent.new(tag: tag) %>
+                    <% end %>
+                  <% else %>
+                    <span class="f-1 gray-400 i"><%= t(:none) %></span>
+                  <% end %>
+                </div>
+              </div>
+              <% if can_edit_tags? %>
+                <%= component(ButtonComponent.new(
+                  size: "tiny",
+                  color: adr.tags.any? ? "white"          : "purple",
+                  label: adr.tags.any? ? t(:edit)         : t(:add),
+                  icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
               <% end %>
             </div>
-          </div>
-          <%= component(ButtonComponent.new(
-            size: "tiny",
-            color: adr.tags.any? ? "white"          : "purple",
-            label: adr.tags.any? ? t(:edit)         : t(:add),
-            icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
+          </adr-tag-editor-view>
+          <% if can_edit_tags? %>
+            <adr-tag-editor-edit class="dn pos-absolute z-2">
+              <%= form_tag(action: AdrTagsWithExternalIdForm.routing(external_id: adr.external_id),
+                           method: "post",
+                           class: "flex flex-column items-end gap-2 mt-2 pa-3 shadow-3 ba bc-gray-700 z-3 bg-white") do %>
+                <label class="flex flex-column gap-1 w-100">
+                  <div class="textarea-container">
+                    <textarea name="tags" class="textarea"><%= tags.to_s %></textarea>
+                  </div>
+                  <span class="sr-only">Tags</span>
+                  <p class="p f-1 i ma-0">Separate tags by commas or new lines. Tags are case-insensitive</p>
+                </label>
+                <div class="flex items-center justify-between gap-2 w-100">
+                  <%= component(ButtonComponent.new(size: "tiny",
+                                                       type: "reset",
+                                                       color: "red",
+                                                       label: t(:nevermind),
+                                                       icon:  "close-line-icon")) %>
+                  <%= component(ButtonComponent.new(size: "tiny",
+                                                       color: "blue",
+                                                       label: t(:save_tags),
+                                                       icon:  "tag-line-icon")) %>
+                </div>
+              <% end %>
+            </adr-tag-editor-edit>
+          <% end %>
+        </adr-tag-editor>
+      </div>
+    </div>
+    <div class="w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3">
+      <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>"><%= t(:help) %></a>
+      <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>"><%= t(:logout) %></a>
+    </div>
+  </nav>
+  <section class="bg-gray-900 gray-100 w-100 h-100vh flex flex-column items-start shadow-1">
+    <article class="overflow-y-scroll w-100 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> pos-relative">
+      <% if draft? %>
+        <div class="measure-wide pos-relative">
+          <aside role="note" class="ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-5 right--3" style="transform: rotate(33deg);">
+            <%= t(:draft) %>
+          </aside>
         </div>
-      </adr-tag-editor-view>
-      <adr-tag-editor-edit class="dn">
-        <%= form_tag(action: AdrTagsWithExternalIdForm.routing(external_id: adr.external_id),
-                     method: "post",
-                     class: "mr-3 flex flex-column items-end gap-2 mt-2 pa-2 shadow-3 ba bc-gray-700 z-3 bg-white") do %>
-          <label class="flex flex-column gap-1 w-100">
-            <div class="textarea-container">
-              <textarea name="tags" class="textarea"><%= tags.to_s %></textarea>
+      <% end %>
+      <h2 class="measure pa-3 lh-title f-5 ma-0 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
+      <div class="mb-3">
+        <% if adr.replaced? %>
+          <h3 class="ma-0 lh-title fw-5 pa-3 br-right-2 measure red-900 bg-red-300 flex items-center gap-3">
+            <div class="w-3">
+            <%= svg("change-icon") %>
             </div>
-            <span class="sr-only">Tags</span>
-            <p class="p f-1 i ma-0">Separate tags by commas or new lines. Tags are case-insensitive</p>
-          </label>
-          <div class="flex items-center justify-between gap-2 w-100">
-            <%= component(ButtonComponent.new(size: "tiny",
-                                                 type: "reset",
-                                                 color: "red",
-                                                 label: t(:nevermind),
-                                                 icon:  "close-line-icon")) %>
-            <%= component(ButtonComponent.new(size: "small",
-                                                 color: "blue",
-                                                 label: t(:save_tags),
-                                                 icon:  "tag-line-icon")) %>
-          </div>
+            <div class="tl">
+              <div class="flex flex-column gap-2">
+                <div>
+                  <%= t_html(:replaced_by) do %>
+                    <a class="red-900" href="<%= adr_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
+                  <% end %>
+                </div>
+                <div class="f-1">
+                  <%= t_html(:replaced_on) do %>
+                    <%= timestamp(adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date) %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </h3>
         <% end %>
-      </adr-tag-editor-edit>
-    </adr-tag-editor>
-  </div>
-</div>
+        <% if accepted? %>
+          <h3 class="ma-0 lh-title pa-3 ba br-right-2 measure
+            <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400 mt-2 fw-4' : 'fw-5 text-glow bc-green-200 green-800 bg-green-200' %>
+            ">
+            <%= t_html(accepted_i18n_key) do %>
+              <%= timestamp(adr.accepted_at, class: "fw-6", format: :date) %>
+            <% end %>
+          </h3>
+        <% end %>
+        <% if !adr.replaced_adr.nil? %>
+          <h3 class="ma-0 f-2 fw-4 i lh-title fw-5 pa-3 br-right-2 green-200 bg-green-900 measure">
+            <%= t_html(:replaces) do %>
+              <a class="green-300" href="<%= adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
+            <% end %>
+          </h3>
+        <% end %>
+        <% if adr.rejected? %>
+        <h3 class="ma-0 lh-title fw-5 pa-3 br-right-2 measure red-800 bg-red-200">
+          <%= t_html(:rejected) do %>
+            <%= timestamp(adr.rejected_at, class: "fw-6", format: :date) %>
+          <% end %>
+        </h3>
+        <% end %>
+        <div class="ph-3 pt-3">
+        <%= t_html(:created) do %>
+          <%= timestamp(adr.created_at, class: "fw-4", format: :date) %>
+        <% end %>
+        </div>
+      </div>
+      <section aria-label="context" class="measure-wide rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
+      <section aria-label="facing" class="measure-wide rendered-markdown ph-3"><%= markdown(:facing) %></section>
+      <div class="ph-3 pv-2 f-3 measure br-right-2 <%= accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' %>">
+        <section aria-label="decision" class="measure-wide rendered-markdown ph-3 fw-5"><%= markdown(:decision) %></section>
+      </div>
+      <section aria-label="neglected" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:neglected) %></section>
+      <section aria-label="achieve" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:achieve) %></section>
+      <section aria-label="accepting" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:accepting) %></section>
+      <section aria-label="because" class="measure-wide rendered-markdown ph-3"><%= markdown(:because) %></section>
+      <% if adr.refines? %>
+        <section class="mt-2">
+        <h3 class="ma-0 lh-title fw-4 f-2 pa-3 br-right-2 measure bg-blue-800 blue-200 flex items-center gap-2">
+          <div class="w-2">
+            <%= svg("adjust-control-icon") %>
+          </div>
+          <div class="tl f-1">
+            <%= t_html(:refines) do %>
+              <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
+            <% end %>
+          </div>
+        </h3>
+        </section>
+      <% end %>
+      <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: refined_by_adrs)) %>
+    </article>
+  </section>
+</section>
 <%= component(ConfirmationDialogComponent.new) %>

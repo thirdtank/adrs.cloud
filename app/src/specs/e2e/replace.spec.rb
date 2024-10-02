@@ -45,7 +45,8 @@ RSpec.describe "Replace an ADR" do
     confirm_button.click
 
     expect(page).to be_page_for(AdrsByExternalIdPage)
-    expect(page.locator("h3", hasText: "Accepted")).to have_text(adr.accepted_at.to_s)
+    adr.reload
+    expect(page.locator("h3", hasText: 'Accepted').locator("time")).to have_attribute("datetime", adr.accepted_at.strftime("%Y-%m-%d %H:%M:%S.%6N %Z"))
     expect(page.locator("h3", hasText: /Replaces/)).to have_text(accepted_adr.title)
 
     back_link = page.locator("a[href='#{AdrsPage.routing}']")

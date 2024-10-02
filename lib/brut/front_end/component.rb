@@ -7,6 +7,7 @@ module Brut::FrontEnd::Components
   autoload(:Input,"brut/front_end/components/input")
   autoload(:Inputs,"brut/front_end/components/input")
   autoload(:I18nTranslations,"brut/front_end/components/i18n_translations")
+  autoload(:Timestamp,"brut/front_end/components/timestamp")
   autoload(:PageIdentifier,"brut/front_end/components/page_identifier")
 end
 # A Component is the top level class for managing the rendering of 
@@ -118,15 +119,8 @@ class Brut::FrontEnd::Component
       component(Brut::FrontEnd::Components::FormTag.new(**attributes,&block))
     end
 
-    def format_timestamp(timestamp,format: :full, skip_year_if_same: true)
-      keys = [
-        "general.timestamp.#{format}"
-      ]
-      if timestamp.year == Time.now.year && skip_year_if_same
-        keys.unshift(keys[0] + "_no_year")
-      end
-      format = t_direct(keys)
-      timestamp.strftime(format)
+    def timestamp(timestamp, **component_options)
+      component(Brut::FrontEnd::Components::Timestamp.new(**(component_options.merge(timestamp:))))
     end
 
     def html_safe!(string)

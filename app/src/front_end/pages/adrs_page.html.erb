@@ -5,7 +5,7 @@
 <% end %>
 <section class="flex w-100">
   <nav class="bg-gray-200 gray-800 w-6 h-100vh flex flex-column justify-between">
-    <div class="flex flex-column xpb-3">
+    <div class="flex flex-column">
       <header class="h-4 pa-3 flex items-center gap-2 w-100 mt-3">
         <span class="w-4">
           <%= svg("architectural-icon") %>
@@ -14,7 +14,7 @@
       </header>
       <div class="pa-3">
         <% if can_add_new? %>
-          <a href="<%= NewDraftAdrPage.routing %>" class="green-500 f-3 tc w-100 db ba br-2 pa-2"><%= t(:add_new) %></a>
+          <a href="<%= NewDraftAdrPage.routing %>" class="green-500 f-3 tc w-100 db ba br-1 pa-2"><%= t(:add_new) %></a>
         <% else %>
           <%= t(:add_new_limit_exceeded) %>
         <% end %>

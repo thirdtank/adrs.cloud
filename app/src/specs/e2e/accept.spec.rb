@@ -48,7 +48,7 @@ RSpec.describe "Accept an ADR" do
     expect(page.locator("section[aria-label='accepting']")).to have_text(adr.accepting)
     expect(page.locator("section[aria-label='because']")).to   have_text(adr.because)
     adr.reload
-    expect(page.locator("h3", hasText: 'Accepted')).to have_text(adr.accepted_at.to_s)
+    expect(page.locator("h3", hasText: 'Accepted').locator("time")).to have_attribute("datetime", adr.accepted_at.strftime("%Y-%m-%d %H:%M:%S.%6N %Z"))
   end
 
 end

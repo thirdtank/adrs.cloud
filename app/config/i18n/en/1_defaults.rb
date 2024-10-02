@@ -26,6 +26,7 @@
         },
       },
       timestamp: { # strftime formats
+        iso_8601: "%Y-%m-%d %H:%M:%S.%6N %Z",
         full: "%Y-%m-%d %H:%M:%S",
         date: "%a, %b %e, %Y",
         date_no_year: "%a, %b %e",

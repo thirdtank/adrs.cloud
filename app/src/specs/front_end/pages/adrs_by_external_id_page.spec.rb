@@ -11,7 +11,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  flash: flash_from(notice: :adr_accepted))
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
-      expect(html_locator.element!("aside[role='status']").text.to_s.strip).to eq("ADR Accepted")
+      expect(html_locator.element!("[role='status']").text.to_s.strip).to eq("ADR Accepted")
     end
   end
   context "draft" do
@@ -24,7 +24,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  flash: empty_flash)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
-      expect(html_locator.element!("aside[role='note']").text.to_s.strip).to eq("DRAFT")
+      expect(html_locator.element!("[role='note']").text.to_s.strip).to eq("DRAFT")
       expect(html_locator.element!("[aria-label='because']").inner_html).to include("Because <em>this</em> is a test of <code>markdown</code>")
     end
   end
@@ -46,7 +46,8 @@ RSpec.describe AdrsByExternalIdPage do
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
-      expect(parsed_html.text).to include("Replaced #{replacing_adr.accepted_at}")
+      timestamp = html_locator.element!("time[datetime='#{replacing_adr.accepted_at.strftime("%Y-%m-%d %H:%M:%S.%6N %Z")}']")
+
       expect(parsed_html.text).to match(/Originally\s+Accepted/)
       link = html_locator.element!("a[href='#{page.adr_path(replacing_adr)}']")
       expect(link.text).to eq(replacing_adr.title)
@@ -117,7 +118,7 @@ RSpec.describe AdrsByExternalIdPage do
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(1)
       expect(parsed_html.css("button[title='Refine']").size).to eq(1)
-      expect(parsed_html.css("aside[role='note']").length).to eq(0)
+      expect(parsed_html.css("[role='note']").length).to eq(0)
     end
   end
   context "rejected" do
@@ -136,7 +137,7 @@ RSpec.describe AdrsByExternalIdPage do
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(0)
       expect(parsed_html.css("button[title='Refine']").size).to eq(0)
-      expect(parsed_html.css("aside[role='note']").length).to eq(0)
+      expect(parsed_html.css("[role='note']").length).to eq(0)
     end
   end
   context "shared" do
@@ -182,7 +183,8 @@ RSpec.describe AdrsByExternalIdPage do
       expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to eq("Stop Sharing")
+      expect(element.text.strip).to eq("Stop")
+      expect(element["aria-label"]).to eq("Stop Sharing")
       element = html_locator.element!("button[title='Share']")
       expect(element).not_to have_html_attribute(disabled: true)
     end

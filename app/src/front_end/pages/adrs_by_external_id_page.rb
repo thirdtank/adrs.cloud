@@ -8,6 +8,7 @@ class AdrsByExternalIdPage < AppPage
   end
 
   def can_add_new? = @can_add_new
+  def can_edit_tags? = self.accepted?
 
   def markdown(field)
     value = t("fields.#{field}", content: adr.send(field))
@@ -20,6 +21,7 @@ class AdrsByExternalIdPage < AppPage
 
   def editable? = !adr.accepted? && !adr.rejected?
   def draft? = self.editable?
+  def accepted? = adr.accepted?
 
   def private? = !self.shared?
   def shared?  =  adr.shared?

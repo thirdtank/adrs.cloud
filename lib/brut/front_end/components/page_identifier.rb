@@ -8,7 +8,6 @@ class Brut::FrontEnd::Components::PageIdentifier < Brut::FrontEnd::Component
     if Brut.container.project_env.production?
       return ""
     end
-    value_attribute = REXML::Attribute.new("content",@page_name).to_string
-    "<meta name=\"class\" #{value_attribute}>"
+    html_tag(:meta, name: "class", content: @page_name)
   end
 end
