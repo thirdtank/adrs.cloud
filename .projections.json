@@ -18,6 +18,9 @@
   },
   "app/src/front_end/pages/*.rb": {
     "type": "page"
+  },
+  "app/src/back_end/db/*.rb": {
+    "type": "db"
   }
 
 }

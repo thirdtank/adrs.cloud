@@ -1,12 +1,18 @@
 <brut-tabs role="tablist" aria-orientation="vertical" class="<%= css_class %>" show-warnings tab-selection-pushes-and-restores-state>
-  <% each_tab do |tab_name,selected| %>
-  <a href="?tab=<%= tab_name %>" 
-     role="tab"
-     aria-selected="<%= selected %>"
-     tabindex="<%= selected ? 0 : -1 %>"
-     aria-controls="<%= tab_name %>-panel"
-     id="<%= tab_name %>-tab">
-     <%= tab_name %>
-  </a>
+  <% each_tab do |tab_name,selected,svg_name| %>
+    <a href="?tab=<%= tab_name %>" 
+       role="tab"
+       aria-selected="<%= selected %>"
+       tabindex="<%= selected ? 0 : -1 %>"
+       aria-controls="<%= tab_name %>-panel"
+       id="<%= tab_name %>-tab"
+       >
+       <span class="flex items-center justify-end gap-2">
+       <span><%= t(tab_name) %></span>
+       <% if svg_name %>
+         <span class="w-2"><%= svg(svg_name) %></span>
+       <% end %>
+       </span>
+    </a>
   <% end %>
 </brut-tabs>

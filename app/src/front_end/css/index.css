@@ -6,6 +6,18 @@
   --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
 }
 
+:root {
+  --mg-green-100: #002602;
+  --mg-green-200: #004104;
+  --mg-green-300: #008108;
+  --mg-green-400: #00DA0D;
+  --mg-green-500: #27ff34;
+  --mg-green-600: #80FF87;
+  --mg-green-700: #C0FFC4;
+  --mg-green-800: #ECFFED;
+  --mg-green-900: #FBFFFB;
+}
+
 .w-quarter {
   width: 25%;
 }
@@ -201,6 +213,9 @@ brut-tabs.adr-page-tabs [role=tab] {
   color: var(--mg-gray-800);
   background-color: none;
   text-align: right;
+}
+brut-tabs.adr-page-tabs [role=tab] * {
+  pointer-events: none;
 }
 brut-tabs.adr-page-tabs [role=tab]:hover {
   color: var(--mg-gray-700);

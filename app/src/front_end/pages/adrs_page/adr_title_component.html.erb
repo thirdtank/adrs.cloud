@@ -5,10 +5,23 @@
   <% end %>
 </div>
 <div class="f-1 i">
-<% if adr.replaced_by_adr %>
-  Replaced By “<a href="<%= AdrsByExternalIdPage.routing(external_id: adr.replaced_by_adr.external_id) %>" class="blue-300"><%= adr.replaced_by_adr.title %></a>”
+<% if replaced_by_adr %>
+  <%= t_html(:replaced_by) do %>
+    <a href="<%= AdrsByExternalIdPage.routing(external_id: replaced_by_adr.external_id) %>" class="blue-300"><%= replaced_by_adr.title %></a>
+  <% end %>
 <% end %>
-<% if adr.replaced_adr %>
-  Replaced “<a href="<%= AdrsByExternalIdPage.routing(external_id: adr.replaced_adr.external_id) %>" class="blue-300"><%= adr.replaced_adr.title %></a>”
+<% if refines_adr %>
+  <%= t_html(:refines) do %>
+    <a href="<%= AdrsByExternalIdPage.routing(external_id: refines_adr.external_id) %>" class="blue-300"><%= refines_adr.title %></a>
+  <% end %>
+<% end %>
+<% if replaced_adr %>
+  <%= t_html(:replaces) do %>
+    <a href="<%= AdrsByExternalIdPage.routing(external_id: replaced_adr.external_id) %>" class="blue-300"><%= replaced_adr.title %></a>
+  <% end %>
+<% elsif proposed_to_replace_adr %>
+  <%= t_html(:proposed_replacement) do %>
+    <a href="<%= AdrsByExternalIdPage.routing(external_id: proposed_to_replace_adr.external_id) %>" class="blue-300"><%= proposed_to_replace_adr.title %></a>
+  <% end %>
 <% end %>
 </div>

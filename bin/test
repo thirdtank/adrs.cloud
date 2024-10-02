@@ -177,7 +177,11 @@ class Command
           end
         elsif pathname.fnmatch?( (Brut.container.back_end_src_dir / "**").to_s )
           type = pathname.parent.basename.to_s
-          if pathname.basename.to_s == "app_#{type}.rb" || type == "back_end"
+          if pathname.basename.to_s == "app_#{type}.rb" ||
+             type == "back_end" ||
+             type == "seed" ||
+             pathname.basename.to_s == "app_data_model.rb"
+
             hash[:type] = :infrastructure
             hash[:test_expected] = false
           else

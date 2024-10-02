@@ -7,6 +7,9 @@ RSpec.describe "Reject an ADR" do
     adr = create(:adr, account: account)
     login(page:,account:)
 
+    drafts_tab = page.locator("#drafts-tab")
+    drafts_tab.click
+
     link = page.locator("a[href='#{EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id)}']")
     link.click
 
@@ -21,12 +24,12 @@ RSpec.describe "Reject an ADR" do
     confirm_button = page.locator("brut-confirmation-dialog button[value='ok']")
     confirm_button.click
 
-    expect(page.locator("h1")).to have_text("ADRs")
+    expect(page).to be_page_for(AdrsPage)
 
-    details = page.locator("summary", hasText: "View Replaced and Rejected ADRs")
-    details.click
+    rejected_tab = page.locator("#rejected-tab")
+    rejected_tab.click
 
-    table = page.locator("details table", has: page.locator("caption", hasText: "Rejected ADRs"))
+    table = page.locator("#rejected-panel table")
 
     expect(table).to have_text(adr.title)
   end

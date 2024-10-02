@@ -25,6 +25,9 @@ RSpec.describe "ADRs can be shared or not" do
     shareable_link = page.locator("a", hasText: "View Shareable Page")
     shareable_href = shareable_link[:href]
 
+    back_link = page.locator("a[href='#{AdrsPage.routing}']")
+    back_link.click
+
     logout_link = page.locator("a", hasText: "Logout")
     logout_link.click
 
@@ -54,7 +57,7 @@ RSpec.describe "ADRs can be shared or not" do
     button = page.locator("form button")
     button.click
 
-    expect(page.locator("h1")).to have_text("ADRs")
+    expect(page).to be_page_for(AdrsPage)
 
     link = page.locator("a[href='#{AdrsByExternalIdPage.routing(external_id: adr.external_id)}']")
     link.click

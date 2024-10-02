@@ -1,4 +1,5 @@
 require "json"
+require "rexml"
 require_relative "template"
 
 module Brut::FrontEnd::Components
@@ -126,6 +127,55 @@ class Brut::FrontEnd::Component
       end
       format = t_direct(keys)
       timestamp.strftime(format)
+    end
+
+    def html_safe!(string)
+      Brut::FrontEnd::Templates::HTMLSafeString.new(string)
+    end
+
+    VOID_ELEMENTS = [
+      :area,
+      :base,
+      :br,
+      :col,
+      :embed,
+      :hr,
+      :img,
+      :input,
+      :link,
+      :meta,
+      :source,
+      :track,
+      :wbr,
+    ]
+
+    def html_tag(tag_name, **html_attributes, &block)
+      tag_name = tag_name.to_s.downcase.to_sym
+      attributes_string = html_attributes.map { |key,value|
+        [
+          key.to_s.gsub(/[\s\"\'>\/=]/,"-"),
+          value
+        ]
+      }.select { |key,value|
+        !value.nil?
+      }.map { |key,value|
+        if value == true
+          key
+        elsif value == false
+          ""
+        else
+          REXML::Attribute.new(key,value).to_string
+        end
+      }.join(" ")
+      contents = (block.nil? ? nil : block.()).to_s
+      if VOID_ELEMENTS.include?(tag_name)
+        if !contents.empty?
+          raise ArgumentError,"#{tag_name} may not have child nodes"
+        end
+        html_safe!(%{<#{tag_name} #{attributes_string}>})
+      else
+        html_safe!(%{<#{tag_name} #{attributes_string}>#{block.()}</#{tag_name}>})
+      end
     end
   end
   include Helpers

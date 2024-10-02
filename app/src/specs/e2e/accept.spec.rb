@@ -11,6 +11,9 @@ RSpec.describe "Accept an ADR" do
 
     login(page:,account:)
 
+    drafts_tab = page.locator("#drafts-tab")
+    drafts_tab.click
+
     link = page.locator("a[href='#{EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id)}']")
     link.click
 

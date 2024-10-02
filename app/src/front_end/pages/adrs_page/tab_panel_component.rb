@@ -1,6 +1,6 @@
 class AdrsPage::TabPanelComponent < AppComponent
   attr_reader :tab, :columns, :adrs
-  def initialize(adrs:, tab:, columns:, selected: false, action: :use_block)
+  def initialize(adrs:, tab:, columns:, selected: false, action:)
     @adrs         =   adrs
     @tab          =   tab
     @columns      =   columns
@@ -8,17 +8,7 @@ class AdrsPage::TabPanelComponent < AppComponent
     @selected     = !!selected
   end
 
-  def custom_action?
-    @action == :use_block
-  end
-
   def selected? = @selected
-
-  def action_block(adr)
-    if @yielded_block
-      Brut::FrontEnd::Templates::HTMLSafeString.new(@yielded_block.(adr:))
-    end
-  end
 
   def action_routing(adr)
     if @action == :edit
@@ -35,15 +25,11 @@ class AdrsPage::TabPanelComponent < AppComponent
   def column_value(adr,column)
     if column.to_s =~ /_at$/
       value = adr.send(column)
-      Brut::FrontEnd::Templates::HTMLSafeString.new(%{<span class='ws-nowrap'>
-  #{format_timestamp(value, format: :date)}
-</span>})
+      html_tag(:span, class: "ws-nowrap") do
+        format_timestamp(value, format: :date)
+      end
     elsif column == :title
       component(AdrsPage::AdrTitleComponent.new(adr:))
-    elsif column == :replaced_by
-      Brut::FrontEnd::Templates::HTMLSafeString.new(
-        "<span class=\"ws-nowrap\">#{adr.replaced_by_adr.title}</span>"
-      )
     else
       adr.send(column)
     end

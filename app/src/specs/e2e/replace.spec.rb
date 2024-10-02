@@ -24,7 +24,7 @@ RSpec.describe "Replace an ADR" do
 
     expect(page).to be_page_for(EditDraftAdrByExternalIdPage)
 
-    info = page.locator("aside[role=status]")
+    info = page.locator("[role=status]")
     expect(info).to have_text("ADR Created")
     expect(page.locator("h3")).to have_text("Proposed Replacement for “#{accepted_adr.title}”")
 
@@ -51,8 +51,7 @@ RSpec.describe "Replace an ADR" do
     back_link = page.locator("a[href='#{AdrsPage.routing}']")
     back_link.click
 
-    page.locator("summary", hasText: "View Replaced and Rejected ADRs").click
-    table = page.locator("table", has: page.locator("caption", hasText: "Replaced ADRs"))
+    table = page.locator("#replaced-panel table")
 
     expect(table).to have_text(accepted_adr.title)
   end

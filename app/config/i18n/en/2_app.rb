@@ -16,11 +16,14 @@
     layouts: {
       default: {
         title: "Welcome to ADRpg!",
-        logout: "Logout",
       },
     },
     pages: {
       general: {
+        logout: "Logout",
+        help: "Help and Support",
+        adrpg: "ADRPG",
+
         view_all: "View All",
         draft: "DRAFT",
         back: "Back",
@@ -46,38 +49,9 @@
         }
       },
       AdrsPage: {
-        view_share_page: "Shareable Link",
-        adrs: "ADRs",
-        adrs_tagged: "ADRs tagged %{block}",
-        name: "Name",
-        accepted_on: "Accepted On",
-        created_on: "Created On",
-        rejected_on: "Rejected On",
-        replaced_on: "Replaced On",
-        replaced_by: "Replaced By",
-        actions: "Actions",
-        no_drafts: "None Drafted",
-        no_accepted: "None Accepted",
-        no_replaced: "None Replaced",
-        no_rejected: "None Rejected",
-        drafts: "Drafts",
-        accepted: "Accepted",
-        replaced: "Replaced",
-        rejected: "Rejected",
-        edit_draft: "Edit Draft",
-        add_new: "Add a new one!",
-        view_replaced_and_rejected: "View Replaced and Rejected ADRs",
-        view_original: "View Original",
-        view_replacement: "View Replacement",
-        view_draft: "View Draft",
-        captions: {
-          accepted: "Accepted ADRs",
-          drafts: "Draft ADRs",
-          replaced: "Replaced ADRs",
-          rejected: "Rejected ADRs",
-        },
-        refines: "refines “%{block}”",
-        replaces: "proposed to replace “%{block}”",
+        add_new: "Add New Draft",
+        filter_by_tag: "Filter by Tag",
+        remove_filter: "Remove Tag Filter",
       },
       AdrsByExternalIdPage: {
         accepted: "Accepted %{block}",
@@ -145,6 +119,40 @@
       },
     },
     components: {
+      "AdrsPage::TabComponent": {
+        accepted: "Accepted",
+        drafts: "Draft",
+        replaced: "Replaced",
+        rejected: "Rejected",
+      },
+      "AdrsPage::TabPanelComponent": {
+        captions: {
+          accepted: "Accepted ADRs",
+          drafts: "Draft ADRs",
+          replaced: "Replaced ADRs",
+          rejected: "Rejected ADRs",
+        },
+        columns: {
+          title: "Title",
+          created_at: "Created",
+          rejected_at: "Rejected",
+          accepted_at: "Accepted",
+          actions: "Actions",
+        },
+        accepted: "Accepted ADRs",
+        drafts: "Draft ADRs",
+        replaced: "Replaced ADRs",
+        rejected: "Rejected ADRs",
+        view: "View",
+        edit: "Edit",
+        none: "None",
+      },
+      "AdrsPage::AdrTitleComponent": {
+        refines: "Refines “%{block}”",
+        replaces: "Replaces “%{block}”",
+        replaced_by: "Replaced by “%{block}”",
+        proposed_replacement: "Proposed to replace “%{block}”",
+      },
       "Adrs::FormComponent": {
         adr_title: "Title",
         adr_title_placeholder: "e.g. We Should Write Tests",

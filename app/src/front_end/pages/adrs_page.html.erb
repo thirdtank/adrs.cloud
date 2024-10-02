@@ -1,22 +1,31 @@
+<% if info_message %>
+  <p role="status">
+    <%= t(info_message) %>
+  </p>
+<% end %>
 <section class="flex w-100">
-  <section class="bg-gray-200 gray-800 w-6 h-100vh flex flex-column justify-between">
+  <nav class="bg-gray-200 gray-800 w-6 h-100vh flex flex-column justify-between">
     <div class="flex flex-column xpb-3">
       <header class="h-4 pa-3 flex items-center gap-2 w-100 mt-3">
         <span class="w-4">
           <%= svg("architectural-icon") %>
         </span>
-        <h1 class="f-5 ma-0">ADRpg</h1>
+        <h1 class="f-5 ma-0"><%= t(:adrpg) %></h1>
       </header>
       <div class="pa-3">
-      <%= component(ButtonComponent.new(size: :small, width: :full, color: :inverse_green, label: "Add Draft", icon: "plus-round-line-icon")) %>
+        <% if can_add_new? %>
+          <a href="<%= NewDraftAdrPage.routing %>" class="green-500 f-3 tc w-100 db ba br-2 pa-2"><%= t(:add_new) %></a>
+        <% else %>
+          <%= t(:add_new_limit_exceeded) %>
+        <% end %>
       </div>
       <%= component(AdrsPage::TabComponent.new(
-        tabs: [
-          :accepted,
-          :drafts,
-          :replaced,
-          :rejected,
-        ],
+        tabs: {
+          accepted: "check-mark-icon",
+          drafts: "edit-list-icon",
+          replaced: "change-icon",
+          rejected: "recycle-bin-line-icon",
+        },
         selected_tab: tab,
         css_class: "adr-page-tabs",
       )) %>
@@ -25,36 +34,29 @@
         <div class="pt-3 bt bc-gray-300">
           <div class="flex flex-column gap-2 items-end">
             <input type="search" name="tag" value="<%= tag %>" id="tag-search-input" class="f-1 ba br-0 blw-0 ph-2 btw-0 brw-0 bc-gray-700 bg-gray-900" placeholder="e.g. OOP">
-            <label for="tag-search-input" class="f-1 i">Filter by Tag</label>
+            <label for="tag-search-input" class="f-1 i"><%= t(:filter_by_tag) %></label>
             <% if filtered_by_tag? %>
-              <a href="?" class="blue-800 f-1">Remove Filter</a>
+              <a href="?" class="blue-800 f-1"><%= t(:remove_filter) %></a>
             <% end %>
           </div>
-          <button class="sr-only">Search</button>
+          <button class="sr-only"><%= t(:filter_by_tag) %></button>
         </div>
       </form>
     </adr-include-query-params>
     </div>
-    <nav class="w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3">
-      <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>">Help</a>
-      <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>">Logout</a>
-    </nav>
-  </section>
+    <div class="w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3">
+      <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>"><%= t(:help) %></a>
+      <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>"><%= t(:logout) %></a>
+    </div>
+  </nav>
   <section class="bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start">
     <%= component(
       AdrsPage::TabPanelComponent.new(adrs: accepted_adrs,
                                       selected: tab == :accepted,
                                       tab: :accepted,
-                                      columns: [ :title, :accepted_at ])) do |adr:|%>
-      <nav class="flex items-baseline gap-2 mv-2">
-        <a class="blue-400" href="<%= adr_path(adr) %>"><%= t(:view) %></a>
-        <% if adr.shared? %>
-          <a class="blue-400 ws-nowrap" href="<%= PrivateAdrsWithExternalIdHandler.routing(external_id: adr.external_id) %>">Stop Sharing</a>
-        <% else %>
-          <a class="blue-400" href="<%= SharedAdrsWithExternalIdHandler.routing(external_id: adr.external_id) %>">Share</a>
-        <% end %>
-      </nav>
-    <% end %>
+                                      columns: [ :title, :accepted_at ],
+                                      action: :view)
+    ) %>
     <%= component(
       AdrsPage::TabPanelComponent.new(adrs: draft_adrs,
                                       tab: :drafts,
@@ -66,7 +68,7 @@
       AdrsPage::TabPanelComponent.new(adrs: replaced_adrs,
                                       selected: tab == :replaced,
                                       tab: :replaced,
-                                      columns: [ :title, :created_at, :replaced_by, :replaced_at ],
+                                      columns: [ :title, :created_at ],
                                       action: :view)
     ) %>
     <%= component(
