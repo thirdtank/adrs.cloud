@@ -44,7 +44,7 @@ class Brut::SpecSupport::Matchers::HaveHTMLAttribute
     if !@error
       if attribute.kind_of?(Hash)
         attribute_name  = attribute.keys.first.to_s
-        attribute_value = attribute.values.first
+        attribute_value = attribute.values.first.to_s
       else
         attribute_name = attribute.to_s
         attribute_value = :any
@@ -55,7 +55,7 @@ class Brut::SpecSupport::Matchers::HaveHTMLAttribute
         if attribute_value != :any
           found_value = result.attribute(attribute_name).value
 
-          if found_value != attribute.values.first
+          if found_value != attribute_value
             @error = "Value for '#{attribute_name}' was '#{found_value}'. Expected '#{attribute_value}'"
           end
         end

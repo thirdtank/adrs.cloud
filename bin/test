@@ -194,15 +194,18 @@ class Command
         hash
       }
 
-      log "These files are missing tests:"
-      log ""
-
       files_missing = []
+      printed_header = false
       audit.each do |file_audit|
         if !file_audit[:test_file].exist?
           if @options[:audit_type].nil? || file_audit[:type] == @options[:audit_type]
             if file_audit[:test_expected]
               files_missing << file_audit[:source_file]
+              if !printed_header
+                log "These files are missing tests:"
+                log ""
+                printed_header = true
+              end
               puts "#{file_audit[:type].to_s.ljust(15)} - #{file_audit[:source_file]}"
             end
           end

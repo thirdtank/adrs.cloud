@@ -138,6 +138,7 @@
         },
         columns: {
           title: "Title",
+          context: "Context",
           created_at: "Created",
           rejected_at: "Rejected",
           accepted_at: "Accepted",
