@@ -10,6 +10,7 @@ module Brut
         session:,
         flash:,
         xhr:,
+        csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"]),
       }
     end
 
@@ -63,7 +64,7 @@ module Brut
           args[name] = self[name]
         elsif !form.nil? && name == :form
           args[name] = form
-        elsif request_params[name.to_s] || request_params[name.to_sym]
+        elsif !request_params.nil? && (request_params[name.to_s] || request_params[name.to_sym])
           args[name] = request_params[name.to_s] || request_params[name.to_sym]
         elsif type == :keyreq
           raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}, request_params: #{request_params.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
@@ -94,9 +95,6 @@ module Brut::SinatraHelpers
     sinatra_app.set :logging, true
     sinatra_app.before do
       app_session = Brut.container.session_class.new(rack_session: session)
-      Thread.current[:rendering_context] = {
-        csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"])
-      }
       flash = app_session.flash
       app_session[:_flash] ||= flash
       Thread.current.thread_variable_set(
@@ -107,7 +105,6 @@ module Brut::SinatraHelpers
     sinatra_app.after do
       flash = Thread.current.thread_variable_get(:request_context)[:flash]
       app_session = Brut.container.session_class.new(rack_session: session)
-      Thread.current[:rendering_context] = nil
       flash.age!
       app_session.flash = flash
     end
@@ -115,8 +112,7 @@ module Brut::SinatraHelpers
 
   # @private
   def render_html(component_or_page_instance)
-    call_render = CallRenderInjectingInfo.new(component_or_page_instance)
-    result = call_render.call_render(**Thread.current[:rendering_context])
+    result = component_or_page_instance.render
     case result
     in Brut::FrontEnd::HttpStatus => http_status
       http_status.to_i

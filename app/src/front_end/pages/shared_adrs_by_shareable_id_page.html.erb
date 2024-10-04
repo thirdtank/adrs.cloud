@@ -11,7 +11,7 @@
           <div class="tl">
             <div class="f-2">
               <%= t_html(:replaced_on) do %>
-                <time class="fw-6" datetime="<%= adr.replaced_by_adr.accepted_at %>"><%= adr.replaced_by_adr.accepted_at %></time>
+                <%= timestamp(adr.replaced_by_adr.accepted_at,class: "fw-6", format: :date) %>
               <% end %>
               <% if adr.replaced_by_adr.shared? %>
                 <%= t_html(:replaced_by) do %>
@@ -27,11 +27,11 @@
         ">
         <% if adr.replaced? %>
           <%= t_html(:originally_accepted) do %>
-            <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
+            <%= timestamp(adr.accepted_at,class: "fw-6", format: :date) %>
           <% end %>
         <% else %>
           <%= t_html(:accepted) do %>
-            <time class="fw-6" datetime="<%= adr.accepted_at %>"><%= adr.accepted_at %></time>
+            <%= timestamp(adr.accepted_at,class: "fw-6", format: :date) %>
           <% end %>
         <% end %>
       </h3>
@@ -42,7 +42,9 @@
           <% end %>
         </h3>
       <% end %>
-      Created <time class="fw-5" datetime="<%= adr.created_at %>"><%= adr.created_at %></time>
+      <%= t_html(:created) do %>
+        <%= timestamp(adr.created_at, class: "fw-5", format: :date) %>
+      <% end %>
     </div>
     <section aria-label="context" class="rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
     <section aria-label="facing" class="rendered-markdown ph-3"><%= markdown(:facing) %></section>

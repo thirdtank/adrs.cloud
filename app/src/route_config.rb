@@ -36,6 +36,7 @@ class AdrApp < Sinatra::Base
 
     logged_in = false
 
+    Thread.current.thread_variable_get(:request_context)[:site_announcement] = "All Systems Working"
     if authenticated_account && authenticated_account.active?
       Thread.current.thread_variable_get(:request_context)[:authenticated_account] = authenticated_account
       logged_in = true

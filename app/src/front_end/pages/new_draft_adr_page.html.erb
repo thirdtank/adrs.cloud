@@ -1,5 +1,6 @@
+<%= component(AnnouncementBannerComponent) %>
 <header>
-<h2 class="tc ma-0 mt-3 ttu tracked-tight f-7"><%= t(:draft_new) %></h2>
+<h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(:draft_new) %></h2>
   <% if refines_adr %>
     <h3 class="tc mt-0 f-4">
       <%= t(:refines, title: refines_adr.title) %>
@@ -12,10 +13,5 @@
   <% end %>
 </header>
 <section class="pa-3">
-  <% if error_message %>
-    <aside role="alert" class="pa-3 br-3 w-50 mh-auto ba bc-red-500 bg-red-800 red-300 mb-3">
-      <%= t(error_message) %>
-    </aside>
-  <% end %>
   <%= component Adrs::FormComponent.new(form, action: :new) %>
 </section>

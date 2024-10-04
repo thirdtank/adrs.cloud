@@ -105,12 +105,20 @@ class Brut::FrontEnd::Component
     # view re-use happens.  The component instance will be able to locate its
     # HTML template and render itself.
     def component(component_instance,&block)
+      if component_instance.kind_of?(Class)
+        if !component_instance.ancestors.include?(Brut::FrontEnd::Component)
+          raise ArgumentError,"#{component_instance} is not a component and cannot be created"
+        end
+        request_context = Thread.current.thread_variable_get(:request_context)
+
+        constructor_args = request_context.as_constructor_args(component_instance,request_params: nil)
+        component_instance = component_instance.new(**constructor_args)
+      end
       if !block.nil?
         component_instance.yielded_block = block
       end
-      call_render = CallRenderInjectingInfo.new(component_instance)
       Brut::FrontEnd::Templates::HTMLSafeString.from_string(
-        call_render.call_render(**Thread.current[:rendering_context])
+        component_instance.render
       )
     end
 

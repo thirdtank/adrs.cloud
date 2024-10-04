@@ -1,11 +1,6 @@
-<% if info_message %>
-  <p role="status">
-    <%= t(info_message) %>
-  </p>
-<% end %>
 <section class="flex w-100">
   <nav class="bg-gray-200 gray-800 w-6 h-100vh flex flex-column justify-between">
-    <div class="flex flex-column">
+    <div class="flex flex-column overflow-y-scroll">
       <header class="h-4 pa-3 flex items-center gap-2 w-100 mt-3">
         <span class="w-4">
           <%= svg("architectural-icon") %>
@@ -50,33 +45,36 @@
     </div>
   </nav>
   <section class="bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start">
-    <%= component(
-      AdrsPage::TabPanelComponent.new(adrs: accepted_adrs,
-                                      selected: tab == :accepted,
-                                      tab: :accepted,
-                                      columns: [ :title, :accepted_at ],
-                                      action: :view)
-    ) %>
-    <%= component(
-      AdrsPage::TabPanelComponent.new(adrs: draft_adrs,
-                                      tab: :drafts,
-                                      selected: tab == :drafts,
-                                      columns: [ :title, :created_at ],
-                                      action: :edit)
-    )%>
-    <%= component(
-      AdrsPage::TabPanelComponent.new(adrs: replaced_adrs,
-                                      selected: tab == :replaced,
-                                      tab: :replaced,
-                                      columns: [ :title, :created_at ],
-                                      action: :view)
-    ) %>
-    <%= component(
-      AdrsPage::TabPanelComponent.new(adrs: rejected_adrs,
-                                      tab: :rejected,
-                                      selected: tab == :rejected,
-                                      columns: [ :title, :created_at, :rejected_at ],
-                                      action: :view)
-    )%>
+    <%= component(AnnouncementBannerComponent) %>
+    <div class="overflow-y-scroll w-100">
+      <%= component(
+        AdrsPage::TabPanelComponent.new(adrs: accepted_adrs,
+                                        selected: tab == :accepted,
+                                        tab: :accepted,
+                                        columns: [ :title, :accepted_at ],
+                                        action: :view)
+      ) %>
+      <%= component(
+        AdrsPage::TabPanelComponent.new(adrs: draft_adrs,
+                                        tab: :drafts,
+                                        selected: tab == :drafts,
+                                        columns: [ :title, :created_at ],
+                                        action: :edit)
+      )%>
+      <%= component(
+        AdrsPage::TabPanelComponent.new(adrs: replaced_adrs,
+                                        selected: tab == :replaced,
+                                        tab: :replaced,
+                                        columns: [ :title, :created_at ],
+                                        action: :view)
+      ) %>
+      <%= component(
+        AdrsPage::TabPanelComponent.new(adrs: rejected_adrs,
+                                        tab: :rejected,
+                                        selected: tab == :rejected,
+                                        columns: [ :title, :created_at, :rejected_at ],
+                                        action: :view)
+      )%>
+    </div>
   </section>
 </section>

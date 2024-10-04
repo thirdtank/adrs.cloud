@@ -1,6 +1,6 @@
+<%= component(AnnouncementBannerComponent) %>
 <header>
-  <h1 class="tc ma-0 mt-3 ttu tracked-tight f-7">ADRpg</h1>
-  <h2 class="tc mt-0 f-5 fw-5">Edit ADR</h2>
+  <h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(:edit) %></h2>
   <% if draft_adr.refining? %>
     <h3 class="mt-1 fw-4 f-2 i flex items-center justify-center gap-2">
       <span class="w-2 gray-300">
@@ -27,15 +27,5 @@
   <% end %>
 </header>
 <section class="pa-3">
-  <% if error_message %>
-    <aside role="alert" class="pa-3 br-3 w-50 mh-auto ba bc-red-500 bg-red-800 red-300 mb-3">
-      <%= t(error_message) %>
-    </aside>
-  <% end %>
-  <% if info_message %>
-    <aside role="status" class="pa-3 br-3 w-50 mh-auto ba bc-blue-500 bg-blue-800 blue-300 mb-3">
-      <%= t(info_message) %>
-    </aside>
-  <% end %>
   <%= component Adrs::FormComponent.new(form, action: :edit, external_id: @draft_adr.external_id) %>
 </section>

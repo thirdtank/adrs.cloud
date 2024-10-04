@@ -6,7 +6,7 @@ CHECK 1 - Real E2E tests
       2 - Visual Review
           DONE: List of all parts of the app that need a visual re-think or change
 
-          * Sanity around page headers/navs
+          D Sanity around page headers/navs
           * Make it not look like shit on mobile
           * Home page
 
@@ -23,6 +23,8 @@ CHECK 1 - Real E2E tests
           * exact phrase
 
           Tag auto-complete
+
+     3 -  Update flash on page errors AJAXily
 
 
 CHECK 3 - Data Layer Review

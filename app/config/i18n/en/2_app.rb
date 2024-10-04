@@ -34,14 +34,6 @@
         aria: {
           external_link_icon: "external link icon",
         },
-        adr_accepted: "ADR Accepted",
-        adr_created: "ADR Created",
-        adr_updated: "ADR Updated",
-        adr_rejected: "ADR Rejected",
-        adr_shared: "ADR Shared",
-        adr_invalid: "ADR cannot be created. See below.",
-        tags_updated: "Tags Updated",
-        sharing_stopped: "Sharing Stopped",
         add_new_limit_exceeded: "You've reached your plan limit",
         auth: {
           no_account: "No account with that email",
@@ -100,6 +92,7 @@
         replaced_on: "Replaced on %{block}",
         replaced_by: "reaplaced by “%{block}”",
         accepted: "Accepted %{block}",
+        created: "Created %{block}",
         originally_accepted: "Originally Accepted %{block}",
         replaces: "Replaces “%{block}”",
         refines: "Refines “%{block}”",
@@ -123,6 +116,16 @@
       },
     },
     components: {
+      "AnnouncementBannerComponent": {
+        adr_accepted: "ADR Accepted",
+        adr_created: "ADR Created",
+        adr_updated: "ADR Updated",
+        adr_rejected: "ADR Rejected",
+        adr_shared: "ADR Shared",
+        adr_invalid: "ADR cannot be created. See below.",
+        tags_updated: "Tags Updated",
+        sharing_stopped: "Sharing Stopped",
+      },
       "AdrsPage::TabComponent": {
         accepted: "Accepted",
         drafts: "Draft",

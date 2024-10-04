@@ -1,8 +1,3 @@
-<% if info_message %>
-  <p role="status">
-    <%= t(info_message) %>
-  </p>
-<% end %>
 <section class="flex w-100">
   <nav class="bg-gray-800 gray-100 w-6 h-100vh flex flex-column justify-between">
     <div class="flex flex-column overflow-y-scroll">
@@ -145,6 +140,7 @@
     </div>
   </nav>
   <section class="bg-gray-900 gray-100 w-100 h-100vh flex flex-column items-start shadow-1">
+    <%= component(AnnouncementBannerComponent) %>
     <article class="overflow-y-scroll w-100 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> pos-relative">
       <% if draft? %>
         <div class="measure-wide pos-relative">

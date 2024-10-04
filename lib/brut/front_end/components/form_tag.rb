@@ -55,7 +55,7 @@ class Brut::FrontEnd::Components::FormTag < Brut::FrontEnd::Component
       end
     }.join(" ")
     csrf_token_component = if @include_csrf_token
-                             component(Brut::FrontEnd::Components::Inputs::CsrfToken.new)
+                             component(Brut::FrontEnd::Components::Inputs::CsrfToken)
                            elsif Brut.container.project_env.development?
                              Brut::FrontEnd::Templates::HTMLSafeString.new("<!-- CSRF Token omitted #{@csrf_token_omit_reasoning} (this message only appears in development) -->")
                            else
