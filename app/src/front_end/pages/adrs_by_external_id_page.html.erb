@@ -156,78 +156,76 @@
       <h2 class="measure pa-3 lh-title f-5 ma-0 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
       <div class="mb-3">
         <% if adr.replaced? %>
-          <h3 class="ma-0 lh-title fw-5 pa-3 br-right-2 measure red-900 bg-red-300 flex items-center gap-3">
-            <div class="w-3">
-            <%= svg("change-icon") %>
-            </div>
-            <div class="tl">
-              <div class="flex flex-column gap-2">
-                <div>
-                  <%= t_html(:replaced_by) do %>
-                    <a class="red-900" href="<%= adr_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
-                  <% end %>
-                </div>
-                <div class="f-1">
-                  <%= t_html(:replaced_on) do %>
-                    <%= timestamp(adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date) %>
-                  <% end %>
+          <%= banner(color: "red-900", background_color: "bg-red-300") do %>
+            <div class="flex items-center gap-3">
+              <div class="w-3">
+                <%= svg("change-icon") %>
+              </div>
+              <div class="tl">
+                <div class="flex flex-column gap-2">
+                  <div>
+                    <%= t_html(:replaced_by) do %>
+                      <a class="red-900" href="<%= adr_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
+                    <% end %>
+                  </div>
+                  <div class="f-1">
+                    <%= t_html(:replaced_on) do %>
+                      <%= timestamp(adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date) %>
+                    <% end %>
+                  </div>
                 </div>
               </div>
             </div>
-          </h3>
+          <% end %>
         <% end %>
         <% if accepted? %>
-          <h3 class="ma-0 lh-title pa-3 ba br-right-2 measure
-            <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400 mt-2 fw-4' : 'fw-5 text-glow bc-green-200 green-800 bg-green-200' %>
-            ">
-            <%= t_html(accepted_i18n_key) do %>
-              <%= timestamp(adr.accepted_at, class: "fw-6", format: :date) %>
-            <% end %>
-          </h3>
+          <%= banner(color: adr.replaced?            ? "gray-700"    : "green-800",
+                     background_color: adr.replaced? ? "bg-gray-400" : "bg-green-200",
+                     font_weight: adr.replaced? ? "fw-4" : "fw-5",
+                     glow: !adr.replaced?,
+                     i18n_key: accepted_i18n_key,
+                     timestamp: adr.accepted_at) %>
         <% end %>
         <% if !adr.replaced_adr.nil? %>
-          <h3 class="ma-0 f-2 fw-4 i lh-title fw-5 pa-3 br-right-2 green-200 bg-green-900 measure">
+          <%= banner(color: "green-200", background_color: "bg-green-900", font_size: "f-1") do %>
             <%= t_html(:replaces) do %>
               <a class="green-300" href="<%= adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
             <% end %>
-          </h3>
+          <% end %>
+        <% end %>
+        <% if adr.refines? %>
+          <%= banner(color: "blue-200", background_color: "bg-blue-800", font_weight: "fw-4") do %>
+            <div class="flex items-center gap-2">
+              <div class="w-2">
+                <%= svg("adjust-control-icon") %>
+              </div>
+              <div class="tl f-1">
+                <%= t_html(:refines) do %>
+                  <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
         <% end %>
         <% if adr.rejected? %>
-        <h3 class="ma-0 lh-title fw-5 pa-3 br-right-2 measure red-800 bg-red-200">
-          <%= t_html(:rejected) do %>
-            <%= timestamp(adr.rejected_at, class: "fw-6", format: :date) %>
-          <% end %>
-        </h3>
+          <%= banner(color: "red-800",
+                     background_color: "bg-red-200",
+                     i18n_key: :rejected,
+                     timestamp: adr.rejected_at) %>
         <% end %>
-        <div class="ph-3 pt-3">
-        <%= t_html(:created) do %>
-          <%= timestamp(adr.created_at, class: "fw-4", format: :date) %>
-        <% end %>
-        </div>
+        <%= banner(font_size: "f-1", color: "", background_color: "", font_weight: "fw-4",timestamp: adr.created_at,i18n_key: :created) %>
       </div>
       <section aria-label="context" class="measure-wide rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
       <section aria-label="facing" class="measure-wide rendered-markdown ph-3"><%= markdown(:facing) %></section>
-      <div class="ph-3 pv-2 f-3 measure br-right-2 <%= accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' %>">
+      <div class="ph-3 pv-2 f-3 measure br-right-2 <%= accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' %>"
+              style="background: linear-gradient(90deg, rgba(236,255,237,1) 11%, rgba(236,255,237,0) 100%);"
+              >
         <section aria-label="decision" class="measure-wide rendered-markdown ph-3 fw-5"><%= markdown(:decision) %></section>
       </div>
       <section aria-label="neglected" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:neglected) %></section>
       <section aria-label="achieve" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:achieve) %></section>
       <section aria-label="accepting" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:accepting) %></section>
       <section aria-label="because" class="measure-wide rendered-markdown ph-3"><%= markdown(:because) %></section>
-      <% if adr.refines? %>
-        <section class="mt-2">
-        <h3 class="ma-0 lh-title fw-4 f-2 pa-3 br-right-2 measure bg-blue-800 blue-200 flex items-center gap-2">
-          <div class="w-2">
-            <%= svg("adjust-control-icon") %>
-          </div>
-          <div class="tl f-1">
-            <%= t_html(:refines) do %>
-              <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
-            <% end %>
-          </div>
-        </h3>
-        </section>
-      <% end %>
       <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: refined_by_adrs)) %>
     </article>
   </section>

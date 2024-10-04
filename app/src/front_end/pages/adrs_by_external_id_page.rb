@@ -30,5 +30,10 @@ class AdrsByExternalIdPage < AppPage
 
   def tags = Tags.from_array(array: adr.tags(phony_shared: false))
 
+  def banner(**args,&block)
+    component(self.class::BannerComponent.new(**args),&block)
+  end
+
 end
 
+require_relative "adrs_by_external_id_page/banner_component"

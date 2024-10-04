@@ -69,6 +69,16 @@ class Brut::FrontEnd::Component
 
   attr_writer :yielded_block
 
+  def render_yielded_block
+    if @yielded_block
+      Brut::FrontEnd::Templates::HTMLSafeString.from_string(
+        @yielded_block.()
+      )
+    else
+      raise Brut::BackEnd::Errors::Bug, "No block was yielded to #{self.class.name}"
+		end
+	end
+
   # The core method of a component. This is expected to return
   # a string to be sent as a response to an HTTP request.
   #
@@ -124,7 +134,7 @@ class Brut::FrontEnd::Component
     end
 
     def html_safe!(string)
-      Brut::FrontEnd::Templates::HTMLSafeString.new(string)
+      Brut::FrontEnd::Templates::HTMLSafeString.from_string(string)
     end
 
     VOID_ELEMENTS = [
@@ -176,11 +186,38 @@ class Brut::FrontEnd::Component
   include Brut::I18n
 
   def i18n_keys_for(key)
-    [
-      "components.#{self.class}.#{key}",
-      "components.general.#{key}",
-      "general.#{key}",
-    ]
+    containing_module_name = self.class.name.split(/::/)[0..-2]
+    is_page_component = if containing_module_name.empty?
+                          false
+                        else
+                          begin
+                            klass = Module.const_get(containing_module_name.join("::"))
+                            klass.ancestors.include?(Brut::FrontEnd::Page)
+                          rescue NameError
+                            false
+                          end
+                        end
+    module_path = self.class.name.split(/::/)
+
+    keys = []
+    current_path = nil
+    module_path.each do |part|
+      if current_path.nil?
+        current_path = part
+      else
+        current_path = current_path + "::" + part
+      end
+      if is_page_component
+        keys << "pages.#{current_path}.#{key}"
+      end
+      keys << "components.#{current_path}.#{key}"
+    end
+    if is_page_component
+      keys << "pages.general.#{key}"
+    end
+    keys << "components.general.#{key}"
+    keys << "general.#{key}"
+    keys
   end
 
 private
