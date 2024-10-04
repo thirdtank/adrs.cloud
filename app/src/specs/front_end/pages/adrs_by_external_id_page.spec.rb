@@ -5,10 +5,10 @@ RSpec.describe AdrsByExternalIdPage do
     it "shows the info message" do
       authenticated_account = create(:authenticated_account)
       adr                   = create(:adr, account: authenticated_account.account)
+      request_context[:flash].notice = :adr_accepted
 
       page = described_class.new(authenticated_account:,
-                                 external_id: adr.external_id,
-                                 flash: flash_from(notice: :adr_accepted))
+                                 external_id: adr.external_id)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("[role='status']").text.to_s.strip).to eq("ADR Accepted")
@@ -20,8 +20,7 @@ RSpec.describe AdrsByExternalIdPage do
       adr                   = create(:adr, because: "Because *this* is a test of `markdown`", account: authenticated_account.account)
 
       page = described_class.new(authenticated_account:,
-                                 external_id: adr.external_id,
-                                 flash: empty_flash)
+                                 external_id: adr.external_id)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
       expect(html_locator.element!("[role='note']").text.to_s.strip).to eq("DRAFT")
@@ -40,8 +39,7 @@ RSpec.describe AdrsByExternalIdPage do
       )
 
       page = described_class.new(authenticated_account:,
-                                 external_id: replaced_adr.external_id,
-                                 flash: empty_flash)
+                                 external_id: replaced_adr.external_id)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
@@ -62,8 +60,7 @@ RSpec.describe AdrsByExternalIdPage do
       refining_adr          = create(:adr, :accepted, refines_adr_id: refined_adr.id, account: authenticated_account.account)
 
       page = described_class.new(authenticated_account:,
-                                 external_id: refining_adr.external_id,
-                                 flash: empty_flash)
+                                 external_id: refining_adr.external_id)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
@@ -86,8 +83,7 @@ RSpec.describe AdrsByExternalIdPage do
         create(:adr, account: authenticated_account.account)
 
         page = described_class.new(authenticated_account:,
-                                   external_id: adr.external_id,
-                                   flash: empty_flash)
+                                   external_id: adr.external_id)
 
         parsed_html = render_and_parse(page)
 
@@ -108,8 +104,7 @@ RSpec.describe AdrsByExternalIdPage do
       adr                   = create(:adr, :accepted, account: authenticated_account.account)
 
       page = described_class.new(authenticated_account:,
-                                 external_id: adr.external_id,
-                                 flash: empty_flash)
+                                 external_id: adr.external_id)
 
       parsed_html = render_and_parse(page)
 
@@ -127,8 +122,7 @@ RSpec.describe AdrsByExternalIdPage do
       adr                   = create(:adr, rejected_at: Time.now, account: authenticated_account.account)
 
       page = described_class.new(authenticated_account:,
-                                 external_id: adr.external_id,
-                                 flash: empty_flash)
+                                 external_id: adr.external_id)
 
       parsed_html = render_and_parse(page)
 
@@ -149,8 +143,7 @@ RSpec.describe AdrsByExternalIdPage do
                                      account: authenticated_account.account)
 
       page = described_class.new(authenticated_account:,
-                                 external_id: adr.external_id,
-                                 flash: empty_flash)
+                                 external_id: adr.external_id)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
@@ -159,7 +152,7 @@ RSpec.describe AdrsByExternalIdPage do
       expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to eq("Share")
+      expect(element.text.strip).to include("Share")
       element = html_locator.element!("button[title='Stop Sharing']")
       expect(element).not_to have_html_attribute(disabled: true)
 
@@ -173,8 +166,7 @@ RSpec.describe AdrsByExternalIdPage do
       adr                   = create(:adr, :accepted, shareable_id: nil, account: authenticated_account.account)
 
       page = described_class.new(authenticated_account:,
-                                 external_id: adr.external_id,
-                                 flash: empty_flash)
+                                 external_id: adr.external_id)
 
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
@@ -183,7 +175,7 @@ RSpec.describe AdrsByExternalIdPage do
       expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to eq("Stop")
+      expect(element.text.strip).to include("Stop")
       expect(element["aria-label"]).to eq("Stop Sharing")
       element = html_locator.element!("button[title='Share']")
       expect(element).not_to have_html_attribute(disabled: true)

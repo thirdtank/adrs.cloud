@@ -102,14 +102,27 @@ RSpec.configure do |config|
   config.include Playwright::Test::Matchers, e2e: true
   config.around do |example|
 
-    rendering_context = Thread.current[:rendering_context]
+    request_context   = Thread.current.thread_variable_get(:request_context)
     is_component      = example.metadata[:component]
     is_e2e            = example.metadata[:e2e]
 
     if is_component
-      Thread.current[:rendering_context] = {
-        csrf_token: "test-csrf-token"
+      session = {
+        "session_id" => "test-session-id",
+        "csrf" => "test-csrf-token"
       }
+      env = {
+        "rack.session" => session
+      }
+      app_session = Brut.container.session_class.new(rack_session: session)
+      request_context = Brut::RequestContext.new(
+        env: env,
+        session: app_session,
+        flash: empty_flash,
+        xhr: false,
+      )
+      Thread.current.thread_variable_set(:request_context, request_context)
+      example.example_group.let(:request_context) { request_context }
     end
     if is_e2e
       TestServer.instance.start
@@ -138,7 +151,7 @@ RSpec.configure do |config|
       end
     end
     if is_component
-      Thread.current[:rendering_context] = rendering_context
+      Thread.current.thread_variable_set(:request_context,request_context)
     end
   end
 

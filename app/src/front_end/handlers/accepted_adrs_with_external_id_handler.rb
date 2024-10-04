@@ -8,7 +8,6 @@ class AcceptedAdrsWithExternalIdHandler < AppHandler
       flash.alert = :adr_cannot_be_accepted
       EditDraftAdrByExternalIdPage.new(
         form:,
-        flash:,
         authenticated_account:,
         external_id: draft_adr.external_id,
       )

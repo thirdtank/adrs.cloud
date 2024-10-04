@@ -67,7 +67,12 @@ module Brut
         elsif !request_params.nil? && (request_params[name.to_s] || request_params[name.to_sym])
           args[name] = request_params[name.to_s] || request_params[name.to_sym]
         elsif type == :keyreq
-          raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}, request_params: #{request_params.keys.map(&:to_s).join(", ")}). Either set this value in the request context or set a default value in the initializer"
+          request_params_message = if request_params.nil?
+                                     "no request params provied"
+                                   else
+                                     "request_params: #{request_params.keys.map(&:to_s).join(", ")}"
+                                   end
+          raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}, #{request_params_message}). Either set this value in the request context or set a default value in the initializer"
         else
           # this keyword arg has a default value which will be used
         end

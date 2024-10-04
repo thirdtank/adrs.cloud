@@ -34,7 +34,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
 
             expect(result.class).to eq(EditDraftAdrByExternalIdPage)
             expect(result.form).to be(form)
-            expect(flash[:error]).to eq(:adr_cannot_be_accepted)
+            expect(flash.alert).to eq(:adr_cannot_be_accepted)
             expect(form.constraint_violations?).to eq(true)
             expect(form).to have_constraint_violation(:context   , key: :required)
             expect(form).to have_constraint_violation(:facing    , key: :required)

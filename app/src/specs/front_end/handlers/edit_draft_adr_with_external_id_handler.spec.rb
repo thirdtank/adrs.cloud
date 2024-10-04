@@ -7,15 +7,16 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
         adr = create(:adr, account: authenticated_account.account)
         adr.title = "aaaaa"
         form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
+        flash = empty_flash
 
         result = described_class.new.handle!(form: form,
                                              external_id: adr.external_id,
                                              authenticated_account:,
                                              xhr: false,
-                                             flash: empty_flash)
+                                             flash:)
 
         expect(result.class).to eq(EditDraftAdrByExternalIdPage)
-        expect(result.error_message).to eq(:adr_invalid)
+        expect(flash.alert).to eq(:adr_invalid)
         expect(result.form).to eq(form)
       end
     end

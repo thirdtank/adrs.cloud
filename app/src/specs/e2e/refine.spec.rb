@@ -24,7 +24,7 @@ RSpec.describe "Refine an ADR" do
 
     expect(page).to be_page_for(EditDraftAdrByExternalIdPage)
 
-    info = page.locator("aside[role=status]")
+    info = page.locator("[role=status]")
     expect(info).to have_text("ADR Created")
     expect(page.locator("h3")).to have_text("Refines “#{accepted_adr.title}”")
 

@@ -32,7 +32,7 @@
         date_no_year: "%a, %b %e",
       },
       diagnostics: { # This is to help diagnose issues with the translation system and is not
-        # intended to store real strings to be used by your app
+                     # intended to store real strings to be used by your app
         has_interpolations: "Test %{interp} Test",
         has_pluralizations: {
           one: "Once!",
@@ -43,6 +43,8 @@
           one: "ONE",
           other: "MORE",
         },
+        simple1: "SIMPLE1",
+        simple2: "SIMPLE2",
       }
     }
   },

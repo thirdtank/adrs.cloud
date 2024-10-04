@@ -76,7 +76,7 @@ RSpec.describe AdrsPage do
     it "does not show any tables" do
       authenticated_account = create(:authenticated_account)
 
-      page = described_class.new(authenticated_account:, flash: empty_flash)
+      page = described_class.new(authenticated_account:)
 
       rendered_html = render_and_parse(page)
       locator = Support::HtmlLocator.new(rendered_html)
@@ -99,14 +99,14 @@ RSpec.describe AdrsPage do
   context "flash info message" do
     it "shows the info message, translated" do
       authenticated_account = create(:authenticated_account)
+      request_context[:flash].notice = :adr_created
 
-      page = described_class.new(authenticated_account:, flash: flash_from(notice: :adr_created))
+      page = described_class.new(authenticated_account:)
 
-      info_message = page.t(:adr_created)
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
-      aside = html_locator.element!("[role='status']")
-      expect(aside.text.to_s.strip).to eq(info_message)
+      status = html_locator.element!("[role='status']")
+      expect(status.text.to_s.strip).to eq("ADR Created")
     end
   end
   context "tabs" do
@@ -119,7 +119,7 @@ RSpec.describe AdrsPage do
       create(:adr, :accepted, account: authenticated_account.account,
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
-      page = described_class.new(authenticated_account:, flash: empty_flash)
+      page = described_class.new(authenticated_account:)
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
@@ -137,7 +137,7 @@ RSpec.describe AdrsPage do
       create(:adr, :accepted, account: authenticated_account.account,
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
-      page = described_class.new(authenticated_account:, flash: empty_flash, tab: "accepted")
+      page = described_class.new(authenticated_account:, tab: "accepted")
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
@@ -155,7 +155,7 @@ RSpec.describe AdrsPage do
       create(:adr, :accepted, account: authenticated_account.account,
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
-      page = described_class.new(authenticated_account:, flash: empty_flash, tab: "drafts")
+      page = described_class.new(authenticated_account:, tab: "drafts")
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
@@ -173,7 +173,7 @@ RSpec.describe AdrsPage do
       create(:adr, :accepted, account: authenticated_account.account,
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
-      page = described_class.new(authenticated_account:, flash: empty_flash, tab: "replaced")
+      page = described_class.new(authenticated_account:, tab: "replaced")
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
@@ -191,7 +191,7 @@ RSpec.describe AdrsPage do
       create(:adr, :accepted, account: authenticated_account.account,
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
-      page = described_class.new(authenticated_account:, flash: empty_flash, tab: "rejected")
+      page = described_class.new(authenticated_account:, tab: "rejected")
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
@@ -209,7 +209,7 @@ RSpec.describe AdrsPage do
           create(:adr, account: authenticated_account.account)
         }
 
-        page = described_class.new(authenticated_account:, flash: empty_flash)
+        page = described_class.new(authenticated_account:)
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -225,7 +225,7 @@ RSpec.describe AdrsPage do
         }
         authenticated_account.account.entitlement.update(max_non_rejected_adrs: adrs.length)
 
-        page = described_class.new(authenticated_account:, flash: empty_flash)
+        page = described_class.new(authenticated_account:)
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -243,7 +243,7 @@ RSpec.describe AdrsPage do
           create(:adr, account: authenticated_account.account)
         }
 
-        page = described_class.new(authenticated_account:, flash: empty_flash)
+        page = described_class.new(authenticated_account:)
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -259,7 +259,7 @@ RSpec.describe AdrsPage do
           create(:adr, :accepted, account: authenticated_account.account)
         }
 
-        page = described_class.new(authenticated_account:, flash: empty_flash)
+        page = described_class.new(authenticated_account:)
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -275,7 +275,7 @@ RSpec.describe AdrsPage do
           create(:adr, rejected_at: Time.now, account: authenticated_account.account)
         }
 
-        page = described_class.new(authenticated_account:, flash: empty_flash)
+        page = described_class.new(authenticated_account:)
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -294,7 +294,7 @@ RSpec.describe AdrsPage do
                                             account: authenticated_account.account).id)
         }
 
-        page = described_class.new(authenticated_account:, flash: empty_flash)
+        page = described_class.new(authenticated_account:)
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -313,7 +313,7 @@ RSpec.describe AdrsPage do
         }
         tagged_adr = create(:adr, account: authenticated_account.account, tags: [ "blah" ])
 
-        page = described_class.new(authenticated_account:, flash: empty_flash, tag: "blah")
+        page = described_class.new(authenticated_account:, tag: "blah")
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -331,7 +331,7 @@ RSpec.describe AdrsPage do
         }
         tagged_adr = create(:adr, :accepted, account: authenticated_account.account, tags: [ "blah" ])
 
-        page = described_class.new(authenticated_account:, flash: empty_flash, tag: "blah")
+        page = described_class.new(authenticated_account:, tag: "blah")
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -349,7 +349,7 @@ RSpec.describe AdrsPage do
         }
         tagged_adr = create(:adr, rejected_at: Time.now, account: authenticated_account.account, tags: [ "blah" ])
 
-        page = described_class.new(authenticated_account:, flash: empty_flash, tag: "blah")
+        page = described_class.new(authenticated_account:, tag: "blah")
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
@@ -375,7 +375,7 @@ RSpec.describe AdrsPage do
                             replaced_by_adr_id: create(:adr, :accepted,
                                                        account: authenticated_account.account).id)
 
-        page = described_class.new(authenticated_account:, flash: empty_flash, tag: "blah")
+        page = described_class.new(authenticated_account:, tag: "blah")
 
         rendered_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)

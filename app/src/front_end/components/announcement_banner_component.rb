@@ -1,8 +1,12 @@
 class AnnouncementBannerComponent < AppComponent
   attr_reader :flash, :site_announcement
-  def initialize(flash:, site_announcement:)
+  def initialize(flash:, site_announcement: :use_default)
     @flash = flash
-    @site_announcement = site_announcement
+    @site_announcement = if site_announcement == :use_default
+                           t(:default_site_announcement)
+                         else
+                           t(site_announcement)
+                         end
   end
 
   def colors

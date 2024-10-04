@@ -14,16 +14,21 @@ class Brut::FrontEnd::Flash
     @messages = messages
   end
 
+  def clear!
+    @age = 0
+    @messages = {}
+  end
+
   def notice=(notice)
     self[:notice] = notice
   end
   def notice = self[:notice]
   def notice? = !!self.notice
 
-  def alert=(notice)
-    self[:error] = notice
+  def alert=(alert)
+    self[:alert] = alert
   end
-  def alert = self[:error]
+  def alert = self[:alert]
   def alert? = !!self.alert
 
   def age!

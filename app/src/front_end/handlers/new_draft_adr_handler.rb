@@ -11,6 +11,7 @@ class NewDraftAdrHandler < AppHandler
       flash.alert = :adr_invalid
       NewDraftAdrPage.new(form:,authenticated_account:,flash:)
     else
+      flash.clear!
       flash.notice = :adr_created
       redirect_to(EditDraftAdrByExternalIdPage, external_id: draft_adr.external_id)
     end

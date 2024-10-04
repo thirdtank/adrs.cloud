@@ -45,7 +45,7 @@ RSpec.describe "ADRs can be shared or not" do
     expect(page.locator("section[aria-label='achieve']")).to   have_text(adr.achieve)
     expect(page.locator("section[aria-label='accepting']")).to have_text(adr.accepting)
     expect(page.locator("section[aria-label='because']")).to   have_text(adr.because)
-    expect(page.locator("h3", hasText: 'Accepted')).to         have_text(adr.accepted_at.to_s)
+    expect(page.locator("h3", hasText: 'Accepted')).to         have_text(adr.accepted_at.strftime("%a, %b %e"))
     expect(page.locator("button").count).to eq(0)
 
     page.goto("/")

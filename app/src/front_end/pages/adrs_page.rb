@@ -1,9 +1,8 @@
 class AdrsPage < AppPage
 
-  attr_reader :info_message, :tag, :tab
+  attr_reader :tag, :tab
 
-  def initialize(authenticated_account:, flash:, tag: nil, tab: "accepted")
-    @info_message = flash.notice
+  def initialize(authenticated_account:, tag: nil, tab: "accepted")
     @tag          = tag
     @adrs         = authenticated_account.adrs.search(tag:)
 

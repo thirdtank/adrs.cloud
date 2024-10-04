@@ -79,14 +79,11 @@
       EditDraftAdrByExternalIdPage: {
         proposed_replacement: "Proposed Replacement for “%{block}”",
         refines: "Refines “%{block}”",
-        adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
-        adr_invalid: "ADR cannot be saved. See below.",
       },
       NewDraftAdrPage: {
         draft_new: "Draft New ADR",
         refines: "Refines “%{title}”",
         replaces: "Proposed to Replace “%{title}”",
-        adr_invalid: "ADR cannot be created. See below."
       },
       SharedAdrsByShareableIdPage: {
         replaced_on: "Replaced on %{block}",
@@ -125,6 +122,9 @@
         adr_invalid: "ADR cannot be created. See below.",
         tags_updated: "Tags Updated",
         sharing_stopped: "Sharing Stopped",
+        default_site_announcement: "System is working properly",
+        adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
+        adr_invalid: "ADR cannot be saved. See below.",
       },
       "AdrsPage::TabComponent": {
         accepted: "Accepted",

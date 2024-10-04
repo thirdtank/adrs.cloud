@@ -13,7 +13,6 @@ class EditDraftAdrWithExternalIdHandler < AppHandler
         flash.alert = :adr_invalid
         EditDraftAdrByExternalIdPage.new(
           form:,
-          flash:,
           authenticated_account:,
           external_id: draft_adr.external_id,
         )

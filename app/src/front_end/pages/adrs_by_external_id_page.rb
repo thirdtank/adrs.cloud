@@ -1,9 +1,8 @@
 class AdrsByExternalIdPage < AppPage
-  attr_reader :adr, :info_message
+  attr_reader :adr
 
-  def initialize(authenticated_account:, external_id:, flash:)
+  def initialize(authenticated_account:, external_id:)
     @adr          = authenticated_account.adrs.find!(external_id:)
-    @info_message = flash.notice
     @can_add_new  = authenticated_account.entitlements.can_add_new?
   end
 
