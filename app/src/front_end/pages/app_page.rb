@@ -4,6 +4,7 @@ end
 module Admin
 end
 require_relative "home_page"
+require_relative "help_page"
 require_relative "adrs_page"
 require_relative "developer_auth_page"
 require_relative "adrs_by_external_id_page"

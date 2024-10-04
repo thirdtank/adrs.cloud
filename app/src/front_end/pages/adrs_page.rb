@@ -1,6 +1,6 @@
 class AdrsPage < AppPage
 
-  attr_reader :tag, :tab
+  attr_reader :tag, :tab, :entitlements
 
   def initialize(authenticated_account:, tag: nil, tab: "accepted")
     @tag          = tag
@@ -8,7 +8,7 @@ class AdrsPage < AppPage
 
     num_non_rejected_adrs = @adrs.length - self.rejected_adrs.length
 
-    @can_add_new  = authenticated_account.entitlements.can_add_new?
+    @entitlements = authenticated_account.entitlements
     @tab          = tab.to_sym
   end
 
@@ -21,7 +21,7 @@ class AdrsPage < AppPage
   def draft_adrs    = @adrs.reject(&:accepted?).reject(&:rejected?).sort_by(&:created_at)
   def rejected_adrs = @adrs.select(&:rejected?).sort_by(&:rejected_at)
 
-  def can_add_new? = @can_add_new
+  def can_add_new? = @entitlements.can_add_new?
 
 end
 require_relative "adrs_page/tab_panel_component"

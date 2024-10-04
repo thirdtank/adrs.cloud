@@ -34,15 +34,20 @@
         aria: {
           external_link_icon: "external link icon",
         },
-        add_new_limit_exceeded: "You've reached your plan limit",
+        add_new_limit_exceeded: "You've reached your limit",
+        contact_support_for_limit_increase: "Reject some ADRs or <a href='mailto:support@adrgp' class='blue-700'>contact support</a> for a limit increase",
         auth: {
           no_account: "No account with that email",
           logged_out: "You have been logged out",
         }
       },
+      HelpPage: {
+        support_message: "We'll take care of whatever you need, including <strong>plan limits</strong>, <strong>how to</strong> use the app, or even <strong>account &amp; data deletion</strong>.",
+      },
       AdrsPage: {
         add_new: "Add New Draft",
         filter_by_tag: "Filter by Tag",
+        tag_filter_placeholder: "e.g. OOP",
         remove_filter: "Remove Tag Filter",
       },
       AdrsByExternalIdPage: {
@@ -119,12 +124,14 @@
         adr_updated: "ADR Updated",
         adr_rejected: "ADR Rejected",
         adr_shared: "ADR Shared",
-        adr_invalid: "ADR cannot be created. See below.",
+        new_adr_invalid: "ADR cannot be created. See below.",
+        update_adr_invalid: "ADR cannot be saved. See below.",
         tags_updated: "Tags Updated",
         sharing_stopped: "Sharing Stopped",
         default_site_announcement: "System is working properly",
+        current_site_announcement: "System is working properly",
         adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
-        adr_invalid: "ADR cannot be saved. See below.",
+        add_new_limit_exceeded: "You've reached your plan limit",
       },
       "AdrsPage::TabComponent": {
         accepted: "Accepted",

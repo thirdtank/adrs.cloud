@@ -28,7 +28,7 @@ RSpec.describe NewDraftAdrHandler do
 
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:title, key: :not_enough_words)
-        expect(flash.alert).to eq(:adr_invalid)
+        expect(flash.alert).to eq(:new_adr_invalid)
         expect(result.class).to eq(NewDraftAdrPage)
         expect(result.form).to eq(form)
       end

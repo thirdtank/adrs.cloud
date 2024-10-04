@@ -7,11 +7,16 @@
         </span>
         <h1 class="f-5 ma-0"><%= t(:adrpg) %></h1>
       </header>
-      <div class="pa-3">
+      <div class="pv-3 pr-3">
         <% if can_add_new? %>
-          <a href="<%= NewDraftAdrPage.routing %>" class="green-500 f-3 tc w-100 db ba br-1 pa-2"><%= t(:add_new) %></a>
+          <a href="<%= NewDraftAdrPage.routing %>"
+             class="green-500 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300">
+             <%= t(:add_new) %>
+          </a>
         <% else %>
-          <%= t(:add_new_limit_exceeded) %>
+          <span class="gray-700 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed" title="<%= t_html(:add_new_limit_exceeded) %>">
+             <%= t(:add_new) %>
+          </span>
         <% end %>
       </div>
       <%= component(AdrsPage::TabComponent.new(
@@ -24,23 +29,38 @@
         selected_tab: tab,
         css_class: "adr-page-tabs",
       )) %>
-    <adr-include-query-params show-warnings>
-      <form class="pa-3">
-        <div class="pt-3 bt bc-gray-300">
-          <div class="flex flex-column gap-2 items-end">
-            <input type="search" name="tag" value="<%= tag %>" id="tag-search-input" class="f-1 ba br-0 blw-0 ph-2 btw-0 brw-0 bc-gray-700 bg-gray-900" placeholder="e.g. OOP">
-            <label for="tag-search-input" class="f-1 i"><%= t(:filter_by_tag) %></label>
-            <% if filtered_by_tag? %>
-              <a href="?" class="blue-800 f-1"><%= t(:remove_filter) %></a>
-            <% end %>
+      <adr-include-query-params show-warnings>
+        <form class="pa-3">
+          <div class="pt-3 xbt bc-gray-300">
+            <div class="flex flex-column gap-2 items-end">
+              <input type="search" name="tag" value="<%= tag %>" id="tag-search-input" class="text-field text-field--tiny" placeholder="<%= t(:tag_filter_placeholder) %>">
+              <label for="tag-search-input" class="f-1 i"><%= t(:filter_by_tag) %></label>
+              <% if filtered_by_tag? %>
+                <a href="?" class="blue-800 f-1"><%= t(:remove_filter) %></a>
+              <% end %>
+            </div>
+            <button class="sr-only"><%= t(:filter_by_tag) %></button>
           </div>
-          <button class="sr-only"><%= t(:filter_by_tag) %></button>
+        </form>
+      </adr-include-query-params>
+      <div class="bt bc-gray-300 w-100 pa-3 flex flex-column items-center">
+        <meter class="w-100" value="<%= entitlements.non_rejected_adrs %>" high="<%= entitlements.max_non_rejected_adrs * 0.85 %>" min="0" max="<%= entitlements.max_non_rejected_adrs %>"></meter>
+        <div class="p f-1 gray-700">
+          <% if can_add_new? %>
+            <%= entitlements.non_rejected_adrs_remaining %> of <%= entitlements.max_non_rejected_adrs %> ADRs Remaining
+          <% else %>
+            <p class="p ma-0 fw-7 red-800">
+              <%= t_html(:add_new_limit_exceeded) %>
+            </p>
+            <p class="p ma-0 fw-4">
+              <%= html_safe!(t_html(:contact_support_for_limit_increase)) %>
+            </p>
+          <% end %>
         </div>
-      </form>
-    </adr-include-query-params>
+      </div>
     </div>
     <div class="w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3">
-      <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>"><%= t(:help) %></a>
+      <a class="orange-800 f-1 db" href="<%= HelpPage.routing %>"><%= t(:help) %></a>
       <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>"><%= t(:logout) %></a>
     </div>
   </nav>
@@ -49,6 +69,7 @@
     <div class="overflow-y-scroll w-100">
       <%= component(
         AdrsPage::TabPanelComponent.new(adrs: accepted_adrs,
+                                        tag: tag,
                                         selected: tab == :accepted,
                                         tab: :accepted,
                                         columns: [ :title, :accepted_at ],
@@ -57,6 +78,7 @@
       <%= component(
         AdrsPage::TabPanelComponent.new(adrs: draft_adrs,
                                         tab: :drafts,
+                                        tag: tag,
                                         selected: tab == :drafts,
                                         columns: [ :title, :created_at ],
                                         action: :edit)
@@ -65,6 +87,7 @@
         AdrsPage::TabPanelComponent.new(adrs: replaced_adrs,
                                         selected: tab == :replaced,
                                         tab: :replaced,
+                                        tag: tag,
                                         columns: [ :title, :created_at ],
                                         action: :view)
       ) %>
@@ -72,6 +95,7 @@
         AdrsPage::TabPanelComponent.new(adrs: rejected_adrs,
                                         tab: :rejected,
                                         selected: tab == :rejected,
+                                        tag: tag,
                                         columns: [ :title, :created_at, :rejected_at ],
                                         action: :view)
       )%>

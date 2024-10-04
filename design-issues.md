@@ -1,13 +1,9 @@
 # Design Issues
 
-## Local Components
+## i18n is out of control
 
-If a page needs components just to be more organized, or for re-use that is just within the page, it would be nice if that could happen without it going into the main components folder.
-
-Options:
-
-* dir for the page, e.g. `app/src/front_end/pages/adrs_page/foo_component.{rb,.html.erb}`
-
+Because of the way pages are created from components, it gets very confusing
+to know what i18n keys are being used.  It creates busywork when refactoring.
 
 ## Testing Components and Pages
 

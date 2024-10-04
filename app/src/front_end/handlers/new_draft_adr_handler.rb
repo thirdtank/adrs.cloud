@@ -8,7 +8,7 @@ class NewDraftAdrHandler < AppHandler
     form = draft_adr.save(form:)
 
     if form.constraint_violations?
-      flash.alert = :adr_invalid
+      flash.alert = :new_adr_invalid
       NewDraftAdrPage.new(form:,authenticated_account:,flash:)
     else
       flash.clear!

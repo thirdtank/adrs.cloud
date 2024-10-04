@@ -16,7 +16,7 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
                                              flash:)
 
         expect(result.class).to eq(EditDraftAdrByExternalIdPage)
-        expect(flash.alert).to eq(:adr_invalid)
+        expect(flash.alert).to eq(:update_adr_invalid)
         expect(result.form).to eq(form)
       end
     end

@@ -9,7 +9,7 @@ class NewDraftAdrPage < AppPage
     @replaces_adr = authenticated_account.accepted_adrs.find(external_id: @form.replaced_adr_external_id)
 
     if !@form.new? && form.constraint_violations?
-      @flash.alert = :adr_invalid
+      @flash.alert = :new_adr_invalid
     end
   end
 

@@ -1,6 +1,6 @@
-<div class="flex items-start gap-3 justify-center">
-  <div role="none" class="w-quarter"></div>
-  <article class="w-50 ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba bc-gray-600 br-2 mv-3 shadow-3 pos-relative">
+<div class="flex-ns items-start gap-3 justify-center">
+  <div role="none" class="w-quarter db-ns db"></div>
+  <article class="w-50-ns ph-0 bg-white <%= adr.replaced? ? 'gray-600' : 'black' %> ba-ns bc-gray-600 br-2 mv-3 shadow-3-ns pos-relative">
     <h2 class="tc measure-narrow ph-1 mh-auto lh-title fs-5 mt-3 mb-1 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
     <div class="tc f-1 mb-3">
       <% if adr.replaced? %>
@@ -71,5 +71,5 @@
     <% end %>
     <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: shareable_refined_by_adrs, shareable_paths: true)) %>
   </article>
-  <div role="none" class="w-quarter"></div>
+  <div role="none" class="w-quarter db-ns dn"></div>
 </div>

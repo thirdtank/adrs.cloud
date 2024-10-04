@@ -7,7 +7,14 @@
        hidden
   <% end %>
 >
-  <h2 class="ph-3 f-4 b ma-0 mt-4"><%= t(tab) %></h2>
+  <h2 class="ph-3 f-4 b ma-0 mt-4 flex items-center gap-2">
+    <span>
+    <%= t(tab) %>
+    </span>
+    <% if !tag.nil? %>
+      <%= component(Adrs::TagComponent.new(tag: tag, link: false)) %>
+    <% end %>
+  </h2>
   <% if adrs.any? %>
     <table class="collapse ma-3 striped">
       <caption class="sr-only"><%= t("captions.#{tab}") %></caption>

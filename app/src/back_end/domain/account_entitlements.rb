@@ -3,7 +3,6 @@ class AccountEntitlements
     self.new(account:DB::Account.find!(external_id:))
   end
 
-
   def initialize(account:)
     @account = account
   end
@@ -18,7 +17,7 @@ class AccountEntitlements
 
 
   def can_add_new?
-    @account.adrs_dataset.where(rejected_at: nil).count < max_non_rejected_adrs
+    non_rejected_adrs < max_non_rejected_adrs
   end
 
   def update(form:)
@@ -29,10 +28,18 @@ class AccountEntitlements
     form
   end
 
-private
-
   def max_non_rejected_adrs
-    @account.entitlement.max_non_rejected_adrs ||
+    @max_non_rejected_adrs ||= (
+      @account.entitlement.max_non_rejected_adrs ||
       @account.entitlement.entitlement_default.max_non_rejected_adrs
+    )
+  end
+
+  def non_rejected_adrs
+    @non_rejected_adrs ||= @account.adrs_dataset.where(rejected_at: nil).count
+  end
+
+  def non_rejected_adrs_remaining
+    max_non_rejected_adrs - non_rejected_adrs
   end
 end

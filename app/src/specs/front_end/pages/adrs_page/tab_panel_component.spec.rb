@@ -9,6 +9,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tab: :drafts,
                                       columns: [ :title ],
                                       selected: false,
+                                      tag: nil,
                                       action: :edit)
 
       parsed_html = render_and_parse(component)
@@ -23,6 +24,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tab: :drafts,
                                       columns: [ :title ],
                                       selected: false,
+                                      tag: nil,
                                       action: :view)
 
       parsed_html = render_and_parse(component)
@@ -38,6 +40,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tab: :drafts,
                                       columns: [ :title ],
                                       selected: true,
+                                      tag: nil,
                                       action: :view)
       parsed_html = render_and_parse(component)
       expect(parsed_html).to have_html_attribute(role: :tabpanel)
@@ -50,6 +53,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tab: :drafts,
                                       columns: [ :title ],
                                       selected: false,
+                                      tag: nil,
                                       action: :view)
       parsed_html = render_and_parse(component)
       expect(parsed_html).to have_html_attribute(role: :tabpanel)
@@ -64,6 +68,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tab: :drafts,
                                       columns: [ :context ],
                                       selected: false,
+                                      tag: nil,
                                       action: :view)
 
       parsed_html = render_and_parse(component)
@@ -79,6 +84,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tab: :drafts,
                                       columns: [ :title ],
                                       selected: false,
+                                      tag: nil,
                                       action: :view)
       parsed_html = render_and_parse(component)
       expect(parsed_html.text).to include("foo")
@@ -92,6 +98,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
       component = described_class.new(adrs: [ adr ],
                                       tab: :drafts,
                                       columns: [ :created_at ],
+                                      tag: nil,
                                       selected: false,
                                       action: :view)
 

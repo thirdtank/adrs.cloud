@@ -231,7 +231,7 @@ RSpec.describe AdrsPage do
         html_locator = Support::HtmlLocator.new(rendered_html)
         side_nav = html_locator.element!("nav")
         expect(side_nav.css("a[href='#{NewDraftAdrPage.routing}']").length).to eq(0)
-        expect(side_nav.text).to include("You&#39;ve reached your plan limit")
+        expect(side_nav.text).to include("reached your limit")
       end
     end
   end

@@ -7,15 +7,15 @@ CHECK 1 - Real E2E tests
           DONE: List of all parts of the app that need a visual re-think or change
 
           D Sanity around page headers/navs
-          * Make it not look like shit on mobile
+          D Make it not look like shit on mobile
           * Home page
 
           DONE: At least one new feature that requires <select>, radio buttons and checkboxes
 
           Account Settings:
 
-          * Delete Account
-          * See plan + limits
+          D Delete Account
+          D See plan + limits
 
           ADR search
 

@@ -3,9 +3,9 @@ class AnnouncementBannerComponent < AppComponent
   def initialize(flash:, site_announcement: :use_default)
     @flash = flash
     @site_announcement = if site_announcement == :use_default
-                           t(:default_site_announcement)
+                           t_html(:default_site_announcement)
                          else
-                           t(site_announcement)
+                           t_html(site_announcement)
                          end
   end
 
@@ -39,9 +39,9 @@ class AnnouncementBannerComponent < AppComponent
 
   def text
     if @flash.alert?
-      t(@flash.alert)
+      t_html(@flash.alert)
     elsif @flash.notice?
-      t(@flash.notice)
+      t_html(@flash.notice)
     else
       @site_announcement
     end

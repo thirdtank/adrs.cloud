@@ -36,7 +36,7 @@ class AdrApp < Sinatra::Base
 
     logged_in = false
 
-    Thread.current.thread_variable_get(:request_context)[:site_announcement] = "All Systems Working"
+    Thread.current.thread_variable_get(:request_context)[:site_announcement] = :current_site_announcement
     if authenticated_account && authenticated_account.active?
       Thread.current.thread_variable_get(:request_context)[:authenticated_account] = authenticated_account
       logged_in = true
@@ -91,5 +91,7 @@ class AdrApp < Sinatra::Base
   form "/admin/new_account"
   form "/admin/account_entitlements/:external_id"
   action "/admin/deactivated_accounts/:external_id"
+
+  page "/help"
 
 end

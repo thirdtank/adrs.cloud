@@ -20,7 +20,7 @@ RSpec.describe "Create and Edit an ADR" do
     submit_button.click
 
     error = page.locator("[role=alert]")
-    expect(error).to have_text("ADR cannot be saved. See below.")
+    expect(error).to have_text("ADR cannot be created. See below.")
     expect(title_field).to have_text("This field must have at least 2 words")
 
     title_field.fill("Proper Title")

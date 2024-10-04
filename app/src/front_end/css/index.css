@@ -2,6 +2,13 @@
 @import "textarea.css";
 @import "button.css";
 
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 :root {
   --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
 }
@@ -22,10 +29,6 @@
   width: 25%;
 }
 
-.h-3-half {
-  height: calc(2.5 * var(--mg-sp-3));
-}
-
 .text-glow {
   text-shadow: currentColor 0px 0px 8px;
 }
@@ -33,6 +36,14 @@
   .text-glow {
     text-shadow: none;
   }
+}
+
+.active-bg-gray-300:active {
+  background-color: var(--mg-gray-300);
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
 }
 
 ::backdrop {
@@ -82,6 +93,11 @@
   padding: var(--mg-sp-2);
 }
 
+.text-field--tiny {
+  font-size: var(--mg-fs-1);
+  padding: var(--mg-sp-2);
+}
+
 .text-field::placeholder {
   /** Placeholder text should be obviously different, so make it smaller size */
   font-size: var(--mg-fs-2);
@@ -99,6 +115,10 @@
   outline-style: solid;
   outline-width: 2px;
   box-shadow: inset 0 0 calc(1.25 * var(--mg-sp-1)) calc(0.25 * var(--mg-sp-1)) var(--mg-gray-300);
+}
+
+.text-field--tiny:focus {
+  outline-width: 1px;
 }
 
 .text-field-label {

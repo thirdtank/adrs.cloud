@@ -11,8 +11,10 @@ class Adrs::TagComponent < AppComponent
     # yellow omitted as it doesn't look good
   ]
   attr_reader :tag, :color, :weight, :icon, :border_weight
-  def initialize(tag:)
-    @tag = tag
+  def initialize(tag:, link: true)
+    @tag  =   tag
+    @link = !!link
+
     index = Digest::MD5.hexdigest(@tag)[0..12].to_i(16) % COLORS.length
     @color = COLORS[index]
     if tag.downcase == DB::Adr.phony_tag_for_shared
@@ -25,5 +27,7 @@ class Adrs::TagComponent < AppComponent
       @border_weight = 700
     end
   end
+
+  def link? = @link
 end
 
