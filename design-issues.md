@@ -5,6 +5,17 @@
 Because of the way pages are created from components, it gets very confusing
 to know what i18n keys are being used.  It creates busywork when refactoring.
 
+- hard to know what is being used
+- the key being used changes based on where `t` is called
+- `t_html` seems braindead
+
+Requirements:
+
+* clear mapping from use of a key to definition of that key
+* keys can contain html
+* interpolated values are HTML escaped by default
+
+
 ## Testing Components and Pages
 
 Need better support for html parsing and whatnot

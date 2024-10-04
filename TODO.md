@@ -1,5 +1,7 @@
 # One Week Sprint
 
+FIGURE OUT GITHUB
+
 CHECK 1 - Real E2E tests
           DONE: Major flows tested via conventional e2e tests
 
@@ -8,7 +10,7 @@ CHECK 1 - Real E2E tests
 
           D Sanity around page headers/navs
           D Make it not look like shit on mobile
-          * Home page
+          D Home page
 
           DONE: At least one new feature that requires <select>, radio buttons and checkboxes
 

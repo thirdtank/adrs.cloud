@@ -1,23 +1,75 @@
-<header class="ph-3 mv-4">
-  <h1 class="tc ma-0">ADRpg</h1>
-  <h2 class="tc ma-0">Your one-stop shop for managing Architecture Decision Records</h2>
-</header>
-<main class="ph-3 mv-4">
-  <% if !info_message.nil? %>
-    <aside class="p mh-auto ba shadow-4 bc-blue-800 br-2 pa-3 blue-300 bg-blue-900 tc"><%= I18n.t(info_message) %></aside>
-  <% end %>
-  <% if !error_message.nil? %>
-    <aside class="p mh-auto ba shadow-4 bc-red-800 br-2 pa-3 red-300 bg-red-900 tc"><%= I18n.t(error_message) %></aside>
-  <% end %>
-  <h3 class="tc flex flex-column gap-2">
-    <%= form_tag(action:"/auth/developer", method:"POST") do %>
-      <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">Sneak Login!</button>
+<div class="w-100 flex items-start">
+  <main class="w-third h-100vh bg-purple-800 purple-100 flex flex-column items-end justify-center br bc-purple-700">
+    <header class="ph-3 mb-5">
+      <h2 class="f-6 mv-1 tr">All Your Decisions, All Together</h2>
+      <h1 class="f-4 mb-0 tr">ADRPG</h1>
+    </header>
+    <% if !error_message.nil? %>
+      <p class="ba br-0 pa-3 bg-red-800 red-300 bc-red-700 mr-3 flex items-center gap-3 shadow-4" role="alert">
+        <span class="w-3">
+        <%= svg("exclamation-triangle-icon") %>
+        </span>
+        <span>
+        <%= t(error_message) %>
+        </span>
+      </p>
     <% end %>
-    <%= form_tag(action:"/auth/github", method:"POST") do %>
-      <button type="submit" class="ph-3 pv-2 ba br-3 shadow-1 bc-gray-600 bg-white black">GitHub Login!</button>
+    <%= form_tag(action:"/auth/github", method:"POST", class: "ph-3") do %>
+      <button type="submit" class="button button--size--large button--color--green">Login with GitHub &rarr;</button>
     <% end %>
-  </h3>
-</main>
-<footer class="ph-3">
-  <p class="lh-copy tc">Copyright © 2024 by Third Tank LLC, All Rights Reserved.</p>
-</footer>
+    <% if !Brut.container.project_env.production? %>
+      <%= form_tag(action:"/auth/developer", method:"POST", class: "ph-3 mt-2") do %>
+        <button type="submit" class="button button--size--small button--color--orange">Dev login</button>
+      <% end %>
+    <% end %>
+    <p class="p mh-auto mb-6 f-2 pl-4 measure-narrow pr-3 mt-2 tr">
+      <strong>No credit card required.</strong> Create up to <strong class="dib">20 free ADRs</strong>. Share them with anyone (or not).
+    </p>
+  </main>
+  <div class="bg-blue-900 gray-100 h-100vh w-two-thirds flex flex-column items-center justify-between"
+       style="
+    background:
+        linear-gradient(-90deg, rgba(0,0,0,.05) 1px, transparent 1px),
+        linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px), 
+        linear-gradient(-90deg, rgba(0, 0, 0, .04) 1px, transparent 1px),
+        linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+        linear-gradient(transparent 3px, #f2f2f2 3px, #f2f2f2 78px, transparent 78px),
+        linear-gradient(-90deg, #aaa 1px, transparent 1px),
+        linear-gradient(-90deg, transparent 3px, #f2f2f2 3px, #f2f2f2 78px, transparent 78px),
+        linear-gradient(#aaa 1px, transparent 1px),
+        #f2f2f2;
+    background-size:
+        4px 4px,
+        4px 4px,
+        80px 80px,
+        80px 80px,
+        80px 80px,
+        80px 80px,
+        80px 80px,
+        80px 80px;
+"
+    >
+    <div class="flex flex-column items-center gap-3 mt-5">
+      <figure style="transform: rotate(-4deg);">
+        <img src="/static/list.png" class="w-7 shadow-3 br-3">
+        <figcaption class="tc f-3 mt-2 measure-narrow lh-title pa-1 br-2" style="background-color: rgba(255,255,255,0.5)">
+          Manage all your decisions in one place.
+        </figcaption>
+      </figure>
+      <div class="flex items-center justify-center gap-3">
+        <figure style="transform: rotate(5deg);">
+          <img src="/static/view.png" class="w-6 shadow-3 br-3">
+          <figcaption class="tc f-3 mt-2 measure-narrow lh-title pa-1 br-2" style="background-color: rgba(255,255,255,0.5)">
+            Refine or replace existing decisions to keep current.
+          </figcaption>
+        </figure>
+        <figure style="transform: rotate(-2deg);">
+          <img src="/static/edit.png" class="w-6 shadow-3 br-3">
+          <figcaption class="tc f-3 mt-2 measure-narrow lh-title pa-1 br-2" style="background-color: rgba(255,255,255,0.5)">
+            Clarify decisions with Y-statements so everything's consistent.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</div>
