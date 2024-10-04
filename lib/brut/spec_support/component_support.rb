@@ -2,10 +2,10 @@ require_relative "flash_support"
 module Brut::SpecSupport::ComponentSupport
   include Brut::SpecSupport::FlashSupport
 
-  def render_and_parse(component, entire_document:false)
+  def render_and_parse(component,&block)
     if component.kind_of?(Brut::FrontEnd::Page)
-      if entire_document
-        raise ArgumentError,"You should not use entire_document: true when callingn render_and_parse with a page"
+      if !block.nil?
+        raise "pages do not accept blocks - do not pass one to render_and_parse"
       end
       result = component.handle!
       case result
@@ -15,7 +15,9 @@ module Brut::SpecSupport::ComponentSupport
         result
       end
     else
-      document = Nokogiri::HTML5(component.render)
+      component.yielded_block = block
+      rendered_text = component.render
+      document = Nokogiri::HTML5(rendered_text)
       component_html = document.css("body")
       if component_html
         non_blank_text_elements = component_html.children.select { |element|
@@ -27,13 +29,11 @@ module Brut::SpecSupport::ComponentSupport
         }
         if non_blank_text_elements.size == 1
           non_blank_text_elements[0]
-        elsif entire_document
-          document
         else
-          raise "#{component.class} rendered #{non_blank_text_elements.size} elements other than blank text:\n\n#{non_blank_text_elements.map(&:name)}. Set entire_document: true to render_and_parse to return the entire document wrapped in <html><body>"
+          raise "#{component.class} rendered #{non_blank_text_elements.size} elements other than blank text:\n\n#{non_blank_text_elements.map(&:name)}. Components should render a single element:\n#{rendered_text}"
         end
       else
-        raise "#{component.class} did not render HTML properly"
+        raise "#{component.class} did not render HTML properly: #{rendered_text}"
       end
     end
   end
