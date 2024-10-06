@@ -1,6 +1,7 @@
 # One Week Sprint
 
-FIGURE OUT GITHUB
+FIGURE OUT GITHUB - somewhere there are cookies being saved and sent.  Need to nuke all localhost cookies or
+                    find a better localhost solution
 
 CHECK 1 - Real E2E tests
           DONE: Major flows tested via conventional e2e tests
