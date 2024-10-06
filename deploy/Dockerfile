@@ -66,7 +66,7 @@ RUN bundle install && \
 RUN npm clean-install --no-audit --no-fund
 
 # Build all assets
-RUN bin/build && rm -rf node_modules
+RUN bundle exec bin/build && rm -rf node_modules
 
 FROM base
 # Copy built artifacts: gems, application
