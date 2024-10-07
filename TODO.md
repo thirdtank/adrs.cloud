@@ -1,7 +1,20 @@
 # One Week Sprint
 
-FIGURE OUT GITHUB - somewhere there are cookies being saved and sent.  Need to nuke all localhost cookies or
-                    find a better localhost solution
+      1 - something that uses <select>, radio buttons, and checkbox
+          - Checkbox to allow public/private sharing?
+
+      2 - update the flash w/ AJAX
+
+      3 - Change to Sequel migrations?
+
+      4 - Address timezone
+
+      5 - Address i18n
+
+      6 - Need a real name
+
+
+# 2024-10-01
 
 CHECK 1 - Real E2E tests
           DONE: Major flows tested via conventional e2e tests
