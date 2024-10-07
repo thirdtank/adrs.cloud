@@ -9,6 +9,10 @@ html {
   box-sizing: inherit;
 }
 
+[hidden] {
+  display: none;
+}
+
 :root {
   --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
 }
@@ -253,3 +257,4 @@ brut-tabs.adr-page-tabs [role=tab][aria-selected=true]:hover {
   color: var(--mg-gray-100);
   background-color: var(--mg-gray-900);
 }
+

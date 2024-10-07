@@ -194,6 +194,9 @@ class Brut::FrontEnd::Component
   include Brut::I18n
 
   def i18n_keys_for(key)
+    if key.nil? || key.to_s.strip == ""
+      raise ArgumentError, "Blank I18n keys are not supported"
+    end
     containing_module_name = self.class.name.split(/::/)[0..-2]
     is_page_component = if containing_module_name.empty?
                           false

@@ -33,7 +33,7 @@ RSpec.describe NewDraftAdrPage do
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       element = html_locator.element!("[role='alert']")
-      expect(element.text.to_s.strip).to eq("ADR cannot be created. See below.")
+      expect(element.text).to include("ADR cannot be created. See below.")
     end
   end
   context "form is valid but blank" do
@@ -44,7 +44,7 @@ RSpec.describe NewDraftAdrPage do
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
       rendered_html = render_and_parse(page)
-      expect(rendered_html.css("[role='alert']").size).to eq(0)
+      expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
     end
   end
   context "refining another ADR" do
@@ -56,7 +56,7 @@ RSpec.describe NewDraftAdrPage do
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
       rendered_html = render_and_parse(page)
-      expect(rendered_html.css("[role='alert']").size).to eq(0)
+      expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
       expect(rendered_html.text).to include(escape_html(adr_being_refined.title))
     end
   end
@@ -69,7 +69,7 @@ RSpec.describe NewDraftAdrPage do
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
       rendered_html = render_and_parse(page)
-      expect(rendered_html.css("[role='alert']").size).to eq(0)
+      expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
       expect(rendered_html.text).to include(escape_html(adr_being_replaced.title))
     end
   end

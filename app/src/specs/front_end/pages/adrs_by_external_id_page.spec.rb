@@ -11,7 +11,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  external_id: adr.external_id)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
-      expect(html_locator.element!("[role='status']").text.to_s.strip).to eq("ADR Accepted")
+      expect(html_locator.element!("[role='status']").text).to include("ADR Accepted")
     end
   end
   context "draft" do
@@ -23,7 +23,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  external_id: adr.external_id)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
-      expect(html_locator.element!("[role='note']").text.to_s.strip).to eq("DRAFT")
+      expect(html_locator.element!("aside[role='note']").text.to_s.strip).to eq("DRAFT")
       expect(html_locator.element!("[aria-label='because']").inner_html).to include("Because <em>this</em> is a test of <code>markdown</code>")
     end
   end
@@ -113,7 +113,7 @@ RSpec.describe AdrsByExternalIdPage do
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(1)
       expect(parsed_html.css("button[title='Refine']").size).to eq(1)
-      expect(parsed_html.css("[role='note']").length).to eq(0)
+      expect(parsed_html.css("aside[role='note']").length).to eq(0)
     end
   end
   context "rejected" do
@@ -131,7 +131,7 @@ RSpec.describe AdrsByExternalIdPage do
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(0)
       expect(parsed_html.css("button[title='Refine']").size).to eq(0)
-      expect(parsed_html.css("[role='note']").length).to eq(0)
+      expect(parsed_html.css("aside[role='note']").length).to eq(0)
     end
   end
   context "shared" do

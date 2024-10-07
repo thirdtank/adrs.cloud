@@ -1,49 +1,27 @@
 class AnnouncementBannerComponent < AppComponent
-  attr_reader :flash, :site_announcement
-  def initialize(flash:, site_announcement: :use_default)
-    @flash = flash
-    @site_announcement = if site_announcement == :use_default
-                           t_html(:default_site_announcement)
-                         else
-                           t_html(site_announcement)
-                         end
+  attr_reader :messages
+
+  Message = Data.define(:role, :css_classes, :svg, :i18_key, :show)
+
+  def initialize(flash:, site_announcement: :default_site_announcement)
+
+    @messages = []
+
+    @messages << Message.new(role: "alert",
+                             css_classes: "bg-red-800 red-300",
+                             svg: "exclamation-triangle-icon",
+                             i18_key: flash.alert,
+                             show: flash.alert?)
+    @messages << Message.new(role: "status",
+                             css_classes: "bg-blue-800 blue-300",
+                             svg: "info-circle-icon",
+                             i18_key: flash.notice,
+                             show: !flash.alert? && flash.notice?)
+    @messages << Message.new(role: "note",
+                             css_classes: "bg-gray-800 gray-300",
+                             svg: "megaphone-icon",
+                             i18_key: site_announcement,
+                             show: !flash.alert? && !flash.notice?)
   end
 
-  def colors
-    if @flash.alert?
-      "bg-red-800 red-300"
-    elsif @flash.notice?
-      "bg-blue-800 blue-300"
-    else
-      "bg-gray-800 gray-300"
-    end
-  end
-
-  def icon
-    if @flash.alert?
-      "exclamation-triangle-icon"
-    elsif @flash.notice?
-      "info-circle-icon"
-    else
-      "megaphone-icon"
-    end
-  end
-
-  def role
-    if @flash.alert?
-      "alert"
-    else
-      "status"
-    end
-  end
-
-  def text
-    if @flash.alert?
-      t_html(@flash.alert)
-    elsif @flash.notice?
-      t_html(@flash.notice)
-    else
-      @site_announcement
-    end
-  end
 end

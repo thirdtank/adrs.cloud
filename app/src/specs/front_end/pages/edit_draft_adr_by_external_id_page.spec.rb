@@ -13,7 +13,7 @@ RSpec.describe EditDraftAdrByExternalIdPage do
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
       alert = html_locator.element!("[role='alert']")
-      expect(alert.text.to_s.strip).to eq("ADR cannot be accepted. See below.")
+      expect(alert.text.to_s.strip).to include("ADR cannot be accepted. See below.")
     end
   end
   context "form with errors" do

@@ -9,8 +9,10 @@ RSpec.describe AnnouncementBannerComponent do
 
     parsed_html = render_and_parse(component)
 
-    expect(parsed_html.text).to include("SIMPLE1")
-    expect(parsed_html.text).not_to include("SIMPLE2")
+    expect(parsed_html.css("[role='alert']")[0].text).to include("SIMPLE1")
+    parsed_html.css("[role='notice']").each do |element|
+      expect(element).to have_html_attribute(:hidden)
+    end[0]
   end
 
   it "shows a site announcement" do

@@ -1,17 +1,17 @@
 # One Week Sprint
 
-      1 - something that uses <select>, radio buttons, and checkbox
-          - Checkbox to allow public/private sharing?
+       1 - something that uses <select>, radio buttons, and checkbox
+           - Checkbox to allow public/private sharing?
 
-      2 - update the flash w/ AJAX
+CHECKK 2 - update the flash w/ AJAX
 
-      3 - Change to Sequel migrations?
+       3 - Change to Sequel migrations?
 
-      4 - Address timezone
+       4 - Address timezone
 
-      5 - Address i18n
+       5 - Address i18n
 
-      6 - Need a real name
+       6 - Need a real name
 
 
 # 2024-10-01

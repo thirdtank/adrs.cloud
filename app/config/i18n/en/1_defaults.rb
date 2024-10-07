@@ -17,6 +17,7 @@
           tooShort: "%{field} is too short",
           typeMismatch: "%{field} is the wrong type",
           valueMissing: "%{field} is required",
+          general: "Form is invalid",
         },
         be: { # short for "back-end", again not to have to type it out
           # These are snake case, which is idiomatic for Ruby.  The values

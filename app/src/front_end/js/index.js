@@ -180,11 +180,11 @@ class EntitlementEffective extends BaseCustomElement {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  BrutI18nTranslation.define()
   TagEditor.define()
   BrutForm.define()
   BrutConstraintViolationMessages.define()
   BrutConstraintViolationMessage.define()
-  BrutI18nTranslation.define()
   BrutConfirm.define()
   BrutConfirmationDialog.define()
   BrutAjaxSubmit.define()
