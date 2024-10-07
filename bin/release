@@ -2,7 +2,7 @@
 set -e
 echo "[ bin/release ] started"
 echo "[ bin/release ] Creating DB if needed"
-bundle exec ./bin/db create --app-env=production --no-seeds
+bundle exec ./bin/db create --app-env=production
 echo "[ bin/release ] Migrating DB if needed"
-bundle exec ./bin/db migrate --app-env=production --no-seeds
+bundle exec ./bin/db migrate --app-env=production
 echo "[ bin/release ] DONE"
