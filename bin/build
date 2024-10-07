@@ -7,7 +7,15 @@ echo "[ bin/build ] building CSS"
 ${SCRIPT_DIR}/build-css
 echo "[ bin/build ] building JS"
 ${SCRIPT_DIR}/build-js
-echo "[ bin/build ] removing jsdocs/"
-rm -rf jsdocs
-echo "[ bin/build ] Building JSDoc"
-npx jsdoc -c jsdoc.config.json -d jsdocs lib/brut-js/*.js
+echo "[ bin/build ] building images"
+${SCRIPT_DIR}/build-images
+
+
+if [ "${RACK_ENV}" == "development" ]; then
+  echo "[ bin/build ] removing jsdocs/"
+  rm -rf jsdocs
+  echo "[ bin/build ] Building JSDoc"
+  npx jsdoc -c jsdoc.config.json -d jsdocs lib/brut-js/*.js
+else
+  echo "[ bin/build ] Not building JSDoc"
+fi

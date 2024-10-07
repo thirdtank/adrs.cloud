@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # packages and/or are useful in installing other software
 RUN apt-get -y clean && \
     apt-get -y update && \
-    apt-get install --quiet --yes ca-certificates curl gnupg
+    apt-get install --quiet --yes ca-certificates curl gnupg rsync
 
 # Install Docker itself. Note that this is installed only what is needed to run
 # the Docker CLI - the docker-compose.dx.yml will connect this docker's socket

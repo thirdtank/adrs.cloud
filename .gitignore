@@ -6,6 +6,8 @@
 /app/public/css
 # This contains generated code, so should not be checked in
 /app/public/js
+# This contains generated code, so should not be checked in
+/app/public/static/images/
 # Don't want to check in the generated JSDocs dir
 /jsdocs
 # This is generated per environment

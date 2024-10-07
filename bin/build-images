@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require_relative "brut_cli"
+require "fileutils"
+require "json"
+require "optparse"
+
+def parse_options
+  options = {
+    output_file: "app.js",
+    source_file: "index.js",
+  }
+  OptionParser.new do |parser|
+    parser.banner = %{Usage: #{$0} [options]
+
+OPTIONS
+}
+    parser.on("--output-file=FILE","Name of the output file, defaults to #{options[:output_file]}") do |value|
+      options[:output_file] = value
+    end
+    parser.on("--source-file=FILE","Name of the source file, relative to js/, defaults to #{options[:source_file]}") do |value|
+      options[:source_file] = value
+    end
+  end.parse!
+  options
+end
+
+options = parse_options
+
+src_dir  = Brut.container.images_src_dir
+dest_dir = Brut.container.images_root_dir
+
+command = "rsync --archive --delete --verbose #{src_dir}/ #{dest_dir}"
+system! command
+

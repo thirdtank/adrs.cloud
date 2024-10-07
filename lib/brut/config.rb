@@ -79,6 +79,13 @@ class Brut::Config
       end
 
       c.store_ensured_path(
+        "images_root_dir",
+        "Path to the root of all images"
+      ) do |public_root_dir|
+        public_root_dir / "static" / "images"
+      end
+
+      c.store_ensured_path(
         "css_bundle_output_dir",
         "Path where bundled CSS is written for use in web pages"
       ) do |public_root_dir|
@@ -162,6 +169,13 @@ class Brut::Config
         "Path to where svgs are stored"
       ) do |front_end_src_dir|
         front_end_src_dir / "svgs"
+      end
+
+      c.store_required_path(
+        "images_src_dir",
+        "Path to where images are stored"
+      ) do |front_end_src_dir|
+        front_end_src_dir / "images"
       end
 
       c.store_required_path(
