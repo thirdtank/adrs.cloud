@@ -1,5 +1,10 @@
 # Design Issues
 
+## Deployment 
+
+* Building the docker image is very slow, likely due to architecture differences
+
+
 ## i18n is out of control
 
 Because of the way pages are created from components, it gets very confusing
