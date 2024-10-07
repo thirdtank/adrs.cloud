@@ -17,13 +17,6 @@ CREATE TABLE adrs (
 COMMENT ON TABLE adrs IS
   'Architecture Decision Records';
 
--- CREATE TRIGGER
---   adrs_external_id
--- BEFORE INSERT ON
---   adrs
--- FOR EACH ROW
--- EXECUTE PROCEDURE generate_external_id('adr');
-
 CREATE INDEX adrs_accounts ON adrs(account_id);
 
 ALTER TABLE adrs ADD CONSTRAINT

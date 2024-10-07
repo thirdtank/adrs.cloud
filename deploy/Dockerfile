@@ -63,7 +63,7 @@ RUN bundle install --verbose && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
 # Install Node Modules
-RUN npm clean-install --no-audit --no-fund
+RUN npm clean-install --no-audit --no-fund --verbose
 
 # Build all assets
 RUN bundle exec bin/build && rm -rf node_modules
