@@ -4,7 +4,6 @@
 
 * Building the docker image is very slow, likely due to architecture differences
 
-
 ## i18n is out of control
 
 Because of the way pages are created from components, it gets very confusing
@@ -20,6 +19,19 @@ Requirements:
 * keys can contain html
 * interpolated values are HTML escaped by default
 
+A few ideas:
+
+- t(key,"english text here") - if key is missing, uses english text, but missing keys can fail CI?
+- key is always based on page?
+- key is never derived for content on a page/component?
+- `page_content(key)?`
+
+## Form Validation Complexity
+
+* Chasing down the parts was hard
+* A "there were validation issues" was hard
+* How to make `<brut-form>` and friends extensible?
+* Perhaps each page could have its own custom element?
 
 ## Testing Components and Pages
 
