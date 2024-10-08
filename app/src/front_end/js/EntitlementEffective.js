@@ -36,7 +36,7 @@ class EntitlementEffective extends BaseCustomElement {
     this.#entitlement = newValue
   }
 
-  render() {
+  update() {
     if (!this.#entitlement) {
       return
     }

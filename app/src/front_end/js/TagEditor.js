@@ -30,7 +30,7 @@ class TagEditor extends BaseCustomElement {
     this.#editable = !isFalse
   }
 
-  render() {
+  update() {
     const view = this.querySelector("adr-tag-editor-view")
     const edit = this.querySelector("adr-tag-editor-edit")
 

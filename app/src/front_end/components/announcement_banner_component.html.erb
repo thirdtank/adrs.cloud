@@ -1,6 +1,6 @@
-<div class="w-100">
+<adr-announcement-banner class="db w-100" default-shown-role="<%= shown_role %>" show-warnings>
   <% messages.each do |message| %>
-    <div <%= message.show ? "" : "hidden" %> class="<%= message.css_classes %> pv-2 ph-3 f-1 flex items-center gap-3" role="<%= message.role %>">
+    <div <%= message.role == shown_role ? "" : "hidden" %> class="<%= message.css_classes %> pv-2 ph-3 f-1 flex items-center gap-3" role="<%= message.role %>">
       <span class="w-2 flex flex-column justify-center">
         <%= svg(message.svg) %>
       </span>
@@ -11,4 +11,4 @@
       </p>
     </div>
   <% end %>
-</div>
+</adr-announcement-banner>

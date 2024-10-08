@@ -1,29 +1,15 @@
-import { BaseCustomElement, RichString } from "brut-js"
-import {
-  BrutConfirm,
-  BrutAjaxSubmit,
-  BrutConstraintViolationMessages,
-  BrutConstraintViolationMessage,
-  BrutConfirmationDialog,
-  BrutI18nTranslation,
-  BrutForm,
-  BrutTabs
-} from "brut-js"
-
+import { BrutCustomElements } from "brut-js"
 import IncludeQueryParams from "./IncludeQueryParams"
 import TagEditor from "./TagEditor"
 import EntitlementEffective from "./EntitlementEffective"
+import EditDraftAdrByExternalIdPage from "./EditDraftAdrByExternalIdPage"
+import AnnouncementBanner from "./AnnouncementBanner"
 
 document.addEventListener("DOMContentLoaded", () => {
-  BrutI18nTranslation.define()
+  BrutCustomElements.define()
   TagEditor.define()
-  BrutForm.define()
-  BrutConstraintViolationMessages.define()
-  BrutConstraintViolationMessage.define()
-  BrutConfirm.define()
-  BrutConfirmationDialog.define()
-  BrutAjaxSubmit.define()
-  BrutTabs.define()
   EntitlementEffective.define()
   IncludeQueryParams.define()
+  EditDraftAdrByExternalIdPage.define()
+  AnnouncementBanner.define()
 })

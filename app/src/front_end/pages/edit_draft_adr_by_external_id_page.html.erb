@@ -1,3 +1,6 @@
+<adr-edit-draft-by-external-id-page show-warnings>
+  <%= component(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_updated")) %>
+  <%= component(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_not_updated")) %>
 <%= component(AnnouncementBannerComponent) %>
 <header>
   <h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(:edit) %></h2>
@@ -29,3 +32,4 @@
 <section class="pa-3">
   <%= component Adrs::FormComponent.new(form, action: :edit, external_id: @draft_adr.external_id) %>
 </section>
+</adr-edit-draft-by-external-id-page>

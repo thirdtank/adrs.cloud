@@ -82,8 +82,11 @@
         },
       },
       EditDraftAdrByExternalIdPage: {
+        edit: "Edit Draft ADR",
         proposed_replacement: "Proposed Replacement for “%{block}”",
         refines: "Refines “%{block}”",
+        adr_updated: "ADR Updated",
+        adr_not_updated: "ADR Could not be updated",
       },
       NewDraftAdrPage: {
         draft_new: "Draft New ADR",
@@ -128,8 +131,8 @@
         update_adr_invalid: "ADR cannot be saved. See below.",
         tags_updated: "Tags Updated",
         sharing_stopped: "Sharing Stopped",
-        default_site_announcement: "System is working properly",
-        current_site_announcement: "System is working properly",
+        default_site_announcement: "ADRPG is working properly",
+        current_site_announcement: "ADRPG is working properly",
         adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
         add_new_limit_exceeded: "You've reached your plan limit",
       },
