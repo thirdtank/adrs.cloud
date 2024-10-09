@@ -1,14 +1,14 @@
 <%= component(AnnouncementBannerComponent) %>
 <header>
-<h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(:draft_new) %></h2>
+<h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(page: :draft_new) %></h2>
   <% if refines_adr %>
     <h3 class="tc mt-0 f-4">
-      <%= t(:refines, title: refines_adr.title) %>
+      <%= t(page: :refines, title: refines_adr.title) %>
     </h3>
   <% end %>
   <% if replaces_adr %>
     <h3 class="tc mt-0 f-4">
-      <%= t(:replaces, title: replaces_adr.title) %>
+      <%= t(page: :replaces, title: replaces_adr.title) %>
     </h3>
   <% end %>
 </header>

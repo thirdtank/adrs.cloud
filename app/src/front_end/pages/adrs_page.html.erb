@@ -11,11 +11,11 @@
         <% if can_add_new? %>
           <a href="<%= NewDraftAdrPage.routing %>"
              class="green-500 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300">
-             <%= t(:add_new) %>
+             <%= t(page: :add_new) %>
           </a>
         <% else %>
-          <span class="gray-700 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed" title="<%= t_html(:add_new_limit_exceeded) %>">
-             <%= t(:add_new) %>
+          <span class="gray-700 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed" title="<%= t(:add_new_limit_exceeded) %>">
+             <%= t(page: :add_new) %>
           </span>
         <% end %>
       </div>
@@ -33,13 +33,13 @@
         <form class="pa-3">
           <div class="pt-3 xbt bc-gray-300">
             <div class="flex flex-column gap-2 items-end">
-              <input type="search" name="tag" value="<%= tag %>" id="tag-search-input" class="text-field text-field--tiny" placeholder="<%= t(:tag_filter_placeholder) %>">
-              <label for="tag-search-input" class="f-1 i"><%= t(:filter_by_tag) %></label>
+              <input type="search" name="tag" value="<%= tag %>" id="tag-search-input" class="text-field text-field--tiny" placeholder="<%= t(page: :tag_filter_placeholder) %>">
+              <label for="tag-search-input" class="f-1 i"><%= t(page: :filter_by_tag) %></label>
               <% if filtered_by_tag? %>
-                <a href="?" class="blue-800 f-1"><%= t(:remove_filter) %></a>
+                <a href="?" class="blue-800 f-1"><%= t(page: :remove_filter) %></a>
               <% end %>
             </div>
-            <button class="sr-only"><%= t(:filter_by_tag) %></button>
+            <button class="sr-only"><%= t(page: :filter_by_tag) %></button>
           </div>
         </form>
       </adr-include-query-params>
@@ -50,10 +50,10 @@
             <%= entitlements.non_rejected_adrs_remaining %> of <%= entitlements.max_non_rejected_adrs %> ADRs Remaining
           <% else %>
             <p class="p ma-0 fw-7 red-800">
-              <%= t_html(:add_new_limit_exceeded) %>
+              <%= t(:add_new_limit_exceeded) %>
             </p>
             <p class="p ma-0 fw-4">
-              <%= html_safe!(t_html(:contact_support_for_limit_increase)) %>
+              <%= html_safe!(t(:contact_support_for_limit_increase)) %>
             </p>
           <% end %>
         </div>

@@ -3,14 +3,14 @@
   <%= component(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_not_updated")) %>
 <%= component(AnnouncementBannerComponent) %>
 <header>
-  <h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(:edit) %></h2>
+  <h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(page: :edit) %></h2>
   <% if draft_adr.refining? %>
     <h3 class="mt-1 fw-4 f-2 i flex items-center justify-center gap-2">
       <span class="w-2 gray-300">
       <%= svg("adjust-control-icon") %>
       </span>
       <span>
-        <%= t_html(:refines) do %>
+        <%= t(page: :refines) do %>
           <a class="blue-300" href="<%= adr_path(draft_adr.adr_refining) %>"><%= draft_adr.adr_refining.title %></a>
         <% end %>
       </span>
@@ -22,7 +22,7 @@
       <%= svg("change-icon") %>
       </span>
       <span>
-        <%= t_html(:proposed_replacement) do %>
+        <%= t(page: :proposed_replacement) do %>
           <a class="blue-300" href="<%= adr_path(draft_adr.adr_replacing) %>"><%= draft_adr.adr_replacing.title %></a>
         <% end %>
       </span>

@@ -39,7 +39,7 @@ class AdrsByExternalIdPage::BannerComponent < AppComponent
     if @timestamp == :use_block
       render_yielded_block
     else
-      t_html(@i18n_key) do
+      t(page: @i18n_key) do
         timestamp(@timestamp,class: @timestamp_font_weight, format: :date)
       end
     end

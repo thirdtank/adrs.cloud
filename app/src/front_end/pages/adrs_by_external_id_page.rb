@@ -10,7 +10,7 @@ class AdrsByExternalIdPage < AppPage
   def can_edit_tags? = self.accepted?
 
   def markdown(field)
-    value = t("fields.#{field}", content: adr.send(field))
+    value = t(page: [ :fields, field ], content: adr.send(field))
     component(MarkdownStringComponent.new(value))
   end
 

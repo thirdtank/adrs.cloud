@@ -6,7 +6,7 @@ class SharedAdrsByShareableIdPage < AppPage
   end
 
   def markdown(field)
-    value = t("fields.#{field}", content: adr.send(field))
+    value = t(page: [ :fields, field ], content: adr.send(field))
     component(MarkdownStringComponent.new(value))
   end
 

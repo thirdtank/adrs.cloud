@@ -93,6 +93,25 @@ class Brut::FrontEnd::Component
     )
   end
 
+  def page_name
+    @page_name ||= begin
+                     page = self.class.name.split(/::/).reduce(Module) { |accumulator,class_path_part|
+                       if accumulator.ancestors.include?(Brut::FrontEnd::Page)
+                         accumulator
+                       else
+                         accumulator.const_get(class_path_part)
+                       end
+                     }
+                     if page.ancestors.include?(Brut::FrontEnd::Page)
+                       page.name
+                     else
+                       raise "#{self.class} is not nested inside a page, so #page_name should not have been called"
+                     end
+                   end
+  end
+
+  def component_name = self.class.name
+
   # Helper methods that subclasses can use.
   # This is a separate module to distinguish the public
   # interface of this class (`render`) from these helper methods

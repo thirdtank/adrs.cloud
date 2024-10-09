@@ -28,7 +28,7 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
 
     erb_file = self.page_locator.locate(self.template_name)
     template = Brut::FrontEnd::Template.new(erb_file)
-    layout_template.render_template(LayoutProxy.new(self)) do
+    layout_template.render_template(self) do
       Brut::FrontEnd::Templates::HTMLSafeString.from_string(
         template.render_template(self)
       )
@@ -44,24 +44,11 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
   end
 
   def page_name = self.class.name
-
+  def component_name = raise Brut::BackEnd::Errors::Bug,"#{self.class} is not a component"
 
 private
 
   def template_name = RichString.new(self.class.name).underscorized.to_s.gsub(/^pages\//,"")
 
-  class LayoutProxy < SimpleDelegator
-    def i18n_keys_for(key)
-      [
-        "layouts.#{self.layout}.#{self.class}.#{key}",
-        "layouts.#{self.layout}.#{key}",
-        "layouts.general.#{key}",
-        "general.#{key}",
-      ]
-    end
-    # Without including this module, t and t_html will call i18n_keys_for 
-    # of the page instances of this class delegate to.
-    include Brut::I18n
-  end
 end
 

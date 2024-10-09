@@ -13,7 +13,7 @@
       <div class="ph-3 bt bc-gray-500 pv-2">
         <div class="flex flex-column gap-3 items-end mt-1 pb-3 bb bc-gray-600">
         <% if editable? %>
-          <a class="db mt-3 w-100 tc pv-2 ba br-1 bc-blue-500 f-2 fw-5 blue-400" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>"><%= t(:edit_adr) %></a>
+          <a class="db mt-3 w-100 tc pv-2 ba br-1 bc-blue-500 f-2 fw-5 blue-400" href="<%= EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id) %>"><%= t(page: :edit_adr) %></a>
         <% elsif accepted? %>
           <%= form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2 w-100") do %>
             <input type="hidden" name="external_id" value="<%= adr.external_id %>">
@@ -22,30 +22,30 @@
               <%= component(ButtonComponent.new(
                 size: "tiny",
                 formaction: SharedAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
-                disabled: shared? ? t(:already_shared) : false,
+                disabled: shared? ? t(page: :already_shared) : false,
                 color: "orange",
                 variant: :left,
-                label: t(:share),
-                confirm: t(:share_confirm),
+                label: t(page: :share),
+                confirm: t(page: :share_confirm),
                 width: :full,
                 icon: "globe-network-icon")) %>
 
               <%= component(ButtonComponent.new(
                 size: "tiny",
                 formaction: PrivateAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
-                disabled: private? ? t(:not_shared) : false,
+                disabled: private? ? t(page: :not_shared) : false,
                 color: "blue",
                 variant: :right,
-                label: t(:stop_sharing_short),
-                aria_label: t(:stop_sharing),
-                confirm: t_html(:stop_share_confirm),
+                label: t(page: :stop_sharing_short),
+                aria_label: t(page: :stop_sharing),
+                confirm: t(page: :stop_share_confirm),
                 width: :full,
                 icon: "lock-icon")) %>
 
             </fieldset>
             <% if shared? %>
               <a class="blue-300 db flex items-center justify-end gap-1 pr-1 w-100" target="_blank" href="<%= SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id) %>">
-                <span class="tdu f-1"><%= t(:view_share_page) %></span>
+                <span class="tdu f-1"><%= t(page: :view_share_page) %></span>
                 <div class="w-1" role="img" aria-description="<%= t("aria.external_link_icon") %>"><%= svg("external-link-icon") %></div>
               </a>
             <% end %>
@@ -61,7 +61,7 @@
                   disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
                   color: "red",
                   width: :full,
-                  label: t(:replace),
+                  label: t(page: :replace),
                   icon: "change-icon"
                 )
               ) %>
@@ -73,7 +73,7 @@
                   disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
                   color: "purple",
                   width: :full,
-                  label: t(:refine),
+                  label: t(page: :refine),
                   icon: "adjust-control-icon"
                 )
               ) %>
@@ -92,7 +92,7 @@
                       <%= component Adrs::TagComponent.new(tag: tag) %>
                     <% end %>
                   <% else %>
-                    <span class="f-1 gray-400 i"><%= t(:none) %></span>
+                    <span class="f-1 gray-400 i"><%= t(page: :no_tags) %></span>
                   <% end %>
                 </div>
               </div>
@@ -100,7 +100,7 @@
                 <%= component(ButtonComponent.new(
                   size: "tiny",
                   color: adr.tags.any? ? "white"          : "purple",
-                  label: adr.tags.any? ? t(:edit)         : t(:add),
+                  label: adr.tags.any? ? t(:edit)         : t(page: :add_tags),
                   icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
               <% end %>
             </div>
@@ -125,7 +125,7 @@
                                                        icon:  "close-line-icon")) %>
                   <%= component(ButtonComponent.new(size: "tiny",
                                                        color: "blue",
-                                                       label: t(:save_tags),
+                                                       label: t(page: :save_tags),
                                                        icon:  "tag-line-icon")) %>
                 </div>
               <% end %>
@@ -160,12 +160,12 @@
               <div class="tl">
                 <div class="flex flex-column gap-2">
                   <div>
-                    <%= t_html(:replaced_by) do %>
+                    <%= t(page: :replaced_by) do %>
                       <a class="red-900" href="<%= adr_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
                     <% end %>
                   </div>
                   <div class="f-1">
-                    <%= t_html(:replaced_on) do %>
+                    <%= t(page: :replaced_on) do %>
                       <%= timestamp(adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date) %>
                     <% end %>
                   </div>
@@ -184,7 +184,7 @@
         <% end %>
         <% if !adr.replaced_adr.nil? %>
           <%= banner(color: "green-200", background_color: "bg-green-900", font_size: "f-1") do %>
-            <%= t_html(:replaces) do %>
+            <%= t(page: :replaces) do %>
               <a class="green-300" href="<%= adr_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>.
             <% end %>
           <% end %>
@@ -196,7 +196,7 @@
                 <%= svg("adjust-control-icon") %>
               </div>
               <div class="tl f-1">
-                <%= t_html(:refines) do %>
+                <%= t(page: :refines) do %>
                   <a class="blue-300" href="<%= adr_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
                 <% end %>
               </div>

@@ -91,11 +91,11 @@ RSpec.describe AdrsByExternalIdPage do
 
         replace_button = parsed_html.css("button[aria-label='Replace'][disabled]")[0]
         expect(replace_button).not_to eq(nil)
-        expect(replace_button[:title]).to eq("You&#39;ve reached your limit")
+        expect(replace_button[:title]).to eq("You've reached your limit")
 
         refine_button = parsed_html.css("button[aria-label='Refine'][disabled]")[0]
         expect(refine_button).not_to eq(nil)
-        expect(refine_button[:title]).to eq("You&#39;ve reached your limit")
+        expect(refine_button[:title]).to eq("You've reached your limit")
 
       end
     end

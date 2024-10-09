@@ -6,23 +6,23 @@ class Adrs::FormComponent < AppComponent
     case action
       # XXX: i18n these labels
     when :new
-      @action_label  = "Save Draft"
+      @action_label  = t(component: [ :actions, :save_draft ])
       @form_action   = NewDraftAdrForm.routing
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     when :edit
       @external_id   = external_id_required!(external_id:,action:)
-      @action_label  = "Update Draft"
+      @action_label  = t(component: [ :actions, :update_draft ])
       @form_action   = EditDraftAdrWithExternalIdForm.routing(external_id: @external_id)
       @go_back_label = "Back"
       @ajax_submit   = true
     when :replace
-      @action_label  = "Save Replacement Draft"
+      @action_label  = t(component: [ :actions, :save_replacement_draft ])
       @form_action   = "/draft_adrs"
       @go_back_label = "Nevermind"
       @ajax_submit   = false
     when :refine
-      @action_label  = "Save Refining Draft"
+      @action_label  = t(component: [ :actions, :save_refining_draft ])
       @form_action   = "/draft_adrs"
       @go_back_label = "Nevermind"
       @ajax_submit   = false
@@ -44,7 +44,7 @@ class Adrs::FormComponent < AppComponent
           formaction: RejectedAdrsWithExternalIdHandler.routing(external_id: @external_id),
           size: "small",
           color: "red",
-          label: "Reject ADR",
+          label: t(component: [ :actions, :reject ]),
           icon: "recycle-bin-line-icon",
           confirm: "You can't bring this back other than re-creating it by hand"
         )
@@ -59,7 +59,7 @@ class Adrs::FormComponent < AppComponent
           formaction: AcceptedAdrsWithExternalIdForm.routing(external_id: @external_id),
           size: "small",
           color: "green",
-          label: "Accept ADR",
+          label: t(component: [ :actions, :accept ]),
           icon: "quality-badge-checkmark-icon",
           confirm: "You won't be able to change this ADR after you accept it"
         )

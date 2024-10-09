@@ -10,11 +10,11 @@
           </div>
           <div class="tl">
             <div class="f-2">
-              <%= t_html(:replaced_on) do %>
+              <%= t(page: :replaced_on) do %>
                 <%= timestamp(adr.replaced_by_adr.accepted_at,class: "fw-6", format: :date) %>
               <% end %>
               <% if adr.replaced_by_adr.shared? %>
-                <%= t_html(:replaced_by) do %>
+                <%= t(page: :replaced_by) do %>
                   <a class="db red-900" href="<%= shareable_path(adr.replaced_by_adr) %>"><%= adr.replaced_by_adr.title %></a>
                 <% end %>
               <% end %>
@@ -26,23 +26,23 @@
         <%= adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' %>
         ">
         <% if adr.replaced? %>
-          <%= t_html(:originally_accepted) do %>
+          <%= t(page: :originally_accepted) do %>
             <%= timestamp(adr.accepted_at,class: "fw-6", format: :date) %>
           <% end %>
         <% else %>
-          <%= t_html(:accepted) do %>
+          <%= t(page: :accepted) do %>
             <%= timestamp(adr.accepted_at,class: "fw-6", format: :date) %>
           <% end %>
         <% end %>
       </h3>
       <% if !adr.replaced_adr.nil? && adr.replaced_adr.shared? %>
         <h3 class="lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900">
-          <%= t_html(:replaced) do %>
+          <%= t(page: :replaced) do %>
             <a class="green-300" href="<%= shareable_path(adr.replaced_adr) %>"><%= adr.replaced_adr.title %></a>
           <% end %>
         </h3>
       <% end %>
-      <%= t_html(:created) do %>
+      <%= t(page: :created) do %>
         <%= timestamp(adr.created_at, class: "fw-5", format: :date) %>
       <% end %>
     </div>
@@ -62,7 +62,7 @@
           <%= svg("adjust-control-icon") %>
         </div>
         <div class="tl">
-          <%= t_html(:refines) do %>
+          <%= t(page: :refines) do %>
             <a class="blue-300" href="<%= shareable_path(adr.refines_adr) %>"><%= adr.refines_adr.title %></a>
           <% end %>
         </div>

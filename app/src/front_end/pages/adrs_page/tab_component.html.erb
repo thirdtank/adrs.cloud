@@ -8,7 +8,7 @@
        id="<%= tab_name %>-tab"
        >
        <span class="flex items-center justify-end gap-2">
-       <span><%= t(tab_name) %></span>
+       <span><%= t(page: [ "tabs", tab_name ]) %></span>
        <% if svg_name %>
          <span class="w-2"><%= svg(svg_name) %></span>
        <% end %>

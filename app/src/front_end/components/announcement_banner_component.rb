@@ -4,7 +4,6 @@ class AnnouncementBannerComponent < AppComponent
   Message = Data.define(:role, :css_classes, :svg, :i18_key)
 
   def initialize(flash:, site_announcement: :default_site_announcement)
-
     @shown_role = if flash.alert?
                     "alert"
                   elsif flash.notice?
