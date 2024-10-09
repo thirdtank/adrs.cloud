@@ -88,6 +88,10 @@ RSpec.configure do |config|
        metadata[:page] == true
       metadata[:component] = true
     end
+    if metadata[:described_class].to_s =~ /[a-z0-9]Page$/ ||
+       metadata[:page] == true
+      metadata[:page] = true
+    end
     if metadata[:described_class].to_s =~ /[a-z0-9]Handler$/
       metadata[:handler] = true
     end
@@ -104,6 +108,7 @@ RSpec.configure do |config|
 
     request_context   = Thread.current.thread_variable_get(:request_context)
     is_component      = example.metadata[:component]
+    is_page           = example.metadata[:page]
     is_e2e            = example.metadata[:e2e]
 
     if is_component
@@ -123,7 +128,12 @@ RSpec.configure do |config|
       )
       Thread.current.thread_variable_set(:request_context, request_context)
       example.example_group.let(:request_context) { request_context }
+      example.example_group.let(:component_name) { described_class.component_name }
     end
+    if is_page
+      example.example_group.let(:page_name) { described_class.page_name }
+    end
+
     if is_e2e
       TestServer.instance.start
       Playwright.create(playwright_cli_executable_path: "./node_modules/.bin/playwright") do |playwright|

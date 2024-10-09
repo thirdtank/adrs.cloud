@@ -11,7 +11,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  external_id: adr.external_id)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
-      expect(html_locator.element!("[role='status']").text).to include("ADR Accepted")
+      expect(html_locator.element!("[role='status']").text).to include(t(:adr_accepted))
     end
   end
   context "draft" do
@@ -91,11 +91,11 @@ RSpec.describe AdrsByExternalIdPage do
 
         replace_button = parsed_html.css("button[aria-label='Replace'][disabled]")[0]
         expect(replace_button).not_to eq(nil)
-        expect(replace_button[:title]).to eq("You've reached your limit")
+        expect(replace_button[:title]).to eq(t(:add_new_limit_exceeded))
 
         refine_button = parsed_html.css("button[aria-label='Refine'][disabled]")[0]
         expect(refine_button).not_to eq(nil)
-        expect(refine_button[:title]).to eq("You've reached your limit")
+        expect(refine_button[:title]).to eq(t(:add_new_limit_exceeded))
 
       end
     end
@@ -108,8 +108,10 @@ RSpec.describe AdrsByExternalIdPage do
 
       parsed_html = render_and_parse(page)
 
-      expect(parsed_html.text).to include("Accepted")
-      expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
+      accept_text = t(page: :accepted, block: "")
+      originally_accept_text = t(page: :originally_accepted, block: "")
+      expect(parsed_html.text).to include(accept_text)
+      expect(parsed_html.text).not_to include(originally_accept_text)
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(1)
       expect(parsed_html.css("button[title='Refine']").size).to eq(1)
@@ -126,8 +128,8 @@ RSpec.describe AdrsByExternalIdPage do
 
       parsed_html = render_and_parse(page)
 
-      expect(parsed_html.text).not_to include("Accepted")
-      expect(parsed_html.text).to include("Rejected")
+      expect(parsed_html.text).not_to include(t(page: :accepted, block: ""))
+      expect(parsed_html.text).to     include(t(page: :rejected, block: ""))
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(0)
       expect(parsed_html.css("button[title='Refine']").size).to eq(0)
@@ -148,12 +150,12 @@ RSpec.describe AdrsByExternalIdPage do
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
 
-      expect(parsed_html.text).to include("Accepted")
-      expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
+      expect(parsed_html.text).to     include(t(page: :accepted, block: ""))
+      expect(parsed_html.text).not_to include(t(page: :originally_accepted, block: ""))
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to include("Share")
-      element = html_locator.element!("button[title='Stop Sharing']")
+      expect(element.text.strip).to include(t(page: :share))
+      element = html_locator.element!("button[title='#{t(page: :stop_sharing)}']")
       expect(element).not_to have_html_attribute(disabled: true)
 
       element = html_locator.element!("adr-tag-editor-edit textarea")
@@ -171,13 +173,13 @@ RSpec.describe AdrsByExternalIdPage do
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
 
-      expect(parsed_html.text).to include("Accepted")
-      expect(parsed_html.text).not_to match(/Originally\s+Accepted/)
+      expect(parsed_html.text).to     include(t(page: :accepted, block: ""))
+      expect(parsed_html.text).not_to include(t(page: :originally_accepted, block: ""))
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to include("Stop")
-      expect(element["aria-label"]).to eq("Stop Sharing")
-      element = html_locator.element!("button[title='Share']")
+      expect(element.text.strip).to include(t(page: :stop_sharing_short))
+      expect(element["aria-label"]).to eq(t(page: :stop_sharing))
+      element = html_locator.element!("button[title='#{t(page: :share)}']")
       expect(element).not_to have_html_attribute(disabled: true)
     end
   end

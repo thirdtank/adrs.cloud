@@ -19,7 +19,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         parsed_html = render_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
 
-        expect(parsed_html.text).to match(/Originally\s+Accepted/)
+        expect(parsed_html.text).to include(t(page: :originally_accepted, block: ""))
         expect(parsed_html.text).to match(/Replaced on\s+#{Regexp.escape(replacing_adr.accepted_at.strftime("%a, %b %e"))}/)
         expect(parsed_html.text).not_to include(replacing_adr.title)
         expect(parsed_html.css("[href='#{page.adr_path(replacing_adr)}']").length).to eq(0)

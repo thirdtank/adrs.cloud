@@ -106,7 +106,7 @@ RSpec.describe AdrsPage do
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
       status = html_locator.element!("[role='status']")
-      expect(status.text).to include("ADR Created")
+      expect(status.text).to include(t(:adr_created))
     end
   end
   context "tabs" do

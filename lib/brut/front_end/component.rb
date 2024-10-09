@@ -110,7 +110,8 @@ class Brut::FrontEnd::Component
                    end
   end
 
-  def component_name = self.class.name
+  def self.component_name = self.name
+  def component_name = self.class.component_name
 
   # Helper methods that subclasses can use.
   # This is a separate module to distinguish the public
@@ -211,44 +212,6 @@ class Brut::FrontEnd::Component
   end
   include Helpers
   include Brut::I18n
-
-  def i18n_keys_for(key)
-    if key.nil? || key.to_s.strip == ""
-      raise ArgumentError, "Blank I18n keys are not supported"
-    end
-    containing_module_name = self.class.name.split(/::/)[0..-2]
-    is_page_component = if containing_module_name.empty?
-                          false
-                        else
-                          begin
-                            klass = Module.const_get(containing_module_name.join("::"))
-                            klass.ancestors.include?(Brut::FrontEnd::Page)
-                          rescue NameError
-                            false
-                          end
-                        end
-    module_path = self.class.name.split(/::/)
-
-    keys = []
-    current_path = nil
-    module_path.each do |part|
-      if current_path.nil?
-        current_path = part
-      else
-        current_path = current_path + "::" + part
-      end
-      if is_page_component
-        keys << "pages.#{current_path}.#{key}"
-      end
-      keys << "components.#{current_path}.#{key}"
-    end
-    if is_page_component
-      keys << "pages.general.#{key}"
-    end
-    keys << "components.general.#{key}"
-    keys << "general.#{key}"
-    keys
-  end
 
 private
 

@@ -35,15 +35,8 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
     end
   end
 
-  def i18n_keys_for(key)
-    [
-      "pages.#{self.class}.#{key}",
-      "pages.general.#{key}",
-      "general.#{key}",
-    ]
-  end
-
-  def page_name = self.class.name
+  def self.page_name = self.name
+  def page_name = self.class.page_name
   def component_name = raise Brut::BackEnd::Errors::Bug,"#{self.class} is not a component"
 
 private

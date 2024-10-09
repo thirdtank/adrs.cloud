@@ -1,10 +1,6 @@
 # Interface for translations.  This is prefered over using Ruby's I18n directly.
 # This is intended to be mixed-in to any class that requires this, so that you can more
 # expediently access the `t` method.
-#
-# If you include this you may implement i18n_keys_for(key) that is expected to return
-# an array of keys to try, in order.  This allows you to provide an API like t(:foo), but
-# have it actually look up `pages.ThisPage.foo`
 module Brut::I18n
 
   # Access a translation and insert interpolated elemens as needed. This will use the provided key to determine
