@@ -1,12 +1,18 @@
 require "pathname"
 require "fileutils"
+require "open3"
 
 # We don't want the setup method to have to do all this error
 # checking, and we also want to explicitly log what we are
 # executing. Thus, we use this method instead of Kernel#system
 def system!(*args)
   log "Executing #{args}"
-  if system(*args)
+  out,err,status = Open3.capture3(*args)
+  log "STDOUT:"
+  $stdout.puts out
+  log "STDERR:"
+  $stderr.puts err
+  if status.success?
     log "#{args} succeeded"
   else
     log "#{args} failed"

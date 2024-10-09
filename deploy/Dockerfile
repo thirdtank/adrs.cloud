@@ -18,6 +18,7 @@ RUN apt-get update --quiet --yes && \
       gnupg \
       libjemalloc2 \
       lsb-release \
+      rsync \
       wget && \
 		rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
