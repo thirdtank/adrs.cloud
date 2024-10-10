@@ -41,7 +41,7 @@ class Brut::Container
   #         value called `tmp_dir` that uses `project_root` like so:
   #
   #         ```
-  #         conatiner.store("tmp_dir") { |project_root| project_root / "tmp" }
+  #         container.store("tmp_dir") { |project_root| project_root / "tmp" }
   #         ```
   def store(name,type,description,value=:use_block,allow_app_override: false,&block)
     # TODO: Check that value / block is used properly

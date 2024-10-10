@@ -5,7 +5,7 @@ RSpec.describe AnnouncementBannerComponent do
     flash = empty_flash
     flash.alert = "diagnostics.simple1"
     flash.notice = "diagnostics.simple2"
-    component = described_class.new(flash:)
+    component = described_class.new(flash:,clock: Clock.new(nil))
 
     parsed_html = render_and_parse(component)
 
@@ -16,14 +16,14 @@ RSpec.describe AnnouncementBannerComponent do
   end
 
   it "shows a site announcement" do
-    component = described_class.new(flash:empty_flash,site_announcement:"diagnostics.simple1")
+    component = described_class.new(flash:empty_flash,site_announcement:"diagnostics.simple1",clock: Clock.new(nil))
 
     parsed_html = render_and_parse(component)
 
     expect(parsed_html.text).to include("SIMPLE1")
   end
   it "shows a fallback announcement by default" do
-    component = described_class.new(flash:empty_flash)
+    component = described_class.new(flash:empty_flash,clock: Clock.new(nil))
 
     parsed_html = render_and_parse(component)
 

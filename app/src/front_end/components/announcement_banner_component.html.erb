@@ -6,7 +6,7 @@
       </span>
       <p class="p ma-0">
         <% if !message.i18_key.nil? %>
-          <%= t(message.i18_key) %>
+          <%= t(message.i18_key, **message.i18n_args) %>
         <% end %>
       </p>
     </div>

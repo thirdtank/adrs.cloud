@@ -11,8 +11,10 @@ module Brut
         flash:,
         xhr:,
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"]),
+        clock: Clock.new(session.timezone_from_browser),
       }
     end
+
 
     def []=(key,value)
       key = key.to_sym
@@ -95,7 +97,9 @@ module Brut::SinatraHelpers
                        # but only if such links are direct/obvious to the user.
       secret: ENV.fetch("SESSION_SECRET")
 
-    sinatra_app.use Rack::Protection::AuthenticityToken
+    sinatra_app.use Rack::Protection::AuthenticityToken, allow_if: ->(env) {
+      env["PATH_INFO"] == "/__brut/locale"
+    }
 
     sinatra_app.set :logging, true
     sinatra_app.before do
@@ -112,6 +116,26 @@ module Brut::SinatraHelpers
       app_session = Brut.container.session_class.new(rack_session: session)
       flash.age!
       app_session.flash = flash
+    end
+    sinatra_app.post "/__brut/locale" do
+      begin
+        parsed = JSON.parse(request.body.read)
+        SemanticLogger["brut:__brut/locale"].info("Got #{parsed.class}/#{parsed}")
+        if parsed.kind_of?(Hash)
+          locale   = parsed["locale"]
+          timezone = parsed["timeZone"]
+
+          app_session = Brut.container.session_class.new(rack_session: session)
+
+          app_session.timezone_from_browser = timezone
+          app_session.locale_from_browser   = locale
+        else
+          SemanticLogger["brut:__brut/locale"].warn("Got a #{parsed.class} from /__brut/locale instead of a hash")
+        end
+      rescue => ex
+        SemanticLogger["brut:__brut/locale"].warn("Got #{ex} from /__brut/locale instead of a parseable JSON object")
+      end
+      200
     end
   end
 

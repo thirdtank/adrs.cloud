@@ -39,6 +39,9 @@ OPTIONS
     parser.on("--show-scaffold", "If set, shows a scaffold command to generate missing tests" ) do |value|
       options[:show_scaffold] = !!value
     end
+    parser.on("--seed=SEED","If set, gives rspec this seed value") do |value|
+      options[:seed] = value
+    end
   end.parse!
   options
 end
@@ -64,14 +67,18 @@ class Command
   class Run < Command
 
     def rspec_command
-      [
+      parts = [
         "bin/rspec",
         "-I", Brut.container.app_specs_dir,
         "-I", Brut.container.app_src_dir,
         "-I lib/", # not needed when Brut is gemified
         "--tag ~e2e",
         "-P \"**/*.spec.rb\"",
-      ].join(" ")
+      ]
+      if @options[:seed]
+        parts << "--seed #{@options[:seed]}"
+      end
+      parts.join(" ")
     end
 
     def call

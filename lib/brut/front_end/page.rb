@@ -2,6 +2,8 @@
 # an entire web page, not just a fragment.
 class Brut::FrontEnd::Page < Brut::FrontEnd::Component
   include Brut::FrontEnd::HandlingResults
+  using Brut::FrontEnd::Templates::HTMLSafeString::Refinement
+
   uses :layout_locator
   uses :page_locator
 
@@ -29,9 +31,7 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
     erb_file = self.page_locator.locate(self.template_name)
     template = Brut::FrontEnd::Template.new(erb_file)
     layout_template.render_template(self) do
-      Brut::FrontEnd::Templates::HTMLSafeString.from_string(
-        template.render_template(self)
-      )
+      template.render_template(self).html_safe!
     end
   end
 

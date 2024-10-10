@@ -9,6 +9,7 @@ module Brut::FrontEnd::Components
   autoload(:I18nTranslations,"brut/front_end/components/i18n_translations")
   autoload(:Timestamp,"brut/front_end/components/timestamp")
   autoload(:PageIdentifier,"brut/front_end/components/page_identifier")
+  autoload(:LocaleDetection,"brut/front_end/components/locale_detection")
 end
 # A Component is the top level class for managing the rendering of 
 # content.  A component is essentially an ERB template and a class whose
@@ -17,6 +18,7 @@ end
 # The component has a few more smarts and helpers.
 class Brut::FrontEnd::Component
   extend Brut::Container::Uses
+  using Brut::FrontEnd::Templates::HTMLSafeString::Refinement
 
   uses :component_locator
   uses :svg_locator
@@ -71,9 +73,7 @@ class Brut::FrontEnd::Component
 
   def render_yielded_block
     if @yielded_block
-      Brut::FrontEnd::Templates::HTMLSafeString.from_string(
-        @yielded_block.()
-      )
+      @yielded_block.().html_safe!
     else
       raise Brut::BackEnd::Errors::Bug, "No block was yielded to #{self.class.name}"
 		end
@@ -88,9 +88,7 @@ class Brut::FrontEnd::Component
   def render
     erb_file = self.component_locator.locate(self.template_name)
     template = Brut::FrontEnd::Template.new(erb_file)
-    Brut::FrontEnd::Templates::HTMLSafeString.from_string(
-      template.render_template(self)
-    )
+    template.render_template(self).html_safe!
   end
 
   def page_name
@@ -137,15 +135,15 @@ class Brut::FrontEnd::Component
       if !block.nil?
         component_instance.yielded_block = block
       end
-      Brut::FrontEnd::Templates::HTMLSafeString.from_string(
-        component_instance.render
-      )
+      request_context = Thread.current.thread_variable_get(:request_context)
+      render_args = request_context.as_method_args(component_instance,:render,request_params: nil, form: nil)
+      component_instance.render(**render_args).html_safe!
     end
 
     # Inline an SVG into the page.
     def svg(svg)
       svg_file = self.svg_locator.locate(svg)
-      Brut::FrontEnd::Templates::HTMLSafeString.from_string(File.read(svg_file))
+      File.read(svg_file).html_safe!
     end
 
     # Given a public path to an asset—the value you'd use in HTML—return
@@ -162,7 +160,7 @@ class Brut::FrontEnd::Component
     end
 
     def html_safe!(string)
-      Brut::FrontEnd::Templates::HTMLSafeString.from_string(string)
+      string.html_safe!
     end
 
     VOID_ELEMENTS = [
@@ -206,7 +204,7 @@ class Brut::FrontEnd::Component
         end
         html_safe!(%{<#{tag_name} #{attributes_string}>})
       else
-        html_safe!(%{<#{tag_name} #{attributes_string}>#{block.()}</#{tag_name}>})
+        html_safe!(%{<#{tag_name} #{attributes_string}>#{contents}</#{tag_name}>})
       end
     end
   end

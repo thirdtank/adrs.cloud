@@ -17,7 +17,7 @@ class MarkdownStringComponent < AppComponent
       autolink: true,
       quote: true,
     )
-    @html = Brut::FrontEnd::Templates::HTMLSafeString.from_string(markdown.render(string))
+    @html = html_safe!(markdown.render(string))
   end
 
   def render

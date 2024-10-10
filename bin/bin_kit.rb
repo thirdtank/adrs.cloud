@@ -6,17 +6,27 @@ require "open3"
 # checking, and we also want to explicitly log what we are
 # executing. Thus, we use this method instead of Kernel#system
 def system!(*args)
-  log "Executing #{args}"
-  out,err,status = Open3.capture3(*args)
-  log "STDOUT:"
-  $stdout.puts out
-  log "STDERR:"
-  $stderr.puts err
-  if status.success?
-    log "#{args} succeeded"
+  if ENV["BRUT_BIN_KIT_DEBUG"] == "true"
+    log "Executing #{args}"
+    out,err,status = Open3.capture3(*args)
+    if status.success?
+      log "#{args} succeeded"
+    else
+      log "#{args} failed"
+      log "STDOUT:"
+      $stdout.puts out
+      log "STDERR:"
+      $stderr.puts err
+      abort
+    end
   else
-    log "#{args} failed"
-    abort
+    log "Executing #{args}"
+    if system(*args)
+      log "#{args} succeeded"
+    else
+      log "#{args} failed"
+      abort
+    end
   end
 end
 

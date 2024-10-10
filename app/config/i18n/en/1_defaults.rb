@@ -2,6 +2,68 @@
 {
   # en: must be the first entry, thus indicating this is the EN translations
   en: {
+    time:{
+      formats: { # strftime formats
+        iso_8601: "%Y-%m-%d %H:%M:%S.%6N %Z",
+        full_with_tz: "%Y-%m-%d %H:%M:%S %Z",
+        full: "%Y-%m-%d %H:%M:%S",
+        default: "%Y-%m-%d %H:%M:%S",
+        date: "%a, %b %e, %Y",
+        date_no_year: "%a, %b %e",
+      },
+      am: "",
+      pm: "",
+    },
+    date: {
+      abbr_day_names: [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+      ],
+      day_names: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      abbr_month_names: [
+        "",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+      month_names: [
+        "",
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ],
+    },
     general: {
       cv: { # short for "constraint violations" to avoid having to type that out
         this_field: "this field",
@@ -25,12 +87,6 @@
           required: "%{field} is required",
           too_short: "%{field} is too short; must be at least %{minlength} characters",
         },
-      },
-      timestamp: { # strftime formats
-        iso_8601: "%Y-%m-%d %H:%M:%S.%6N %Z",
-        full: "%Y-%m-%d %H:%M:%S",
-        date: "%a, %b %e, %Y",
-        date_no_year: "%a, %b %e",
       },
       diagnostics: { # This is to help diagnose issues with the translation system and is not
                      # intended to store real strings to be used by your app

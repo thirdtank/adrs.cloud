@@ -16,7 +16,7 @@
       help: "Help and Support",
       adrpg: "ADRPG",
       default_site_announcement: "ADRPG is working properly",
-      current_site_announcement: "ADRPG is working properly",
+      current_site_announcement: "ADRPG is working properly as of %{time}",
       adr_rejected: "ADR Rejected",
       page_title: "Welcome to ADRpg!",
       view_all: "View All",

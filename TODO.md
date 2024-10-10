@@ -7,9 +7,9 @@ CHECKK 2 - update the flash w/ AJAX
 
        3 - Change to Sequel migrations?
 
-       4 - Address timezone
+CHECK  4 - Address timezone
 
-       5 - Address i18n
+CHECK  5 - Address i18n
 
        6 - Need a real name
 

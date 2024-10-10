@@ -39,7 +39,8 @@ RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-
 ENV RACK_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT="development" \
+    BRUT_BIN_KIT_DEBUG="true"
 
 # Throw-away build stage to reduce size of final image
 FROM base AS build

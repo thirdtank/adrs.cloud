@@ -79,3 +79,7 @@ gem "sequel"
 gem "temple"
 gem "tilt"
 
+# Ruby databases for Timezone
+gem "tzinfo"
+gem "tzinfo-data"
+

@@ -2,6 +2,7 @@
 # This is intended to be mixed-in to any class that requires this, so that you can more
 # expediently access the `t` method.
 module Brut::I18n
+  using Brut::FrontEnd::Templates::HTMLSafeString::Refinement
 
   # Access a translation and insert interpolated elemens as needed. This will use the provided key to determine
   # the actual full key to the translation, as described below.  The value returned is not HTML escaped,
@@ -119,7 +120,7 @@ module Brut::I18n
       if rest[:block]
         raise ArgumentError,"t was given a block and a block: param. You can't do both "
       end
-      rest[:block] = Brut::FrontEnd::Templates::HTMLSafeString.from_string(yield.to_s.strip)
+      rest[:block] = yield.to_s.strip.html_safe!
     end
     t_direct(key,**rest)
   rescue I18n::MissingInterpolationArgument => ex

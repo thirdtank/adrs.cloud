@@ -9,6 +9,32 @@ class SubclassMustImplement < StandardError
   end
 end
 
+class Clock
+  def initialize(tzinfo_timezone)
+    if tzinfo_timezone
+      @timezone = tzinfo_timezone
+    elsif ENV["TZ"]
+      @timezone = begin
+                    TZInfo::Timezone.get(ENV["TZ"])
+                  rescue TZInfo::InvalidTimezoneIdentifier => ex
+                    SemanticLogger[self.class.name].warn("#{ex} from ENV['TZ'] value '#{ENV['TZ']}'")
+                    nil
+                  end
+    end
+    if @timezone.nil?
+      @timezone = TZInfo::Timezone.get("UTC")
+    end
+  end
+
+  def now
+    Time.now(in: @timezone)
+  end
+
+  def in_time_zone(time)
+    @timezone.to_local(time)
+  end
+end
+
 class RichString
   def initialize(string)
     @string = string.to_s
