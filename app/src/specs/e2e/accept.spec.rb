@@ -6,6 +6,7 @@ RSpec.describe "Accept an ADR" do
     account = create(:account)
     adr = create(:adr, :accepted,
                  account: account,
+                 project: account.projects.first,
                  accepted_at: nil, # but not accepted
                  context: nil)     # and without a context, which we'll fill in an expected to be saved
 

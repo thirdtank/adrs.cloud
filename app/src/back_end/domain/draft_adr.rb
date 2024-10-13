@@ -51,6 +51,7 @@ class DraftAdr
       because: @adr.because,
       tags: Tags.from_array(array: @adr.tags).to_s,
       refines_adr_external_id: @adr.refines_adr&.external_id,
+      project_external_id: @adr.project.external_id,
     }
   end
 
@@ -96,24 +97,32 @@ class DraftAdr
       return form
     end
 
+    project = DB::Project.find!(external_id: form.project_external_id)
+    if project.account != @adr.account
+      raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s account does not belong to account #{@adr.account.external_id}"
+    end
 
     DB.transaction do
       new_adr = @adr.external_id.nil?
       @adr.update(title: form.title,
-                 context: form.context,
-                 facing: form.facing,
-                 decision: form.decision,
-                 neglected: form.neglected,
-                 achieve: form.achieve,
-                 accepting: form.accepting,
-                 because: form.because,
-                 tags: Tags.from_string(string: form.tags).to_a,
-                )
+                  context: form.context,
+                  facing: form.facing,
+                  decision: form.decision,
+                  neglected: form.neglected,
+                  achieve: form.achieve,
+                  accepting: form.accepting,
+                  because: form.because,
+                  project: project,
+                  tags: Tags.from_string(string: form.tags).to_a,
+                 )
 
       if new_adr
         propose_replacement_adr(form)
         # XXX
         refines_adr = DB::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
+        if refines_adr && refines_adr.project != project
+          raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s is not the same as the ADR being refined's project #{refines_adr.project.external_id}"
+        end
         @adr.update(refines_adr_id: refines_adr&.id)
       else
         replaced_adr_may_not_change!(form)

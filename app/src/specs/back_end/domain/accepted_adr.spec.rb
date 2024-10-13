@@ -108,39 +108,60 @@ RSpec.describe AcceptedAdr do
   end
   describe "#propose_replacement" do
     context "both ADRs have the same account" do
-      it "creates a ProposedAdrReplacement" do
-        account                  = create(:account)
-        adr_being_replaced       = create(:adr, :accepted, account:)
-        proposed_replacement_adr = create(:adr, account:)
+      context "both ADRs have the same project" do
+        it "creates a ProposedAdrReplacement" do
+          account                  = create(:account)
+          adr_being_replaced       = create(:adr, :accepted, account:, project: account.projects.first)
+          proposed_replacement_adr = create(:adr, account:, project: account.projects.first)
 
-        accepted_adr = AcceptedAdr.find!(
-          external_id: adr_being_replaced.external_id,
-          account:
-        )
+          accepted_adr = AcceptedAdr.find!(
+            external_id: adr_being_replaced.external_id,
+            account:
+          )
 
-        expect {
-          accepted_adr.propose_replacement(proposed_replacement_adr)
-        }.to change {
-          DB::ProposedAdrReplacement.count
-        }.by(1)
+          expect {
+            accepted_adr.propose_replacement(proposed_replacement_adr)
+          }.to change {
+            DB::ProposedAdrReplacement.count
+          }.by(1)
 
-        adr_being_replaced.reload
-        proposed_replacement_adr.reload
-        expect(proposed_replacement_adr.proposed_to_replace_adr).to eq(adr_being_replaced)
+          adr_being_replaced.reload
+          proposed_replacement_adr.reload
+          expect(proposed_replacement_adr.proposed_to_replace_adr).to eq(adr_being_replaced)
+        end
+        it "requires that the new ADR not be accepted" do
+          account                  = create(:account)
+          adr_being_replaced       = create(:adr, :accepted, account:, project: account.projects.first)
+          proposed_replacement_adr = create(:adr, :accepted, account:, project: account.projects.first)
+
+          accepted_adr = AcceptedAdr.find!(
+            external_id: adr_being_replaced.external_id,
+            account:
+          )
+
+          expect {
+            accepted_adr.propose_replacement(proposed_replacement_adr)
+          }.to raise_error(Brut::BackEnd::Errors::Bug)
+        end
       end
-      it "requires that the new ADR not be accepted" do
-        account                  = create(:account)
-        adr_being_replaced       = create(:adr, :accepted, account:)
-        proposed_replacement_adr = create(:adr, :accepted, account:)
+      context "ADRs have different projects" do
+        it "raises an error" do
+          account                  = create(:account)
+          project                  = account.projects.first
+          other_project            = create(:project, account: account)
+          adr_being_replaced       = create(:adr, :accepted, account:, project: project)
+          proposed_replacement_adr = create(:adr, account:, project: other_project)
 
-        accepted_adr = AcceptedAdr.find!(
-          external_id: adr_being_replaced.external_id,
-          account:
-        )
+          accepted_adr = AcceptedAdr.find!(
+            external_id: adr_being_replaced.external_id,
+            account:
+          )
 
-        expect {
-          accepted_adr.propose_replacement(proposed_replacement_adr)
-        }.to raise_error(Brut::BackEnd::Errors::Bug)
+          expect {
+            accepted_adr.propose_replacement(proposed_replacement_adr)
+          }.to raise_error(Brut::BackEnd::Errors::Bug)
+
+        end
       end
     end
     context "both ADRs have different accounts" do

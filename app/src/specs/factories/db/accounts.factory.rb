@@ -4,6 +4,7 @@ FactoryBot.define do
 
     transient do
       create_entitlement { true }
+      create_project { true }
     end
 
     trait :deactivated do
@@ -16,6 +17,9 @@ FactoryBot.define do
     callback(:after_create) do |account, context|
       if context.create_entitlement
         create(:entitlement, account: account, max_non_rejected_adrs: 10)
+      end
+      if context.create_project
+        create(:project, account: account)
       end
     end
     trait :without_entitlement do

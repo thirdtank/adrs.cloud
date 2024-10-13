@@ -4,7 +4,7 @@ RSpec.describe "Refine an ADR" do
   include Support::E2E::Login
   it "can create an ADR that refines another one" do
     account = create(:account)
-    accepted_adr = create(:adr, :accepted, account: account)
+    accepted_adr = create(:adr, :accepted, account: account, project: account.projects.first)
     login(page:,account:)
 
     view_link = page.locator("a[href='#{AdrsByExternalIdPage.routing(external_id: accepted_adr.external_id)}']")

@@ -82,6 +82,7 @@ class GithubLinkedAccount < AuthenticatedAccount
     DB.transaction do
       account = DB::Account.create(email:)
       AccountEntitlements.new(account:).grant_for_new_user
+      DB::Project.create(account:,name: "Default")
       self.new(account:account)
     end
   end

@@ -222,7 +222,7 @@ RSpec.describe GithubLinkedAccount do
       end
     end
     context "email doesn't exist" do
-      it "creates a new account with defaulte entitlements" do
+      it "creates a new account with default entitlements and one project" do
         form = Admin::NewAccountForm.new(params: { email: Faker::Internet.unique.email })
 
         result = nil
@@ -237,6 +237,8 @@ RSpec.describe GithubLinkedAccount do
         expect(result).not_to be(form)
         expect(form.constraint_violations?).to eq(false)
         expect(result.session_id).to eq(new_account.external_id)
+        expect(new_account.projects.size).to eq(1)
+        expect(new_account.projects[0].name).to eq("Default")
       end
     end
   end

@@ -4,7 +4,7 @@ RSpec.describe "ADRs can be shared or not" do
   include Support::E2E::Login
   it "can be shared" do
     account = create(:account)
-    adr = create(:adr, :accepted, account: account)
+    adr = create(:adr, :accepted, account: account, project: account.projects.first)
 
     login(page:,account:)
 

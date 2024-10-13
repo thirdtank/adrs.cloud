@@ -4,10 +4,11 @@ class One < Brut::Backend::SeedData
   include FactoryBot::Syntax::Methods
   def seed!
     account             = create(:account, :without_entitlement, email: "davec@naildrivin5.com")
+    project             = account.projects.first
     entitlement_default = create(:entitlement_default, internal_name: "basic", max_non_rejected_adrs: 20)
     entitlement         = create(:entitlement, max_non_rejected_adrs: nil, entitlement_default: entitlement_default, account: account)
 
-    postgres = create(:adr, account: account,
+    postgres = create(:adr, account: account, project: project,
            "title": "Choosing PostgreSQL Over MySQL",
            "context": "We need to select a database management system (DBMS) for our application that requires robust support for complex queries, ACID compliance, and scalability for future growth. The primary candidates are PostgreSQL and MySQL.",
            "facing": "The main challenge is to choose a database that can handle complex queries, provide strong consistency, and scale effectively with anticipated application growth.",
@@ -22,7 +23,7 @@ class One < Brut::Backend::SeedData
            shareable_id: "shared-from-seeds"
           )
 
-    tailwind = create(:adr, :accepted, account: account,
+    tailwind = create(:adr, :accepted, account: account, project: project,
            "title": "Choosing TailwindCSS for Styling",
            "context": "We need to choose a CSS framework for our front-end development that supports rapid UI development, maintains flexibility, and ensures consistency across the application. The primary options are TailwindCSS and traditional CSS frameworks like Bootstrap or custom CSS.",
            "facing": "The main challenge is finding a styling solution that allows for fast iteration on UI components while ensuring maintainability and avoiding excessive custom styles.",
@@ -34,7 +35,7 @@ class One < Brut::Backend::SeedData
            tags: [ "CSS", "TailwindCSS", "frontend" ].map(&:downcase),
           )
 
-    triggers = create(:adr,:accepted, account: account,
+    triggers = create(:adr,:accepted, account: account, project: project,
                       "title": "Avoiding the Use of Triggers in PostgreSQL",
                       "context": "We are designing the database architecture for our application, and there is a need to decide whether to use database triggers for certain automated tasks such as auditing, validation, or maintaining data consistency.",
                       "facing": "The challenge is to determine whether triggers, which offer automatic execution of database tasks, should be used despite potential drawbacks in terms of complexity, debugging, and performance.",
@@ -48,7 +49,7 @@ class One < Brut::Backend::SeedData
                      )
 
 
-    bem = create(:adr, :accepted, account: account,
+    bem = create(:adr, :accepted, account: account, project: project,
                  "title": "Switching to Standardized CSS and BEM Naming Over TailwindCSS",
                  "context": "We initially chose TailwindCSS for our application to accelerate UI development. However, as the project grows, we are reconsidering the long-term maintainability and readability of our codebase, especially for new developers joining the team.",
                  "facing": "The challenge is balancing rapid development with code readability, maintainability, and adherence to widely accepted CSS standards across a growing development team.",
@@ -65,18 +66,18 @@ class One < Brut::Backend::SeedData
 
 
 
-    create(:adr, :rejected, account: account,
+    create(:adr, :rejected, account: account, project: project,
            "title": "Using BEM and TailwindCSS Together for Styling",
            "context": "We are looking for a styling approach that combines the flexibility and speed of TailwindCSS with the structure and maintainability of BEM. The goal is to benefit from utility-first CSS while still maintaining clear, modular, and readable class names in the codebase.",
            "decision": "We have decided to use both BEM and TailwindCSS together. Tailwind will handle utility classes for layout, spacing, and minor styling, while BEM will structure our custom components with clear, modular naming conventions.",
           )
-    create(:adr, :rejected, account: account,
+    create(:adr, :rejected, account: account, project: project,
              "title": "Adopting JS-in-CSS for Component-Level Styling",
   "context": "We are exploring approaches to manage styles in our application that provide greater flexibility, scope isolation, and dynamic styling tied closely to JavaScript components. JS-in-CSS solutions like styled-components or Emotion offer a modern way to handle these requirements.",
   "decision": "We have decided to adopt JS-in-CSS for component-level styling to take advantage of its ability to scope styles to individual components, enable dynamic styling, and promote better integration between our JavaScript logic and UI styling.",
           )
 
-    create(:adr, account: account,
+    create(:adr, account: account, project: project,
            "title": "Deciding Not to Use Rails for Our Application",
            "context": "We are in the process of selecting a web framework for our new application. While Rails is a popular choice with many features out of the box, we need to consider our team’s expertise and the specific requirements of our project.",
            "facing": "The main challenge is determining whether to adopt Rails, which may have a steep learning curve for our team and might not align with our performance and scalability needs.",

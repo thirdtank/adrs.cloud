@@ -16,8 +16,8 @@ RSpec.describe DraftAdr do
   describe "#accept" do
     context "form has no constraint violations" do
       it "sets the ADR as accepted" do
-        adr = create(:adr)
-        account = adr.account
+        account = create(:account)
+        adr = create(:adr, account: account, project: account.projects.first)
         params = {
           title: adr.title,
           context: Faker::Lorem.sentence,
@@ -27,6 +27,7 @@ RSpec.describe DraftAdr do
           achieve:  Faker::Lorem.sentence,
           accepting:  Faker::Lorem.sentence,
           because:  Faker::Lorem.sentence,
+          project_external_id: adr.project.external_id,
         }
         form = AcceptedAdrsWithExternalIdForm.new(params:)
 
@@ -50,9 +51,9 @@ RSpec.describe DraftAdr do
         end
       end
       it "sets the ADR this one is to replaced as having been replaced" do
-        adr_to_replace = create(:adr, :accepted)
-        account = adr_to_replace.account
-        adr = create(:adr, account: account)
+        account = create(:account)
+        adr_to_replace = create(:adr, :accepted, account: account, project: account.projects.first)
+        adr = create(:adr, account: account, project: adr_to_replace.project)
 
         DB::ProposedAdrReplacement.create(
           replacing_adr_id: adr.id,
@@ -68,6 +69,7 @@ RSpec.describe DraftAdr do
           achieve:  Faker::Lorem.sentence,
           accepting:  Faker::Lorem.sentence,
           because:  Faker::Lorem.sentence,
+          project_external_id: adr.project.external_id,
         }
         form = AcceptedAdrsWithExternalIdForm.new(params:)
 
@@ -98,9 +100,13 @@ RSpec.describe DraftAdr do
     end
     context "form has server-side constraint violations" do
       it "returns the form and does not change the ADR" do
-        adr = create(:adr)
-        account = adr.account
-        form = AcceptedAdrsWithExternalIdForm.new(params: { title: "some adr title", facing: "short" })
+        account = create(:account)
+        adr = create(:adr, account: account, project: account.projects.first)
+        form = AcceptedAdrsWithExternalIdForm.new(params: {
+          title: "some adr title",
+          facing: "short",
+          project_external_id: adr.project.external_id,
+        })
 
         result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
@@ -142,6 +148,7 @@ RSpec.describe DraftAdr do
             achieve:  Faker::Lorem.sentence,
             accepting:  Faker::Lorem.sentence,
             because:  Faker::Lorem.sentence,
+            project_external_id: account.projects.first.external_id,
           }
           form = NewDraftAdrForm.new(params: params)
 
@@ -155,6 +162,7 @@ RSpec.describe DraftAdr do
 
           aggregate_failures do
             expect(adr.account).to     eq(account)
+            expect(adr.project).to     eq(account.projects.first)
             expect(adr.title).to       eq(params[:title])
             expect(adr.context).to     eq(params[:context])
             expect(adr.facing).to      eq(params[:facing])
@@ -168,8 +176,8 @@ RSpec.describe DraftAdr do
           end
         end
         it "marks this ADR as being proposed to replace another one" do
-          adr_to_replace = create(:adr, :accepted)
-          account = adr_to_replace.account
+          account = create(:account)
+          adr_to_replace = create(:adr, :accepted, account: account, project: account.projects.first)
           params = {
             title: Faker::Lorem.sentence,
             context: Faker::Lorem.sentence,
@@ -179,7 +187,8 @@ RSpec.describe DraftAdr do
             achieve:  Faker::Lorem.sentence,
             accepting:  Faker::Lorem.sentence,
             because:  Faker::Lorem.sentence,
-            replaced_adr_external_id: adr_to_replace.external_id
+            replaced_adr_external_id: adr_to_replace.external_id,
+            project_external_id: adr_to_replace.project.external_id
           }
           form = NewDraftAdrForm.new(params: params)
 
@@ -193,8 +202,8 @@ RSpec.describe DraftAdr do
           expect(adr.proposed_to_replace_adr).to eq(adr_to_replace)
         end
         it "if this ADR is being proposed to replace another one, does not create a new proposal" do
-          adr_to_replace = create(:adr, :accepted)
-          account = adr_to_replace.account
+          account = create(:account)
+          adr_to_replace = create(:adr, :accepted, account: account, project: account.projects.first)
           params = {
             title: Faker::Lorem.sentence,
             context: Faker::Lorem.sentence,
@@ -204,7 +213,8 @@ RSpec.describe DraftAdr do
             achieve:  Faker::Lorem.sentence,
             accepting:  Faker::Lorem.sentence,
             because:  Faker::Lorem.sentence,
-            replaced_adr_external_id: adr_to_replace.external_id
+            replaced_adr_external_id: adr_to_replace.external_id,
+            project_external_id: adr_to_replace.project.external_id
           }
           form = NewDraftAdrForm.new(params: params)
 
@@ -217,9 +227,9 @@ RSpec.describe DraftAdr do
           }
         end
         it "if this ADR is being proposed to replace another one, and the proposed replacement changes, raises a bug" do
-          adr_to_replace = create(:adr, :accepted)
-          account = adr_to_replace.account
-          other_adr = create(:adr, :accepted, account: account)
+          account = create(:account)
+          adr_to_replace = create(:adr, :accepted, account: account, project: account.projects.first)
+          other_adr = create(:adr, :accepted, account: account, project: adr_to_replace.project)
           params = {
             title: Faker::Lorem.sentence,
             context: Faker::Lorem.sentence,
@@ -229,7 +239,8 @@ RSpec.describe DraftAdr do
             achieve:  Faker::Lorem.sentence,
             accepting:  Faker::Lorem.sentence,
             because:  Faker::Lorem.sentence,
-            replaced_adr_external_id: adr_to_replace.external_id
+            replaced_adr_external_id: adr_to_replace.external_id,
+            project_external_id: adr_to_replace.project.external_id
           }
           form = NewDraftAdrForm.new(params: params)
 
@@ -239,6 +250,36 @@ RSpec.describe DraftAdr do
             form = EditDraftAdrWithExternalIdForm.new(params: params.merge({
               replaced_adr_external_id: other_adr.external_id,
             }))
+            draft_adr.save(form:)
+          }.to raise_error(Brut::BackEnd::Errors::Bug)
+        end
+        it "raises an error if the ADR being refined is in another project" do
+          account = create(:account)
+          other_adr = create(:adr, account: account, project: create(:project, account: account))
+          params = {
+            title: Faker::Lorem.sentence,
+            refines_adr_external_id: other_adr.external_id,
+            project_external_id: account.projects.first.external_id,
+          }
+          form = NewDraftAdrForm.new(params: params)
+
+          draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
+          expect {
+            draft_adr.save(form:)
+          }.to raise_error(Brut::BackEnd::Errors::Bug)
+        end
+        it "raises an error if the ADR being replaced is in another project" do
+          account = create(:account)
+          other_adr = create(:adr, account: account, project: create(:project, account: account))
+          params = {
+            title: Faker::Lorem.sentence,
+            replaced_adr_external_id: other_adr.external_id,
+            project_external_id: account.projects.first.external_id,
+          }
+          form = NewDraftAdrForm.new(params: params)
+
+          draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
+          expect {
             draft_adr.save(form:)
           }.to raise_error(Brut::BackEnd::Errors::Bug)
         end
@@ -256,9 +297,9 @@ RSpec.describe DraftAdr do
       end
       context "form has server-side constraint violations" do
         it "returns the form and does not change the ADR" do
-          adr = create(:adr)
-          account = adr.account
-          form = NewDraftAdrForm.new(params: { title: "some" })
+          account = create(:account)
+          adr = create(:adr, account: account, project: account.projects.first)
+          form = NewDraftAdrForm.new(params: { title: "some", project_external_id: account.projects.first.external_id })
 
           result = described_class.create(authenticated_account: AuthenticatedAccount.new(account:)).save(form:)
           expect(result).to be(form)
@@ -270,8 +311,8 @@ RSpec.describe DraftAdr do
     context "updating existing ADR" do
       context "form has no constraint violations" do
         it "saves the ADR" do
-          adr = create(:adr)
-          account = adr.account
+          account = create(:account)
+          adr = create(:adr, account: account, project: account.projects.first)
           params = {
             title: Faker::Lorem.sentence,
             context: Faker::Lorem.sentence,
@@ -281,6 +322,7 @@ RSpec.describe DraftAdr do
             achieve:  Faker::Lorem.sentence,
             accepting:  Faker::Lorem.sentence,
             because:  Faker::Lorem.sentence,
+            project_external_id: account.projects.first.external_id,
           }
           form = EditDraftAdrWithExternalIdForm.new(params:)
 
@@ -292,6 +334,7 @@ RSpec.describe DraftAdr do
           adr.reload
 
           aggregate_failures do
+            expect(adr.project).to     eq(account.projects.first)
             expect(adr.title).to       eq(params[:title])
             expect(adr.context).to     eq(params[:context])
             expect(adr.facing).to      eq(params[:facing])
@@ -306,10 +349,10 @@ RSpec.describe DraftAdr do
         end
         context "adr has been proposed to replace another one" do
           it "does not allow the proposal to be changed" do
-            adr_to_replace = create(:adr, :accepted)
-            account        = adr_to_replace.account
-            adr            = create(:adr, account: account)
-            other_adr      = create(:adr, :accepted, account: account)
+            account        = create(:account)
+            adr_to_replace = create(:adr, :accepted, account: account, project: account.projects.first)
+            adr            = create(:adr,            account: account, project: account.projects.first)
+            other_adr      = create(:adr, :accepted, account: account, project: account.projects.first)
 
             DB::ProposedAdrReplacement.create(
               replacing_adr_id: adr.id,
@@ -318,7 +361,8 @@ RSpec.describe DraftAdr do
 
             params = {
               title: Faker::Lorem.sentence,
-              replaced_adr_external_id: other_adr.external_id
+              replaced_adr_external_id: other_adr.external_id,
+              project_external_id: account.projects.first.external_id,
             }
             form = EditDraftAdrWithExternalIdForm.new(params:)
 
@@ -329,12 +373,14 @@ RSpec.describe DraftAdr do
         end
         context "adr has not been proposed to replace another one" do
           it "does not allow a proposal to be created" do
-            adr_to_replace = create(:adr, :accepted)
-            account = adr_to_replace.account
-            adr = create(:adr, account: account)
+            account        = create(:account)
+            adr_to_replace = create(:adr, :accepted, account:, project: account.projects.first)
+            adr            = create(:adr,            account:, project: adr_to_replace.project)
+
             params = {
               title: Faker::Lorem.sentence,
-              replaced_adr_external_id: adr_to_replace.external_id
+              replaced_adr_external_id: adr_to_replace.external_id,
+              project_external_id: adr.project.external_id,
             }
             form = EditDraftAdrWithExternalIdForm.new(params:)
 
@@ -345,14 +391,15 @@ RSpec.describe DraftAdr do
         end
         context "adr is a refinement of another ADR" do
           it "may not change which ADR it refines" do
-            adr_to_refine = create(:adr, :accepted)
-            account       = adr_to_refine.account
-            adr           = create(:adr, account: account, refines_adr_id: adr_to_refine.id)
-            other_adr     = create(:adr, :accepted, account: account)
+            account       = create(:account)
+            adr_to_refine = create(:adr, :accepted, account:, project: account.projects.first)
+            adr           = create(:adr,            account:, project: adr_to_refine.project, refines_adr_id: adr_to_refine.id)
+            other_adr     = create(:adr, :accepted, account:, project: adr_to_refine.project )
 
             params = {
               title: Faker::Lorem.sentence,
               refines_adr_external_id: other_adr.external_id,
+              project_external_id: adr.project.external_id,
             }
             form = EditDraftAdrWithExternalIdForm.new(params:)
 
@@ -363,13 +410,14 @@ RSpec.describe DraftAdr do
         end
         context "adr is not a refinement of another ADR" do
           it "may not set an ADR to refines" do
-            adr_to_refine = create(:adr, :accepted)
-            account       = adr_to_refine.account
-            adr           = create(:adr, account: account)
+            account       = create(:account)
+            adr_to_refine = create(:adr, :accepted, account:, project: account.projects.first)
+            adr           = create(:adr,            account:, project: adr_to_refine.project)
 
             params = {
               title: Faker::Lorem.sentence,
               refines_adr_external_id: adr_to_refine.external_id,
+              project_external_id: adr.project.external_id,
             }
             form = EditDraftAdrWithExternalIdForm.new(params:)
 

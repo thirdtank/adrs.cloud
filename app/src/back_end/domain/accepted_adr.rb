@@ -17,6 +17,7 @@ class AcceptedAdr
 
   def title       = @adr.title
   def external_id = @adr.external_id
+  def project     = @adr.project
 
   def initialize(adr:)
     @adr = adr
@@ -41,6 +42,9 @@ class AcceptedAdr
     end
     if adr.account != @adr.account
       raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with another account's ADR"
+    end
+    if adr.project != @adr.project
+      raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with another project's ADR (#{adr.project&.id} != #{@adr.project&.id})"
     end
     DB::ProposedAdrReplacement.create(
       replacing_adr_id: adr.id,

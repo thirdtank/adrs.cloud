@@ -27,7 +27,10 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
           it "indicates errors on the form" do
             authenticated_account = create(:authenticated_account)
             adr                   = create(:adr, account: authenticated_account.account)
-            form                  = AcceptedAdrsWithExternalIdForm.new(params: { title: adr.title })
+            form                  = AcceptedAdrsWithExternalIdForm.new(params: {
+              title: adr.title,
+              project_external_id: authenticated_account.account.projects.first.external_id,
+            })
             flash                 = empty_flash
 
             result = handler.handle!(form:,authenticated_account:,flash:, external_id: adr.external_id)
@@ -49,7 +52,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
           context "it is not accepted" do
             it "sets accepted_at" do
               authenticated_account = create(:authenticated_account)
-              adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account)
+              adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account, project: authenticated_account.account.projects.first)
               flash                 = empty_flash
               form                  = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
                 :title,
@@ -61,7 +64,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
                 :accepting,
                 :because,
                 # omitting tags because it doesn't matter and requires transformation to a string
-              ))
+              ).merge(project_external_id: adr.project.external_id))
 
               result = handler.handle!(form:,authenticated_account:,flash:,external_id: adr.external_id)
               expect(result).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
@@ -97,8 +100,8 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
           context "it is intended to replace another ADR that is accepted" do
             it "sets that ADR as having been replaced by this one" do
               authenticated_account = create(:authenticated_account)
-              adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account)
-              adr_to_replace        = create(:adr, :accepted,                   account: authenticated_account.account)
+              adr                   = create(:adr, :accepted, accepted_at: nil, account: authenticated_account.account, project: authenticated_account.account.projects.first)
+              adr_to_replace        = create(:adr, :accepted,                   account: authenticated_account.account, project: authenticated_account.account.projects.first)
               flash                 = empty_flash
               form                  = AcceptedAdrsWithExternalIdForm.new(params: adr.to_hash.slice(
                 :title,
@@ -110,7 +113,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
                 :accepting,
                 :because,
                 # omitting tags because it doesn't matter and requires transformation to a string
-              ))
+              ).merge({ project_external_id: adr.project.external_id }))
               DB::ProposedAdrReplacement.create(
                 replacing_adr_id: adr.id,
                 replaced_adr_id: adr_to_replace.id,

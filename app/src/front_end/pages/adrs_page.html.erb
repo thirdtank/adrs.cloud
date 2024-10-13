@@ -10,11 +10,11 @@
       <div class="pv-3 pr-3">
         <% if can_add_new? %>
           <a href="<%= NewDraftAdrPage.routing %>"
-             class="green-500 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300">
+             class="green-500 bc-green-200 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300">
              <%= t(page: :add_new) %>
           </a>
         <% else %>
-          <span class="gray-700 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed" title="<%= t(:add_new_limit_exceeded) %>">
+          <span class="gray-700 i bc-gray-200 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed" title="<%= t(:add_new_limit_exceeded) %>">
              <%= t(page: :add_new) %>
           </span>
         <% end %>

@@ -36,7 +36,10 @@ RSpec.describe NewDraftAdrHandler do
     context "there are no constraint violations" do
       it "saves and redirects to the edit page" do
         authenticated_account = create(:authenticated_account)
-        form = NewDraftAdrForm.new(params: { title: "This is a test"})
+        form = NewDraftAdrForm.new(params: {
+          title: "This is a test",
+          project_external_id: authenticated_account.account.projects.first.external_id
+        })
         flash = empty_flash
 
         result = handler.handle!(form:,authenticated_account:,flash:)
@@ -51,7 +54,11 @@ RSpec.describe NewDraftAdrHandler do
           it "sets refines_adr_id to nil" do
             authenticated_account = create(:authenticated_account)
             adr_being_refined = create(:adr, :accepted)
-            form = NewDraftAdrForm.new(params: { title: "This is a test", refines_adr_external_id: adr_being_refined.external_id})
+            form = NewDraftAdrForm.new(params: {
+              title: "This is a test",
+              refines_adr_external_id: adr_being_refined.external_id,
+              project_external_id: authenticated_account.account.projects.first.external_id
+            })
             flash = empty_flash
 
             result = handler.handle!(form:,authenticated_account:,flash:)
@@ -66,8 +73,12 @@ RSpec.describe NewDraftAdrHandler do
         context "this account can access it" do
           it "saves it to the adr" do
             authenticated_account = create(:authenticated_account)
-            adr_being_refined = create(:adr, :accepted, account: authenticated_account.account)
-            form = NewDraftAdrForm.new(params: { title: "This is a test", refines_adr_external_id: adr_being_refined.external_id})
+            adr_being_refined = create(:adr, :accepted, account: authenticated_account.account, project: authenticated_account.account.projects.first)
+            form = NewDraftAdrForm.new(params: {
+              title: "This is a test",
+              refines_adr_external_id: adr_being_refined.external_id,
+              project_external_id: authenticated_account.account.projects.first.external_id
+            })
             flash = empty_flash
 
             result = handler.handle!(form:,authenticated_account:,flash:)
@@ -83,8 +94,12 @@ RSpec.describe NewDraftAdrHandler do
       context "there is a replaced_adr_external_id" do
         it "creates a proposed_adr_replacement" do
           authenticated_account = create(:authenticated_account)
-          adr_being_replaced = create(:adr, :accepted, account: authenticated_account.account)
-          form = NewDraftAdrForm.new(params: { title: "This is a test", replaced_adr_external_id: adr_being_replaced.external_id})
+          adr_being_replaced = create(:adr, :accepted, account: authenticated_account.account, project: authenticated_account.account.projects.first)
+          form = NewDraftAdrForm.new(params: {
+            title: "This is a test",
+            replaced_adr_external_id: adr_being_replaced.external_id,
+              project_external_id: authenticated_account.account.projects.first.external_id
+          })
           flash = empty_flash
 
           result = handler.handle!(form:,authenticated_account:,flash:)

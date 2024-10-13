@@ -4,7 +4,7 @@ RSpec.describe "Reject an ADR" do
   include Support::E2E::Login
   it "can add and remove tags" do
     account = create(:account)
-    adr = create(:adr, account: account)
+    adr = create(:adr, account: account, project: account.projects.first)
     login(page:,account:)
 
     drafts_tab = page.locator("#drafts-tab")

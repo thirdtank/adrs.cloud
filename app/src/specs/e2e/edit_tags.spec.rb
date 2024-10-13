@@ -4,7 +4,7 @@ RSpec.describe "Edit tags for an ADR" do
   include Support::E2E::Login
   it "can add and remove tags" do
     account = create(:account)
-    adr = create(:adr, :accepted, account: account, tags: [ "foo" ])
+    adr = create(:adr, :accepted, account: account, project: account.projects.first, tags: [ "foo" ])
     login(page:,account:)
 
     view_link = page.locator("a[href='#{AdrsByExternalIdPage.routing(external_id: adr.external_id)}']")

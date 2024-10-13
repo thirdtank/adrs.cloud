@@ -23,8 +23,11 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
     context "no constraint violations" do
       it "redirects to the AdrsByExternalIdPage" do
         authenticated_account = create(:authenticated_account)
-        adr = create(:adr, account: authenticated_account.account)
-        form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
+        adr = create(:adr, account: authenticated_account.account, project: authenticated_account.account.projects.first)
+        form = EditDraftAdrWithExternalIdForm.new(params: {
+          title: adr.title,
+          project_external_id: adr.project.external_id,
+        })
 
         result = described_class.new.handle!(form: form,
                                              external_id: adr.external_id,
@@ -59,8 +62,11 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
     context "no constraint violations" do
       it "returns an HTTP 200" do
         authenticated_account = create(:authenticated_account)
-        adr = create(:adr, account: authenticated_account.account)
-        form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
+        adr = create(:adr, account: authenticated_account.account, project: authenticated_account.account.projects.first)
+        form = EditDraftAdrWithExternalIdForm.new(params: {
+          title: adr.title,
+          project_external_id: authenticated_account.account.projects.first.external_id,
+        })
 
         result = described_class.new.handle!(form: form,
                                              external_id: adr.external_id,

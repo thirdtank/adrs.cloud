@@ -12,6 +12,7 @@ class DB::Adr < AppDataModel
   # constraints, but this is how Sequel wants to model this
   many_to_one :replaced_by_adr, class: "DB::Adr"
   one_to_one :replaced_adr, class: "DB::Adr", key: :replaced_by_adr_id
+  many_to_one :project, class: "DB::Project"
 
   one_to_many :refined_by_adrs, class: "DB::Adr", key: :refines_adr_id
 

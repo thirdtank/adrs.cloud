@@ -10,9 +10,10 @@ class NewDraftAdrForm < AppForm
   input :tags, required: false
   input :refines_adr_external_id, required: false
   input :replaced_adr_external_id, required: false
+  input :project_external_id, required: true
 
   def params_empty?(params)
-    params.nil? || params.except(:refines_adr_external_id,:replaced_adr_external_id).empty?
+    params.nil? || params.except(:refines_adr_external_id,:replaced_adr_external_id,:project_external_id).empty?
   end
 
   def new_record? = true
