@@ -33,8 +33,15 @@ class Adrs::FormComponent < AppComponent
 
   def ajax_submit? = @ajax_submit
 
-  def adr_textarea(name:, prefix:, label:)
-    component(Adrs::TextareaComponent.new(form: @form, input_name: name, prefix: prefix, label: label))
+  def adr_textarea(name)
+    component(
+      Adrs::TextareaComponent.new(
+        form: @form,
+        input_name: name,
+        label: t(component: [ :fields, name, :label ]),
+        context: t(component: [ :fields, name, :context ])
+      )
+    )
   end
 
   def reject_button

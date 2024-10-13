@@ -4,6 +4,7 @@ class Brut::FrontEnd::Templates::HTMLSafeString
   module Refinement
     refine String do
       def html_safe! = Brut::FrontEnd::Templates::HTMLSafeString.from_string(self)
+      def html_safe? = false
     end
   end
   attr_reader :string
@@ -24,7 +25,16 @@ class Brut::FrontEnd::Templates::HTMLSafeString
   def to_s       = @string
   def to_str     = @string
   def html_safe! = self
+  def html_safe? = true
   def capitalize = self.class.new(@string.capitalize)
   def downcase   = self.class.new(@string.downcase)
   def upcase     = self.class.new(@string.upcase)
+
+  def +(other)
+    if other.html_safe?
+      self.class.new(@string + other.to_s)
+    else
+      @string + other.to_s
+    end
+  end
 end

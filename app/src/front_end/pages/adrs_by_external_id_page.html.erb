@@ -150,7 +150,8 @@
         </div>
       <% end %>
       <h2 class="measure pa-3 lh-title f-5 ma-0 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
-      <div class="mb-3">
+      <%= banner(font_size: "f-1", color: "", background_color: "", font_weight: "fw-4",timestamp: adr.created_at,i18n_key: :created, margins: "mh-3 mv-0") %>
+      <div class="mb-2">
         <% if adr.replaced? %>
           <%= banner(color: "red-900", background_color: "bg-red-300") do %>
             <div class="flex items-center gap-3">
@@ -209,19 +210,20 @@
                      i18n_key: :rejected,
                      timestamp: adr.rejected_at) %>
         <% end %>
-        <%= banner(font_size: "f-1", color: "", background_color: "", font_weight: "fw-4",timestamp: adr.created_at,i18n_key: :created) %>
       </div>
-      <section aria-label="context" class="measure-wide rendered-markdown ph-3 bb bt bc-gray-800"><%= markdown(:context) %></section>
-      <section aria-label="facing" class="measure-wide rendered-markdown ph-3"><%= markdown(:facing) %></section>
-      <div class="ph-3 pv-2 f-3 measure br-right-2 <%= accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' %>"
-              style="background: linear-gradient(90deg, rgba(236,255,237,1) 11%, rgba(236,255,237,0) 100%);"
-              >
-        <section aria-label="decision" class="measure-wide rendered-markdown ph-3 fw-5"><%= markdown(:decision) %></section>
-      </div>
-      <section aria-label="neglected" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:neglected) %></section>
-      <section aria-label="achieve" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:achieve) %></section>
-      <section aria-label="accepting" class="measure-wide rendered-markdown ph-3 bb bc-gray-800"><%= markdown(:accepting) %></section>
-      <section aria-label="because" class="measure-wide rendered-markdown ph-3"><%= markdown(:because) %></section>
+      <section class="pt-3">
+        <%= field("context") %>
+        <%= field("facing") %>
+        <div class="mb-3 pb-1 pt-3 f-3 measure br-right-2 <%= accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' %>"
+             style="background: linear-gradient(90deg, rgba(236,255,237,1) 11%, rgba(236,255,237,0) 100%);"
+             >
+             <%= field("decision", label_additional_clases: "tdu f-2") %>
+        </div>
+        <%= field("neglected") %>
+        <%= field("achieve") %>
+        <%= field("accepting") %>
+        <%= field("because") %>
+      </section>
       <%= component(Adrs::GetRefinementsComponent.new(refined_by_adrs: refined_by_adrs)) %>
     </article>
   </section>

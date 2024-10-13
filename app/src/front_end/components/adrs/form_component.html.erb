@@ -15,7 +15,7 @@
     autofocus: true) %>
   <div class="flex items-center gap-2 justify-between">
     <div class="w-100">
-      <%= adr_textarea(name: "context", label: "Use case or user story", prefix: "In the context of") %>
+      <%= adr_textarea("context") %>
     </div>
     <span class="w-4">
       <%= svg("curved-arrow-right-to-bottom-icon") %>
@@ -26,12 +26,12 @@
       <%= svg("curved-arrow-left-to-bottom-icon") %>
     </span>
     <div class="w-100">
-      <%= adr_textarea(name: "facing", label: "Concern or issue", prefix: "Facing") %>
+      <%= adr_textarea("facing") %>
     </div>
   </div>
   <div class="flex items-center gap-2 justify-between">
     <div class="w-100">
-      <%= adr_textarea(name: "decision", label: "Bulk of what was decided or option chosen", prefix: "We decided") %>
+      <%= adr_textarea("decision") %>
     </div>
     <span class="w-4">
       <%= svg("curved-arrow-right-to-bottom-icon") %>
@@ -42,12 +42,12 @@
       <%= svg("curved-arrow-left-to-bottom-icon") %>
     </span>
     <div class="w-100">
-      <%= adr_textarea(name: "neglected", label: "Options considered but not chosen", prefix: "And neglected") %>
+      <%= adr_textarea("neglected") %>
     </div>
   </div>
   <div class="flex items-center gap-2 justify-between">
     <div class="w-100">
-      <%= adr_textarea(name: "achieve", label: "System qualities or desired consequences", prefix: "To achieve") %>
+      <%= adr_textarea("achieve") %>
     </div>
     <span class="w-4">
       <%= svg("curved-arrow-right-to-bottom-icon") %>
@@ -58,19 +58,19 @@
       <%= svg("curved-arrow-left-to-bottom-icon") %>
     </span>
     <div class="w-100">
-      <%= adr_textarea(name: "accepting", label: "Downside, trade-offs, or understood consequences", prefix: "Accepting") %>
+      <%= adr_textarea("accepting") %>
     </div>
   </div>
   <div class="flex items-center gap-2 justify-between">
     <div class="w-100">
-      <%= adr_textarea(name: "because", label: "Additional rationale or context", prefix: "because") %>
+      <%= adr_textarea("because") %>
     </div>
     <span class="w-4">
       <%= svg("curved-arrow-right-to-bottom-icon") %>
     </span>
   </div>
   <div class="flex items-center gap-2 justify-between">
-    <%= adr_textarea(name: "tags", label: "Tags, separated by newlines or commas", prefix: "tags") %>
+    <%= adr_textarea("tags") %>
   </div>
   <div class="flex flex-column items-center justify-between">
     <span class="w-4">

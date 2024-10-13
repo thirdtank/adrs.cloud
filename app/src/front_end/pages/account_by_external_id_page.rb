@@ -13,7 +13,6 @@ class AccountByExternalIdPage < AppPage
 
   def tabs
     [
-      Tab.new(name: "adr-style", icon: "brush-pencil-icon"),
       Tab.new(name: "projects",  icon: "layer-icon"),
       Tab.new(name: "download",  icon: "database-download-icon"),
       Tab.new(name: "info",      icon: "speedometer-icon"),

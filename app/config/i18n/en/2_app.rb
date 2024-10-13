@@ -112,13 +112,13 @@
         save_tags: "Save Tags",
         edit_adr: "Edit ADR",
         fields: {
-          context: "**In the context of** %{content}",
-          facing: "**Facing** %{content}",
-          decision: "**We decided** %{content}",
-          neglected: "**Neglecting** %{content}",
-          achieve: "**To achieve** %{content}",
-          accepting: "**Accepting** %{content}",
-          because: "**Because** %{content}",
+          context: "Context",
+          facing: "Concerns or Issues",
+          decision: "Decision",
+          neglected: "Options Considered, but Not Chosen",
+          achieve: "System Qualities or Desired Consequences",
+          accepting: "Downsides",
+          because: "Additional Rationale",
         },
         no_tags: "No Tags",
       },
@@ -143,22 +143,18 @@
         replaces: "Replaces “%{block}”",
         refines: "Refines “%{block}”",
         fields: {
-          context: "**In the context of** %{content}",
-          facing: "**Facing** %{content}",
-          decision: "**We decided** %{content}",
-          neglected: "**Neglecting** %{content}",
-          achieve: "**To achieve** %{content}",
-          accepting: "**Accepting** %{content}",
-          because: "**Because** %{content}",
+          context: "Context",
+          facing: "Concerns or Issues",
+          decision: "Decision",
+          neglected: "Options Considered, but Not Chosen",
+          achieve: "System Qualities or Desired Consequences",
+          accepting: "Downsides",
+          because: "Additional Rationale",
         },
       },
       AccountByExternalIdPage: {
         back_to_adrs: "Back to Your ADRs",
         tabs: {
-          "adr-style": {
-            title: "ADR Style",
-            intro: "Choose the way you'd like to author your ADRs. <em>Formula</em> will use a formula for each section where you complete the sentence. <em>Fields</em> allows you to write however you'd like by labeling the fields instead of treating them as the start of a sentence.",
-          },
           "projects": {
             title: "Projects",
             intro: "Organize your ADRs into different projects. This allows you to manage ADRs scoped to just one project or app.",
@@ -172,31 +168,10 @@
             intro: "Here you will find all the personal information we are storing, as well as your account's limits.",
           },
         },
-        "adr-style-examples": {
-          formula: {
-            name: "Formula",
-            title: "ADRs Follow a Formula",
-            context: "<strong>In the context of</strong> wanting to have consistency across all of our ADRs.",
-            facing: "<strong>Facing</strong> the challenge of having to constantly review each ADR for adherance to a particular style.",
-            decision: "<strong>We decided</strong> to use <em>formula</em>-based ADRs.  These will present each field of the ADR as the start of a sentence that the ADR authors must complete.",
-          },
-          fields: {
-            name: "Fields",
-            title: "ADRs Use Fields with Free-Form Text",
-            context: {
-              title: "Use Case",
-              content: "While we like having Y-statements for ADRs, we don't want to be constrained by how we author each field. We'd like to be able to write each section however it works best.",
-            },
-            facing: {
-              title: "Concerns &amp; Issues",
-              content: "Even though it's consisten to start each section the same way, it's often awkward to word sentence with the same starting words.  It might be better to allow free-form text in each field.",
-            },
-            decision: {
-              title: "Decision",
-              content: "We will use <em>fields</em> for our ADRs, allowing the authors to write the contents of each section however they like.",
-            },
-          }
-        },
+        projects: {
+          default_shared: "Shared",
+          default_private: "Not Shared",
+        }
       },
       "Admin::AccountsByExternalIdPage" => {
         entitlements_saved: "Entitlements updated",
@@ -218,6 +193,40 @@
           save_refining_draft: "Save Refining Draft",
           reject: "Reject ADR",
           accept: "Accept ADR",
+        },
+        fields: {
+          context: {
+            label: "Context",
+            context: "Background information to provide context for the decision.",
+          },
+          facing: {
+            label: "Concerns or Issues",
+            context: "Specific issues that the decision is meant to address",
+          },
+          decision: {
+            label: "Decision",
+            context: "The decision that was made.",
+          },
+          neglected: {
+            label: "Options Considered, but Not Chosen",
+            context: "Any options evaluated to address the concerns that were not chosen, and why.",
+          },
+          achieve: {
+            label: "System Qualities or Desired Consequences",
+            context: "Expected benefits of the decision beyond simply addressing the concerns.",
+          },
+          accepting: {
+            label: "Downsides",
+            context: "Trade-offs or consequences of the decision that are understood and accepted.",
+          },
+          because: {
+            label: "Additional Rationale",
+            context: "Any additional information relevant to understranding the decision",
+          },
+          tags: {
+            label: "Tags",
+            context: "Tags, delimited by commas or newlines to allow categorization of this ADR.",
+          },
         },
       },
       "Adrs::GetRefinementsComponent": {

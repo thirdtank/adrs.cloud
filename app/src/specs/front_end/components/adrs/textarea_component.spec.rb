@@ -9,7 +9,7 @@ RSpec.describe Adrs::TextareaComponent do
         label: "The Foo Field",
         form: form,
         input_name: :foo,
-        prefix: "context",
+        context: "Some context",
       )
 
       html = render_and_parse(component)
@@ -34,7 +34,7 @@ RSpec.describe Adrs::TextareaComponent do
         label: "The Foo Field",
         form: form,
         input_name: :foo,
-        prefix: "context",
+        context: "Some context",
       )
 
       html = render_and_parse(component)

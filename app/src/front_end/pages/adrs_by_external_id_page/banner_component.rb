@@ -1,11 +1,12 @@
 class AdrsByExternalIdPage::BannerComponent < AppComponent
-  attr_reader :color, :background_color, :font_weight, :font_size, :padding
+  attr_reader :color, :background_color, :font_weight, :font_size, :padding, :margin
 
   def initialize(background_color:,
                  color:,
                  font_size: "",
                  font_weight: "fw-5",
                  glow: false,
+                 margins: :use_default,
                  i18n_key: :use_block,
                  timestamp: :use_block)
 
@@ -20,6 +21,7 @@ class AdrsByExternalIdPage::BannerComponent < AppComponent
     @glow             = !!glow
     @i18n_key         =   i18n_key
     @timestamp        =   timestamp
+    @margin           =   margins == :use_default ? "mh-3" : margins
 
     @timestamp_font_weight = if font_weight =~ /^fw-(\d)$/
                                lower_weight = [$1.to_i + 1,9].min

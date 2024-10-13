@@ -42,6 +42,10 @@ html {
   }
 }
 
+.bg-none {
+  background-color: transparent;
+}
+
 .active-bg-gray-300:active {
   background-color: var(--mg-gray-300);
 }
@@ -59,12 +63,10 @@ html {
   line-height: var(--mg-lh-copy);
   max-width: var(--mg-tw-wide);
 }
-/** Ensures that the decision section
- * is not too wide, since it uses f-3
- */
-.xf-3 .rendered-markdown p {
-  max-width: var(--mg-tw);
+.rendered-markdown p:first-child {
+  margin-top: 0;
 }
+
 .bg-red-600-a20 {
   background-color: rgb(from var(--mg-red-600) r g b / 20%);
 }

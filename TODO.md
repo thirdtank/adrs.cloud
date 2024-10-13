@@ -8,7 +8,7 @@ CHECK  1 - Store provider and uid for auth
            DONE: ADRs cannot be replaced/refined across projects
            DONE: Project can be changed on any ADR
 
-       3 - ADR Style
+CHECK  3 - Change ADR style to not fill in sentences
 
        4 - ADR Downloads
 

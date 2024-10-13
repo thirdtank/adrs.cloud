@@ -39,65 +39,6 @@
   <section class="bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start">
     <%= component(AnnouncementBannerComponent) %>
     <div class="overflow-y-scroll w-100">
-      <%= tab_panel("adr-style") do %>
-        <form autocomplete="off">
-          <fieldset class="bn flex items-start gap-3">
-            <label class="ba br-3 bc-gray-700 self-stretch">
-              <div class="flex items-center gap-2 bb bc-gray-700 pa-2">
-                <input type="radio" name="adr_style" value="formula" checked required>
-                <span class="f-2 b"><%= t(page: "adr-style-examples.formula.name") %></span>
-              </div>
-              <div class="pa-2">
-                <h3 class="f-3 mt-1"><%= t(page: "adr-style-examples.formula.title") %></h3>
-                <p class="p f-1">
-                  <%= t(page: "adr-style-examples.formula.context") %>
-                </p>
-                <p class="p f-1">
-                  <%= t(page: "adr-style-examples.formula.facing") %>
-                </p>
-                <p class="p f-1">
-                  <%= t(page: "adr-style-examples.formula.decision") %>
-                </p>
-              </div>
-            </label>
-            <label class="ba br-3 bc-gray-700 self-stretch">
-              <div class="flex items-center gap-2 bb bc-gray-700 pa-2">
-                <input type="radio" name="adr_style" value="fields" required>
-                <span class="f-2 b"><%= t(page: "adr-style-examples.fields.name") %></span>
-              </div>
-              <div class="pa-2">
-                <h3 class="f-3 mt-1 lh-titler"><%= t(page: "adr-style-examples.fields.title") %></h3>
-                <h4 class="f-2 ma-0 mt-1">
-                  <%= t(page: "adr-style-examples.fields.context.title") %>
-                </h4>
-                <p class="p f-1">
-                  <%= t(page: "adr-style-examples.fields.context.content") %>
-                </p>
-                <h4 class="f-2 ma-0 mt-1">
-                  <%= t(page: "adr-style-examples.fields.facing.title") %>
-                </h4>
-                <p class="p f-1">
-                  <%= t(page: "adr-style-examples.fields.facing.content") %>
-                </p>
-                <h4 class="f-2 ma-0 mt-1">
-                  <%= t(page: "adr-style-examples.fields.decision.title") %>
-                </h4>
-                <p class="p f-1">
-                  <%= t(page: "adr-style-examples.fields.decision.content") %>
-                </p>
-              </div>
-            </label>
-          </fieldset>
-          <div class="pa-3">
-            <%= component(ButtonComponent.new(
-              color: :orange,
-              label: "Change Style",
-              icon: "edit-list-icon",
-              confirm: "You may need to change existing ADRs to accommodate the style change.",
-            )) %>
-          </div>
-        </form>
-      <% end %>
       <%= tab_panel("projects") do %>
         <table class="collapse mv-3 striped">
           <caption class="sr-only">Projects</caption>
@@ -108,6 +49,9 @@
               </th>
               <th class="tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600">
                 Description
+              </th>
+              <th class="tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600">
+                Default Sharing
               </th>
               <th class="tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600">
                 <span class="sr-only">
@@ -124,10 +68,21 @@
               <td class="measure p f-1 pa-2 lh-copy va-middle bb br bc-gray-600">
                 An app to manage ADRs for your projects, and allow sharing them with others.
               </td>
+              <td class="pa-2 lh-copy va-middle bb br bc-gray-600">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 flex flex-column justify-center"><%= svg("globe-network-icon") %></span>
+                  <span><%= t(page: [ "projects", "default_shared" ]) %></span>
+                </div>
+              </td>
               <td class="pa-2 tr va-middle bb br bc-gray-600">
                 <div class="flex items-baseline gap-2">
                   <a class="blue-400 ws-nowrap" href="#">Edit</a>
-                  <a class="blue-400 ws-nowrap" href="#">Archive</a>
+                  <form>
+                    <brut-confirm
+                      message="ADRs will still be available and editable, but no new ADRs can be added to this project">
+                      <button class="tdu pointer blue-400 bn bg-none">Archive</button>
+                    </brut-confirm>
+                  </form>
                 </div>
               </td>
             </tr>
@@ -138,10 +93,21 @@
               <td class="measure p f-1 pa-2 lh-copy va-middle bb br bc-gray-600">
                 A new way to make web apps with Ruby that relies on object-oriented programming, simple constructs, and parity with existing web technology fundamentals.
               </td>
+              <td class="pa-2 lh-copy va-middle bb br bc-gray-600">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 flex flex-column justify-center"><%= svg("lock-icon") %></span>
+                  <span><%= t(page: [ "projects", "default_private" ]) %></span>
+                </div>
+              </td>
               <td class="pa-2 tr va-middle bb br bc-gray-600">
                 <div class="flex items-baseline gap-2">
                   <a class="blue-400 ws-nowrap" href="#">Edit</a>
-                  <a class="blue-400 ws-nowrap" href="#">Archive</a>
+                  <form>
+                    <brut-confirm
+                      message="ADRs will still be available and editable, but no new ADRs can be added to this project">
+                      <button class="tdu pointer blue-400 bn bg-none">Archive</button>
+                    </brut-confirm>
+                  </form>
                 </div>
               </td>
             </tr>

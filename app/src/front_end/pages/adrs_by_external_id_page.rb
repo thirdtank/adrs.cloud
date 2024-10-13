@@ -9,9 +9,14 @@ class AdrsByExternalIdPage < AppPage
   def can_add_new? = @can_add_new
   def can_edit_tags? = self.accepted?
 
-  def markdown(field)
-    value = t(page: [ :fields, field ], content: adr.send(field))
-    component(MarkdownStringComponent.new(value))
+  def field(name, label_additional_clases: "")
+    html_tag(:section, "aria-label": name, class: "flex flex-column gap-2 ph-3") {
+      html_tag(:span, class: "f-1 ttu fw-6 #{label_additional_clases}") {
+        t(page: [ :fields, name ])
+      } + html_tag(:div, class: "measure-wide rendered-markdown") {
+        component(MarkdownStringComponent.new(adr.send(name)))
+      }
+    }
   end
 
   def refined_by_adrs

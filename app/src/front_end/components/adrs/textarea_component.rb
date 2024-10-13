@@ -1,8 +1,8 @@
 class Adrs::TextareaComponent < AppComponent
-  attr_reader :prefix, :input_name, :constraint_violations, :input_component, :label
-  def initialize(form:, input_name:, label:, prefix:)
+  attr_reader :input_name, :constraint_violations, :input_component, :label, :context
+  def initialize(form:, input_name:, label:, context:)
     @label = label
-    @prefix = prefix
+    @context = context
     @input_name = input_name
     @input_component = Brut::FrontEnd::Components::Inputs::Textarea.for_form_input(
       form: form,

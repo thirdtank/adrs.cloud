@@ -1,8 +1,6 @@
 <label class="flex flex-column gap-1 w-100">
   <div class="textarea-container" <%= invalid? ? 'data-invalid' : '' %>>
-    <% if prefix %>
-      <div class="inner-label"><%= prefix %></div>
-    <% end %>
+    <div class="inner-label"><%= label %></div>
     <%= component(input_component) %>
   </div>
   <div class="text-field-error-label">
@@ -19,6 +17,6 @@
     </brut-constraint-violation-messages>
   </div>
   <div class="text-field-label">
-    <span class="f-1"><%= label %></span>
+    <span class="f-1"><%= context %></span>
   </div>
 </label>
