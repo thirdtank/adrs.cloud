@@ -65,4 +65,26 @@ RSpec.describe Auth::Github::CallbackHandler do
       expect(session.logged_in?).to eq(false)
     end
   end
+  context "an internal error happens" do
+    it "sets an error in the flash and redirects to the HomePage" do
+      external_account = create(:external_account,provider: "github")
+      flash = empty_flash
+      session = empty_session
+      env = {
+        "omniauth.auth" => {
+          "provider" => "github",
+          "uid" => external_account.external_account_id,
+          "info" => {
+            "email" => "different" + external_account.account.email
+          }
+        }
+      }
+      result = described_class.new.handle!(env: env,
+                                           flash: flash,
+                                           session: session)
+      expect(result.class).to eq(HomePage)
+      expect(flash.alert).to eq("domain.account.github.uid_used_by_other_account")
+      expect(session.logged_in?).to eq(false)
+    end
+  end
 end

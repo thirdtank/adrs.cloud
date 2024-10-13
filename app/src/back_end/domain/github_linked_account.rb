@@ -1,4 +1,9 @@
+require_relative "authenticated_account"
+
 class GithubLinkedAccount < AuthenticatedAccount
+  include SemanticLogger::Loggable
+  extend SemanticLogger::Loggable
+
   def self.find_from_omniauth_hash(omniauth_hash:)
     provider = omniauth_hash["provider"]
     if provider.to_s.downcase != "github"
@@ -14,7 +19,30 @@ class GithubLinkedAccount < AuthenticatedAccount
     if email == ""
       raise "Problem with GitHub auth: we did not get an email from 'info':\n#{omniauth_hash['info']}"
     end
-    self.find(email:)
+
+    external_account = DB::ExternalAccount.first(provider:,external_account_id: uid)
+    if external_account
+      if external_account.account.email == email
+        return self.new(account:external_account.account)
+      end
+      logger.warn("Github uid #{uid} matched account #{external_account.account.external_id}, whose email was NOT #{email}")
+      return InternalErrorAccount.new(account:external_account.account,
+                                      error:"domain.account.github.uid_used_by_other_account")
+    end
+    existing_account = self.find(email:)
+    if existing_account.nil?
+      return nil
+    end
+    if !existing_account.active?
+      return existing_account
+    end
+    if !existing_account.account.external_account(provider:).nil?
+      logger.warn("Github uid #{uid} was not in our database, however the email provided, #{email} matched another external account")
+      return InternalErrorAccount.new(account:existing_account.account,
+                                      error:"domain.account.github.uid_changed")
+    end
+    DB::ExternalAccount.create(account: existing_account.account,provider: provider, external_account_id: uid)
+    existing_account
   end
 
   def self.find(email: nil, external_id:nil)

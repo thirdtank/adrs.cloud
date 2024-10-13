@@ -4,6 +4,10 @@
 
 * Building the docker image is very slow, likely due to architecture differences
 
+## Logging
+
+* Seems a mess
+
 ## Form Validation Complexity
 
 * Chasing down the parts was hard

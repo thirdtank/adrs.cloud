@@ -40,9 +40,12 @@ class ButtonComponent < AppComponent
     @variant              =   variant
     @width                =   width
 
-    disabled_message = disabled.kind_of?(String) ? disabled : nil
     @title                =   if @disabled
-                                disabled_message
+                                if disabled == true
+                                  label
+                                else
+                                  disabled.to_s
+                                end
                               elsif title
                                 title
                               elsif aria_label

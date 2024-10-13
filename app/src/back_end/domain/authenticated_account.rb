@@ -1,5 +1,5 @@
-class AuthenticatedAccount
-  attr_reader :account, :session_id
+class AuthenticatedAccount < Account
+  attr_reader :session_id
 
   def self.find(session_id:)
     account = DB::Account.find(external_id: session_id)
@@ -16,11 +16,14 @@ class AuthenticatedAccount
     if account.deactivated?
       raise ArgumentError,"#{account.external_id} has been deactivated"
     end
-    @account    = account
+    super(account:)
     @session_id = account.external_id
   end
 
+  def external_id = @session_id
+
   def active? = true
+  def error?  = false
 
   class Findable
     def initialize(klass,**args)

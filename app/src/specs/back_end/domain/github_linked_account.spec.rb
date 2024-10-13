@@ -41,19 +41,87 @@ RSpec.describe GithubLinkedAccount do
       }.to raise_error(/did not get an email/i)
     end
     context "email exists" do
-      it "sets the id in the session and redirects to the AdrsPage" do
-        account = create(:account)
-        omniauth_hash = {
-          "provider" => "github",
-          "uid" => SecureRandom.uuid,
-          "info" => {
-            "email" => account.email
-          }
-        }
+      context "the account does not have an ExternalAccount for GitHub" do
+        context "there is no ExternalAccount with this uid" do
+          it "creates an ExternalAccount for this account, then returns a GithubLinkedAccount" do
+            account = create(:account)
 
-        github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
-        expect(github_linked_account).not_to eq(nil)
-        expect(github_linked_account.session_id).to eq(account.external_id)
+            omniauth_hash = {
+              "provider" => "github",
+              "uid" => SecureRandom.uuid,
+              "info" => {
+                "email" => account.email
+              }
+            }
+
+            github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
+            new_external_account = DB::ExternalAccount[account: account, provider: "github"]
+
+            expect(github_linked_account).not_to                eq(nil)
+            expect(github_linked_account.session_id).to         eq(account.external_id)
+            expect(new_external_account).not_to                 eq(nil)
+            expect(new_external_account.external_account_id).to eq(omniauth_hash["uid"])
+          end
+        end
+        context "there is already an ExternalAccount with this uid" do
+          it "returns an InternalErrorAccount" do
+            account                = create(:account)
+            other_external_account = create(:external_account, provider: "github")
+
+            omniauth_hash = {
+              "provider" => "github",
+              "uid" => other_external_account.external_account_id,
+              "info" => {
+                "email" => account.email
+              }
+            }
+
+            github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
+
+            expect(github_linked_account.error?).to eq(true)
+            expect(github_linked_account.error_i18n_key).to eq("domain.account.github.uid_used_by_other_account")
+          end
+        end
+      end
+      context "the account does have an ExternalAccount for GitHub" do
+        context "the uid matches the ExternalAccount" do
+          it "returns a GithubLinkedAccount whose session id is the Account's external_id" do
+
+            account          = create(:account)
+            external_account = create(:external_account, account: account, provider: "github")
+
+            omniauth_hash = {
+              "provider" => "github",
+              "uid" => external_account.external_account_id,
+              "info" => {
+                "email" => account.email
+              }
+            }
+
+            github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
+            expect(github_linked_account).not_to eq(nil)
+            expect(github_linked_account.session_id).to eq(account.external_id)
+          end
+        end
+        context "the uid does not match the ExternalAccount" do
+          it "returns an InternalErrorAccount" do
+            account          = create(:account)
+            external_account = create(:external_account, account: account, provider: "github")
+
+            omniauth_hash = {
+              "provider" => "github",
+              "uid" => SecureRandom.uuid,
+              "info" => {
+                "email" => account.email
+              }
+            }
+
+            github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
+
+            expect(github_linked_account.error?).to eq(true)
+            expect(github_linked_account.error_i18n_key).to eq("domain.account.github.uid_changed")
+          end
+        end
       end
     end
     context "email does not exist" do

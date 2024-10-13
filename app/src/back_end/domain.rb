@@ -1,6 +1,8 @@
 require_relative "domain/draft_adr"
 require_relative "domain/accepted_adr"
+require_relative "domain/account"
 require_relative "domain/authenticated_account"
+require_relative "domain/internal_error_account"
 require_relative "domain/developer_only_account"
 require_relative "domain/github_linked_account"
 require_relative "domain/tags"

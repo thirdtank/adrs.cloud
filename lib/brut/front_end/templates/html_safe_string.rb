@@ -24,4 +24,7 @@ class Brut::FrontEnd::Templates::HTMLSafeString
   def to_s       = @string
   def to_str     = @string
   def html_safe! = self
+  def capitalize = self.class.new(@string.capitalize)
+  def downcase   = self.class.new(@string.downcase)
+  def upcase     = self.class.new(@string.upcase)
 end

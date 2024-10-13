@@ -1,7 +1,27 @@
 # One Week Sprint
 
+CHECK  1 - Store provider and uid for auth
+
+       2 - Projects
+
+           DONE: Users get a default project
+           DONE: ADRs cannot be replaced/refined across projects
+           DONE: Project can be changed on any ADR
+
+       3 - ADR Style
+
+       4 - ADR Downloads
+
+           DONE: Background jobs and temporary files?
+
+       5 - Need a real name for this thing
+
+# 2024-10-07
+
        1 - something that uses <select>, radio buttons, and checkbox
            - Checkbox to allow public/private sharing?
+           - Perhaps topic areas or projects?
+           - Ability to use the "Y statement" as the start of a sentence or not
 
 CHECKK 2 - update the flash w/ AJAX
 

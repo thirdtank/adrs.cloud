@@ -36,6 +36,9 @@
         external_link_icon: "external link icon",
       },
       add_new_limit_exceeded: "You've reached your limit",
+      adrs_remaining_counts: "%{num} of %{max} ADRs Remaining",
+      project_limit_exceeded: "You've reached your limit",
+      projects_remaining_counts: "%{num} of %{max} Projects",
       contact_support_for_limit_increase: "Reject some ADRs or <a href='mailto:support@adrgp' class='blue-700'>contact support</a> for a limit increase",
       auth: {
         no_account: "No account with that email",
@@ -84,6 +87,7 @@
         view: "View",
         edit: "Edit",
         none: "None",
+        your_account: "Your Account",
       },
       AdrsByExternalIdPage: {
         accepted: "Accepted %{block}",
@@ -148,6 +152,52 @@
           because: "**Because** %{content}",
         },
       },
+      AccountByExternalIdPage: {
+        back_to_adrs: "Back to Your ADRs",
+        tabs: {
+          "adr-style": {
+            title: "ADR Style",
+            intro: "Choose the way you'd like to author your ADRs. <em>Formula</em> will use a formula for each section where you complete the sentence. <em>Fields</em> allows you to write however you'd like by labeling the fields instead of treating them as the start of a sentence.",
+          },
+          "projects": {
+            title: "Projects",
+            intro: "Organize your ADRs into different projects. This allows you to manage ADRs scoped to just one project or app.",
+          },
+          "download": {
+            title: "Download Your ADRs",
+            intro: "These are your ADRs. Download them here to use in other systems.",
+          },
+          "info": {
+            title: "Info and Limits",
+            intro: "Here you will find all the personal information we are storing, as well as your account's limits.",
+          },
+        },
+        "adr-style-examples": {
+          formula: {
+            name: "Formula",
+            title: "ADRs Follow a Formula",
+            context: "<strong>In the context of</strong> wanting to have consistency across all of our ADRs.",
+            facing: "<strong>Facing</strong> the challenge of having to constantly review each ADR for adherance to a particular style.",
+            decision: "<strong>We decided</strong> to use <em>formula</em>-based ADRs.  These will present each field of the ADR as the start of a sentence that the ADR authors must complete.",
+          },
+          fields: {
+            name: "Fields",
+            title: "ADRs Use Fields with Free-Form Text",
+            context: {
+              title: "Use Case",
+              content: "While we like having Y-statements for ADRs, we don't want to be constrained by how we author each field. We'd like to be able to write each section however it works best.",
+            },
+            facing: {
+              title: "Concerns &amp; Issues",
+              content: "Even though it's consisten to start each section the same way, it's often awkward to word sentence with the same starting words.  It might be better to allow free-form text in each field.",
+            },
+            decision: {
+              title: "Decision",
+              content: "We will use <em>fields</em> for our ADRs, allowing the authors to write the contents of each section however they like.",
+            },
+          }
+        },
+      },
       "Admin::AccountsByExternalIdPage" => {
         entitlements_saved: "Entitlements updated",
         entitlements_cannot_be_saved: "Entitlements cannot be saved",
@@ -175,6 +225,14 @@
         is_accepted: "Accepted",
         is_rejected: "Rejected",
         is_draft: "Draft",
+      },
+    },
+    domain: {
+      account: {
+        github: {
+          uid_used_by_other_account: "The UID provided by GitHub is linked to another account.",
+          uid_changed: "The UID provided by GitHub is not the one used when you first signed up.",
+        },
       },
     }
   },

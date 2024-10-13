@@ -122,7 +122,7 @@ module Brut::I18n
       end
       rest[:block] = yield.to_s.strip.html_safe!
     end
-    t_direct(key,**rest)
+    t_direct(key,**rest).html_safe!
   rescue I18n::MissingInterpolationArgument => ex
     if ex.key.to_s == "block"
       raise ArgumentError,"One of the keys #{key.join(", ")} contained a %{block} interpolation value: '#{ex.string}'. This means you must use t_html *and* yield a block to it"

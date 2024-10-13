@@ -87,6 +87,8 @@ class AdrApp < Sinatra::Base
   action "/shared_adrs/:external_id"
   action "/private_adrs/:external_id"
 
+  page "/account/:external_id"
+
   page "/admin/home"
   page "/admin/accounts"
   page "/admin/accounts/:external_id"

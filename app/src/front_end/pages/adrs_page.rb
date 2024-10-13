@@ -1,14 +1,15 @@
 class AdrsPage < AppPage
 
-  attr_reader :tag, :tab, :entitlements
+  attr_reader :tag, :tab, :entitlements, :authenticated_account
 
   def initialize(authenticated_account:, tag: nil, tab: "accepted")
-    @tag          = tag
-    @adrs         = authenticated_account.adrs.search(tag:)
+    @authenticated_account = authenticated_account
+    @tag                   = tag
+    @adrs                  = @authenticated_account.adrs.search(tag:)
 
     num_non_rejected_adrs = @adrs.length - self.rejected_adrs.length
 
-    @entitlements = authenticated_account.entitlements
+    @entitlements = @authenticated_account.entitlements
     @tab          = tab.to_sym
   end
 

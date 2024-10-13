@@ -1,10 +1,11 @@
-class DeactivateAccount
+class DeactivateAccount < Account
   def initialize(account:)
     if !account.deactivated?
       raise ArgumentError,"#{account.external_id} is not deactivated"
     end
-    @account = account
+    super(account:)
   end
-  def external_id = @account.external_id
+  def external_id = self.account.external_id
   def active? = false
+  def error?  = false
 end

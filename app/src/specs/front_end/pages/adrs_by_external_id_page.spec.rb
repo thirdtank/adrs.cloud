@@ -11,7 +11,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  external_id: adr.external_id)
 
       html_locator = Support::HtmlLocator.new(render_and_parse(page))
-      expect(html_locator.element!("[role='status']").text).to include(t(:adr_accepted))
+      expect(html_locator.element!("[role='status']").text).to include(t(:adr_accepted).to_s)
     end
   end
   context "draft" do
@@ -91,11 +91,11 @@ RSpec.describe AdrsByExternalIdPage do
 
         replace_button = parsed_html.css("button[aria-label='Replace'][disabled]")[0]
         expect(replace_button).not_to eq(nil)
-        expect(replace_button[:title]).to eq(t(:add_new_limit_exceeded))
+        expect(replace_button[:title]).to eq(t(:add_new_limit_exceeded).to_s)
 
         refine_button = parsed_html.css("button[aria-label='Refine'][disabled]")[0]
         expect(refine_button).not_to eq(nil)
-        expect(refine_button[:title]).to eq(t(:add_new_limit_exceeded))
+        expect(refine_button[:title]).to eq(t(:add_new_limit_exceeded).to_s)
 
       end
     end
@@ -178,7 +178,7 @@ RSpec.describe AdrsByExternalIdPage do
 
       element = html_locator.element!("button[disabled]")
       expect(element.text.strip).to include(t(page: :stop_sharing_short))
-      expect(element["aria-label"]).to eq(t(page: :stop_sharing))
+      expect(element["aria-label"]).to eq(t(page: :stop_sharing).to_s)
       element = html_locator.element!("button[title='#{t(page: :share)}']")
       expect(element).not_to have_html_attribute(disabled: true)
     end

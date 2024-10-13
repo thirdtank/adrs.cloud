@@ -17,7 +17,7 @@ class MarkdownStringComponent < AppComponent
       autolink: true,
       quote: true,
     )
-    @html = html_safe!(markdown.render(string))
+    @html = html_safe!(markdown.render(string.to_s))
   end
 
   def render

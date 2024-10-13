@@ -1,0 +1,13 @@
+<section class="pa-3"
+         role="tabpanel"
+         tabindex="0"
+         <% if !selected? %>
+           hidden
+         <% end %>
+         id="<%= tab_name %>-panel">
+  <h2 class="f-4 ma-0"><%= t(page: [ "tabs", tab_name, "title" ]) %></h2>
+  <p class="p f-1">
+    <%= html_safe!(t(page: [ "tabs", tab_name, "intro" ])) %>
+  </p>
+  <%= content %>
+</section>

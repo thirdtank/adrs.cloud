@@ -47,7 +47,7 @@
         <meter class="w-100" value="<%= entitlements.non_rejected_adrs %>" high="<%= entitlements.max_non_rejected_adrs * 0.85 %>" min="0" max="<%= entitlements.max_non_rejected_adrs %>"></meter>
         <div class="p f-1 gray-700">
           <% if can_add_new? %>
-            <%= entitlements.non_rejected_adrs_remaining %> of <%= entitlements.max_non_rejected_adrs %> ADRs Remaining
+            <%= t(:adrs_remaining_counts, num: entitlements.non_rejected_adrs_remaining, max: entitlements.max_non_rejected_adrs) %>
           <% else %>
             <p class="p ma-0 fw-7 red-800">
               <%= t(:add_new_limit_exceeded) %>
@@ -57,6 +57,7 @@
             </p>
           <% end %>
         </div>
+        <a class="blue-800 f-1" href="<%= AccountByExternalIdPage.routing(external_id: authenticated_account.external_id) %>"><%= t(page: :your_account) %></a>
       </div>
     </div>
     <div class="w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3">
