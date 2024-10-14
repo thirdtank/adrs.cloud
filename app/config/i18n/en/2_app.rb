@@ -25,6 +25,7 @@
       adr_shared: "ADR now shared",
       adr_accepted: "ADR Accepted",
       adr_created: "ADR Created",
+      project_archived: "Project Archived",
       new_project_created: "Project Created",
       project_updated: "Project Updated",
       adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
@@ -43,7 +44,7 @@
       add_new_limit_exceeded: "You've reached your limit",
       adrs_remaining_counts: "%{num} of %{max} ADRs Remaining",
       project_limit_exceeded: "You've reached your limit",
-      projects_remaining_counts: "%{num} of %{max} Projects",
+      projects_remaining_counts: "%{num} of %{max} Projects Remaining",
       contact_support_for_limit_increase: "Reject some ADRs or <a href='mailto:support@adrgp' class='blue-700'>contact support</a> for a limit increase",
       auth: {
         no_account: "No account with that email",
@@ -159,6 +160,8 @@
         },
       },
       AccountByExternalIdPage: {
+        contact_support_for_limit_increase: "<a href='mailto:support@adrgp' class='blue-300'>Contact support</a> for a limit increase.",
+        project_limit_exceeded: "You've reached your limit on number of projects.",
         back_to_adrs: "Back to Your ADRs",
         tabs: {
           "projects": {
@@ -190,11 +193,10 @@
         }
       },
       NewProjectPage: {
-        new_project: "Add New Project",
+        new_project: "Create Project",
       },
       EditProjectByExternalIdPage: {
         edit_project: "Edit Project",
-        save_project: "Save Project",
       },
       "Admin::AccountsByExternalIdPage" => {
         entitlements_saved: "Entitlements updated",
@@ -257,6 +259,23 @@
         is_accepted: "Accepted",
         is_rejected: "Rejected",
         is_draft: "Draft",
+      },
+      "Projects::FormComponent": {
+        actions: {
+          new: "Create Project",
+          edit: "Save Project",
+        },
+        name: {
+          label: "Name",
+          placeholder: "e.g. www",
+        },
+        description: {
+          label: "Description",
+          placeholder: "e.g. the app running our website",
+        },
+        adrs_shared_by_default: {
+          label: "Share ADRs by Default?",
+        }
       },
     },
     domain: {

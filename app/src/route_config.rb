@@ -92,6 +92,7 @@ class AdrApp < Sinatra::Base
   form "/new_project"
   page "/edit_project/:external_id"
   form "/edit_project/:external_id"
+  action "/archived_projects/:external_id"
 
   page "/admin/home"
   page "/admin/accounts"

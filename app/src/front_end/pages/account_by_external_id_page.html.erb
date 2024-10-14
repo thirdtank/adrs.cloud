@@ -86,13 +86,13 @@
                 <td class="pa-2 tr va-middle bb br bc-gray-600">
                   <div class="flex items-baseline gap-2">
                     <a class="blue-400 ws-nowrap" href="<%= EditProjectByExternalIdPage.routing(external_id: project.external_id) %>"><%= t(:edit) %></a>
-                    <% if !project.archived? %>
-                      <form>
+                    <% if project.active? %>
+                      <%= form_tag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id), method: :post) do %>
                         <brut-confirm
                           message="<%= t(page: "projects.archive_confirmation") %>">
                           <button class="tdu pointer blue-400 bn bg-none"><%= t(page: "projects.archive") %></button>
                         </brut-confirm>
-                      </form>
+                      <% end %>
                     <% end %>
                   </div>
                 </td>
@@ -100,7 +100,14 @@
             <% end %>
           </tbody>
         </table>
-        <a href="<%= NewProjectPage.routing %>" class="db pv-3 blue-300 f-3"><%= t(page: "projects.add_new") %></a>
+        <% if authenticated_account.entitlements.can_add_new_project? %>
+          <a href="<%= NewProjectPage.routing %>" class="db pv-3 blue-300 f-3"><%= t(page: "projects.add_new") %></a>
+        <% else %>
+          <p class="p i gray-400">
+          <%= t(page: :project_limit_exceeded) %>
+          <%= t(page: :contact_support_for_limit_increase) %>
+          </p>
+        <% end %>
       <% end %>
       <%= tab_panel("download") do %>
       <% end %>
@@ -121,20 +128,20 @@
                 <%= t(:add_new_limit_exceeded) %>
               </p>
               <p class="p ma-0 fw-4">
-                <%= html_safe!(t(:contact_support_for_limit_increase)) %>
+                <%= html_safe!(t(page: :contact_support_for_limit_increase)) %>
               </p>
             <% end %>
           </div>
-          <meter class="w-100 mt-3" value="<%= authenticated_account.entitlements.non_rejected_adrs %>" high="<%= authenticated_account.entitlements.max_non_rejected_adrs * 0.85 %>" min="0" max="<%= authenticated_account.entitlements.max_non_rejected_adrs %>"></meter>
+          <meter class="w-100 mt-3" value="<%= authenticated_account.entitlements.num_projects %>" high="<%= authenticated_account.entitlements.max_projects * 0.85 %>" min="0" max="<%= authenticated_account.entitlements.max_projects %>"></meter>
           <div class="p f-1 gray-300">
-            <% if authenticated_account.entitlements.can_add_new? %>
-              <%= t(:projects_remaining_counts, num: authenticated_account.entitlements.non_rejected_adrs_remaining, max: authenticated_account.entitlements.max_non_rejected_adrs) %>
+            <% if authenticated_account.entitlements.can_add_new_project? %>
+              <%= t(:projects_remaining_counts, num: authenticated_account.entitlements.projects_remaining, max: authenticated_account.entitlements.max_projects) %>
             <% else %>
               <p class="p ma-0 fw-7 red-300">
                 <%= t(:project_limit_exceeded) %>
               </p>
               <p class="p ma-0 fw-4">
-                <%= html_safe!(t(:contact_support_for_limit_increase)) %>
+                <%= html_safe!(t(page: :contact_support_for_limit_increase)) %>
               </p>
             <% end %>
           </div>

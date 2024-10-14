@@ -7,7 +7,7 @@ class NewProjectHandler < AppHandler
     project.save(form:)
     if form.constraint_violations?
       flash.alert = :new_project_invalid
-      NewProjectPage.new(form:form)
+      NewProjectPage.new(form:, authenticated_account:)
     else
       flash.notice = :new_project_created
       redirect_to(AccountByExternalIdPage, external_id: authenticated_account.external_id, tab: "projects")

@@ -44,7 +44,7 @@ class AccountEntitlements
   end
 
   def can_add_new_project?
-     num_projects < max_projects
+    num_projects < max_projects
   end
 
   def max_projects

@@ -19,9 +19,10 @@ class Project
     @project = project
   end
 
-  def_delegators :@project, :external_id, :name, :description, :adrs_shared_by_default
+  def_delegators :@project, :external_id, :name, :description, :adrs_shared_by_default, :account
 
-  def archived? = !@project.archived_at.nil?
+  def archived? = !self.active?
+  def active?   =  @project.archived_at.nil?
 
   def save(form:)
     if name_already_in_use?(form.name)
@@ -33,6 +34,16 @@ class Project
     form
   rescue Sequel::UniqueConstraintViolation
     name_in_use!(form:)
+  end
+
+  def archive
+    if @project.external_id.nil?
+      raise Brut::BackEnd::Errors::Bug, "New projects that have not yet been saved cannot be archived"
+    end
+    if self.archived?
+      raise Brut::BackEnd::Errors::Bug, "#{@project.external_id} is already archived"
+    end
+    @project.update(archived_at: Time.now)
   end
 
 private

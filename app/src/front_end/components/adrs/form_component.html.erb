@@ -102,7 +102,7 @@
     <%= reject_button %>
     <%= accept_button %>
   </div>
-  <a href="/adrs" class="red-300"><span role="none">&larr;</span> <%= go_back_label %></a>
+  <a href="<%= AdrsPage.routing %>" class="red-300"><span role="none">&larr;</span> <%= go_back_label %></a>
 <% end %>
 <%= component(ConfirmationDialogComponent.new) %>
 </brut-form>

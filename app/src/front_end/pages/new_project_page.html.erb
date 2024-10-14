@@ -3,29 +3,5 @@
 <h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(page: :new_project) %></h2>
 </header>
 <section class="pa-3">
-  <brut-form>
-    <%= form_tag(action: NewProjectForm.routing,
-                 method:"post",
-                 class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-60-ns") do %>
-      <%= component TextFieldComponent.new(
-        label: "Name",
-        form: form,
-        input_name: "name",
-        placeholder: "e.g. www",
-        autofocus: true) %>
-      <%= component TextareaComponent.new(
-        label: "Description",
-        form: form,
-        input_name: "description",
-        placeholder: "e.g. The app that runs our primary web site",
-        autofocus: false) %>
-      <%= component CheckboxComponent.new(
-        label: "ADRs Shared by Default?",
-        form: form,
-        input_name: "adrs_shared_by_default") %>
-      <div class="mt-2 flex justify-center">
-        <%= component(ButtonComponent.new(size: "normal", color: "blue", label: t(page: :new_project), icon: "edit-list-icon")) %>
-      </div>
-    <% end %>
-  </brut-form>
+  <%= component(Projects::FormComponent.new(form,action: :new, account_external_id: account_external_id)) %>
 </section>
