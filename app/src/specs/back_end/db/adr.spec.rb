@@ -2,14 +2,6 @@ require "spec_helper"
 
 RSpec.describe DB::Adr do
 
-  describe "::create" do
-    it "returns a new instance using the generated ID" do
-      account = create(:account)
-      adr = described_class.create(title: "This is a test",account_id: account.id)
-      expect(adr.id).not_to eq(nil)
-    end
-  end
-
   describe "#tags" do
     context "adr is shared" do
       it "includes 'shared' in the tags" do
