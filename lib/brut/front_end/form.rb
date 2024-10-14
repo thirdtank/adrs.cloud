@@ -15,6 +15,12 @@ module Brut::FrontEnd::FormInputDeclaration
     )
   end
 
+  def select(name,attributes={})
+    self.add_input_definition(
+      Brut::FrontEnd::Forms::SelectInputDefinition.new(**(attributes.merge(name: name)))
+    )
+  end
+
   def add_input_definition(input_definition)
     @input_definitions ||= {}
     @input_definitions[input_definition.name] = input_definition

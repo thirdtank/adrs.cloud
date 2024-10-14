@@ -30,6 +30,6 @@
   <% end %>
 </header>
 <section class="pa-3">
-  <%= component Adrs::FormComponent.new(form, action: :edit, external_id: @draft_adr.external_id) %>
+  <%= component Adrs::FormComponent.new(form, action: :edit, external_id: @draft_adr.external_id, projects: projects, selected_project: @draft_adr.project) %>
 </section>
 </adr-edit-draft-by-external-id-page>

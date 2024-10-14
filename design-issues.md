@@ -7,6 +7,7 @@
 ## Logging
 
 * Seems a mess
+* Exceptions are getting swallowed/not logged
 
 ## Form Validation Complexity
 

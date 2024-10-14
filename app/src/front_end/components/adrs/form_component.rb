@@ -1,30 +1,38 @@
 class Adrs::FormComponent < AppComponent
 
-  attr_reader :form, :action_label, :form_action, :go_back_label
-  def initialize(form, action:, external_id: nil)
+  attr_reader :form, :action_label, :form_action, :go_back_label, :projects_input
+  def initialize(form, action:, external_id: nil, projects: [], selected_project: nil)
     @form = form
+    @projects_input = Brut::FrontEnd::Components::Inputs::Select.for_form_input(
+      form: form,
+      input_name: :project_external_id,
+      html_attributes: { class: "w-100 f-3" },
+      options: projects,
+      selected_option: selected_project,
+      value_attribute: :external_id,
+      option_text_attribute: :name,
+    )
     case action
-      # XXX: i18n these labels
     when :new
       @action_label  = t(component: [ :actions, :save_draft ])
       @form_action   = NewDraftAdrForm.routing
-      @go_back_label = "Nevermind"
+      @go_back_label = t(:nevermind)
       @ajax_submit   = false
     when :edit
       @external_id   = external_id_required!(external_id:,action:)
       @action_label  = t(component: [ :actions, :update_draft ])
       @form_action   = EditDraftAdrWithExternalIdForm.routing(external_id: @external_id)
-      @go_back_label = "Back"
+      @go_back_label = t(:back)
       @ajax_submit   = true
     when :replace
       @action_label  = t(component: [ :actions, :save_replacement_draft ])
-      @form_action   = "/draft_adrs"
-      @go_back_label = "Nevermind"
+      @form_action   = NewDraftAdrHandler.routing
+      @go_back_label = t(:nevermind)
       @ajax_submit   = false
     when :refine
       @action_label  = t(component: [ :actions, :save_refining_draft ])
-      @form_action   = "/draft_adrs"
-      @go_back_label = "Nevermind"
+      @form_action   = NewDraftAdrHandler.routing
+      @go_back_label = t(:nevermind)
       @ajax_submit   = false
     else
       raise "Action '#{action}' is not known"

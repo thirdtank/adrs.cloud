@@ -5,6 +5,8 @@ class One < Brut::Backend::SeedData
   def seed!
     account             = create(:account, :without_entitlement, email: "davec@naildrivin5.com")
     project             = account.projects.first
+                          create(:project, account: account)
+                          create(:project, account: account)
     entitlement_default = create(:entitlement_default, internal_name: "basic", max_non_rejected_adrs: 20)
     entitlement         = create(:entitlement, max_non_rejected_adrs: nil, entitlement_default: entitlement_default, account: account)
 

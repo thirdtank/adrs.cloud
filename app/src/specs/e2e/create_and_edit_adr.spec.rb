@@ -4,6 +4,8 @@ RSpec.describe "Create and Edit an ADR" do
   include Support::E2E::Login
   it "can create and edit an ADR" do
     account = create(:account)
+    other_project1 = create(:project, account: account)
+    other_project2 = create(:project, account: account, name: "zzz_lastone")
     login(page:,account:)
 
     link = page.locator("a[href='#{NewDraftAdrPage.routing}']")
@@ -24,6 +26,8 @@ RSpec.describe "Create and Edit an ADR" do
     expect(title_field).to have_text("This field must have at least 2 words")
 
     title_field.fill("Proper Title")
+    project_selector = page.locator("select[name='project_external_id']")
+    project_selector.select_option(label: other_project2.name)
     submit_button.click
 
     info = page.locator("[role=status]")
@@ -35,6 +39,7 @@ RSpec.describe "Create and Edit an ADR" do
     table = page.locator("table", has: page.locator("caption", hasText: "Draft ADRs"))
 
     expect(table).to have_text("Proper Title")
+    expect(table).to have_text(other_project2.name)
   end
 
 end

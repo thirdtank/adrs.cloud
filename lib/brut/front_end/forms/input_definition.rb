@@ -82,3 +82,17 @@ class Brut::FrontEnd::Forms::InputDefinition
     Brut::FrontEnd::Forms::Input.new(input_definition: self, value: value)
   end
 end
+class Brut::FrontEnd::Forms::SelectInputDefinition
+  include Brut::FussyTypeEnforcment
+  attr_reader :required, :name
+  def initialize(name:, required: true)
+    name = name.to_s
+    @name     = type!( name      , String        , "name")
+    @required = type!( required  , [true, false] , "required", :required)
+  end
+
+  # Create an Input based on this defitition, initializing it with the given value.
+  def make_input(value:)
+    Brut::FrontEnd::Forms::SelectInput.new(input_definition: self, value: value)
+  end
+end

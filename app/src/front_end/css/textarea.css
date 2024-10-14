@@ -28,7 +28,7 @@
   border-width: 0;
   font-size: var(--mg-fs-2);
   background-color: white;
-  resize: none;
+  resize: vertical;
   padding: calc(var(--mg-sp-3) - (1.25 * var(--mg-sp-1)));
 }
 .textarea:focus {

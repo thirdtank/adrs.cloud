@@ -74,6 +74,7 @@
         },
         columns: {
           title: "Title",
+          project: "Project",
           context: "Context",
           created_at: "Created",
           rejected_at: "Rejected",

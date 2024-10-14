@@ -38,6 +38,7 @@ class DraftAdr
   def replacing?    = !self.adr_replacing.nil?
   def adr_refining  =  @adr.refines_adr
   def adr_replacing =  @adr.proposed_to_replace_adr
+  def project       =  @adr.project
 
   def to_params
     {

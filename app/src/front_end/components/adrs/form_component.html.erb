@@ -2,6 +2,10 @@
   <%= form_tag(action: form_action,
                method:"post",
                class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-60-ns") do %>
+  <label class="flex items-center gap-2 mb-3">
+    <span>Project:</span>
+    <%= component(projects_input) %>
+  </label>
   <%= component TextFieldComponent.new(
     label: t(component: :adr_title),
     form: form,
@@ -74,7 +78,6 @@
   </div>
   <input type="hidden" name="refines_adr_external_id" value="<%= form.refines_adr_external_id %>">
   <input type="hidden" name="replaced_adr_external_id" value="<%= form.replaced_adr_external_id %>">
-  <input type="hidden" name="project_external_id" value="<%= form.project_external_id %>">
   <div class="mt-2 flex justify-center">
     <% if ajax_submit? %>
       <brut-ajax-submit

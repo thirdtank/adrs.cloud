@@ -92,6 +92,19 @@ RSpec.describe AdrsPage::TabPanelComponent do
       expect(parsed_html.text).to include(adr.title)
     end
 
+    it "uses the project name for :project" do
+      adr = create(:adr)
+
+      component = described_class.new(adrs: [ adr ],
+                                      tab: :drafts,
+                                      columns: [ :project ],
+                                      selected: false,
+                                      tag: nil,
+                                      action: :view)
+      parsed_html = render_and_parse(component)
+      expect(parsed_html.text).to include(adr.project.name)
+    end
+
     it "formats a date using a <time>" do
       adr = create(:adr)
 

@@ -37,6 +37,10 @@ class AuthenticatedAccount < Account
     def find(**args)
       @klass.find(**(args.merge(@args)))
     end
+
+    def all
+      @klass.order(:name).where(**@args)
+    end
   end
 
   class AdrsFindable < Findable
@@ -75,6 +79,10 @@ class AuthenticatedAccount < Account
 
   def entitlements
     AccountEntitlements.new(account:)
+  end
+
+  def projects
+    Findable.new(DB::Project,account:)
   end
 
 end

@@ -80,3 +80,40 @@ class Brut::FrontEnd::Forms::Input
 
   def valid? = @validity_state.valid?
 end
+class Brut::FrontEnd::Forms::SelectInput
+
+  extend Forwardable
+
+  attr_reader :value, :validity_state
+
+  def initialize(input_definition:, value:)
+    @input_definition = input_definition
+    @validity_state = Brut::FrontEnd::Forms::ValidityState.new
+    self.value=(value)
+  end
+
+  def_delegators :"@input_definition", :name,
+                                       :required
+
+  def value=(new_value)
+    value_missing = new_value.nil? || (new_value.kind_of?(String) && new_value.strip == "")
+    missing = if self.required
+                value_missing
+              else
+                false
+              end
+
+    @validity_state = Brut::FrontEnd::Forms::ValidityState.new(
+      value_missing: missing,
+    )
+    @value = new_value
+  end
+
+  # Set a server-side constraint violation on this input.  This is essentially arbitrary, but note
+  # that `key` should not be a key used for client-side validations.
+  def server_side_constraint_violation(key,context=true)
+    @validity_state.server_side_constraint_violation(key: key, context: context)
+  end
+
+  def valid? = @validity_state.valid?
+end

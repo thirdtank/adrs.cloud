@@ -73,7 +73,7 @@
                                         tag: tag,
                                         selected: tab == :accepted,
                                         tab: :accepted,
-                                        columns: [ :title, :accepted_at ],
+                                        columns: [ :title, :project, :accepted_at ],
                                         action: :view)
       ) %>
       <%= component(
@@ -81,7 +81,7 @@
                                         tab: :drafts,
                                         tag: tag,
                                         selected: tab == :drafts,
-                                        columns: [ :title, :created_at ],
+                                        columns: [ :title, :project, :created_at ],
                                         action: :edit)
       )%>
       <%= component(
@@ -89,7 +89,7 @@
                                         selected: tab == :replaced,
                                         tab: :replaced,
                                         tag: tag,
-                                        columns: [ :title, :created_at ],
+                                        columns: [ :title, :project, :created_at ],
                                         action: :view)
       ) %>
       <%= component(
@@ -97,7 +97,7 @@
                                         tab: :rejected,
                                         selected: tab == :rejected,
                                         tag: tag,
-                                        columns: [ :title, :created_at, :rejected_at ],
+                                        columns: [ :title, :project, :created_at, :rejected_at ],
                                         action: :view)
       )%>
     </div>
