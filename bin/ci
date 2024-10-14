@@ -12,4 +12,7 @@ echo "[ bin/ci ] Analyzing Ruby gems for"
 echo "[ bin/ci ] security vulnerabilities"
 bundle exec bundle audit check --update
 
+echo "[ bin/ci ] Checking to see that all classes have tests"
+bin/test audit
+
 echo "[ bin/ci ] Done"

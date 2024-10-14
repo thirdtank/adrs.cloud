@@ -220,6 +220,7 @@ class Command
       end
       if files_missing.empty?
         log "All tests exists!"
+        0
       else
         if @options[:show_scaffold]
           files_missing_args = files_missing.map { |file|
@@ -228,9 +229,8 @@ class Command
 
           log "Run this command to generate empty tests:\n\nbin/scaffold test \\\n#{files_missing_args}"
         end
+        1
       end
-
-      0
     end
   end
 end

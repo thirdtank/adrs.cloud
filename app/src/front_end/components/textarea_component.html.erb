@@ -1,4 +1,4 @@
-<label class="flex flex-column gap-1 w-100">
+<<%= container_tag %> class="flex flex-column gap-1 w-100">
   <div class="textarea-container" <%= invalid? ? 'data-invalid' : '' %>>
     <%= component(input_component) %>
   </div>
@@ -18,4 +18,4 @@
   <div class="text-field-label">
     <%= label %>
   </div>
-</label>
+</<%= container_tag %>>
