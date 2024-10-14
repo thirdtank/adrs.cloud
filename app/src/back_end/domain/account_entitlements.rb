@@ -42,4 +42,23 @@ class AccountEntitlements
   def non_rejected_adrs_remaining
     max_non_rejected_adrs - non_rejected_adrs
   end
+
+  def can_add_new_project?
+     num_projects < max_projects
+  end
+
+  def max_projects
+    @max_projects ||= (
+      @account.entitlement.max_projects ||
+      @account.entitlement.entitlement_default.max_projects
+    )
+  end
+
+  def num_projects
+    @projects ||= @account.projects_dataset.count
+  end
+
+  def projects_remaining
+    max_projects - num_projects
+  end
 end

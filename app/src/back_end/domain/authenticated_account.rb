@@ -38,9 +38,25 @@ class AuthenticatedAccount < Account
       @klass.find(**(args.merge(@args)))
     end
 
+  end
+
+  class ProjectsFindable < Findable
     def all
-      @klass.order(:name).where(**@args)
+      DB::Project.order(:name).where(**@args)
     end
+
+    def active
+      self.all.where(archived_at: nil).map { |db_project|
+        Project.new(project: db_project)
+      }
+    end
+
+    def each(&block)
+      self.all.each do |db_project|
+        block.(Project.new(project: db_project))
+      end
+    end
+
   end
 
   class AdrsFindable < Findable
@@ -82,7 +98,7 @@ class AuthenticatedAccount < Account
   end
 
   def projects
-    Findable.new(DB::Project,account:)
+    ProjectsFindable.new(Project,account:)
   end
 
 end

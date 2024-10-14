@@ -76,7 +76,7 @@ class Brut::FrontEnd::Routing
 
   def add_routing_method(route)
     handler_class = route.handler_class
-    if handler_class.respond_to?(:routing)
+    if handler_class.respond_to?(:routing) && handler_class.method(:routing).owner != Brut::FrontEnd::Form
       raise ArgumentError,"#{handler_class} (that handles path #{route.path_template}) implements ::routing, which it should not"
     end
     form_class = route.respond_to?(:form_class) ? route.form_class : nil

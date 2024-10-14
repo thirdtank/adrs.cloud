@@ -88,6 +88,10 @@ class AdrApp < Sinatra::Base
   action "/private_adrs/:external_id"
 
   page "/account/:external_id"
+  page "/new_project"
+  form "/new_project"
+  page "/edit_project/:external_id"
+  form "/edit_project/:external_id"
 
   page "/admin/home"
   page "/admin/accounts"

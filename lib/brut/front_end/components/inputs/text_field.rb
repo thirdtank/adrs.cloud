@@ -4,7 +4,6 @@ class Brut::FrontEnd::Components::Inputs::TextField < Brut::FrontEnd::Components
     input = form[input_name]
     default_html_attributes["required"] = input.required
     default_html_attributes["pattern"]  = input.pattern
-    default_html_attributes["value"]    = input.value
     default_html_attributes["type"]     = input.type
     default_html_attributes["name"]     = input.name
     if input.max
@@ -21,6 +20,12 @@ class Brut::FrontEnd::Components::Inputs::TextField < Brut::FrontEnd::Components
     end
     if input.step
       default_html_attributes["step"] = input.step
+    end
+    if input.type == "checkbox"
+      default_html_attributes["value"] = "true"
+      default_html_attributes["checked"] = input.value == "true"
+    else
+      default_html_attributes["value"] = input.value
     end
     if !form.new? && !input.valid?
       default_html_attributes["data-invalid"] = true

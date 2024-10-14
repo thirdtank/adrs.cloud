@@ -10,6 +10,7 @@
           # here are all based on DataObjectValidator's behavior
           not_enough_words: "%{field} must have at least %{minwords} words",
           account_exists: "That account already exists",
+          taken: "%{field}'s value is already taken",
         },
       },
       logout: "Logout",
@@ -24,8 +25,12 @@
       adr_shared: "ADR now shared",
       adr_accepted: "ADR Accepted",
       adr_created: "ADR Created",
+      new_project_created: "Project Created",
+      project_updated: "Project Updated",
       adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
       new_adr_invalid: "ADR cannot be created. See below.",
+      new_project_invalid: "Project cannot be created. See below.",
+      save_project_invalid: "Project cannot be saved. See below.",
       tags_updated: "ADR's tags updated",
       draft: "DRAFT",
       back: "Back",
@@ -88,7 +93,7 @@
         view: "View",
         edit: "Edit",
         none: "None",
-        your_account: "Your Account",
+        your_account: "Your Account and Projects",
       },
       AdrsByExternalIdPage: {
         accepted: "Accepted %{block}",
@@ -172,7 +177,24 @@
         projects: {
           default_shared: "Shared",
           default_private: "Not Shared",
+          archived: "Archived",
+          add_new: "Add New Project",
+          archive: "Archive",
+          archive_confirmation: "ADRs will still be available and editable, but no new ADRs can be added to this project",
+          columns: {
+            name: "Name",
+            description: "Description",
+            sharing: "Default Sharing",
+            actions: "Actions",
+          }
         }
+      },
+      NewProjectPage: {
+        new_project: "Add New Project",
+      },
+      EditProjectByExternalIdPage: {
+        edit_project: "Edit Project",
+        save_project: "Save Project",
       },
       "Admin::AccountsByExternalIdPage" => {
         entitlements_saved: "Entitlements updated",

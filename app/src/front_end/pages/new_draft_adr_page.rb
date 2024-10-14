@@ -1,10 +1,10 @@
 class NewDraftAdrPage < AppPage
   attr_reader :form, :refines_adr, :replaces_adr, :projects
   def initialize(form: nil, authenticated_account:, flash:)
-    @form                 = form || NewDraftAdrForm.new(params: { project_external_id: authenticated_account.account.projects.first.external_id })
+    @form                 = form || NewDraftAdrForm.new
     @flash                = flash
     @account_entitlements = authenticated_account.entitlements
-    @projects             = authenticated_account.projects.all
+    @projects             = authenticated_account.projects.active
 
     @refines_adr  = authenticated_account.accepted_adrs.find(external_id: @form.refines_adr_external_id)
     @replaces_adr = authenticated_account.accepted_adrs.find(external_id: @form.replaced_adr_external_id)

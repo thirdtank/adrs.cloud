@@ -13,22 +13,34 @@ class TextFieldComponent < AppComponent
                label
              end
     @input_name = input_name.kind_of?(Symbol) ? input_name.to_s : input_name
-    input_html_attributes = {
-        autofocus: autofocus,
-        placeholder: placeholder,
-        class: "text-field"
-    }
-    if @input_id
-      input_html_attributes.merge!(id: @input_id)
-    end
-    @input_component = Brut::FrontEnd::Components::Inputs::TextField.for_form_input(
-      form: form,
-      input_name: @input_name,
-      html_attributes: input_html_attributes,
+    @input_component = create_input_component(
+      form:,
+      autofocus:,
+      placeholder:,
+      input_id: @input_id
     )
     @constraint_violations = form[@input_name].validity_state
   end
 
   def container_tag = @label.nil? ? "div" : "label"
   def labeled_elsewhere? = @label.nil?
+  def invalid? = @input_component.sanitized_attributes.key?("data-invalid")
+
+private
+
+  def create_input_component(form:,autofocus:,placeholder:,input_id:)
+    input_html_attributes = {
+      autofocus: autofocus,
+      placeholder: placeholder,
+      class: "text-field"
+    }
+    if input_id
+      input_html_attributes.merge!(id: input_id)
+    end
+    Brut::FrontEnd::Components::Inputs::TextField.for_form_input(
+      form: form,
+      input_name: @input_name,
+      html_attributes: input_html_attributes,
+    )
+  end
 end

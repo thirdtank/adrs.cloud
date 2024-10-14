@@ -21,9 +21,6 @@ class DraftAdr
   def self.find!(external_id:,account:)
     adr = DB::Adr.find!(external_id:, account:, accepted_at: nil, rejected_at: nil)
 
-    if !adr
-      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have a draft ADR with ID #{external_id}"
-    end
     DraftAdr.new(adr:)
   end
 
@@ -68,7 +65,12 @@ class DraftAdr
         return form
       end
       if !@adr.accepted?
-        @adr.update(accepted_at: Time.now)
+        DB.transaction do
+          @adr.update(accepted_at: Time.now)
+          if @adr.project.adrs_shared_by_default
+            AcceptedAdr.new(adr:@adr).share!
+          end
+        end
       end
       if !@adr.proposed_to_replace_adr.nil?
         if @adr.proposed_to_replace_adr.accepted?

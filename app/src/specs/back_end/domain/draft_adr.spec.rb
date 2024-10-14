@@ -15,39 +15,84 @@ RSpec.describe DraftAdr do
   end
   describe "#accept" do
     context "form has no constraint violations" do
-      it "sets the ADR as accepted" do
-        account = create(:account)
-        adr = create(:adr, account: account, project: account.projects.first)
-        params = {
-          title: adr.title,
-          context: Faker::Lorem.sentence,
-          facing:  Faker::Lorem.sentence,
-          decision:  Faker::Lorem.sentence,
-          neglected:  Faker::Lorem.sentence,
-          achieve:  Faker::Lorem.sentence,
-          accepting:  Faker::Lorem.sentence,
-          because:  Faker::Lorem.sentence,
-          project_external_id: adr.project.external_id,
-        }
-        form = AcceptedAdrsWithExternalIdForm.new(params:)
+      context "project is set to not share ADRs by default" do
+        it "sets the ADR as accepted" do
+          account = create(:account)
+          project = account.projects.first
+          project.update(adrs_shared_by_default: false)
+          adr = create(:adr, account: account, project: project)
+          params = {
+            title: adr.title,
+            context: Faker::Lorem.sentence,
+            facing:  Faker::Lorem.sentence,
+            decision:  Faker::Lorem.sentence,
+            neglected:  Faker::Lorem.sentence,
+            achieve:  Faker::Lorem.sentence,
+            accepting:  Faker::Lorem.sentence,
+            because:  Faker::Lorem.sentence,
+            project_external_id: adr.project.external_id,
+          }
+          form = AcceptedAdrsWithExternalIdForm.new(params:)
 
 
-        result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
-        expect(result).to be(form)
-        expect(form.constraint_violations?).to eq(false)
+          result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
+          expect(result).to be(form)
+          expect(form.constraint_violations?).to eq(false)
 
-        adr.reload
+          adr.reload
 
-        aggregate_failures do
-          expect(adr.accepted_at).to be_within(10).of(Time.now)
-          expect(adr.title).to       eq(params[:title])
-          expect(adr.context).to     eq(params[:context])
-          expect(adr.facing).to      eq(params[:facing])
-          expect(adr.decision).to    eq(params[:decision])
-          expect(adr.neglected).to   eq(params[:neglected])
-          expect(adr.achieve).to     eq(params[:achieve])
-          expect(adr.accepting).to   eq(params[:accepting])
-          expect(adr.because).to     eq(params[:because])
+          aggregate_failures do
+            expect(adr.accepted_at).to be_within(10).of(Time.now)
+            expect(adr.title).to       eq(params[:title])
+            expect(adr.context).to     eq(params[:context])
+            expect(adr.facing).to      eq(params[:facing])
+            expect(adr.decision).to    eq(params[:decision])
+            expect(adr.neglected).to   eq(params[:neglected])
+            expect(adr.achieve).to     eq(params[:achieve])
+            expect(adr.accepting).to   eq(params[:accepting])
+            expect(adr.because).to     eq(params[:because])
+            expect(adr.shared?).to     eq(false)
+          end
+        end
+      end
+      context "project is set to share ADRs by default" do
+        it "sets the ADR as accepted and shared" do
+          account = create(:account)
+          project = account.projects.first
+          project.update(adrs_shared_by_default: true)
+          adr = create(:adr, account: account, project: project)
+          params = {
+            title: adr.title,
+            context: Faker::Lorem.sentence,
+            facing:  Faker::Lorem.sentence,
+            decision:  Faker::Lorem.sentence,
+            neglected:  Faker::Lorem.sentence,
+            achieve:  Faker::Lorem.sentence,
+            accepting:  Faker::Lorem.sentence,
+            because:  Faker::Lorem.sentence,
+            project_external_id: adr.project.external_id,
+          }
+          form = AcceptedAdrsWithExternalIdForm.new(params:)
+
+
+          result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
+          expect(result).to be(form)
+          expect(form.constraint_violations?).to eq(false)
+
+          adr.reload
+
+          aggregate_failures do
+            expect(adr.accepted_at).to be_within(10).of(Time.now)
+            expect(adr.title).to       eq(params[:title])
+            expect(adr.context).to     eq(params[:context])
+            expect(adr.facing).to      eq(params[:facing])
+            expect(adr.decision).to    eq(params[:decision])
+            expect(adr.neglected).to   eq(params[:neglected])
+            expect(adr.achieve).to     eq(params[:achieve])
+            expect(adr.accepting).to   eq(params[:accepting])
+            expect(adr.because).to     eq(params[:because])
+            expect(adr.shared?).to     eq(true)
+          end
         end
       end
       it "sets the ADR this one is to replaced as having been replaced" do

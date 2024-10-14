@@ -43,7 +43,7 @@ class Brut::FrontEnd::Forms::InputDefinition
     minlength: nil,
     name: nil,
     pattern: nil,
-    required: true,
+    required: :based_on_type,
     step: nil,
     type: nil
   )
@@ -60,17 +60,19 @@ class Brut::FrontEnd::Forms::InputDefinition
            end
 
     type = type.to_s
+    if required == :based_on_type
+      required = type != "checkbox"
+    end
 
-    @max       = type!( max       , Numeric       , "max")
-    @maxlength = type!( maxlength , Numeric       , "maxlength")
-    @min       = type!( min       , Numeric       , "min")
-    @minlength = type!( minlength , Numeric       , "minlength")
-    @name      = type!( name      , String        , "name")
-    @pattern   = type!( pattern   , String        , "pattern")
-    @required  = type!( required  , [true, false] , "required", :required)
-    @step      = type!( step      , Numeric       , "step")
-    @type      = type!( type      , INPUT_TYPES_TO_CLASS.keys,
-                                                    "type", :required)
+    @max       = type!( max       , Numeric                   , "max")
+    @maxlength = type!( maxlength , Numeric                   , "maxlength")
+    @min       = type!( min       , Numeric                   , "min")
+    @minlength = type!( minlength , Numeric                   , "minlength")
+    @name      = type!( name      , String                    , "name")
+    @pattern   = type!( pattern   , String                    , "pattern")
+    @required  = type!( required  , [true, false]             , "required", :required)
+    @step      = type!( step      , Numeric                   , "step")
+    @type      = type!( type      , INPUT_TYPES_TO_CLASS.keys , "type", :required)
 
     if @pattern.nil? && type == "email"
       @pattern = /^[^@]+@[^@]+\.[^@]+$/.source

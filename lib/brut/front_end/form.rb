@@ -48,6 +48,10 @@ class Brut::FrontEnd::Form
 
   extend Brut::FrontEnd::FormInputDeclaration
 
+  def self.routing(*)
+    raise ArgumentError,"You called .routing on a form, but that form hasn't been configured with a route. You must do so in your route_config.rb file via the `form` method"
+  end
+
   # Create an instance of this form, optionally initialized with
   # the given values for its params.
   def initialize(params: {})
@@ -108,10 +112,12 @@ private
   def convert_to_string_or_nil(hash)
     hash.each do |key,value|
       case value
-      in Hash then convert_to_string_or_nil(value)
-      in String then hash[key] = RichString.new(value).to_s_or_nil
-      in Numeric then hash[key] = value.to_s
-      in NilClass then # it's fine
+      in Hash       then convert_to_string_or_nil(value)
+      in String     then hash[key] = RichString.new(value).to_s_or_nil
+      in Numeric    then hash[key] = value.to_s
+      in TrueClass  then hash[key] = "true"
+      in FalseClass then hash[key] = "false"
+      in NilClass   then # it's fine
       else
         if Brut.container.project_env.test?
           raise ArgumentError, "Got #{value.class} for #{key} in params hash, which is not expected"
