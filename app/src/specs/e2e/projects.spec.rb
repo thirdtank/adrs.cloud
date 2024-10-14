@@ -61,7 +61,6 @@ RSpec.describe "Manage Projects" do
     sharing_checkbox = page.locator("input[type='checkbox'][name='adrs_shared_by_default']")
     sharing_checkbox.check
 
-    puts page.content
     submit_button.click
 
     expect(page).to be_page_for(AccountByExternalIdPage)
