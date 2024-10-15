@@ -24,6 +24,8 @@ class AuthenticatedAccount < Account
 
   def active? = true
   def error?  = false
+  def has_download? = !self.download.nil?
+  def download = Download.for_account(account: @account)
 
   class Findable
     def initialize(klass,**args)

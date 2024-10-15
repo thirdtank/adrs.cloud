@@ -110,6 +110,60 @@
         <% end %>
       <% end %>
       <%= tab_panel("download") do %>
+        <% if authenticated_account.has_download? %>
+          <% if authenticated_account.download.ready? %>
+          <div class="pa-3 bn shadow-1 br-3 bg-green-900 green-200 dib">
+            <h3 class="ma-0 f-3 flex items-center gap-2">
+              <span class="w-2"><%= svg("database-download-icon") %></span>
+              <span>
+                Data Ready
+              </span>
+            </h3>
+            <p class="p i">
+              Your data as of <%= timestamp(authenticated_account.download.created_at, format: :full_with_tz) %> is ready to download. It'll be available here until <%= timestamp(authenticated_account.download.delete_at, format: :full_with_tz) %>.
+            </p>
+            <a href="#" class="f-3 green-200 db">
+              Download
+            </a>
+            <%= form_tag(for: DownloadsHandler, class: "mt-4") do %>
+              <%= component(ButtonComponent.new(
+                size: :tiny,
+                color: :blue,
+                label: "Create New Download",
+                icon: "database-download-icon",
+                confirm: "This will delete your existing download",
+              ))%>
+            <p class="p i f-1">
+              This will delete the currently-available download and create a new one with all your data as of this moment.
+            </p>
+          <% end %>
+          </div>
+        <% else %>
+          <div class="pa-3 bn shadow-1 br-3 bg-yellow-900 yellow-200 dib">
+            <h3 class="ma-0 f-3 flex items-center gap-2">
+              <span class="w-2 flex items-center rotating"><%= svg("loader-icon") %></span>
+              <span>
+                Data Being Gathered
+              </span>
+            </h3>
+            <p class="p i mb-0">
+              Your data is being assembled. Please check back.
+            </p>
+          </div>
+        <% end %>
+        <% else %>
+          <%= form_tag(for: DownloadsHandler) do %>
+            <%= component(ButtonComponent.new(
+              size: :large,
+              color: :green,
+              label: "Create Download",
+              icon: "database-download-icon",
+            ))%>
+            <p class="p i">
+              We'll assemble all your data into a single download. Check back here to see when it's done. Should be just a few minutes.
+            </p>
+          <% end %>
+        <% end %>
       <% end %>
       <%= tab_panel("info") do %>
         <h3 class="f-3 ma-0">Personal Data</h3>

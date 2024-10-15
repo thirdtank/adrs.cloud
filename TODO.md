@@ -2,17 +2,24 @@
 
 CHECK  1 - Store provider and uid for auth
 
-       2 - Projects
+CHECK  2 - Projects
 
 CHECK      DONE: Users get a default project
 CHECK      DONE: ADRs cannot be replaced/refined across projects
-           DONE: Project can be changed on any ADR
 
 CHECK  3 - Change ADR style to not fill in sentences
 
        4 - ADR Downloads
 
            DONE: Background jobs and temporary files?
+
+           - Option 1 - Create a JSON blob of the data, store that in a table, have that row
+                        deleted after e.g. a day
+                        PROS: No new infra
+                        CONS: Not scalable, uses up space
+           - Optino 2 - Create JSON blob and save to S3
+                        PROS: scalable, don't have to worry about deleting
+                        CONS: more complicated
 
        5 - Need a real name for this thing
 

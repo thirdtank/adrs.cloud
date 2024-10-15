@@ -7,6 +7,7 @@ class DB::Account < AppDataModel
   one_to_many :external_accounts
   one_to_one :entitlement
   one_to_many :projects
+  one_to_one :download
 
   def deactivated? = !!self.deactivated_at
 

@@ -170,7 +170,7 @@
           },
           "download": {
             title: "Download Your ADRs",
-            intro: "These are your ADRs. Download them here to use in other systems.",
+            intro: "The ADRs you have created belong to you. Download them here to use in other systems.",
           },
           "info": {
             title: "Info and Limits",
