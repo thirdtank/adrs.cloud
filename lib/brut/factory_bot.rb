@@ -9,7 +9,7 @@ class Brut::FactoryBot
   def setup!
     Faker::Config.locale = :en
     FactoryBot.definition_file_paths = [
-      Brut.container.app_src_dir / "specs" / "factories"
+      Brut.container.app_specs_dir / "factories"
     ]
     FactoryBot.define do
       to_create { |instance| instance.save }

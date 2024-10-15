@@ -4,8 +4,8 @@ CHECK  1 - Store provider and uid for auth
 
        2 - Projects
 
-           DONE: Users get a default project
-           DONE: ADRs cannot be replaced/refined across projects
+CHECK      DONE: Users get a default project
+CHECK      DONE: ADRs cannot be replaced/refined across projects
            DONE: Project can be changed on any ADR
 
 CHECK  3 - Change ADR style to not fill in sentences

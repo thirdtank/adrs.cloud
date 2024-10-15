@@ -15,6 +15,9 @@ gem "sinatra", require: false
 # Audit our dependencies
 gem "bundler-audit", groups: [ :test ]
 
+# This allows us to make assertions about test setup that are not themselves tests
+gem "confidence-check", groups: [ :test ]
+
 # Dotenv manages the UNIX environment for dev and test
 gem "dotenv", groups: [:development, :test]
 
@@ -83,3 +86,5 @@ gem "tilt"
 gem "tzinfo"
 gem "tzinfo-data"
 
+# Allows for diagnosing failing tests
+gem "with_clues", groups: [ :test ]

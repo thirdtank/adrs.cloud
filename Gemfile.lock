@@ -18,6 +18,7 @@ GEM
       bundler (>= 1.2.0, < 3)
       thor (~> 1.0)
     concurrent-ruby (1.3.4)
+    confidence-check (1.0.1)
     connection_pool (2.4.1)
     diff-lcs (1.5.1)
     dotenv (3.1.4)
@@ -36,7 +37,7 @@ GEM
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     json (2.7.2)
-    jwt (2.9.1)
+    jwt (2.9.3)
       base64
     logger (1.6.1)
     mime-types (3.6.0)
@@ -79,11 +80,11 @@ GEM
     playwright-ruby-client (1.47.0)
       concurrent-ruby (>= 1.1.6)
       mime-types (>= 3.0)
-    prism (1.1.0)
+    prism (1.2.0)
     puma (6.4.3)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.1.7)
+    rack (3.1.8)
     rack-protection (4.0.0)
       base64 (>= 0.1.0)
       rack (>= 3.0.0, < 4)
@@ -132,6 +133,7 @@ GEM
     uri (0.13.1)
     version_gem (1.1.4)
     webrick (1.8.2)
+    with_clues (1.3.0)
 
 PLATFORMS
   aarch64-linux
@@ -139,6 +141,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler-audit
+  confidence-check
   dotenv
   factory_bot
   faker
@@ -163,6 +166,7 @@ DEPENDENCIES
   tilt
   tzinfo
   tzinfo-data
+  with_clues
 
 BUNDLED WITH
    2.5.7

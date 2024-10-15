@@ -148,7 +148,7 @@ class Command
       audit = app_files.map { |file|
         pathname = Pathname(file)
         relative = pathname.relative_path_from(Brut.container.app_src_dir)
-        test_file = Brut.container.app_src_dir / "specs" / relative.dirname / "#{relative.basename(relative.extname)}.spec.rb"
+        test_file = Brut.container.project_root / "specs" / relative.dirname / "#{relative.basename(relative.extname)}.spec.rb"
         hash = {
           source_file: pathname,
           test_file: test_file,

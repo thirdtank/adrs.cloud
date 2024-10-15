@@ -1,7 +1,7 @@
 ENV["RACK_ENV"] = "test"
 require "bundler"
 Bundler.require
-require_relative "../../boot"
+require_relative "../app/boot"
 require "brut/spec_support"
 
 require "nokogiri"
@@ -10,6 +10,8 @@ require "socket"
 require "timeout"
 require "playwright"
 require "playwright/test"
+require "confidence_check/for_rspec"
+require "with_clues"
 
 require_relative "support"
 
@@ -100,6 +102,8 @@ RSpec.configure do |config|
       metadata[:e2e] = true
     end
   end
+  config.include ConfidenceCheck::ForRSpec
+  config.include WithClues::Method
   config.include Brut::SpecSupport::GeneralSupport
   config.include Brut::SpecSupport::ComponentSupport, component: true
   config.include Brut::SpecSupport::HandlerSupport, handler: true

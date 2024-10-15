@@ -1,9 +1,9 @@
 {
   "app/src/*.rb": {
-    "alternate": "app/src/specs/{}.spec.rb",
+    "alternate": "specs/{}.spec.rb",
     "type": "source"
   },
-  "app/src/specs/*.spec.rb": {
+  "specs/*.spec.rb": {
     "alternate": "app/src/{}.rb",
     "type": "spec"
   },
@@ -21,6 +21,9 @@
   },
   "app/src/back_end/db/*.rb": {
     "type": "db"
+  },
+  "app/src/back_end/domain/*.rb": {
+    "type": "domain"
   }
 
 }

@@ -125,8 +125,8 @@ class Brut::Config
       c.store_ensured_path(
         "app_specs_dir",
         "Path to root of where all the app's specs/tests are"
-      ) do |app_src_dir|
-        app_src_dir / "specs"
+      ) do |project_root|
+        project_root / "specs"
       end
 
       c.store_required_path(
