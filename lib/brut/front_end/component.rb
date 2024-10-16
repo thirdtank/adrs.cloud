@@ -49,9 +49,14 @@ class Brut::FrontEnd::Component
 
   class AssetPathResolver
     def initialize(metadata_file:)
-      @metadata = JSON.parse(File.read(metadata_file))["asset_metadata"]
+      @metadata_file = metadata_file
+      reload
+    end
+
+    def reload
+      @metadata = JSON.parse(File.read(@metadata_file))["asset_metadata"]
       if @metadata.nil?
-        raise "Asset metadata file '#{metadata_file}' is corrupted. There is no top-level 'asset_metadata' key"
+        raise "Asset metadata file '#{@metadata_file}' is corrupted. There is no top-level 'asset_metadata' key"
       end
     end
 

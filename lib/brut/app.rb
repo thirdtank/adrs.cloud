@@ -37,7 +37,12 @@ class Brut::App
     Sequel::Model.plugin :external_id, global_prefix: "ad"
     Sequel::Model.plugin :find_bang
     Sequel::Model.plugin :created_at
-    @loader.eager_load
+    if Brut.container.eager_load_classes?
+      SemanticLogger["Brut"].info("Eagerly loading app's classes")
+      @loader.eager_load
+    else
+      SemanticLogger["Brut"].info("Lazily loading app's classes")
+    end
     @booted = true
   end
 
@@ -51,23 +56,6 @@ class Brut::App
       app_id: self.id,
       app_organization: self.organization,
     )
-
-    Dir[Brut.container.front_end_src_dir / "*"].each do |dir|
-      if Pathname(dir).directory?
-        @loader.push_dir(dir)
-      end
-    end
-    Dir[Brut.container.back_end_src_dir / "*"].each do |dir|
-      if Pathname(dir).directory?
-        @loader.push_dir(dir)
-      end
-    end
-    @loader.inflector.inflect(
-      "db" => "DB"
-    )
-    @loader.enable_reloading # you need to opt-in before setup
-    @loader.setup
-    #@loader.log!
 
     project_root = Brut.container.project_root
     project_env = Brut.container.project_env
@@ -84,6 +72,34 @@ class Brut::App
 
     ::I18n.load_path += Dir[Brut.container.project_root / "app" / "config" / "i18n" / "**/*.rb"]
 
+    Brut.container.store(
+      "zeitwerk_loader",
+      @loader.class,
+      "Zeitwerk Loader configured for this app",
+      @loader
+    )
+
+    Dir[Brut.container.front_end_src_dir / "*"].each do |dir|
+      if Pathname(dir).directory?
+        @loader.push_dir(dir)
+      end
+    end
+    Dir[Brut.container.back_end_src_dir / "*"].each do |dir|
+      if Pathname(dir).directory?
+        @loader.push_dir(dir)
+      end
+    end
+    @loader.inflector.inflect(
+      "db" => "DB"
+    )
+    if Brut.container.auto_reload_classes?
+      SemanticLogger["Brut"].info("Auto-reloaded configured")
+      @loader.enable_reloading
+    else
+      SemanticLogger["Brut"].info("Classes will not be auto-reloaded")
+    end
+    @loader.setup
+    #@loader.log!
   end
 
 end

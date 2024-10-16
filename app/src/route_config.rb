@@ -1,15 +1,5 @@
 require "sinatra/base"
 
-#require "front_end/app_view_helpers"
-#require "front_end/components/app_component"
-#require "front_end/pages/app_page"
-#require "front_end/app_session"
-#require "back_end/db/app_data_model"
-#require "back_end/domain"
-#require "back_end/jobs"
-#require "front_end/forms/app_form"
-#require "front_end/handlers/app_handler"
-
 class AdrApp < Sinatra::Base
 
   include Brut::SinatraHelpers

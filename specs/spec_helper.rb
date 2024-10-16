@@ -12,6 +12,7 @@ require "playwright"
 require "playwright/test"
 require "confidence_check/for_rspec"
 require "with_clues"
+require "sidekiq/testing"
 
 require_relative "support"
 
@@ -20,26 +21,29 @@ Brut::FactoryBot.new.setup!
 
 class TestServer
   def self.instance
-    @instance ||= TestServer.new(bin_dir: Brut.container.project_root / "bin",
-                                 tmp_dir: Brut.container.tmp_dir)
+    @instance ||= TestServer.new(bin_dir: Brut.container.project_root / "bin")
   end
 
-  def initialize(bin_dir:,tmp_dir:)
+  def initialize(bin_dir:)
     @bin_dir = bin_dir
-    @tmp_dir = tmp_dir
-    @thread  = nil
+    @pid     = nil
   end
 
   def start
-    if !@thread.nil?
+    if !@pid.nil?
       puts "already started server"
       return
     end
-    @thread = Thread.new do
-      puts "server starting"
-      system "#{@bin_dir}/build-and-run"
+    Bundler.with_unbundled_env do
+      puts "Starting test server"
+      @pid = Process.spawn(
+        "#{@bin_dir}/test-server",
+        pgroup: true # We want this in its own process group, so we can 
+                     # more reliably kill it later on
+      )
+      puts "Spawned '#{@pid}'"
     end
-    if is_port_open?("0.0.0.0",6502)
+    if is_port_open?("0.0.0.0",6503)
       puts "server started"
     else
       raise "Problem: server never started"
@@ -47,19 +51,22 @@ class TestServer
   end
 
   def stop
-    puts "server already stopped"
-    return if @thread.nil?
-    pid = File.read(@tmp_dir / "pidfile").chomp
-    puts "killing server nicely"
-    system "kill #{pid}"
-    result = @thread.join(2)
-    if result.nil?
-      puts "server did not die after 2 seconds. Trying -9"
-      system "kill -9 #{pid}"
-    else
-      puts "server stopped it seems"
+    if @pid.nil?
+      puts "Server already stopped"
+      return
     end
-    @thread = nil
+    puts "killing server nicely"
+    Process.kill("-TERM",@pid) # The '-' is to kill the process group, not just the pid
+    begin
+      Timeout.timeout(4) do
+        Process.wait(@pid)
+      end
+    rescue Timeout::Error
+      binding.irb
+      puts "Server did not die after 4 seconds. Trying harder"
+      Process.kill("-KILL",@pid)
+    end
+    @pid = nil
   end
 
 private
@@ -139,21 +146,27 @@ RSpec.configure do |config|
     end
 
     if is_e2e
-      TestServer.instance.start
-      Playwright.create(playwright_cli_executable_path: "./node_modules/.bin/playwright") do |playwright|
-        playwright.chromium.launch(headless: true) do |browser|
-          context_options = {
-            baseURL: "http://0.0.0.0:6502/",
-          }
-          if ENV["E2E_RECORD_VIDEOS"]
-            context_options[:record_video_dir] =  Brut.container.project_root / "videos"
+      Sidekiq::Testing.disable! do
+        Sidekiq.redis do |redis|
+          redis.flushall
+        end
+
+        TestServer.instance.start
+        Playwright.create(playwright_cli_executable_path: "./node_modules/.bin/playwright") do |playwright|
+          playwright.chromium.launch(headless: true) do |browser|
+            context_options = {
+              baseURL: "http://0.0.0.0:6503/",
+            }
+            if ENV["E2E_RECORD_VIDEOS"]
+              context_options[:record_video_dir] =  Brut.container.project_root / "videos"
+            end
+            browser_context = browser.new_context(**context_options)
+            browser_context.default_timeout = (ENV["E2E_TIMEOUT_MS"] || 5_000).to_i
+            example.example_group.let(:page) { browser_context.new_page }
+            example.run
+            browser_context.close
+            browser.close
           end
-          browser_context = browser.new_context(**context_options)
-          browser_context.default_timeout = (ENV["E2E_TIMEOUT_MS"] || 5_000).to_i
-          example.example_group.let(:page) { browser_context.new_page }
-          example.run
-          browser_context.close
-          browser.close
         end
       end
     else

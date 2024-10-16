@@ -46,10 +46,21 @@ class Brut::Container
   def store(name,type,description,value=:use_block,allow_app_override: false,&block)
     # TODO: Check that value / block is used properly
     name = name.to_s
+    if type.to_s == "boolean"
+      name = "#{name}?".gsub(/\?\?$/,"?")
+    end
     self.validate_name!(name,type)
     if value == :use_block
-      @container[name] = { value: nil, derive_with: block }
+      if type == "boolean"
+        derive_with = ->() { !!block.() }
+      else
+        derive_with = block
+      end
+      @container[name] = { value: nil, derive_with: derive_with }
     else
+      if type == "boolean"
+        value = !!value
+      end
       @container[name] = { value: value }
     end
     @container[name][:description] = description

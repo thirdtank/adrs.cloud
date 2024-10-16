@@ -9,6 +9,20 @@ class Brut::FrontEnd::Routing
     @routes = Set.new
   end
 
+  def reload
+    new_routes = @routes.map { |route|
+      if route.class == Route
+        route.class.new(route.http_method,route.path_template)
+      else
+        route.class.new(route.path_template)
+      end
+    }
+    @routes = Set.new(new_routes)
+    @routes.each do |route|
+      add_routing_method(route)
+    end
+  end
+
   def register_page(path)
     route = PageRoute.new(path)
     @routes << route
@@ -39,9 +53,9 @@ class Brut::FrontEnd::Routing
 
   def route(handler_class)
     route = @routes.detect { |route|
-      handler_class_match = route.handler_class == handler_class
+      handler_class_match = route.handler_class.name == handler_class.name
       form_class_match = if route.respond_to?(:form_class)
-                           route.form_class == handler_class
+                           route.form_class.name == handler_class.name
                          else
                            false
                          end
@@ -178,8 +192,8 @@ class Brut::FrontEnd::Routing
   end
 
   class PageRoute < Route
-    def initialize(path)
-      super(Brut::FrontEnd::HttpMethod.new(:get),path)
+    def initialize(path_template)
+      super(Brut::FrontEnd::HttpMethod.new(:get),path_template)
     end
     def suffix = "Page"
     def preposition = "By"
@@ -187,18 +201,18 @@ class Brut::FrontEnd::Routing
 
   class FormRoute < Route
     attr_reader :form_class
-    def initialize(path)
-      super(Brut::FrontEnd::HttpMethod.new(:post),path)
+    def initialize(path_template)
+      super(Brut::FrontEnd::HttpMethod.new(:post),path_template)
       @form_class = self.locate_handler_class("Form","With")
     end
   end
 
   class FormHandlerRoute < Route
-    def initialize(path)
-      super(Brut::FrontEnd::HttpMethod.new(:post),path)
+    def initialize(path_template)
+      super(Brut::FrontEnd::HttpMethod.new(:post),path_template)
       unnecessary_class = self.locate_handler_class("Form","With", on_missing: nil)
       if !unnecessary_class.nil?
-        raise ArgumentError,"#{path} should only have #{handler_class} defined, however #{unnecessary_class} was found. If #{path} should be a form submission, use `form \"#{path}\"` instead of `action \"#{path}\"`. Otherwise, delete #{unnecessary_class}"
+        raise ArgumentError,"#{path_template} should only have #{handler_class} defined, however #{unnecessary_class} was found. If #{path_template} should be a form submission, use `form \"#{path_template}\"` instead of `action \"#{path_template}\"`. Otherwise, delete #{unnecessary_class}"
       end
     end
   end

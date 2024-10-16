@@ -95,6 +95,13 @@ module Brut::SinatraHelpers
 
     sinatra_app.set :logging, true
     sinatra_app.before do
+
+      if Brut.container.auto_reload_classes?
+        Brut.container.zeitwerk_loader.reload
+        Brut.container.routing.reload
+        Brut.container.asset_path_resolver.reload
+      end
+
       app_session = Brut.container.session_class.new(rack_session: session)
       flash = app_session.flash
       app_session[:_flash] ||= flash

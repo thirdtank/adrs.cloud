@@ -4,8 +4,10 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
 ROOT_DIR="${SCRIPT_DIR}/.."
 
-RACK_ENV="development"
+RACK_ENV="test"
 export RACK_ENV
 "${SCRIPT_DIR}"/build-assets
-foreman start --procfile "${ROOT_DIR}/Procfile.${RACK_ENV}" --root "${ROOT_DIR}"
 
+PORT=6503 bin/run &
+bin/run-sidekiq &
+wait

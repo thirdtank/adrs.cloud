@@ -31,12 +31,10 @@ else
   echo "[ $0 ] No pidfile-Starting up"
 fi
 
-PORT="${PORT:-6502}"
 RACK_ENV="${RACK_ENV:-development}"
 
-export PORT
 export RACK_ENV
 
-bin/sidekiq --config "${SCRIPT_DIR}/../app/config/sidekiq.yml"  --require "${SCRIPT_DIR}/../app/boot_sidekiq.rb" --verbose &
+dotenv -f "${SCRIPT_DIR}/../.env.test,${SCRIPT_DIR}/../.env.test.local" --ignore -- bin/sidekiq --config "${SCRIPT_DIR}/../app/config/sidekiq.yml"  --require "${SCRIPT_DIR}/../app/boot_sidekiq.rb" --verbose &
 echo $! > "${PIDFILE}"
 wait

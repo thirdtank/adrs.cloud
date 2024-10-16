@@ -20,9 +20,7 @@ class AccountByExternalIdPage < AppPage
   end
 
   def tab_panel(tab_name,&block)
-    component(self.class::TabPanelComponent.new(tab_name: tab_name, selected_name: selected_tab.name),&block)
+    component(AccountByExternalIdPage::TabPanelComponent.new(tab_name: tab_name, selected_name: selected_tab.name),&block)
   end
 
 end
-
-#require_relative "account_by_external_id_page/tab_panel_component"

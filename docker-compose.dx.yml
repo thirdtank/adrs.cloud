@@ -16,6 +16,7 @@ services:
     working_dir: /root/work
     ports:
       - "6502:6502"
+      - "6503:6503"
   postgres:
     image: postgres:16
     pull_policy: "missing"

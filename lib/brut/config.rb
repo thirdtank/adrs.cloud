@@ -64,6 +64,27 @@ class Brut::Config
         "The environment of the running app, e.g. dev/test/prod",
         ProjectEnvironment.new(ENV["RACK_ENV"]) )
 
+      c.store(
+        "eager_load_classes",
+        :boolean,
+        "If true, classes are eagerly loaded upon startup",
+        true,
+        allow_app_override: true
+      )
+      c.store(
+        "auto_reload_classes",
+        :boolean,
+        "If true, classes are reloaded with each request. Useful only really for development",
+        allow_app_override: true
+      ) do |project_env|
+        no_reload_in_dev = ENV["BRUT_NO_RELOAD_IN_DEV"] == "true"
+        if project_env.development?
+          !no_reload_in_dev
+        else
+          false
+        end
+      end
+
       c.store_ensured_path(
         "log_dir",
         "Path where log files may be written"

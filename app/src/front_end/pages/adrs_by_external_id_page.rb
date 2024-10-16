@@ -37,7 +37,7 @@ class AdrsByExternalIdPage < AppPage
   def tags = Tags.from_array(array: adr.tags(phony_shared: false))
 
   def banner(**args,&block)
-    component(self.class::BannerComponent.new(**args),&block)
+    component(AdrsByExternalIdPage::BannerComponent.new(**args),&block)
   end
 
 end
