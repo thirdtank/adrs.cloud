@@ -36,6 +36,15 @@ class Download
 
   def save
     @download.save
+    CreateDownloadJob.perform_async(external_id)
+  end
+
+  def assemble
+    @download.update(
+      data_ready_at: Time.now,
+      delete_at: Time.now + (60 * 60 * 24),
+      all_data: @download.account.adrs.to_json
+    )
   end
 
   def ready? = !@download.data_ready_at.nil?

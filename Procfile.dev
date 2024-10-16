@@ -1,0 +1,2 @@
+web: PORT=6502 SHELL=/bin/bash npx chokidar --initial -p "app/config/i18n/**/*" "app/src/**/*" "lib/**/*" -c "bin/build-and-run"
+sidekiq: SHELL=/bin/bash npx chokidar --initial -p "app/config/i18n/**/*" "app/src/**/*" "lib/**/*" -c "bin/run-sidekiq"

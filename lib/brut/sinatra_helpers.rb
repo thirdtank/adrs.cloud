@@ -89,14 +89,6 @@ module Brut::SinatraHelpers
   def self.included(sinatra_app)
     sinatra_app.extend(ClassMethods)
 
-    sinatra_app.use Rack::Session::Cookie,
-      key: "rack.session",
-      path: "/",
-      expire_after: 31_536_000,
-      same_site: :lax, # this allows links from other domains to send our cookies to us,
-                       # but only if such links are direct/obvious to the user.
-      secret: ENV.fetch("SESSION_SECRET")
-
     sinatra_app.use Rack::Protection::AuthenticityToken, allow_if: ->(env) {
       env["PATH_INFO"] == "/__brut/locale"
     }

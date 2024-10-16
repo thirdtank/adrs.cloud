@@ -78,6 +78,9 @@ gem "semantic_logger"
 # We use Sequel to access the database
 gem "sequel"
 
+# We use Sidekiq to process background jobs
+gem "sidekiq"
+
 # We use tilt and Temple for html generation
 gem "temple"
 gem "tilt"

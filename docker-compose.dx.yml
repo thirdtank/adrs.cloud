@@ -21,3 +21,5 @@ services:
     pull_policy: "missing"
     environment:
       POSTGRES_PASSWORD: postgres
+  redis:
+    image: valkey/valkey:7.2

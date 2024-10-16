@@ -1,8 +1,10 @@
 #!/bin/bash
 
-set -e
+set -e 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+ROOT_DIR="${SCRIPT_DIR}/.."
 
 RACK_ENV="${RACK_ENV:-development}"
 
-RACK_ENV="${RACK_ENV}" SHELL=/bin/bash npx chokidar --initial -p "app/config/i18n/**/*" "app/src/**/*" "lib/**/*" -c "bin/build-and-run"
+RACK_ENV="${RACK_ENV}" foreman start --procfile "${ROOT_DIR}/Procfile.dev" --root "${ROOT_DIR}"
 
