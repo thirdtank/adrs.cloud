@@ -4,6 +4,7 @@ require "semantic_logger"
 require "dotenv"
 require "open3"
 require "i18n"
+require "zeitwerk"
 
 # A class representing the Brut-powered app that is being built.
 # Unlike Brut::Config, this sets up more dynamic and app-specific stuff,
@@ -12,6 +13,7 @@ class Brut::App
   def initialize
     @config = Brut::Config.new
     @booted = false
+    @loader = Zeitwerk::Loader.new
   end
 
   def id           = raise SubclassMustImplement
@@ -31,6 +33,11 @@ class Brut::App
     end
 
     Sequel::Model.db = Brut.container.sequel_db_handle
+    Sequel::Model.db.extension :pg_array
+    Sequel::Model.plugin :external_id, global_prefix: "ad"
+    Sequel::Model.plugin :find_bang
+    Sequel::Model.plugin :created_at
+    @loader.eager_load
     @booted = true
   end
 
@@ -44,6 +51,23 @@ class Brut::App
       app_id: self.id,
       app_organization: self.organization,
     )
+
+    Dir[Brut.container.front_end_src_dir / "*"].each do |dir|
+      if Pathname(dir).directory?
+        @loader.push_dir(dir)
+      end
+    end
+    Dir[Brut.container.back_end_src_dir / "*"].each do |dir|
+      if Pathname(dir).directory?
+        @loader.push_dir(dir)
+      end
+    end
+    @loader.inflector.inflect(
+      "db" => "DB"
+    )
+    @loader.enable_reloading # you need to opt-in before setup
+    @loader.setup
+    #@loader.log!
 
     project_root = Brut.container.project_root
     project_env = Brut.container.project_env

@@ -47,7 +47,7 @@ RSpec.describe AdrsByExternalIdPage do
       timestamp = html_locator.element!("time[datetime='#{replacing_adr.accepted_at.strftime("%Y-%m-%d %H:%M:%S.%6N %Z")}']")
 
       expect(parsed_html.text).to match(/Originally\s+Accepted/)
-      link = html_locator.element!("a[href='#{page.adr_path(replacing_adr)}']")
+      link = html_locator.element!("a[href='#{routing_for(AdrsByExternalIdPage,external_id: replacing_adr.external_id)}']")
       expect(link.text).to eq(replacing_adr.title)
       expect(parsed_html.css("button[title='Replace']").size).to eq(0)
       expect(parsed_html.css("button[title='Refine']").size).to eq(0)
@@ -65,7 +65,7 @@ RSpec.describe AdrsByExternalIdPage do
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
-      link = html_locator.element!("a[href='#{page.adr_path(refined_adr)}']")
+      link = html_locator.element!("a[href='#{routing_for(AdrsByExternalIdPage,external_id: refined_adr.external_id)}']")
       expect(link.text).to eq(refined_adr.title)
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(1)

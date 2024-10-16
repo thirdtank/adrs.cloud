@@ -25,4 +25,4 @@ class AccountByExternalIdPage < AppPage
 
 end
 
-require_relative "account_by_external_id_page/tab_panel_component"
+#require_relative "account_by_external_id_page/tab_panel_component"

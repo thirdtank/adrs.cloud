@@ -6,7 +6,7 @@ class AuthenticatedAccount < Account
     if account.nil?
       nil
     elsif account.deactivated?
-      DeactivateAccount.new(account:)
+      DeactivatedAccount.new(account:)
     else
       self.new(account:)
     end

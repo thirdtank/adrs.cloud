@@ -1,4 +1,4 @@
-class DeactivateAccount < Account
+class DeactivatedAccount < Account
   def initialize(account:)
     if !account.deactivated?
       raise ArgumentError,"#{account.external_id} is not deactivated"

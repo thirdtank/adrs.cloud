@@ -1,6 +1,6 @@
 class Account
   attr_reader :account
-  def initialize(account:) # DB::Account
+  def initialize(account:) 
     @account = account
   end
 

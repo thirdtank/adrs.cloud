@@ -8,6 +8,8 @@ class AdrsByExternalIdPage < AppPage
 
   def can_add_new? = @can_add_new
   def can_edit_tags? = self.accepted?
+  # XXX: Remove or recreate this
+  def adr_path(adr) = AdrsByExternalIdPage.routing(external_id: adr.external_id)
 
   def field(name, label_additional_clases: "")
     html_tag(:section, "aria-label": name, class: "flex flex-column gap-2 ph-3") {
@@ -40,4 +42,4 @@ class AdrsByExternalIdPage < AppPage
 
 end
 
-require_relative "adrs_by_external_id_page/banner_component"
+#require_relative "adrs_by_external_id_page/banner_component"

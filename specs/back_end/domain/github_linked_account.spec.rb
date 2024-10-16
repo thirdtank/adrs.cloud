@@ -139,7 +139,7 @@ RSpec.describe GithubLinkedAccount do
       end
     end
     context "email exists, but is deactivated" do
-      it "returns a DeactivateAccount" do
+      it "returns a DeactivatedAccount" do
         account = create(:account, :deactivated)
         omniauth_hash = {
           "provider" => "github",

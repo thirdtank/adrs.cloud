@@ -1,4 +1,4 @@
-require_relative "authenticated_account"
+#require_relative "authenticated_account"
 
 class GithubLinkedAccount < AuthenticatedAccount
   include SemanticLogger::Loggable
@@ -59,7 +59,7 @@ class GithubLinkedAccount < AuthenticatedAccount
     if account.nil?
       nil
     elsif account.deactivated?
-      DeactivateAccount.new(account:)
+      DeactivatedAccount.new(account:)
     else
       self.new(account:)
     end

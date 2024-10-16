@@ -1,5 +1,5 @@
 require "spec_helper"
-RSpec.describe DeactivateAccount do
+RSpec.describe DeactivatedAccount do
   describe "::new" do
     context "account is deactivated" do
       it "creates without issue" do

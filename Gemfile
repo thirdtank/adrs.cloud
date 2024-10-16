@@ -91,3 +91,6 @@ gem "tzinfo-data"
 
 # Allows for diagnosing failing tests
 gem "with_clues", groups: [ :test ]
+
+# Zeitwerk handles autoloading of files
+gem "zeitwerk"

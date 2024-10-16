@@ -19,12 +19,12 @@ RSpec.describe AuthenticatedAccount do
         end
       end
       context "account is deactivated" do
-        it "returns a DeactivateAccount" do
+        it "returns a DeactivatedAccount" do
           account = create(:account, :deactivated)
           result = AuthenticatedAccount.find(session_id: account.external_id)
 
           expect(result).not_to eq(nil)
-          expect(result.class).to eq(DeactivateAccount)
+          expect(result.class).to eq(DeactivatedAccount)
         end
       end
     end

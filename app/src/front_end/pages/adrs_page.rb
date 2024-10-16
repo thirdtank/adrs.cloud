@@ -25,7 +25,7 @@ class AdrsPage < AppPage
   def can_add_new? = @entitlements.can_add_new?
 
 end
-require_relative "adrs_page/tab_panel_component"
-require_relative "adrs_page/tab_component"
-require_relative "adrs_page/adr_title_component"
+#require_relative "adrs_page/tab_panel_component"
+#require_relative "adrs_page/tab_component"
+#require_relative "adrs_page/adr_title_component"
 

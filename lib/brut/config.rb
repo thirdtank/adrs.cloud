@@ -207,17 +207,24 @@ class Brut::Config
       end
 
       c.store_ensured_path(
+        "data_models_src_dir",
+        "Path to the root of all data modeling",
+      ) do |back_end_src_dir|
+        back_end_src_dir / "data_models"
+      end
+
+      c.store_ensured_path(
         "migrations_dir",
         "Path to the DB migrations",
-      ) do |back_end_src_dir|
-        back_end_src_dir / "db" / "migrations"
+      ) do |data_models_src_dir|
+        data_models_src_dir / "migrations"
       end
 
       c.store_ensured_path(
         "db_seeds_dir",
         "Path to the seed data for the DB",
-      ) do |back_end_src_dir|
-        back_end_src_dir / "db" / "seed"
+      ) do |data_models_src_dir|
+        data_models_src_dir / "seed"
       end
 
       c.store_ensured_path(

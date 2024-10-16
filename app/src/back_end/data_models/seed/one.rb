@@ -1,6 +1,6 @@
 require "brut/back_end/seed_data"
 
-class One < Brut::Backend::SeedData
+class Seed::One < Brut::Backend::SeedData
   include FactoryBot::Syntax::Methods
   def seed!
     account             = create(:account, :without_entitlement, email: "davec@naildrivin5.com")
