@@ -14,8 +14,13 @@ CHECK  4 - ADR Downloads
            DONE: Background jobs and temporary files?
 
 
-       5 - Need a real name for this thing
+CHECK  5 - Need a real name for this thing
 
+       6 - Deploy w/ sidekiq
+
+           DONE: Maybe I need fucking terraform?
+           DONE: Domain
+           DONE: Email?
 # 2024-10-07
 
        1 - something that uses <select>, radio buttons, and checkbox
