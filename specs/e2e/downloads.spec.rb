@@ -31,14 +31,14 @@ RSpec.describe "Download all data", e2e_timeout: 30_000 do
     end
 
     contents = File.read(download.path)
-    expect(download.suggested_filename).to match(/^\d\d\d\d-\d\d-\d\dT\d\d-\d\d-\d\d-adrs-download.json$/)
+    expect(download.suggested_filename).to match(/^\d\d\d\d-\d\d-\d\dT\d\d-\d\d-\d\d-adrs-download.html$/)
     parsed_contents = begin
-                        JSON.parse(contents)
+                        Nokogiri::HTML5(contents)
                       rescue => ex
-                        fail "Could not parse '#{contents}' as JSON: #{ex.message}"
+                        fail "Could not parse '#{contents}' as HTML: #{ex.message}"
                       end
-    expect(parsed_contents["adrs"].length).to eq(2)
-    expect(parsed_contents["projects"].length).to eq(1)
+    expect(parsed_contents.css("section[title='adrs'] section").length).to eq(2)
+    expect(parsed_contents.css("section[title='projects'] section").length).to eq(1)
   end
 
 end

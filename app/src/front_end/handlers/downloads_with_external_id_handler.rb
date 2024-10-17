@@ -4,11 +4,15 @@ class DownloadsWithExternalIdHandler < AppHandler
     if download.external_id != external_id
       return http_status(403)
     end
-    Brut::FrontEnd::Download.new(
-      timestamp: true,
-      filename: "adrs-download.json",
-      content_type: "applicatoin/json",
-      data: download.all_data
-    )
+    if download.ready?
+      Brut::FrontEnd::Download.new(
+        timestamp: true,
+        filename: "adrs-download.html",
+        content_type: "text/html",
+        data: download.all_data
+      )
+    else
+      http_status(404)
+    end
   end
 end

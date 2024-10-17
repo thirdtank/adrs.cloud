@@ -54,6 +54,11 @@ html {
   cursor: not-allowed;
 }
 
+dl.dl-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+}
+
 ::backdrop {
   background-color: black;
   opacity: 0.5;

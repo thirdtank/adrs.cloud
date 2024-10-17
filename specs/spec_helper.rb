@@ -171,6 +171,7 @@ RSpec.configure do |config|
         end
       end
     else
+      Sidekiq::Worker.clear_all
       Sequel::Model.db.transaction do
         # XXX:
         create(:entitlement_default, internal_name: "basic")

@@ -1,14 +1,16 @@
 class AccountByExternalIdPage < AppPage
-  attr_reader :authenticated_account, :selected_tab
+  attr_reader :authenticated_account, :selected_tab, :timezone_from_browser, :locale_from_browser
 
   Tab = Data.define(:name,:icon)
 
-  def initialize(authenticated_account:, external_id:, tab: nil)
+  def initialize(authenticated_account:, external_id:, session:, tab: nil)
     if authenticated_account.external_id != external_id
       raise "forbidden"
     end
-    @selected_tab = tabs.detect { |t| t.name == tab } || tabs.first
+    @selected_tab          = tabs.detect { |t| t.name == tab } || tabs.first
     @authenticated_account = authenticated_account
+    @timezone_from_browser = session.timezone_from_browser
+    @locale_from_browser   = session.locale_from_browser
   end
 
   def tabs

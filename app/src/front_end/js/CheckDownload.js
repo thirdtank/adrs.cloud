@@ -78,8 +78,9 @@ class CheckDownload extends BaseCustomElement {
           try {
             const parser = new DOMParser()
             const fragment = parser.parseFromString(text,"text/html")
-            Array.from(fragment.children).forEach( (child) => this.parentNode.appendChild(child) )
-            this.parentNode.removeChild(this)
+            Array.from(this.children).forEach( (child) => this.removeChild(child) )
+            Array.from(fragment.children).forEach( (child) => this.appendChild(child) )
+            this.setAttribute("ready",true)
             this.#timeoutId = null
           }
           catch (e) {

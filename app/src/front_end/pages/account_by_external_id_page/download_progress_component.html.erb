@@ -3,25 +3,25 @@
     <h3 class="ma-0 f-3 flex items-center gap-2">
       <span class="w-2"><%= svg("database-download-icon") %></span>
       <span>
-        Data Ready
+        <%= t(component: :download_ready) %>
       </span>
     </h3>
     <p class="p i">
-      Your data as of <%= timestamp(download.created_at, format: :full_with_tz) %> is ready to download. It'll be available here until <%= timestamp(download.delete_at, format: :full_with_tz) %>.
+      <%= t(component: :download_ready_text, created: timestamp(download.created_at, format: :full_with_tz), deleted: timestamp(download.delete_at, format: :full_with_tz)) %>
     </p>
     <a href="<%= DownloadsWithExternalIdHandler.routing(external_id: download.external_id) %>" class="f-3 green-200 db">
-      Download
+      <%= t(component: :download) %>
     </a>
     <%= form_tag(for: DownloadsHandler, class: "mt-4") do %>
       <%= component(ButtonComponent.new(
         size: :tiny,
         color: :blue,
-        label: "Create New Download",
+        label: t(component: :create_new),
         icon: "database-download-icon",
-        confirm: "This will delete your existing download",
+        confirm: t(component: :create_new_confirmation),
       ))%>
     <p class="p i f-1">
-      This will delete the currently-available download and create a new one with all your data as of this moment.
+      <%= t(component: :create_new_explanation) %>
     </p>
   <% end %>
   </div>
@@ -30,11 +30,11 @@
     <h3 class="ma-0 f-3 flex items-center gap-2">
       <span class="w-2 flex items-center rotating"><%= svg("loader-icon") %></span>
       <span>
-        Data Being Gathered
+        <%= t(component: :download_being_assembled) %>
       </span>
     </h3>
     <p class="p i mb-0">
-      Your data is being assembled. Please check back.
+      <%= t(component: :assembled_message) %>
     </p>
   </div>
 <% end %>

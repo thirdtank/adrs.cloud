@@ -193,7 +193,28 @@
         },
         download: {
           create_download: "Create Download",
+          create_download_explanation: "We'll assemble all your data into a single download. Check back here to see when it's done. Should be just a few minutes.",
           download: "Download",
+        },
+        info: {
+          personal: {
+            title: "Personal Info",
+            email: {
+              title: "Email",
+              note: "This value was provided by GitHub and cannot currently be changed in our system.",
+            },
+            timezone: {
+              title: "Timezone",
+              note: "These values are derived from your web browser and currently cannot be overridden.",
+            },
+            locale: {
+              title: "Locale",
+            },
+          },
+          limits: {
+            title: "Limits",
+
+          }
         },
       },
       NewProjectPage: {
@@ -263,6 +284,16 @@
         is_accepted: "Accepted",
         is_rejected: "Rejected",
         is_draft: "Draft",
+      },
+      "AccountByExternalIdPage::DownloadProgressComponent": {
+        download_ready: "Download Ready",
+        download_being_assembled: "Download Being Assembled",
+        download_ready_text: "Your data as of %{created} is ready to download. It'll be available here until %{deleted}.",
+        download: "Download",
+        create_new: "Create New Download",
+        create_new_confirmation: "This will delete your existing download",
+        create_new_explanation: "This will delete the currently-available download and create a new one with all your data as of this moment.",
+        assembled_message: "Your data is being assembled. Please check back.",
       },
       "Projects::FormComponent": {
         actions: {

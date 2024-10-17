@@ -1,4 +1,4 @@
-class CreateDownloadJob
+class AssembleDownloadJob
   include Sidekiq::Job
   def perform(external_id)
     download = Download.new(download: DB::Download.find!(external_id:))

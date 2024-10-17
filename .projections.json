@@ -19,8 +19,17 @@
   "app/src/front_end/pages/*.rb": {
     "type": "page"
   },
-  "app/src/back_end/db/*.rb": {
+  "app/src/back_end/data_models/db/*.rb": {
     "type": "db"
+  },
+  "app/src/back_end/data_models/migrations/*.rb": {
+    "type": "migration"
+  },
+  "app/src/back_end/data_models/migrations/*.sql": {
+    "type": "migration"
+  },
+  "app/src/back_end/data_models/seed/*.rb": {
+    "type": "seed"
   },
   "app/src/back_end/domain/*.rb": {
     "type": "domain"

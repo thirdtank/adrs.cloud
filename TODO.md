@@ -9,17 +9,10 @@ CHECK      DONE: ADRs cannot be replaced/refined across projects
 
 CHECK  3 - Change ADR style to not fill in sentences
 
-       4 - ADR Downloads
+CHECK  4 - ADR Downloads
 
            DONE: Background jobs and temporary files?
 
-           - Option 1 - Create a JSON blob of the data, store that in a table, have that row
-                        deleted after e.g. a day
-                        PROS: No new infra
-                        CONS: Not scalable, uses up space
-           - Optino 2 - Create JSON blob and save to S3
-                        PROS: scalable, don't have to worry about deleting
-                        CONS: more complicated
 
        5 - Need a real name for this thing
 

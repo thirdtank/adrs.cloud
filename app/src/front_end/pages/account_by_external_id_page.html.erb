@@ -128,22 +128,40 @@
             <%= component(ButtonComponent.new(
               size: :large,
               color: :green,
-              label: "Create Download",
+              label: t(page: "download.create_download"),
               icon: "database-download-icon",
             ))%>
             <p class="p i">
-              We'll assemble all your data into a single download. Check back here to see when it's done. Should be just a few minutes.
+              <%= t(page: "download.create_download_explanation") %>
             </p>
           <% end %>
         <% end %>
       <% end %>
       <%= tab_panel("info") do %>
-        <h3 class="f-3 ma-0">Personal Data</h3>
-        <dl class="flex items-baseline gap-2 ph-3">
-          <dt class="b">Email</dt>
-          <dd><%= authenticated_account.account.email %></dd>
+        <h3 class="f-3 ma-0"><%= t(page: "info.personal.title") %></h3>
+        <dl class="dl-grid gap-2 ml-3">
+          <dt class="b"><%= t(page: "info.personal.email.title") %></dt>
+          <dd><%= authenticated_account.account.email %><sup>&dagger;</sup></dd>
+          <% if timezone_from_browser %>
+            <dt class="b"><%= t(page: "info.personal.timezone.title") %></dt>
+            <dd><%= timezone_from_browser %><sup>&ddagger;</sup></dd>
+          <% end %>
+          <% if locale_from_browser %>
+            <dt class="b"><%= t(page: "info.personal.locale.title") %></dt>
+            <dd><%= locale_from_browser %><sup>&ddagger;</sup></dd>
+          <% end %>
         </dl>
-        <h3 class="f-3 ma-0 mt-4">Limits</h3>
+        <p class="i f-1 p ml-3 mb-0 gray-400">
+          <sup>&dagger;</sup><%= t(page: "info.personal.email.note") %>
+        </p>
+        <p class="i f-1 p ml-3 mt-0 gray-400">
+          <sup>&ddagger;</sup><%= t(page: "info.personal.timezone.note") %>
+        </p>
+
+        <h3 class="f-3 ma-0 mt-4"><%= t(page: "info.limits.title") %></h3>
+        <p class="p ma-0 fw-4 mt-2">
+          <%= html_safe!(t(page: :contact_support_for_limit_increase)) %>
+        </p>
         <div class="w-50 pa-3 flex flex-column items-center">
           <meter class="w-100" value="<%= authenticated_account.entitlements.non_rejected_adrs %>" high="<%= authenticated_account.entitlements.max_non_rejected_adrs * 0.85 %>" min="0" max="<%= authenticated_account.entitlements.max_non_rejected_adrs %>"></meter>
           <div class="p f-1 gray-300">
@@ -152,9 +170,6 @@
             <% else %>
               <p class="p ma-0 fw-7 red-300">
                 <%= t(:add_new_limit_exceeded) %>
-              </p>
-              <p class="p ma-0 fw-4">
-                <%= html_safe!(t(page: :contact_support_for_limit_increase)) %>
               </p>
             <% end %>
           </div>
@@ -165,9 +180,6 @@
             <% else %>
               <p class="p ma-0 fw-7 red-300">
                 <%= t(:project_limit_exceeded) %>
-              </p>
-              <p class="p ma-0 fw-4">
-                <%= html_safe!(t(page: :contact_support_for_limit_increase)) %>
               </p>
             <% end %>
           </div>

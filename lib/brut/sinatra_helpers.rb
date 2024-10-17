@@ -56,12 +56,14 @@ module Brut
     def args_for_method(method:, request_params:, form: )
       args = {}
       method.parameters.each do |(type,name)|
+
         if name.to_s == "**" || name.to_s == "*"
           raise ArgumentError,"#{method.class}##{method.name} accepts '#{name}' and not keyword args. Define it in your class to accept the keyword arguments your method needs"
         end
         if ![ :key,:keyreq ].include?(type)
           raise ArgumentError,"#{name} is not a keyword arg, but is a #{type}"
         end
+
         if self.key?(name)
           args[name] = self[name]
         elsif !form.nil? && name == :form
@@ -74,7 +76,7 @@ module Brut
                                    else
                                      "request_params: #{request_params.keys.map(&:to_s).join(", ")}"
                                    end
-          raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}, #{request_params_message}). Either set this value in the request context or set a default value in the initializer"
+          raise ArgumentError,"#{method} argument '#{name}' is required, but there is no value in the current request context (keys: #{@hash.keys.map(&:to_s).join(", ")}, #{request_params_message}, form: #{form.class}). Either set this value in the request context or set a default value in the initializer"
         else
           # this keyword arg has a default value which will be used
         end
@@ -97,10 +99,10 @@ module Brut::SinatraHelpers
     sinatra_app.before do
 
       if Brut.container.auto_reload_classes?
-        puts "RELOADING!"
         Brut.container.zeitwerk_loader.reload
         Brut.container.routing.reload
         Brut.container.asset_path_resolver.reload
+        ::I18n.reload!
       end
 
       app_session = Brut.container.session_class.new(rack_session: session)
@@ -271,7 +273,7 @@ module Brut::SinatraHelpers
         brut_route = Brut.container.routing.for(path:,method:)
 
         handler_class = brut_route.handler_class
-        form_class    = brut_route.respond_to?(:form_class) ? form_class : nil
+        form_class    = brut_route.respond_to?(:form_class) ? brut_route.form_class : nil
 
         request_context = Thread.current.thread_variable_get(:request_context)
         handler = handler_class.new
