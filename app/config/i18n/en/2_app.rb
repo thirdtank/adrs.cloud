@@ -1,4 +1,4 @@
-# This is for app-specific stuff. It can override anything in 1_defaults if needed
+# This is for app-specific stuff. It can oveadrscloud anything in 1_defaults if needed
 {
   # en: must be the first entry, thus indicating this is the EN translations
   en: {
@@ -15,11 +15,11 @@
       },
       logout: "Logout",
       help: "Help and Support",
-      adrpg: "ADRPG",
-      default_site_announcement: "ADRPG is working properly",
-      current_site_announcement: "ADRPG is working properly as of %{time}",
+      adrscloud: "ADRs.cloud",
+      default_site_announcement: "ADRs.Cloud is working properly",
+      current_site_announcement: "ADRs.Cloud is working properly as of %{time}",
       adr_rejected: "ADR Rejected",
-      page_title: "Welcome to ADRpg!",
+      page_title: "Welcome to ADRs.cloud!",
       view_all: "View All",
       sharing_stopped: "ADR no longer shared",
       adr_shared: "ADR now shared",

@@ -1,6 +1,6 @@
 require "omniauth"
 class App < Brut::App
-  def id           = "adrpg"
+  def id           = "adrsdotcloud"
   def organization = "third-tank"
 
   def configure_only!

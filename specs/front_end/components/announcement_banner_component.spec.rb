@@ -27,6 +27,6 @@ RSpec.describe AnnouncementBannerComponent do
 
     parsed_html = render_and_parse(component)
 
-    expect(parsed_html.text).to include("ADRPG is working properly")
+    expect(parsed_html.text).to include("ADRs.Cloud is working properly")
   end
 end

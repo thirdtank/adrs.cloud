@@ -1,5 +1,5 @@
 {
-  "name": "adrpg",
+  "name": "adrsdotcloud",
   "note": "export PLAYWRIGHT_CLI_VERSION=$(bundle exec ruby -e 'require \"playwright\"; puts Playwright::COMPATIBLE_PLAYWRIGHT_VERSION.strip')",
   "license": "UNLICENSED",
   "dependencies": {
