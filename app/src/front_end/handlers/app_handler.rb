@@ -1,23 +1,2 @@
 class AppHandler < Brut::FrontEnd::Handler
 end
-
-#require_relative "logout_handler"
-#require_relative "auth/developer_handler"
-#require_relative "auth/developer/callback_handler"
-#require_relative "auth/github/callback_handler"
-#require_relative "adr_tags_with_external_id_handler"
-#require_relative "private_adrs_with_external_id_handler"
-#require_relative "shared_adrs_with_external_id_handler"
-#require_relative "rejected_adrs_with_external_id_handler"
-#require_relative "replaced_adrs_with_existing_external_id_handler"
-#require_relative "refined_adrs_with_existing_external_id_handler"
-#require_relative "new_draft_adr_handler"
-#require_relative "edit_draft_adr_with_external_id_handler"
-#require_relative "accepted_adrs_with_external_id_handler"
-#require_relative "new_project_handler"
-#require_relative "edit_project_with_external_id_handler"
-#require_relative "archived_projects_with_external_id_handler"
-#require_relative "downloads_handler"
-#require_relative "admin/new_account_handler"
-#require_relative "admin/account_entitlements_with_external_id_handler"
-#require_relative "admin/deactivated_accounts_with_external_id_handler"

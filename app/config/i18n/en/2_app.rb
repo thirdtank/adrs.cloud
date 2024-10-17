@@ -189,8 +189,12 @@
             description: "Description",
             sharing: "Default Sharing",
             actions: "Actions",
-          }
-        }
+          },
+        },
+        download: {
+          create_download: "Create Download",
+          download: "Download",
+        },
       },
       NewProjectPage: {
         new_project: "Create Project",

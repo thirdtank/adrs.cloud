@@ -40,4 +40,25 @@ class DB::Adr < AppDataModel
 
   def self.phony_tag_for_shared = "shared".freeze
 
+  def as_json
+    hash = self.to_hash.slice(
+      :external_id,
+      :title,
+      :context,
+      :facing,
+      :decision,
+      :neglected,
+      :achieve,
+      :accepting,
+      :because,
+      :accepted_at,
+      :created_at,
+      :rejected_at,
+      :tags,
+    )
+    hash[:replaced_by_adr] = self.replaced_by_adr&.external_id
+    hash[:refines_adr] = self.refines_adr&.external_id
+    hash[:project] = self.project.name
+    hash
+  end
 end

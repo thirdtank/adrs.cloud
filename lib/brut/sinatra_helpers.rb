@@ -97,6 +97,7 @@ module Brut::SinatraHelpers
     sinatra_app.before do
 
       if Brut.container.auto_reload_classes?
+        puts "RELOADING!"
         Brut.container.zeitwerk_loader.reload
         Brut.container.routing.reload
         Brut.container.asset_path_resolver.reload
@@ -189,10 +190,11 @@ module Brut::SinatraHelpers
     #
     # Once this page object exists, `render` will be called to produce HTML to send back to the browser.
     def page(path)
-      route = Brut.container.routing.register_page(path)
-      page_class = route.handler_class
+      Brut.container.routing.register_page(path)
 
-      get route.path_template do
+      get path do
+        route = Brut.container.routing.for(path: path,method: :get)
+        page_class = route.handler_class
         request_context = Thread.current.thread_variable_get(:request_context)
         constructor_args = request_context.as_constructor_args(
           page_class,
@@ -234,10 +236,8 @@ module Brut::SinatraHelpers
     # * `form("/admin/widgets/:internal_id") will use `Admin::WidgetsWithInternalIdForm` and `Admin::WidgetsWithInternalIdHandler`
     #
     def form(path)
-      route      = Brut.container.routing.register_form(path)
-      handler_class = route.handler_class
-      form_class    = route.form_class
-      self.define_handled_route(route,handler_class,form_class)
+      route = Brut.container.routing.register_form(path)
+      self.define_handled_route(route)
     end
 
     # Declare a form action that has no associated form elements.  This is used when you need to use a button to submit to the
@@ -248,8 +248,7 @@ module Brut::SinatraHelpers
     # to make sure there is no form defined.
     def action(path)
       route = Brut.container.routing.register_handler_only(path)
-      handler_class = route.handler_class
-      self.define_handled_route(route,handler_class)
+      self.define_handled_route(route)
     end
 
     # When you need to respond to a given path/method, but it's not a page nor a form.  For example, webhooks often
@@ -257,19 +256,23 @@ module Brut::SinatraHelpers
     #
     # This will locate a handler class based on the same naming convention as for forms.
     def path(path, method:)
-      route         = Brut.container.routing.register_path(path, method: Brut::FrontEnd::HttpMethod.new(method))
-      handler_class = route.handler_class
-      self.define_handled_route(route,handler_class)
+      route = Brut.container.routing.register_path(path, method: Brut::FrontEnd::HttpMethod.new(method))
+      self.define_handled_route(route)
     end
 
   private
 
-    def define_handled_route(brut_route,handler_class,form_class=nil)
+    def define_handled_route(original_brut_route)
 
-      method = brut_route.http_method.to_s.upcase
-      path   = brut_route.path_template
+      method = original_brut_route.http_method.to_s.upcase
+      path   = original_brut_route.path_template
 
       route method, path do
+        brut_route = Brut.container.routing.for(path:,method:)
+
+        handler_class = brut_route.handler_class
+        form_class    = brut_route.respond_to?(:form_class) ? form_class : nil
+
         request_context = Thread.current.thread_variable_get(:request_context)
         handler = handler_class.new
         form = if form_class.nil?
@@ -294,6 +297,8 @@ module Brut::SinatraHelpers
           ]
         in Brut::FrontEnd::HttpStatus => http_status
           http_status.to_i
+        in Brut::FrontEnd::Download => download
+          [ 200, download.headers, download.data ]
         else
           raise NoMatchingPatternError, "Result from #{handler.class}'s handle! method was a #{result.class}, which cannot be used to understand the response to generate"
         end

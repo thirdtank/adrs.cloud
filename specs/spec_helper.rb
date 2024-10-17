@@ -121,6 +121,7 @@ RSpec.configure do |config|
     is_component      = example.metadata[:component]
     is_page           = example.metadata[:page]
     is_e2e            = example.metadata[:e2e]
+    e2e_timeout       = example.metadata[:e2e_timeout] || 5_000
 
     if is_component
       session = {
@@ -161,7 +162,7 @@ RSpec.configure do |config|
               context_options[:record_video_dir] =  Brut.container.project_root / "videos"
             end
             browser_context = browser.new_context(**context_options)
-            browser_context.default_timeout = (ENV["E2E_TIMEOUT_MS"] || 5_000).to_i
+            browser_context.default_timeout = (ENV["E2E_TIMEOUT_MS"] || e2e_timeout).to_i
             example.example_group.let(:page) { browser_context.new_page }
             example.run
             browser_context.close

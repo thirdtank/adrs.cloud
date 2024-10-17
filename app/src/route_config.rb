@@ -85,6 +85,8 @@ class AdrApp < Sinatra::Base
   form "/edit_project/:external_id"
   action "/archived_projects/:external_id"
   action "/downloads"
+  path "/downloads/:external_id", method: :get
+  path "/ready_downloads/:external_id", method: :get
 
   page "/admin/home"
   page "/admin/accounts"

@@ -12,7 +12,7 @@ class Brut::FrontEnd::HttpMethod
   alias to_str to_s
 
   def ==(other)
-    self.class == other.class && self.to_s == other.to_s
+    self.class.name == other.class.name && self.to_s == other.to_s
   end
 
   def get? = self.to_sym == :get

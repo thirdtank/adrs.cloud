@@ -36,19 +36,22 @@ class Download
 
   def save
     @download.save
-    CreateDownloadJob.perform_async(external_id)
+    CreateDownloadJob.perform_in(1,external_id)
   end
 
   def assemble
     @download.update(
       data_ready_at: Time.now,
       delete_at: Time.now + (60 * 60 * 24),
-      all_data: @download.account.adrs.to_json
+      all_data: {
+        adrs: @download.account.adrs,
+        projects: @download.account.projects,
+      }.to_json,
     )
   end
 
   def ready? = !@download.data_ready_at.nil?
 
-  def_delegators :@download, :external_id, :created_at, :delete_at
+  def_delegators :@download, :all_data, :external_id, :created_at, :delete_at
 
 end

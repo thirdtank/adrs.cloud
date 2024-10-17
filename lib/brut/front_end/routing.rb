@@ -9,6 +9,14 @@ class Brut::FrontEnd::Routing
     @routes = Set.new
   end
 
+  def for(path:,method:)
+    http_method = Brut::FrontEnd::HttpMethod.new(method)
+    @routes.detect { |route|
+      route.path_template == path &&
+        route.http_method == http_method
+    }
+  end
+
   def reload
     new_routes = @routes.map { |route|
       if route.class == Route

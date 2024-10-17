@@ -7,6 +7,7 @@ require_relative "brut/app"
 #   (e.g. and not Brut::Pages::Base).
 module Brut
   module FrontEnd
+    autoload(:Download, "brut/front_end/download")
     autoload(:Component, "brut/front_end/component")
     autoload(:Components, "brut/front_end/component")
     autoload(:Page, "brut/front_end/page")
