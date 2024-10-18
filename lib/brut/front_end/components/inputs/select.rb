@@ -34,7 +34,7 @@ class Brut::FrontEnd::Components::Inputs::Select < Brut::FrontEnd::Components::I
                  option_text_attribute:,
                  html_attributes:)
     @options               = options
-    @include_blank         = IncludeBlank.new(include_blank)
+    @include_blank         = IncludeBlank.from_param(include_blank)
     @selected_value        = selected_value
     @value_attribute       = value_attribute
     @option_text_attribute = option_text_attribute
@@ -74,8 +74,15 @@ private
 
   class IncludeBlank
     attr_reader :text_content, :option_attributes
+    def self.from_param(include_blank)
+      if !include_blank
+        return nil
+      else
+        self.new(include_blank)
+      end
+    end
     def initialize(include_blank)
-      if include_blank == true || !include_blank
+      if include_blank == true
         @text_content = ""
         @option_attributes = {}
       elsif include_blank.kind_of?(Hash)
