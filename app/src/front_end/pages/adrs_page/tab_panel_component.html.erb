@@ -30,7 +30,7 @@
       </thead>
       <tbody>
         <% adrs.each do |adr| %>
-          <tr>
+          <tr title="<%= adr.title %>" id="<%= adr.external_id %>">
             <% columns.each_with_index do |column, index| %>
               <td class="<%= index == 0 ? 'w-100 bl f-3' : 'f-2' %> pa-2 lh-copy va-middle bb br bc-gray-600">
                 <%= column_value(adr,column) %>

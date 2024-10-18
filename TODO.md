@@ -16,11 +16,29 @@ CHECK  4 - ADR Downloads
 
 CHECK  5 - Need a real name for this thing
 
-       6 - Deploy w/ sidekiq
+       Saving draft with project doesn't seem to work
+
+       Ability to correct/edit accepted ADRs
+
+       6 - Delete downloads
+
+       7 - Deploy w/ sidekiq
 
            DONE: Maybe I need fucking terraform?
            DONE: Domain
            DONE: Email?
+
+           Deploy and done done:
+
+           - Redis + backups
+           - Sidekiq real passwords
+           - PG with backups
+           - Domain and email at least forwarding to my email
+           - sidekiq docker container part of deploy scripting
+           - some sort of monitoring for exceptions or something?
+             - bugsnag free seems to work
+           - logging
+
 # 2024-10-07
 
        1 - something that uses <select>, radio buttons, and checkbox

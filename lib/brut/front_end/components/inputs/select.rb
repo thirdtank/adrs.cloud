@@ -2,7 +2,7 @@ class Brut::FrontEnd::Components::Inputs::Select < Brut::FrontEnd::Components::I
   def self.for_form_input(form:,
                           input_name:,
                           options:,
-                          selected_option:,
+                          selected_value:,
                           value_attribute:,
                           option_text_attribute:,
                           html_attributes: {})
@@ -20,19 +20,19 @@ class Brut::FrontEnd::Components::Inputs::Select < Brut::FrontEnd::Components::I
     end
     Brut::FrontEnd::Components::Inputs::Select.new(
       options:,
-      selected_option:,
+      selected_value:,
       value_attribute:,
       option_text_attribute:,
       html_attributes: default_html_attributes.merge(html_attributes)
     )
   end
   def initialize(options:,
-                 selected_option:,
+                 selected_value:,
                  value_attribute:,
                  option_text_attribute:,
                  html_attributes:)
     @options               = options
-    @selected_option       = selected_option
+    @selected_value        = selected_value
     @value_attribute       = value_attribute
     @option_text_attribute = option_text_attribute
     @sanitized_attributes  = html_attributes.map { |key,value|
@@ -48,10 +48,9 @@ class Brut::FrontEnd::Components::Inputs::Select < Brut::FrontEnd::Components::I
   def render
     html_tag(:select,**@sanitized_attributes) {
       @options.map { |option|
-        option_attributes = {
-          value: option.send(@value_attribute),
-        }
-        if option == @selected_option
+        value = option.send(@value_attribute)
+        option_attributes = { value: value }
+        if value == @selected_value
           option_attributes[:selected] = true
         end
         html_tag(:option,**option_attributes) {

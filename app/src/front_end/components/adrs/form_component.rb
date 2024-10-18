@@ -1,14 +1,14 @@
 class Adrs::FormComponent < AppComponent
 
   attr_reader :form, :action_label, :form_action, :go_back_label, :projects_input
-  def initialize(form, action:, external_id: nil, projects: [], selected_project: nil)
+  def initialize(form, action:, external_id: nil, projects: [])
     @form = form
     @projects_input = Brut::FrontEnd::Components::Inputs::Select.for_form_input(
       form: form,
       input_name: :project_external_id,
       html_attributes: { class: "w-100 f-3" },
       options: projects,
-      selected_option: selected_project,
+      selected_value: form.project_external_id,
       value_attribute: :external_id,
       option_text_attribute: :name,
     )
