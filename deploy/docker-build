@@ -111,7 +111,7 @@ images = {
     cmd: "bin/run-sidekiq",
     image_name: %{#{Brut.container.app_organization}/#{Brut.container.app_id}:#{version}-sidekiq},
     dockerfile: "deploy/Dockerfile.sidekiq",
-    heroku_image_name: "registry.heroku.com/#{heroku_app_name}/release",
+    heroku_image_name: "registry.heroku.com/#{heroku_app_name}/sidekiq",
   },
   "release" => {
     cmd: "bin/release",
