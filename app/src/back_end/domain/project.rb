@@ -19,7 +19,7 @@ class Project
     @project = project
   end
 
-  def_delegators :@project, :external_id, :name, :description, :adrs_shared_by_default, :account
+  def_delegators :@project, :external_id, :name, :description, :adrs_shared_by_default, :account, :id
 
   def archived? = !self.active?
   def active?   =  @project.archived_at.nil?

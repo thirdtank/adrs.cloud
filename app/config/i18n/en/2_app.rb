@@ -57,9 +57,8 @@
       },
       AdrsPage: {
         add_new: "Add New Draft",
-        filter_by_tag: "Filter by Tag",
         tag_filter_placeholder: "e.g. OOP",
-        remove_filter: "Remove Tag Filter",
+        remove_filter: "Remove Filters",
         title_additions: {
           refines: "Refines “%{block}”",
           replaces: "Replaces “%{block}”",
@@ -162,7 +161,7 @@
       AccountByExternalIdPage: {
         contact_support_for_limit_increase: "<a href='mailto:support@adrgp' class='blue-300'>Contact support</a> for a limit increase.",
         project_limit_exceeded: "You've reached your limit on number of projects.",
-        back_to_adrs: "Back to Your ADRs",
+        your_adrs: "Your ADRs",
         tabs: {
           "projects": {
             title: "Projects",

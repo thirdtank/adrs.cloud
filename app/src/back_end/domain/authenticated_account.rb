@@ -43,6 +43,7 @@ class AuthenticatedAccount < Account
   end
 
   class ProjectsFindable < Findable
+    include Enumerable
     def all
       DB::Project.order(:name).where(**@args)
     end
@@ -67,19 +68,24 @@ class AuthenticatedAccount < Account
       account.adrs
     end
 
-    def search(tag:nil)
+    def search(tag:nil,project:nil)
       account = @args.fetch(:account)
       adrs = if tag.nil?
-               account.adrs
+               account.adrs_dataset
              else
                tag = tag.downcase
                if (tag == DB::Adr.phony_tag_for_shared)
-                 account.adrs_dataset.where(Sequel.lit("shareable_id IS NOT NULL")).to_a
+                 account.adrs_dataset.where(Sequel.lit("shareable_id IS NOT NULL"))
                else
-                 account.adrs_dataset.where(Sequel.lit("tags @> ?",Sequel.pg_array([tag]))).to_a
+                 account.adrs_dataset.where(Sequel.lit("tags @> ?",Sequel.pg_array([tag])))
                end
              end
-      adrs
+      adrs = if project.nil?
+               adrs
+             else
+               adrs.where(project_id: project.id)
+             end
+      adrs.to_a
     end
   end
 

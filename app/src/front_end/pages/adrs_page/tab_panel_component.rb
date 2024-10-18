@@ -1,12 +1,15 @@
 class AdrsPage::TabPanelComponent < AppComponent
-  attr_reader :tab, :columns, :adrs, :tag
-  def initialize(adrs:, tab:, columns:, selected: false, action:, tag:)
+
+  attr_reader :tab, :columns, :adrs, :tag, :project
+
+  def initialize(adrs:, tab:, columns:, selected: false, action:, tag:, project:)
     @adrs         =   adrs
     @tab          =   tab
     @columns      =   columns
     @action       =   action
     @selected     = !!selected
     @tag          =   tag
+    @project      =   project
   end
 
   def selected? = @selected

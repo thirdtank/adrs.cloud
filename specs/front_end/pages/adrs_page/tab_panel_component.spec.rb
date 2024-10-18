@@ -1,6 +1,24 @@
 require "spec_helper"
 
 RSpec.describe AdrsPage::TabPanelComponent do
+  describe "tag and project in title" do
+    it "includes the project in the h2" do
+      adr = create(:adr, tags: [ "blah" ])
+
+      component = described_class.new(adrs: [ adr ],
+                                      tab: :drafts,
+                                      columns: [ :title ],
+                                      selected: false,
+                                      tag: "blah",
+                                      project: adr.project,
+                                      action: :edit)
+
+      parsed_html = render_and_parse(component)
+      h2 = parsed_html.css("h2")
+      expect(h2.text).to include("blah")
+      expect(h2.text).to include(adr.project.name)
+    end
+  end
   describe "actions" do
     it "uses the edit link for :edit" do
       adr = create(:adr)
@@ -10,6 +28,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       columns: [ :title ],
                                       selected: false,
                                       tag: nil,
+                                      project: nil,
                                       action: :edit)
 
       parsed_html = render_and_parse(component)
@@ -25,6 +44,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       columns: [ :title ],
                                       selected: false,
                                       tag: nil,
+                                      project: nil,
                                       action: :view)
 
       parsed_html = render_and_parse(component)
@@ -41,6 +61,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       columns: [ :title ],
                                       selected: true,
                                       tag: nil,
+                                      project: nil,
                                       action: :view)
       parsed_html = render_and_parse(component)
       expect(parsed_html).to have_html_attribute(role: :tabpanel)
@@ -54,6 +75,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       columns: [ :title ],
                                       selected: false,
                                       tag: nil,
+                                      project: nil,
                                       action: :view)
       parsed_html = render_and_parse(component)
       expect(parsed_html).to have_html_attribute(role: :tabpanel)
@@ -69,6 +91,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       columns: [ :context ],
                                       selected: false,
                                       tag: nil,
+                                      project: nil,
                                       action: :view)
 
       parsed_html = render_and_parse(component)
@@ -85,6 +108,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       columns: [ :title ],
                                       selected: false,
                                       tag: nil,
+                                      project: nil,
                                       action: :view)
       parsed_html = render_and_parse(component)
       expect(parsed_html.text).to include("foo")
@@ -100,6 +124,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       columns: [ :project ],
                                       selected: false,
                                       tag: nil,
+                                      project: nil,
                                       action: :view)
       parsed_html = render_and_parse(component)
       expect(parsed_html.text).to include(adr.project.name)
@@ -112,6 +137,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tab: :drafts,
                                       columns: [ :created_at ],
                                       tag: nil,
+                                      project: nil,
                                       selected: false,
                                       action: :view)
 

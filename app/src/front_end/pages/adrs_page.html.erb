@@ -29,38 +29,9 @@
         selected_tab: tab,
         css_class: "adr-page-tabs",
       )) %>
-      <adr-include-query-params show-warnings>
-        <form class="pa-3">
-          <div class="pt-3 xbt bc-gray-300">
-            <div class="flex flex-column gap-2 items-end">
-              <input type="search" name="tag" value="<%= tag %>" id="tag-search-input" class="text-field text-field--tiny" placeholder="<%= t(page: :tag_filter_placeholder) %>">
-              <label for="tag-search-input" class="f-1 i"><%= t(page: :filter_by_tag) %></label>
-              <% if filtered_by_tag? %>
-                <a href="?" class="blue-800 f-1"><%= t(page: :remove_filter) %></a>
-              <% end %>
-            </div>
-            <button class="sr-only"><%= t(page: :filter_by_tag) %></button>
-          </div>
-        </form>
-      </adr-include-query-params>
-      <div class="bt bc-gray-300 w-100 pa-3 flex flex-column items-center">
-        <meter class="w-100" value="<%= entitlements.non_rejected_adrs %>" high="<%= entitlements.max_non_rejected_adrs * 0.85 %>" min="0" max="<%= entitlements.max_non_rejected_adrs %>"></meter>
-        <div class="p f-1 gray-700">
-          <% if can_add_new? %>
-            <%= t(:adrs_remaining_counts, num: entitlements.non_rejected_adrs_remaining, max: entitlements.max_non_rejected_adrs) %>
-          <% else %>
-            <p class="p ma-0 fw-7 red-800">
-              <%= t(:add_new_limit_exceeded) %>
-            </p>
-            <p class="p ma-0 fw-4">
-              <%= html_safe!(t(:contact_support_for_limit_increase)) %>
-            </p>
-          <% end %>
-        </div>
-        <a class="blue-800 f-1" href="<%= AccountByExternalIdPage.routing(external_id: authenticated_account.external_id) %>"><%= t(page: :your_account) %></a>
-      </div>
     </div>
     <div class="w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3">
+      <a class="orange-800 f-1 db" href="<%= AccountByExternalIdPage.routing(external_id: authenticated_account.external_id) %>"><%= t(page: :your_account) %></a>
       <a class="orange-800 f-1 db" href="<%= HelpPage.routing %>"><%= t(:help) %></a>
       <a class="orange-800 f-1 db" href="<%= LogoutHandler.routing %>"><%= t(:logout) %></a>
     </div>
@@ -68,9 +39,28 @@
   <section class="bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start">
     <%= component(AnnouncementBannerComponent) %>
     <div class="overflow-y-scroll w-100">
+      <div class="mh-3 mt-3 shadow-1 dib bg-purple-900 br-2">
+        <adr-include-query-params show-warnings>
+          <form class="pa-3 flex items-center gap-3 bb bc-gray-700">
+            <label class="flex items-center gap-2">
+              <span class="f-1 fw-6">Project:</span>
+              <%= project_select %>
+            </label>
+            <label class="flex items-center gap-2">
+              <span class="f-1 fw-6">Tag:</span>
+              <input type="search" name="tag" value="<%= tag %>" id="tag-search-input" class="text-field text-field--tiny" placeholder="<%= t(page: :tag_filter_placeholder) %>">
+            </label>
+            <%= component(ButtonComponent.new(size: :tiny, color: :purple, label: "Filter", icon: "layer-icon")) %>
+            <% if filtered? %>
+              <a href="?" class="blue-400 f-1"><%= t(page: :remove_filter) %></a>
+            <% end %>
+          </form>
+        </adr-include-query-params>
+      </div>
       <%= component(
         AdrsPage::TabPanelComponent.new(adrs: accepted_adrs,
                                         tag: tag,
+                                        project: project,
                                         selected: tab == :accepted,
                                         tab: :accepted,
                                         columns: [ :title, :project, :accepted_at ],
@@ -80,6 +70,7 @@
         AdrsPage::TabPanelComponent.new(adrs: draft_adrs,
                                         tab: :drafts,
                                         tag: tag,
+                                        project: project,
                                         selected: tab == :drafts,
                                         columns: [ :title, :project, :created_at ],
                                         action: :edit)
@@ -89,6 +80,7 @@
                                         selected: tab == :replaced,
                                         tab: :replaced,
                                         tag: tag,
+                                        project: project,
                                         columns: [ :title, :project, :created_at ],
                                         action: :view)
       ) %>
@@ -97,6 +89,7 @@
                                         tab: :rejected,
                                         selected: tab == :rejected,
                                         tag: tag,
+                                        project: project,
                                         columns: [ :title, :project, :created_at, :rejected_at ],
                                         action: :view)
       )%>

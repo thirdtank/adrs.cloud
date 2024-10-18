@@ -97,25 +97,72 @@ RSpec.describe AuthenticatedAccount do
         end
       end
       context "the tag is a normal tag" do
-        it "returns ADRs on the account with that tag" do
-          account = create(:account)
-          tag     = "test tag"
-          tagged1 = create(:adr, account:, tags: [ tag, "foo", "bar" ])
-          tagged2 = create(:adr, account:, tags: [ "blah", tag ])
+        context "no project" do
+          it "returns ADRs on the account with that tag" do
+            account = create(:account)
+            tag     = "test tag"
+            tagged1 = create(:adr, account:, tags: [ tag, "foo", "bar" ])
+            tagged2 = create(:adr, account:, tags: [ "blah", tag ])
 
-          create(:adr, account:)
-          create(:adr, :rejected, account:)
-          create(:adr, :rejected, account:)
-          create(:adr, :private, :accepted, account:)
+            create(:adr, account:)
+            create(:adr, :rejected, account:)
+            create(:adr, :rejected, account:)
+            create(:adr, :private, :accepted, account:)
 
-          results = described_class.new(account:).adrs.search(tag:)
+            results = described_class.new(account:).adrs.search(tag:)
 
-          expect(results.size).to eq(2)
+            expect(results.size).to eq(2)
 
-          ids_found = results.map(&:id)
-          expect(ids_found).to include(tagged1.id)
-          expect(ids_found).to include(tagged2.id)
+            ids_found = results.map(&:id)
+            expect(ids_found).to include(tagged1.id)
+            expect(ids_found).to include(tagged2.id)
+          end
         end
+        context "project also provided" do
+          it "returns ADRs on the account with that tag" do
+            account = create(:account)
+            project = create(:project, account: account)
+            tag     = "test tag"
+            tagged1 = create(:adr, account:, project: account.projects.first, tags: [ tag, "foo", "bar" ])
+            tagged2 = create(:adr, account:, project: project, tags: [ "blah", tag ])
+            tagged3 = create(:adr, account:, project: project, tags: [ "blah", tag ])
+
+            create(:adr, account:)
+            create(:adr, :rejected, account:)
+            create(:adr, :rejected, account:)
+            create(:adr, :private, :accepted, account:)
+
+            results = described_class.new(account:).adrs.search(tag:,project:)
+
+            expect(results.size).to eq(2)
+
+            ids_found = results.map(&:id)
+            expect(ids_found).to include(tagged2.id)
+            expect(ids_found).to include(tagged3.id)
+          end
+        end
+      end
+    end
+    context "project provided" do
+      it "returns ADRs in that project" do
+        account = create(:account)
+        project = create(:project, account: account)
+        create(:adr, account:, project: account.projects.first)
+        in_project_1 = create(:adr, account:, project: project)
+        in_project_2 = create(:adr, account:, project: project)
+
+        create(:adr, account:)
+        create(:adr, :rejected, account:)
+        create(:adr, :rejected, account:)
+        create(:adr, :private, :accepted, account:)
+
+        results = described_class.new(account:).adrs.search(project:)
+
+        expect(results.size).to eq(2)
+
+        ids_found = results.map(&:id)
+        expect(ids_found).to include(in_project_1.id)
+        expect(ids_found).to include(in_project_2.id)
       end
     end
   end

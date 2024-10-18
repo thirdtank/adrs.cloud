@@ -1,11 +1,17 @@
 class AdrsPage < AppPage
 
-  attr_reader :tag, :tab, :entitlements, :authenticated_account
+  attr_reader :tag, :tab, :entitlements, :authenticated_account, :project
 
-  def initialize(authenticated_account:, tag: nil, tab: "accepted")
+  def initialize(authenticated_account:, tag: nil, tab: "accepted", project_external_id: nil)
     @authenticated_account = authenticated_account
-    @tag                   = tag
-    @adrs                  = @authenticated_account.adrs.search(tag:)
+    @tag                   = RichString.new(tag).to_s_or_nil
+    @project               = if project_external_id == "ALL" || project_external_id.nil?
+                               nil
+                             else
+                               Project.find!(external_id: project_external_id, account: authenticated_account.account)
+                             end
+
+    @adrs                  = @authenticated_account.adrs.search(tag: @tag,project: @project)
 
     num_non_rejected_adrs = @adrs.length - self.rejected_adrs.length
 
@@ -13,7 +19,7 @@ class AdrsPage < AppPage
     @tab          = tab.to_sym
   end
 
-  def filtered_by_tag? = !!@tag
+  def filtered? = !!@tag || !!@project
 
   def accepted_adrs = @adrs.select(&:accepted?).reject(&:replaced?).sort_by(&:accepted_at)
   def replaced_adrs = @adrs.select(&:replaced?).sort_by { |adr|
@@ -24,8 +30,16 @@ class AdrsPage < AppPage
 
   def can_add_new? = @entitlements.can_add_new?
 
+  def project_select
+    component(Brut::FrontEnd::Components::Inputs::Select.new(
+      name: "project_external_id",
+      include_blank: { value: "ALL", text_content: "All" },
+      options: authenticated_account.projects,
+      selected_value: project&.external_id,
+      value_attribute: :external_id,
+      option_text_attribute: :name,
+      html_attributes: { class: "w-6" }))
+  end
+
 end
-#require_relative "adrs_page/tab_panel_component"
-#require_relative "adrs_page/tab_component"
-#require_relative "adrs_page/adr_title_component"
 
