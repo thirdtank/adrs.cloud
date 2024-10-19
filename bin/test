@@ -187,6 +187,7 @@ class Command
           if pathname.basename.to_s == "app_#{type}.rb" ||
              type == "back_end" ||
              type == "seed" ||
+             type == "migrations" ||
              pathname.basename.to_s == "app_data_model.rb" ||
              pathname.basename.to_s == "db.rb"
 
