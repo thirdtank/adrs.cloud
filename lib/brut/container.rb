@@ -43,7 +43,7 @@ class Brut::Container
   #         ```
   #         container.store("tmp_dir") { |project_root| project_root / "tmp" }
   #         ```
-  def store(name,type,description,value=:use_block,allow_app_override: false,&block)
+  def store(name,type,description,value=:use_block,allow_app_override: false,allow_nil: false,&block)
     # TODO: Check that value / block is used properly
     name = name.to_s
     if type.to_s == "boolean"
@@ -63,9 +63,10 @@ class Brut::Container
       end
       @container[name] = { value: value }
     end
-    @container[name][:description] = description
-    @container[name][:type] = type
+    @container[name][:description]        = description
+    @container[name][:type]               = type
     @container[name][:allow_app_override] = allow_app_override
+    @container[name][:allow_nil]          = allow_nil
     self
   end
 
@@ -157,7 +158,9 @@ private
     args = parameters.map { |param_description| param_description[1] }.map { |name_of_dependent_object| self.send(name_of_dependent_object) }
     x[:value] = deriver.(*args)
     if x[:value].nil?
-      raise "Something is wrong: #{name} had no value"
+      if !x[:allow_nil]
+        raise "Something is wrong: #{name} had no value"
+      end
     end
     handle_path_values(name,x)
     x[:value]

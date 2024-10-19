@@ -32,6 +32,7 @@ class Brut::App
       Brut.container.sequel_db_handle.disconnect
     end
 
+    Brut.container.sequel_db_handle.logger = SemanticLogger["Sequel::Database"]
     Sequel::Model.db = Brut.container.sequel_db_handle
     Sequel::Model.db.extension :pg_array
     Sequel::Model.plugin :external_id, global_prefix: "ad"
@@ -63,11 +64,22 @@ class Brut::App
     Dotenv.load(project_root / ".env.#{project_env.to_s}",
                 project_root / ".env.#{project_env.to_s}.local")
 
-    log_dir = Brut.container.log_dir
+    log_dir               = Brut.container.log_dir
+    log_file_name         = Brut.container.log_file_name
+    log_to_stdout_options = Brut.container.log_to_stdout_options
+
     FileUtils.mkdir_p log_dir
     SemanticLogger.default_level = Brut.container.log_level
-    SemanticLogger.add_appender(file_name: (log_dir / "development.log").to_s)
-    SemanticLogger.add_appender(io: $stdout, formatter: :color)
+    if log_file_name
+      SemanticLogger.add_appender(file_name: log_file_name.to_s)
+    else
+      puts "Not logging to a file"
+    end
+    if log_to_stdout_options
+      SemanticLogger.add_appender(log_to_stdout_options.merge(io: $stdout))
+    else
+      puts "Not logging to stdout"
+    end
     SemanticLogger["Brut"].info("Logging set up")
 
     ::I18n.load_path += Dir[Brut.container.project_root / "app" / "config" / "i18n" / "**/*.rb"]
@@ -89,6 +101,7 @@ class Brut::App
         @loader.push_dir(dir)
       end
     end
+    @loader.ignore(Brut.container.migrations_dir)
     @loader.inflector.inflect(
       "db" => "DB"
     )

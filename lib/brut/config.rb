@@ -331,6 +331,38 @@ class Brut::Config
         allow_app_override: true,
       )
 
+      c.store(
+        "log_file_name",
+        String,
+        "Path to the log file to use, if any",
+        allow_app_override: true,
+        allow_nil: true,
+      ) do |log_dir,project_env|
+        if project_env.test?
+          log_dir / "test.log"
+        elsif project_env.development?
+          log_dir / "development.log"
+        else
+          nil
+        end
+      end
+
+      c.store(
+        "log_to_stdout_options",
+        Hash,
+        "Options for a stdout-based log appender, or nil if that should not be done",
+        allow_app_override: true,
+        allow_nil: true,
+      ) do |project_env|
+        if project_env.test?
+          nil
+        elsif project_env.development?
+          { formatter: :color }
+        else
+          {}
+        end
+      end
+
     end
   end
 end

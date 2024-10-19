@@ -11,6 +11,6 @@ RSpec.describe DB::Entitlement do
     expect {
       described_class.create(account_id: account.id,
                              entitlement_default_id: default.id)
-    }.to raise_error(/entitlements_account_id_key/)
+    }.to raise_error(/duplicate key value violates unique constraint/)
   end
 end

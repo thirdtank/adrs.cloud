@@ -16,28 +16,26 @@ CHECK  4 - ADR Downloads
 
 CHECK  5 - Need a real name for this thing
 
-       Saving draft with project doesn't seem to work
+CHECK  Saving draft with project doesn't seem to work
 
        Ability to correct/edit accepted ADRs
 
+       Main page is busy with tags
+
        6 - Delete downloads
 
-       7 - Deploy w/ sidekiq
+CHECK  7 - Deploy w/ sidekiq
 
-           DONE: Maybe I need fucking terraform?
-           DONE: Domain
-           DONE: Email?
+Make it really real:
 
-           Deploy and done done:
+* Domain
+* GitHub auth attached to Third Tank
+* Runbooks/docks for the infra
+* Backups for PG
+* PaperTrail
+* Bugsnag
+* Test Users
 
-           - Redis + backups
-           - Sidekiq real passwords
-           - PG with backups
-           - Domain and email at least forwarding to my email
-           - sidekiq docker container part of deploy scripting
-           - some sort of monitoring for exceptions or something?
-             - bugsnag free seems to work
-           - logging
 
 # 2024-10-07
 

@@ -17,6 +17,7 @@ class App < Brut::App
         # Per https://devcenter.heroku.com/articles/connecting-heroku-redis#connecting-in-ruby
         ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
       }
+      config.logger = SemanticLogger["Sidekiq:server"]
     end
 
     Sidekiq.configure_client do |config|
@@ -24,6 +25,7 @@ class App < Brut::App
         # Per https://devcenter.heroku.com/articles/connecting-heroku-redis#connecting-in-ruby
         ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
       }
+      config.logger = SemanticLogger["Sidekiq:client"]
     end
 
   end

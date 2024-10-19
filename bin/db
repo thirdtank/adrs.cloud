@@ -8,6 +8,8 @@ require "date"
 
 require_relative "bin_kit"
 
+Sequel.extension :migration
+
 def parse_options
   options = {}
   OptionParser.new do |parser|
@@ -140,46 +142,6 @@ class Command
   end
 
   class Migrate < Command
-    TABLE_SQL = [
-      %{
-        CREATE TABLE IF NOT EXISTS brut_migrations (
-	        id BIGSERIAL PRIMARY KEY,
-          identifier text not null,
-          name text not null,
-          created_at timestamp with time zone not null
-        )
-      },
-      %{
-        COMMENT ON TABLE brut_migrations
-        IS 'Tracks which migrations have been applied to the database'
-      },
-      %{
-        COMMENT ON COLUMN brut_migrations.identifier
-        IS 'Unique identifier for this migration, ideally one that, when sorted, indicates the order in which migrations  have been applied (although this is not required)'
-      },
-      %{
-        COMMENT ON COLUMN brut_migrations.created_at
-        IS 'When this row was created in the database'
-      },
-      %{
-        COMMENT ON COLUMN brut_migrations.name
-        IS 'A human-readable name for the migration, provided when it was created'
-      },
-      %{
-        CREATE UNIQUE INDEX IF NOT EXISTS
-          brut_migrations_unique_id_and_name
-        ON
-          brut_migrations
-        (
-          identifier,
-          lower(name)
-        )
-      },
-      %{
-        COMMENT ON INDEX brut_migrations_unique_id_and_name
-        IS 'Ensures that no migration has the same name or identifier'
-      }
-    ]
     def call
       migrations_dir = Brut.container.migrations_dir
       if !migrations_dir.exist?
@@ -187,35 +149,20 @@ class Command
         return
       end
       connection = Sequel.connect(@database_uri.to_s)
+      Brut.container.sequel_db_handle.extension :pg_array
+      Brut.container.sequel_db_handle.sql_log_level = :info
+
+      Brut.container.sequel_db_handle.logger = SemanticLogger["Sequel::Database"]
+      Sequel::Migrator.run(Brut.container.sequel_db_handle,migrations_dir)
+      puts "Migrations applied"
+    rescue Sequel::DatabaseConnectionError
+      uri_no_database = URI(@database_uri.to_s)
+      uri_no_database.path = ""
       begin
-        TABLE_SQL.each do |sql|
-          puts "Running SQL:\n#{sql}\n"
-          connection.run(sql)
-        end
-        Dir["#{migrations_dir}/*.sql"].each do |file|
-          file = Pathname(file)
-          basename = file.basename.to_s.gsub(/#{Regexp.escape(file.extname)}$/,"")
-          identifier,name = basename.split(/_/)
-          if identifier && name
-            rows = connection.fetch("SELECT count(*) AS count FROM brut_migrations WHERE identifier = ? and name = ?",identifier,name).all
-            if rows.empty? || rows.first[:count] == 0
-              puts "#{identifier}_#{name} has not been run"
-              connection.transaction do
-                sql = File.read(file)
-                puts "Running SQL:\n#{sql}\n"
-                connection.run(sql)
-                puts "Remembering migration"
-                result = connection["INSERT INTO brut_migrations(identifier,name,created_at) VALUES(?,?,now())",identifier,name].insert
-              end
-            else
-              puts "#{identifier}_#{name} has been run"
-            end
-          else
-            raise "#{file} is not named according to convention"
-          end
-        end
-      ensure
-        connection.disconnect
+        connection = Sequel.connect(uri_no_database.to_s)
+        puts "Database #{@database_name} does not exist - run bin/db create to create it"
+      rescue => ex
+        puts ex.message
       end
     end
   end
@@ -228,10 +175,13 @@ class Command
       end
       migrations_dir = Brut.container.migrations_dir
       name = @args.join(" ").gsub(/[^\w\d\-]/,"-")
-      date = DateTime.now.strftime("%Y-%m-%dT%H:%M:%S")
-      file_name = migrations_dir / "#{date}_#{name}.sql"
+      date = DateTime.now.strftime("%Y%m%d%H%M%S")
+      file_name = migrations_dir / "#{date}_#{name}.rb"
       File.open(file_name,"w") do |file|
-        file.puts "-- Put your SQL here"
+        file.puts "Sequel.migration do"
+        file.puts "  up do"
+        file.puts "  end"
+        file.puts "end"
       end
       puts "#{file_name} created"
     end
@@ -242,20 +192,18 @@ class Command
       connection = Sequel.connect(@database_uri.to_s)
       puts "Database Server is Up"
       puts "Database #{@database_name} exists"
-      if connection.table_exists?("brut_migrations")
-        migrations_run = connection["select identifier,name,created_at from brut_migrations order by identifier"].all
-        if migrations_run.empty?
-          puts "No Migrations have been run"
-        else
-          puts "These migrations have been run\n\n"
-          migrations_run.each do |row|
-            row => { identifier:, name: }
-            puts "  #{identifier} - #{name}"
-          end
-          puts
-        end
-      else
-        puts "No Migrations have been run"
+      migrations_run = if connection.table_exists?("schema_migrations")
+                         connection["select filename from schema_migrations order by filename"].all.map { |_| _[:filename] }
+                       else
+                         []
+                       end
+      max_length = migrations_run.map(&:length).max
+      printf_string = "%-#{max_length}s - %s\n"
+      puts printf_string
+      Dir[Brut.container.migrations_dir / "*.rb"].each do |file|
+        filename = Pathname(file).basename.to_s
+        applied = migrations_run.include?(filename)
+        printf(printf_string,filename,applied ? "✅ APPLIED" : "❌ NOT APPLIED")
       end
     rescue Sequel::DatabaseConnectionError
       uri_no_database = URI(@database_uri.to_s)
