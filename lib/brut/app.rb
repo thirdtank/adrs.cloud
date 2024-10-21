@@ -76,7 +76,7 @@ class Brut::App
       puts "Not logging to a file"
     end
     if log_to_stdout_options
-      SemanticLogger.add_appender(log_to_stdout_options.merge(io: $stdout))
+      SemanticLogger.add_appender(**log_to_stdout_options.merge(io: $stdout))
     else
       puts "Not logging to stdout"
     end

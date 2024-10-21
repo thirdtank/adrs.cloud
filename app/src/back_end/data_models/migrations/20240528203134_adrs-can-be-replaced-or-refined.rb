@@ -17,32 +17,23 @@
 # 
 Sequel.migration do
   up do
-    create_table :proposed_adr_replacements do
-      primary_key :id
-      foreign_key :replaced_adr_id, :adrs, null: false, index: true
-      foreign_key :replacing_adr_id, :adrs, null: false, index: true
-      column :created_at, :timestamptz, null: false
-      constraint(:adr_cannot_replace_itself, Sequel.lit(
-      %{
-      replaced_adr_id <> replacing_adr_id
-      }))
-      index [ :replaced_adr_id, :replaced_adr_id ], unique: true
+    create_table :proposed_adr_replacements, comment: "Stores a proposal to replace one ADR with another.  This is needed to remember ths information while the replacing ADR is being drafted" do
+      foreign_key :replaced_adr_id, :adrs
+      foreign_key :replacing_adr_id, :adrs
+      constraint(:adr_cannot_replace_itself,"replaced_adr_id <> replacing_adr_id")
+      key [ :replaced_adr_id, :replacing_adr_id ]
     end
-    run %{
-      COMMENT ON TABLE proposed_adr_replacements IS
-        'Stores a proposal to replace one ADR with another.  This is needed to remember ths information while the replacing ADR is being drafted'
-    }
     alter_table :adrs do
-      add_foreign_key :replaced_by_adr_id, :adrs, index: { unique: true }
-      add_foreign_key :refines_adr_id, :adrs, index: true
-      add_constraint(:replaced_requires_accepted,Sequel.lit(
+      add_foreign_key :replaced_by_adr_id, :adrs, index: { unique: true }, null: true
+      add_foreign_key :refines_adr_id, :adrs, null: true
+      add_constraint(:replaced_requires_accepted,
         %{
             ( replaced_by_adr_id IS NULL ) OR
             (
               ( replaced_by_adr_id IS NOT NULL ) AND ( accepted_at IS NOT NULL )
             )
 
-        }))
+        })
     end
   end
 end

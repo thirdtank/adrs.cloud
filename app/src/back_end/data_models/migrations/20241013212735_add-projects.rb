@@ -1,25 +1,18 @@
 Sequel.migration do
   up do
-    create_table :projects do
-      primary_key :id
-      column :external_id, :citext, null: false, unique: true
-      column :name, :text, null: false
+    create_table :projects, comment: "A way to group ADRs to avoid confusion or excessive tagging", external_id: true do
+      column :name, :text
       column :description, :text, null: true
-      column :adrs_shared_by_default, :boolean, null: false
-      foreign_key :account_id, :accounts, null: false, index: true
+      column :adrs_shared_by_default, :boolean
+      foreign_key :account_id, :accounts
       column :archived_at, :timestamptz, null: true
-      column :created_at, :timestamptz, null: false
-      index [ :account_id, :name ], unique: true
+      key [ :account_id, :name ]
     end
-    run(%{
-COMMENT ON TABLE projects IS
-  'A way to group ADRs to avoid confusion or excessive tagging'
-        })
     alter_table :adrs do
-      add_foreign_key :project_id, :projects, null: false
+      add_foreign_key :project_id, :projects
     end
     alter_table :entitlement_defaults do
-      add_column :max_projects, :integer, null: false, default: 10
+      add_column :max_projects, :integer, default: 10
     end
     alter_table :entitlements do
       add_column :max_projects, :integer, null: true

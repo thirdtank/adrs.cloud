@@ -143,6 +143,7 @@ class Command
 
   class Migrate < Command
     def call
+      Brut.container.sequel_db_handle.extension :brut_migrations
       migrations_dir = Brut.container.migrations_dir
       if !migrations_dir.exist?
         puts "#{migrations_dir} doesn't exist"

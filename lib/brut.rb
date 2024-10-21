@@ -29,4 +29,4 @@ module Brut
   autoload(:I18n, "brut/i18n")
   autoload(:SinatraHelpers, "brut/sinatra_helpers")
 end
-require "brut/back_end/sequel/plugins"
+require "sequel/plugins"
