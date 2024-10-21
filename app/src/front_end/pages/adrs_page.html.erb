@@ -40,11 +40,13 @@
     <%= component(AnnouncementBannerComponent) %>
     <div class="overflow-y-scroll w-100">
       <div class="mh-3 mt-3 shadow-1 dib bg-purple-900 br-2">
-        <adr-include-query-params show-warnings>
+        <adr-include-query-params>
           <form class="pa-3 flex items-center gap-3 bb bc-gray-700">
             <label class="flex items-center gap-2">
               <span class="f-1 fw-6">Project:</span>
-              <%= project_select %>
+              <brut-autosubmit>
+                <%= project_select %>
+              </brut-autosubmit>
             </label>
             <label class="flex items-center gap-2">
               <span class="f-1 fw-6">Tag:</span>

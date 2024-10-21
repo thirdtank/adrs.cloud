@@ -29,13 +29,13 @@ class AdrsPage::TabPanelComponent < AppComponent
   def column_value(adr,column)
     if column.to_s =~ /_at$/
       value = adr.send(column)
-      html_tag(:span, class: "ws-nowrap") {
+      html_tag(:span, class: "ws-nowrap gray-400 fw-5") {
         timestamp(value, format: :date)
       }
     elsif column == :title
       component(AdrsPage::AdrTitleComponent.new(adr:))
     elsif column == :project
-      html_tag(:span, class: "ws-nowrap") {
+      html_tag(:span, class: "ws-nowrap b") {
         adr.project.name
       }
     else

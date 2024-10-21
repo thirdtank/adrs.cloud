@@ -1,10 +1,12 @@
-<div class="flex flex-wrap gap-2">
-  <span><%= adr.title%></span>
+<div>
+  <div class="f-4 lh-title mb-2"><%= adr.title%></div>
+  <div class="flex flex-wrap gap-2">
   <% tags.each do |tag| %>
-    <%= component(Adrs::TagComponent.new(tag:)) %>
+    <%= component(Adrs::TagComponent.new(tag:, compact: true)) %>
   <% end %>
+  </div>
 </div>
-<div class="f-1 i">
+<div class="f-1 i mt-2">
 <% if replaced_by_adr %>
   <%= t(page: [ :title_additions, :replaced_by ]) do %>
     <a href="<%= AdrsByExternalIdPage.routing(external_id: replaced_by_adr.external_id) %>" class="blue-300"><%= replaced_by_adr.title %></a>
