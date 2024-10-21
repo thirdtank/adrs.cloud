@@ -20,7 +20,7 @@ CHECK  Saving draft with project doesn't seem to work
 
        Ability to correct/edit accepted ADRs
 
-       Main page is busy with tags
+CHECK  Main page is busy with tags
 
        6 - Delete downloads
 
