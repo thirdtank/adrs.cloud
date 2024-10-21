@@ -1,10 +1,19 @@
 require_relative "config"
 require_relative "junk_drawer"
 require "semantic_logger"
-require "dotenv"
-require "open3"
 require "i18n"
 require "zeitwerk"
+
+# This is only needed in dev/test, but it's needed ASAP, so
+# we'll check if we are production when there is an issue
+begin
+require "dotenv"
+rescue LoadError => ex
+  if ENV["RACK_ENV"] != "production"
+    raise ex
+  end
+end
+
 
 # A class representing the Brut-powered app that is being built.
 # Unlike Brut::Config, this sets up more dynamic and app-specific stuff,
@@ -61,8 +70,10 @@ class Brut::App
     project_root = Brut.container.project_root
     project_env = Brut.container.project_env
 
-    Dotenv.load(project_root / ".env.#{project_env.to_s}",
-                project_root / ".env.#{project_env.to_s}.local")
+    if !project_env.production?
+      Dotenv.load(project_root / ".env.#{project_env.to_s}",
+                  project_root / ".env.#{project_env.to_s}.local")
+    end
 
     log_dir               = Brut.container.log_dir
     log_file_name         = Brut.container.log_file_name

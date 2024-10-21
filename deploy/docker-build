@@ -6,6 +6,7 @@ end
 
 ENV["RACK_ENV"] = "production"
 
+require_relative "../bin/bin_kit"
 require_relative "../bin/brut_cli"
 require "optparse"
 
