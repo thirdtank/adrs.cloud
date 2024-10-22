@@ -1,15 +1,19 @@
 {
   "name": "adrsdotcloud",
   "note": "export PLAYWRIGHT_CLI_VERSION=$(bundle exec ruby -e 'require \"playwright\"; puts Playwright::COMPATIBLE_PLAYWRIGHT_VERSION.strip')",
+  "type": "module",
   "license": "UNLICENSED",
   "dependencies": {
     "melange-cli": "^1.0.0-RC4",
     "melange-css": "^1.0.0-RC4"
   },
   "devDependencies": {
+    "brut-js": "file:./lib/brut-js",
     "chokidar-cli": "^3.0.0",
     "esbuild": "^0.20.2",
     "jsdoc": "^4.0.3",
+    "jsdom": "^25.0.1",
+    "mocha": "^10.7.3",
     "playwright": "^1.47.1"
   }
 }

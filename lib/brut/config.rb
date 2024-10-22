@@ -150,6 +150,13 @@ class Brut::Config
         project_root / "specs"
       end
 
+      c.store_ensured_path(
+        "js_specs_dir",
+        "Path to root of where all JS-based specs/tests are",
+      ) do |app_specs_dir|
+        app_specs_dir / "front_end" / "js"
+      end
+
       c.store_required_path(
         "front_end_src_dir",
         "Path to the root of the front end layer for the app"
@@ -218,6 +225,13 @@ class Brut::Config
         "Path to where layout classes and templates are stored"
       ) do |front_end_src_dir|
         front_end_src_dir / "layouts"
+      end
+
+      c.store_required_path(
+        "js_src_dir",
+        "Path to where JS files are",
+      ) do |front_end_src_dir|
+        front_end_src_dir / "js"
       end
 
       c.store_required_path(

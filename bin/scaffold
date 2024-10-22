@@ -19,8 +19,9 @@ Scaffolds various types of files.
 
 COMMANDS
 
-  test      - scaffolds test for the files given in args
-  component - scaffolds a new component given by class name
+  test                - scaffolds test for the files given in args
+  component           - scaffolds a new component given by class name
+  custom-element-test - scaffolds a test for the custom element.js files given in the args
 
 OPTIONS
 }
@@ -42,8 +43,9 @@ options = parse_options
 class Command
   def self.from_string(string, args:, options:)
     case string
-    when "test" then Test.new(args:, options:)
-    when "component" then Component.new(args:,options:)
+    when "test"                then Test.new(args:, options:)
+    when "component"           then Component.new(args:,options:)
+    when "custom-element-test" then CustomElementTest.new(args:,options:)
     else
       nil
     end
@@ -203,6 +205,62 @@ end}
 
       0
 
+    end
+  end
+  class CustomElementTest < Command
+    def call
+      if @args.empty?
+        log "'custom-element-test' requires one or more files to scaffold a test for"
+        return 1
+      end
+
+      if @args.any? { |file| Pathname(file).extname != ".js" }
+        log "'custom-element-test' must be given only .js files"
+        return 1
+      end
+
+      files_to_create = @args.map { |arg|
+        path = Pathname(arg).expand_path
+        relative_path = path.relative_path_from(Brut.container.js_src_dir)
+        relative_path_as_spec = relative_path.dirname / (relative_path.basename(relative_path.extname).to_s + ".spec.js")
+        spec_path = Brut.container.js_specs_dir / relative_path_as_spec
+        [ path, spec_path ]
+      }
+
+      existing_files = files_to_create.select { |_,spec|
+        spec.exist?
+      }
+
+      if existing_files.any?
+        log "#{existing_files.join(', ')} exist. Aborting..."
+        return 1
+      end
+
+      files_to_create.each do |source_file, spec_file|
+        source_class = source_file.basename(source_file.extname)
+        tag_name = File.read(source_file).split(/\n/).map { |line|
+          if line =~ /static\s+tagName\s*=\s*\"([^"]+)\"/
+            "<#{$1}>"
+          else
+            nil
+          end
+        }.compact.first
+        description = tag_name || source_class
+        File.open(spec_file, "w") do |file|
+          file.puts %{import { withHTML } from "brut-js/testing/index.js"
+
+describe("#{description}", () => {
+  withHTML(`
+  #{ tag_name ? "#{tag_name}" : "<!-- HTML here -->" }
+  #{ tag_name ? "#{tag_name.gsub(/^</,'</')}" : "" }
+  `).test("description here", ({document,window,assert}) => {
+    assert.fail("test goes here")
+  })
+})}
+        end
+      end
+
+      0
     end
   end
 

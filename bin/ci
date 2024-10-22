@@ -5,6 +5,9 @@ set -e
 echo "[ bin/ci ] Running non E2E tests"
 bin/test run --rebuild
 
+echo "[ bin/ci ] Running JS tests"
+bin/test js
+
 echo "[ bin/ci ] Running E2E tests"
 bin/test e2e --rebuild --rebuild-after
 

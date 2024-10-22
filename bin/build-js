@@ -69,7 +69,7 @@ asset_metadata = if File.exist?(asset_metadata_file)
                    log "'#{asset_metadata_file}' does not exist - creating it"
                    { "asset_metadata" => {} }
                  end
-existing_metadata = asset_metadata["asset_metadata"][".js"]
+existing_metadata = asset_metadata["asset_metadata"][".js"] || {}
 asset_metadata["asset_metadata"][".js"] = existing_metadata.merge(metadata)
 
 log "Writing updated asset metadata file '#{asset_metadata_file}'"

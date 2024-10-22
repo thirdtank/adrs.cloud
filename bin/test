@@ -13,6 +13,7 @@ def parse_options
     rebuild: :use_default,
     rebuild_after: :use_default,
     show_scaffold: false,
+    build_assets: true,
   }
   OptionParser.new do |parser|
     parser.banner = %{Usage: #{$0} [options] «command» [args]
@@ -23,6 +24,7 @@ COMMANDS
 
     run   - runs non e2e tests (this is the default when no command given)
     e2e   - runs e2e tests
+    js    - run JS-based tests
     audit - show a list of all files without a corresponding test file 
 
 OPTIONS
@@ -39,6 +41,9 @@ OPTIONS
     parser.on("--show-scaffold", "If set, shows a scaffold command to generate missing tests" ) do |value|
       options[:show_scaffold] = !!value
     end
+    parser.on("--[no-]build-assets", "If set, assets are built before js tests") do |value|
+      options[:build_assets] = !!value
+    end
     parser.on("--seed=SEED","If set, gives rspec this seed value") do |value|
       options[:seed] = value
     end
@@ -54,6 +59,7 @@ class Command
     when "run"   then Run.new(args:, options:)
     when "e2e"   then RunE2E.new(args:, options:)
     when "audit" then Audit.new(args:,options:)
+    when "js"    then JS.new(args:,options:)
     else
       nil
     end
@@ -131,6 +137,17 @@ class Command
         @options[:rebuild_after] = true
       end
       super
+    end
+  end
+
+  class JS < Command
+    def call
+      if @options[:build_assets]
+        log "Rebuilding assets"
+        system! "RACK_ENV=test bin/build-assets"
+      end
+      system!({ "NODE_DISABLE_COLORS" => "1" },"npx mocha #{Brut.container.js_specs_dir} --no-color --extension 'spec.js' --recursive")
+      0
     end
   end
 
