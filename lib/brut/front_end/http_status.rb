@@ -8,6 +8,7 @@ class Brut::FrontEnd::HttpStatus
   end
 
   def to_i = @number
+  def to_s = to_i.to_s
 
   def ==(other)
     self.class == other.class && self.to_i == other.to_i

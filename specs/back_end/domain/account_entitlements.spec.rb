@@ -1,5 +1,41 @@
 require "spec_helper"
 RSpec.describe AccountEntitlements do
+  describe "#admin?" do
+    context "account's admin is null" do
+      context "account's entitlement_default's admin is true" do
+        it "is true" do
+          account = create(:account)
+          account.entitlement.update(admin: nil)
+          account.entitlement.entitlement_default.update(admin: true)
+          expect(AccountEntitlements.new(account:).admin?).to eq(true)
+        end
+      end
+      context "account's entitlement_default's admin is false" do
+        it "is false" do
+          account = create(:account)
+          account.entitlement.update(admin: nil)
+          account.entitlement.entitlement_default.update(admin: false)
+          expect(AccountEntitlements.new(account:).admin?).to eq(false)
+        end
+      end
+    end
+    context "account's admin is true" do
+      it "is true" do
+        account = create(:account)
+        account.entitlement.update(admin: true)
+        account.entitlement.entitlement_default.update(admin: false)
+        expect(AccountEntitlements.new(account:).admin?).to eq(true)
+      end
+    end
+    context "account's admin is false" do
+      it "is false" do
+        account = create(:account)
+        account.entitlement.update(admin: false)
+        account.entitlement.entitlement_default.update(admin: true)
+        expect(AccountEntitlements.new(account:).admin?).to eq(false)
+      end
+    end
+  end
   describe "#can_add_new?" do
     context "account's max_non_rejected_adrs is null" do
       context "adrs is at the value" do

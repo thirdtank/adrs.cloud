@@ -15,6 +15,13 @@ class AccountEntitlements
     DB::Entitlement.create(account: @account, entitlement_default: default)
   end
 
+  def admin?
+    if @account.entitlement.admin.nil?
+      @account.entitlement.entitlement_default.admin
+    else
+      @account.entitlement.admin
+    end
+  end
 
   def can_add_new?
     non_rejected_adrs < max_non_rejected_adrs

@@ -5,6 +5,7 @@ FactoryBot.define do
     transient do
       create_entitlement { true }
       create_project { true }
+      make_admin { false }
     end
 
     trait :deactivated do
@@ -14,9 +15,13 @@ FactoryBot.define do
       deactivated_at { nil }
     end
 
+    trait :admin do
+      make_admin { true }
+    end
+
     callback(:after_create) do |account, context|
       if context.create_entitlement
-        create(:entitlement, account: account, max_non_rejected_adrs: 10)
+        create(:entitlement, account: account, max_non_rejected_adrs: 10, admin: context.make_admin)
       end
       if context.create_project
         create(:project, account: account)
