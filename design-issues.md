@@ -1,5 +1,10 @@
 # Design Issues
 
+## handle! vs render vs constructor
+
+There is a dissonance between components/pages that get their args via constructor and handlers which do not.
+
+
 ## Deployment 
 
 * Building the docker image is very slow, likely due to architecture differences
