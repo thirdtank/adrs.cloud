@@ -26,7 +26,7 @@ class Brut::FrontEnd::Component
 
   class TemplateLocator
     def initialize(paths:, extension:)
-      @paths = Array(paths).map { |path| Pathname(path) }
+      @paths     = Array(paths).map { |path| Pathname(path) }
       @extension = extension
     end
 
@@ -91,9 +91,9 @@ class Brut::FrontEnd::Component
   # and sends it through ERB using this component as
   # the binding.
   def render
-    erb_file = self.component_locator.locate(self.template_name)
-    template = Brut::FrontEnd::Template.new(erb_file)
-    template.render_template(self).html_safe!
+    self.component_locator.locate(self.template_name).
+      then { |erb_file| Brut::FrontEnd::Template.new(erb_file) }.
+      then { |template| template.render_template(self).html_safe! }
   end
 
   def page_name
@@ -132,23 +132,25 @@ class Brut::FrontEnd::Component
         if !component_instance.ancestors.include?(Brut::FrontEnd::Component)
           raise ArgumentError,"#{component_instance} is not a component and cannot be created"
         end
-        request_context = Thread.current.thread_variable_get(:request_context)
-
-        constructor_args = request_context.as_constructor_args(component_instance,request_params: nil)
-        component_instance = component_instance.new(**constructor_args)
+        Thread.current.thread_variable_get(:request_context).
+          then { |request_context| request_context.as_constructor_args(component_instance,request_params: nil)
+        }.then { |constructor_args| component_instance.new(**constructor_args)
+        } => component_instance
       end
       if !block.nil?
         component_instance.yielded_block = block
       end
-      request_context = Thread.current.thread_variable_get(:request_context)
-      render_args = request_context.as_method_args(component_instance,:render,request_params: nil, form: nil)
-      component_instance.render(**render_args).html_safe!
+      request_context = Thread.current.thread_variable_get(:request_context).
+        then { |request_context| request_context.as_method_args(component_instance,:render,request_params: nil, form: nil)
+      }.then { |render_args| component_instance.render(**render_args).html_safe!
+      }
     end
 
     # Inline an SVG into the page.
     def svg(svg)
-      svg_file = self.svg_locator.locate(svg)
-      File.read(svg_file).html_safe!
+      self.svg_locator.locate(svg).then { |svg_file|
+        File.read(svg_file).html_safe!
+      }
     end
 
     # Given a public path to an asset—the value you'd use in HTML—return
