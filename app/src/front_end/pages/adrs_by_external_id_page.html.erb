@@ -3,10 +3,12 @@
     <div class="flex flex-column overflow-y-scroll">
       <div class="pa-3 w-100 pt-4 bg-gray-200 gray-800">
         <header class="flex items-center gap-2">
-          <span class="w-3">
-            <%= svg("architectural-icon") %>
-          </span>
-          <h1 class="f-4 ma-0"><%= t(:adrscloud) %></h1>
+          <h1 class="f-4 ma-0 flex items-center gap-2">
+            <span class="f-5">
+              <%= svg("architectural-icon") %>
+            </span>
+            <%= t(:adrscloud) %>
+          </h1>
         </header>
         <a class="f-2 fw-5 blue-800 db pt-3" href="<%= AdrsPage.routing %>">&larr; <%= t(:view_all) %></a>
       </div>
@@ -149,7 +151,7 @@
           </aside>
         </div>
       <% end %>
-      <h2 class="measure pa-3 lh-title f-5 ma-0 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
+      <h2 class="measure-narrow pa-3 lh-title f-5 ma-0 <%= adr.replaced? ? 'tds' : '' %>"><%= adr.title %></h2>
       <%= banner(font_size: "f-1", color: "", background_color: "", font_weight: "fw-4",timestamp: adr.created_at,i18n_key: :created, margins: "mh-3 mv-0") %>
       <div class="mb-2">
         <% if adr.replaced? %>

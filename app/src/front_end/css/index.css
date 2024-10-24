@@ -237,7 +237,7 @@ brut-constraint-violation-message ~ brut-constraint-violation-message::before {
   content: ", ";
 }
 
-table.striped tbody tr:nth-child(odd) {
+table.striped tbody tr:nth-child(even) {
   background-color: var(--mg-gray-800);
 }
 

@@ -1,29 +1,33 @@
 <div>
-  <div class="f-4 lh-title mb-2"><%= adr.title%></div>
-  <div class="flex flex-wrap gap-2">
-  <% tags.each do |tag| %>
-    <%= component(Adrs::TagComponent.new(tag:, compact: true)) %>
+  <div class="f-4 lh-title"><%= adr.title%></div>
+  <% if tags.any? %>
+    <div class="flex flex-wrap gap-2 mt-2">
+      <% tags.each do |tag| %>
+        <%= component(Adrs::TagComponent.new(tag:, compact: true)) %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<% if replaced_by_adr || refines_adr || replaced_adr || proposed_to_replace_adr %>
+  <div class="f-1 i mt-2">
+  <% if replaced_by_adr %>
+    <%= t(page: [ :title_additions, :replaced_by ]) do %>
+      <a href="<%= AdrsByExternalIdPage.routing(external_id: replaced_by_adr.external_id) %>" class="blue-300"><%= replaced_by_adr.title %></a>
+    <% end %>
+  <% end %>
+  <% if refines_adr %>
+    <%= t(page: [ :title_additions, :refines ]) do %>
+      <a href="<%= AdrsByExternalIdPage.routing(external_id: refines_adr.external_id) %>" class="blue-300"><%= refines_adr.title %></a>
+    <% end %>
+  <% end %>
+  <% if replaced_adr %>
+    <%= t(page: [ :title_additions, :replaces ]) do %>
+      <a href="<%= AdrsByExternalIdPage.routing(external_id: replaced_adr.external_id) %>" class="blue-300"><%= replaced_adr.title %></a>
+    <% end %>
+  <% elsif proposed_to_replace_adr %>
+    <%= t(page: [ :title_additions, :proposed_replacement ]) do %>
+      <a href="<%= AdrsByExternalIdPage.routing(external_id: proposed_to_replace_adr.external_id) %>" class="blue-300"><%= proposed_to_replace_adr.title %></a>
+    <% end %>
   <% end %>
   </div>
-</div>
-<div class="f-1 i mt-2">
-<% if replaced_by_adr %>
-  <%= t(page: [ :title_additions, :replaced_by ]) do %>
-    <a href="<%= AdrsByExternalIdPage.routing(external_id: replaced_by_adr.external_id) %>" class="blue-300"><%= replaced_by_adr.title %></a>
-  <% end %>
 <% end %>
-<% if refines_adr %>
-  <%= t(page: [ :title_additions, :refines ]) do %>
-    <a href="<%= AdrsByExternalIdPage.routing(external_id: refines_adr.external_id) %>" class="blue-300"><%= refines_adr.title %></a>
-  <% end %>
-<% end %>
-<% if replaced_adr %>
-  <%= t(page: [ :title_additions, :replaces ]) do %>
-    <a href="<%= AdrsByExternalIdPage.routing(external_id: replaced_adr.external_id) %>" class="blue-300"><%= replaced_adr.title %></a>
-  <% end %>
-<% elsif proposed_to_replace_adr %>
-  <%= t(page: [ :title_additions, :proposed_replacement ]) do %>
-    <a href="<%= AdrsByExternalIdPage.routing(external_id: proposed_to_replace_adr.external_id) %>" class="blue-300"><%= proposed_to_replace_adr.title %></a>
-  <% end %>
-<% end %>
-</div>
