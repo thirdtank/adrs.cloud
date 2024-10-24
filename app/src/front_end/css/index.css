@@ -2,6 +2,64 @@
 @import "textarea.css";
 @import "button.css";
 
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Light.otf") format("opentype");
+  font-display: swap;
+  font-weight: 100 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Light-Italic.otf") format("opentype");
+  font-display: swap;
+  font-weight: 100 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Book.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Book-Italic.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Medium.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Medium-Italic.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Bold.otf") format("opentype");
+  font-display: swap;
+  font-weight: 800 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Semplicita Modern";
+  src: url("../fonts/Semplicita-Modern-Bold-Italic.otf") format("opentype");
+  font-display: swap;
+  font-weight: 800 900;
+  font-style: italic;
+}
+
 html {
   box-sizing: border-box;
 }
@@ -15,6 +73,10 @@ html {
 
 :root {
   --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Semplicita Modern', var(--mg-ff-sans);
 }
 
 svg {

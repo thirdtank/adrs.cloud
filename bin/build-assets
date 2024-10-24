@@ -3,6 +3,8 @@
 set -e 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
 
+# NOTE: esbuild will copy any referenced assets from the CSS files into the CSS directory. This is fine.
+#       Also note that we do not intend to hash images  or other assets at this time. esbuild could do this if needed.
 echo "[ bin/build ] building CSS"
 ${SCRIPT_DIR}/build-css
 echo "[ bin/build ] building JS"

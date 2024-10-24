@@ -3,10 +3,12 @@
     <div class="flex flex-column overflow-y-scroll">
       <div class="flex flex-column gap-2 items-center">
         <header class="h-4 pa-3 flex items-center gap-2 w-100 mt-3">
-          <span class="w-4">
+          <h1 class="f-4 ma-0 flex items-center gap-2">
+            <span class="f-5">
             <%= svg("architectural-icon") %>
-          </span>
-          <h1 class="f-5 ma-0"><%= t(:adrscloud) %></h1>
+            </span>
+            <%= t(:adrscloud) %>
+          </h1>
         </header>
       </div>
       <brut-tabs role="tablist" aria-orientation="vertical" class="adr-page-tabs" show-warnings tab-selection-pushes-and-restores-state>
@@ -21,6 +23,7 @@
            <% end %>
            aria-controls="<%= tab.name %>-panel"
            id="<%= tab.name %>-tab"
+           class="ws-nowrap"
            >
            <span class="flex items-center justify-end gap-2">
              <span><%= t(page: [ "tabs", tab.name, "title" ] )%></span>

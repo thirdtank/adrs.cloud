@@ -11,7 +11,7 @@ asset_metadata_file = Brut.container.asset_metadata_file
 
 name_with_hash_regexp = /app\/public\/(?<path>.+)\/(?<name>.+)\-(?<hash>.+)\.css/
 
-command = "npx esbuild --metafile=#{metafile} --entry-names=[name]-[hash] --sourcemap --bundle #{css_bundle_source} --outfile=#{css_bundle}"
+command = "npx esbuild --loader:.otf=copy --metafile=#{metafile} --entry-names=[name]-[hash] --sourcemap --bundle #{css_bundle_source} --outfile=#{css_bundle}"
 log "Building CSS bundle '#{css_bundle}' with '#{command}'"
 system!(command)
 
