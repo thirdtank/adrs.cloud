@@ -1,5 +1,5 @@
 class NewDraftAdrHandler < AppHandler
-  def handle!(form:, authenticated_account:, flash:)
+  def handle(form:, authenticated_account:, flash:)
     if !authenticated_account.entitlements.can_add_new?
       return http_status(403)
     end

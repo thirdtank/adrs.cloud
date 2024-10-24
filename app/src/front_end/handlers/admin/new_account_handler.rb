@@ -1,9 +1,6 @@
 module Admin
-  class NewAccountHandler < AppHandler
-    def handle!(form:,flash:,authenticated_account:)
-      if !authenticated_account.entitlements.admin?
-        return http_status(404)
-      end
+  class NewAccountHandler < Admin::BaseHandler
+    def handle(form:,flash:,authenticated_account:)
       result = GithubLinkedAccount.create(form:)
       case result
       in GithubLinkedAccount

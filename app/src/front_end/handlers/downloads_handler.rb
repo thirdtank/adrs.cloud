@@ -1,5 +1,5 @@
 class DownloadsHandler < AppHandler
-  def handle!(authenticated_account:, flash:)
+  def handle(authenticated_account:, flash:)
     download = Download.create(authenticated_account:)
     download.save
     redirect_to(

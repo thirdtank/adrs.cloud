@@ -1,6 +1,6 @@
 module Auth
   class DeveloperHandler < AppHandler
-    def handle!
+    def handle
       DeveloperAuthPage.new
     end
   end

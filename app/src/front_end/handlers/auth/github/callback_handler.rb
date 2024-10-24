@@ -1,7 +1,7 @@
 module Auth
   module Github
     class CallbackHandler < AppHandler
-      def handle!(env:, flash:, session:)
+      def handle(env:, flash:, session:)
         github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash: env["omniauth.auth"])
         if github_linked_account && github_linked_account.error?
           flash.alert = github_linked_account.error_i18n_key

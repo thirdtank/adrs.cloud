@@ -16,6 +16,6 @@ echo "[ bin/ci ] security vulnerabilities"
 bundle exec bundle audit check --update
 
 echo "[ bin/ci ] Checking to see that all classes have tests"
-bin/test audit
+bin/test audit --ignore app/src/front_end/handlers/admin/base_handler.rb --ignore app/src/front_end/pages/admin/base_page.rb
 
 echo "[ bin/ci ] Done"

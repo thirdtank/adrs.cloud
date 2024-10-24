@@ -1,5 +1,5 @@
 class ReadyDownloadsWithExternalIdHandler < AppHandler
-  def handle!(external_id:, authenticated_account:)
+  def handle(external_id:, authenticated_account:)
     download = Download.for_account(account:authenticated_account.account)
     if download.external_id != external_id
       return http_status(403)

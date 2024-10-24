@@ -1,5 +1,5 @@
 class EditProjectWithExternalIdHandler < AppHandler
-  def handle!(external_id:,form:,authenticated_account:,flash:)
+  def handle(external_id:,form:,authenticated_account:,flash:)
     project = authenticated_account.projects.find!(external_id:)
     project.save(form:)
     if form.constraint_violations?

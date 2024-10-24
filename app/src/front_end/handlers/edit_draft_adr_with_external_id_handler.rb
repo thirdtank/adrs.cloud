@@ -1,5 +1,5 @@
 class EditDraftAdrWithExternalIdHandler < AppHandler
-  def handle!(form:, external_id:, authenticated_account:, xhr:, flash:)
+  def handle(form:, external_id:, authenticated_account:, xhr:, flash:)
     draft_adr = authenticated_account.draft_adrs.find!(external_id:external_id)
     form = draft_adr.save(form:)
 

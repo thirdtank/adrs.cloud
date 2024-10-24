@@ -283,7 +283,7 @@ module Brut::SinatraHelpers
                  form_class.new(params: params)
                end
 
-        process_args = request_context.as_method_args(handler,:handle!,request_params: params,form: form)
+        process_args = request_context.as_method_args(handler,:handle,request_params: params,form: form)
 
         result = handler.handle!(**process_args)
 

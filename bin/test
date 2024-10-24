@@ -14,6 +14,7 @@ def parse_options
     rebuild_after: :use_default,
     show_scaffold: false,
     build_assets: true,
+    ignore: [],
   }
   OptionParser.new do |parser|
     parser.banner = %{Usage: #{$0} [options] «command» [args]
@@ -47,8 +48,11 @@ OPTIONS
     parser.on("--seed=SEED","If set, gives rspec this seed value") do |value|
       options[:seed] = value
     end
+    parser.on("--ignore=FILE","Ignore this file for auditing purposes. Can be specified more than once") do |value|
+      options[:ignore] << value
+    end
   end.parse!
-  options
+  options.tap { |_| puts _ }
 end
 
 options = parse_options
@@ -163,7 +167,15 @@ class Command
         end
       }
       audit = app_files.map { |file|
-        pathname = Pathname(file)
+        Pathname(file)
+      }.select { |pathname|
+        relative_to_root = pathname.relative_path_from(Brut.container.project_root)
+        if @options[:ignore].include?(relative_to_root.to_s)
+          false
+        else
+          true
+        end
+      }.map { |pathname|
         relative = pathname.relative_path_from(Brut.container.app_src_dir)
         test_file = Brut.container.project_root / "specs" / relative.dirname / "#{relative.basename(relative.extname)}.spec.rb"
         hash = {
@@ -218,7 +230,7 @@ class Command
           hash[:test_expected] = false
         end
         hash
-      }
+      }.compact
 
       files_missing = []
       printed_header = false
