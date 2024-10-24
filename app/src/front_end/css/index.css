@@ -17,6 +17,14 @@ html {
   --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
 }
 
+svg {
+  width: 1em;
+  height: 1em;
+}
+svg path {
+  fill: currentColor;
+}
+
 :root {
   --mg-green-100: #002602;
   --mg-green-200: #004104;

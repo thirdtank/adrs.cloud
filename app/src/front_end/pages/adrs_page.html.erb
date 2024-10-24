@@ -1,11 +1,13 @@
 <section class="flex w-100">
   <nav class="bg-gray-200 gray-800 w-6 h-100vh flex flex-column justify-between">
     <div class="flex flex-column overflow-y-scroll">
-      <header class="h-4 pa-3 flex items-center gap-2 w-100 mt-3">
-        <span class="w-4">
-          <%= svg("architectural-icon") %>
-        </span>
-        <h1 class="f-5 ma-0"><%= t(:adrscloud) %></h1>
+      <header class="pa-3 w-100 mt-3">
+        <h1 class="f-4 ma-0 flex items-center gap-2">
+          <span class="f-6 flex flex-column items-center">
+            <%= svg("architectural-icon") %>
+          </span>
+          <%= t(:adrscloud) %>
+        </h1>
       </header>
       <div class="pv-3 pr-3">
         <% if can_add_new? %>
