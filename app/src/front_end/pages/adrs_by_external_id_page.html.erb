@@ -46,9 +46,9 @@
 
             </fieldset>
             <% if shared? %>
-              <a class="blue-300 db flex items-center justify-end gap-1 pr-1 w-100" target="_blank" href="<%= SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id) %>">
-                <span class="tdu f-1"><%= t(page: :view_share_page) %></span>
-                <div class="w-1" role="img" aria-description="<%= t("aria.external_link_icon") %>"><%= svg("external-link-icon") %></div>
+              <a class="blue-300 f-1 db flex items-center justify-end gap-1 pr-1 w-100" target="_blank" href="<%= SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id) %>">
+                <span class=""<%= svg("external-link-icon") %></span>
+                <span class=""><%= t(page: :view_share_page) %></span>
               </a>
             <% end %>
           <% end %>
@@ -101,9 +101,9 @@
               <% if can_edit_tags? %>
                 <%= component(ButtonComponent.new(
                   size: "tiny",
-                  color: adr.tags.any? ? "white"          : "purple",
-                  label: adr.tags.any? ? t(:edit)         : t(page: :add_tags),
-                  icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon")) %>
+                  color: adr.tags.any? ? "white"             : "purple",
+                  label: adr.tags.any? ? t(page: :edit_tags) : t(page: :add_tags),
+                  icon:  adr.tags.any? ? "edit-list-icon"    : "plus-round-line-icon")) %>
               <% end %>
             </div>
           </adr-tag-editor-view>
@@ -213,7 +213,7 @@
                      timestamp: adr.rejected_at) %>
         <% end %>
       </div>
-      <section class="pt-3">
+      <section class="pt-3 adr-content">
         <%= field("context") %>
         <%= field("facing") %>
         <div class="mb-3 pb-1 pt-3 f-3 measure br-right-2 <%= accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' %>"

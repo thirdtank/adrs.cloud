@@ -1,15 +1,15 @@
 <section class="flex w-100">
   <nav class="bg-gray-200 gray-800 w-6 h-100vh flex flex-column justify-between">
     <div class="flex flex-column overflow-y-scroll">
-      <header class="pa-3 w-100 mt-3">
+      <header class="pa-3 w-100 pt-4 flex items-center gap-2">
         <h1 class="f-4 ma-0 flex items-center gap-2">
-          <span class="f-6 flex flex-column items-center">
+          <span class="f-5">
             <%= svg("architectural-icon") %>
           </span>
           <%= t(:adrscloud) %>
         </h1>
       </header>
-      <div class="pv-3 pr-3">
+      <div class="pb-3 pr-3">
         <% if can_add_new? %>
           <a href="<%= NewDraftAdrPage.routing %>"
              class="green-500 bc-green-200 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300">

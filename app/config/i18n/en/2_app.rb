@@ -115,6 +115,7 @@
         replace: "Replace",
         refine: "Refine",
         add_tags: "Add Tags",
+        edit_tags: "Edit Tags",
         save_tags: "Save Tags",
         edit_adr: "Edit ADR",
         fields: {

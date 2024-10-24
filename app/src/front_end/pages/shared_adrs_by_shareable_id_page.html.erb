@@ -46,7 +46,7 @@
         <%= timestamp(adr.created_at, class: "fw-5", format: :date) %>
       <% end %>
     </div>
-    <section class="pt-3">
+    <section class="pt-3 adr-content">
       <%= field("context") %>
       <%= field("facing") %>
       <div class="mb-3 pb-1 pt-3 f-3 br-right-2 <%= adr.accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' %>">

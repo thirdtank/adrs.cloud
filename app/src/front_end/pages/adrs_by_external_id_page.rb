@@ -13,7 +13,7 @@ class AdrsByExternalIdPage < AppPage
 
   def field(name, label_additional_clases: "")
     html_tag(:section, "aria-label": name, class: "flex flex-column gap-2 ph-3") {
-      html_tag(:span, class: "f-1 ttu fw-6 #{label_additional_clases}") {
+      html_tag(:h4, class: "ma-0 f-1 ttu fw-6 #{label_additional_clases}") {
         t(page: [ :fields, name ])
       } + html_tag(:div, class: "measure-wide rendered-markdown") {
         component(MarkdownStringComponent.new(adr.send(name)))
