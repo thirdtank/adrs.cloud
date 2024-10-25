@@ -100,7 +100,7 @@ class Command
       end
       if @options[:rebuild]
         log "Rebuilding test database schema"
-        system! "bin/db rebuild --app-env=test > /tmp/build-test-schema.log"
+        system! "bin/db rebuild --env=test > /tmp/build-test-schema.log"
       end
       if @args.empty?
         log "Running all tests"
@@ -113,7 +113,7 @@ class Command
       end
       if @options[:rebuild_after]
         log "Re-Rebuilding test database schema"
-        system! "bin/db rebuild --app-env=test > tmp/rebuild-test-schema.log"
+        system! "bin/db rebuild --env=test > tmp/rebuild-test-schema.log"
       end
       0
     rescue SystemExit => ex

@@ -38,7 +38,11 @@ class Brut::App
     end
     self.configure_only!
     Kernel.at_exit do
+      begin
       Brut.container.sequel_db_handle.disconnect
+      rescue Sequel::DatabaseConnectionError
+        SemanticLogger["Sequel::Database"].info "Not connected to database, so not disconnecting"
+      end
     end
 
     Brut.container.sequel_db_handle.logger = SemanticLogger["Sequel::Database"]

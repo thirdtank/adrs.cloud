@@ -26,6 +26,7 @@ module Brut
     autoload(:Error, "brut/back_end/error")
     autoload(:Errors, "brut/back_end/error")
   end
+  # DO NOT autoload(:CLI) - that is intended to be require-able on its own
   autoload(:I18n, "brut/i18n")
   autoload(:SinatraHelpers, "brut/sinatra_helpers")
 end

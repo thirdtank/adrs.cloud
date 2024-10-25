@@ -1,80 +1,52 @@
 #!/usr/bin/env ruby
 
-require "optparse"
 require "sequel"
 require "uri"
 require "fileutils"
 require "date"
+require "pathname"
 
-require_relative "bin_kit"
+# Not needed once Brut is modularized
+BRUT_PATH = File.join(File.dirname($0),"..","lib")
+$: << BRUT_PATH
+require "brut/cli"
 
-Sequel.extension :migration
 
-def parse_options
-  options = {}
-  OptionParser.new do |parser|
-    parser.banner = %{Usage: #{$0} [options] «command»
+class DBApp < Brut::CLI::App
+  description "Manage your database in development, test, and production"
 
-COMMANDS
-
-  create        - create the database if it doesn't exist
-  drop          - drop the database if it exists
-  migrate       - apply any outstanding migrations
-  rebuild       - drops, then creates the db, then runs migrations
-  status        - report on the status of the database and its migrations
-  seeds         - load seed data
-  new-migration - creates a new migration file. Arguments are the name/description of the migration
-
-OPTIONS
-}
-    parser.on("--app-env=ENV","Env for the app. Must be development, test, or production") do |value|
-      options[:app_env] = value
-    end
-    parser.on("--seeds","For rebuild only, load seeds after rebuild") do |value|
-      options[:load_seeds] = !!value
-    end
-
-  end.parse!
-  options
-end
-
-options = parse_options
-
-class Command
-  def self.from_string(string)
-    case string
-    when "create"        then Create
-    when "drop"          then Drop
-    when "migrate"       then Migrate
-    when "new-migration" then NewMigration
-    when "status"        then Status
-    when "rebuild"       then Rebuild
-    when "seeds"         then Seed
-    else
-      nil
-    end
-  rescue ArgumentError => ex
-    puts "Problem parsing '#{database_uri}': #{ex.message}"
-    raise
+  def before_execute
+    ENV["BRUT_LOG_FILE_NAME"] = "bin_db"
+    ENV["BRUT_LOG_STDOUT"]    = "true"
+    ENV["LOG_LEVEL"]          = "fatal"
   end
 
-  def self.default_env = nil
-  def self.boot_app? = false
+  class Seed < Brut::CLI::Command
+    description "Load seed data into the database"
+    opts.on("--env=ENVIRONMENT", "App environment to access.")
 
-  def initialize(database_uri:, args:, options:)
-    @database_uri  = database_uri
-    @database_name = @database_uri.path.gsub(/^\//,"")
-    @args          = args
-    @options       = options
-  end
-
-  class Seed < Command
-    def self.boot_app? = true
-
-    def initialize(database_uri:,args:,options:)
+    def before_execute
+      ENV["RACK_ENV"] = @command_options[:env]
     end
 
-    def call
+    def handle_bootstrap_exception(ex)
+      case ex
+      when Sequel::DatabaseConnectionError
+        puts "Database needs to be created"
+        stop_execution
+      when Sequel::DatabaseError
+        if ex.cause.kind_of?(PG::UndefinedTable)
+          puts "Migrations need to be run"
+          stop_execution
+        else
+          super
+        end
+      else
+        super
+      end
+    end
+
+    def execute
       seeds_dir = Brut.container.db_seeds_dir
       Dir["#{seeds_dir}/*.rb"].each do |file|
         require file
@@ -82,97 +54,207 @@ class Command
       seed_data = Brut::Backend::SeedData.new
       seed_data.setup!
       seed_data.load_seeds!
+      0
+    rescue Sequel::UniqueConstraintViolation => ex
+      puts "Seed data may have already been loaded: #{ex}"
     end
   end
 
-  class Rebuild < Command
-    def call
-      Drop.new(database_uri: @database_uri, args: @args, options: @options).call
-      Create.new(database_uri: @database_uri, args: @args, options: @options).call
-      Migrate.new(database_uri: @database_uri, args: @args, options: @options).call
-      if @options[:load_seeds]
-        puts "Loading seed data"
-        exec("#{$0} seeds --app-env=#{@options[:app_env]}")
+  class Rebuild < Brut::CLI::Command
+    description "Drop, re-create, and run migrations, effecitvely rebuilding the entire database"
+    opts.on("--env=ENVIRONMENT", "App environment to access.")
+    opts.on("--[no-]seeds","Load seed data after applying migrations")
+
+    def before_execute
+      ENV["RACK_ENV"] = @command_options[:env]
+    end
+
+    def handle_bootstrap_exception(ex)
+      case ex
+      when Sequel::DatabaseConnectionError
+        continue_execution
+      when Sequel::DatabaseError
+        if ex.cause.kind_of?(PG::UndefinedTable)
+          continue_execution
+        else
+          super
+        end
       else
-        puts "NOT Loading seed data, use --seeds if you want that"
+        super
       end
     end
+
+    def execute
+      result = delegate_to_command(Drop)
+      if result.ok?
+        result = delegate_to_command(Create)
+        if result.ok?
+          result = delegate_to_command(Migrate)
+          if @command_options[:seeds]
+            if result.ok?
+              result = delegate_to_command(Seed)
+            else
+              puts "migrate failed"
+            end
+          end
+        else
+          puts "create failed #{result}"
+        end
+      else
+        puts "drop failed"
+      end
+      result
+    end
   end
 
-  class Create < Command
-    def call
-      connection = Sequel.connect(@database_uri.to_s)
+  class Create < Brut::CLI::Command
+    description "Create the database if it does not exist"
+    opts.on("--env=ENVIRONMENT", "App environment to access.")
+    def handle_bootstrap_exception(ex)
+      case ex
+      when Sequel::DatabaseConnectionError
+        uri_no_database = URI(Brut.container.database_url.to_s)
+        database_name = uri_no_database.path.gsub(/^\//,"")
+        uri_no_database.path = ""
+        begin
+          connection = Sequel.connect(uri_no_database.to_s)
+          puts "#{database_name} does not exit. Creating..."
+          connection.run("CREATE DATABASE \"#{database_name}\"")
+          connection.disconnect
+        rescue => ex
+          puts ex.message
+        end
+        stop_execution
+      when Sequel::DatabaseError
+        if ex.cause.kind_of?(PG::UndefinedTable)
+          puts "Migrations need to be run"
+          continue_execution
+        else
+          super
+        end
+      else
+        super
+      end
+    end
+    def before_execute
+      ENV["RACK_ENV"] = @command_options[:env]
+    end
+    def execute
+      connection = Sequel.connect(Brut.container.database_url)
       puts "Database already exists"
       connection.disconnect
-      return
-    rescue Sequel::DatabaseConnectionError
-      uri_no_database = URI(@database_uri.to_s)
-      uri_no_database.path = ""
-      begin
-        connection = Sequel.connect(uri_no_database.to_s)
-        puts "#{@database_name} does not exit. Creating..."
-        connection.run("CREATE DATABASE \"#{@database_name}\"")
-        connection.disconnect
-      rescue => ex
-        puts ex.message
-      end
+      0
+    rescue => ex
+      handle_bootstrap_exception(ex)
     end
   end
 
-  class Drop < Command
-    def call
-      uri_no_database = URI(@database_uri.to_s)
+  class Drop < Brut::CLI::Command
+    description "Drop the database if it exists"
+    opts.on("--env=ENVIRONMENT", "App environment to access.")
+    def before_execute
+      ENV["RACK_ENV"] = @command_options[:env]
+    end
+
+    def handle_bootstrap_exception(ex)
+      case ex
+      when Sequel::DatabaseConnectionError
+        puts "Database does not exist"
+        stop_execution
+      when Sequel::DatabaseError
+        if ex.cause.kind_of?(PG::UndefinedTable)
+          continue_execution
+        else
+          super
+        end
+      else
+        super
+      end
+    end
+
+    def execute
+      uri_no_database = URI(Brut.container.database_url.to_s)
+      database_name = uri_no_database.path.gsub(/^\//,"")
       uri_no_database.path = ""
-      connection = Sequel.connect(@database_uri.to_s)
       puts "Database exists. Dropping..."
-      connection.disconnect
-      connection = Sequel.connect(uri_no_database.to_s)
-      connection.run("DROP DATABASE \"#{@database_name}\"")
-      connection.disconnect
-      return
-    rescue Sequel::DatabaseConnectionError
       begin
-        connection = Sequel.connect(uri_no_database.to_s)
-        puts "#{@database_name} does not exit."
-        connection.disconnect
-      rescue => ex
-        puts ex.message
+        Brut.container.sequel_db_handle.disconnect
+      rescue Sequel::DatabaseConnectionError
       end
+      connection = Sequel.connect(uri_no_database.to_s)
+      connection.run("DROP DATABASE IF EXISTS \"#{database_name}\"")
+      connection.disconnect
+      0
+    rescue => ex
+      handle_bootstrap_exception(ex)
     end
   end
 
-  class Migrate < Command
-    def call
+  class Migrate < Brut::CLI::Command
+    description "Apply any outstanding migrations to the database"
+    opts.on("--env=ENVIRONMENT", "App environment to access.")
+
+    def before_execute
+      ENV["RACK_ENV"] = @command_options[:env]
+    end
+
+    def handle_bootstrap_exception(ex)
+      case ex
+      when Sequel::DatabaseConnectionError
+        puts "Database does not exist. Create it first"
+        stop_execution
+      when Sequel::DatabaseError
+        if ex.cause.kind_of?(PG::UndefinedTable)
+          # ignoring - we are running migrations which will address this
+          continue_execution
+        else
+          super
+        end
+      else
+        super
+      end
+    end
+
+    def execute
+      Sequel.extension :migration
       Brut.container.sequel_db_handle.extension :brut_migrations
       migrations_dir = Brut.container.migrations_dir
       if !migrations_dir.exist?
         puts "#{migrations_dir} doesn't exist"
         return
       end
-      connection = Sequel.connect(@database_uri.to_s)
       Brut.container.sequel_db_handle.extension :pg_array
-      Brut.container.sequel_db_handle.sql_log_level = :info
 
-      Brut.container.sequel_db_handle.logger = SemanticLogger["Sequel::Database"]
+      logger = Logger.new(STDOUT)
+      logger.level = :info
+      indent = ""
+      logger.formatter = proc { |severity,time,progname,message|
+        formatted = "#{indent}#{severity} - #{message}\n"
+        if message =~ /^Begin applying/
+          indent = "   "
+        elsif message =~ /^Finished applying/
+          indent = ""
+          formatted = "#{indent}#{severity} - #{message}\n"
+        end
+        formatted
+      }
+      Brut.container.sequel_db_handle.logger = logger
       Sequel::Migrator.run(Brut.container.sequel_db_handle,migrations_dir)
       puts "Migrations applied"
-    rescue Sequel::DatabaseConnectionError
-      uri_no_database = URI(@database_uri.to_s)
-      uri_no_database.path = ""
-      begin
-        connection = Sequel.connect(uri_no_database.to_s)
-        puts "Database #{@database_name} does not exist - run bin/db create to create it"
-      rescue => ex
-        puts ex.message
-      end
     end
   end
 
-  class NewMigration < Command
-    def self.default_env = "development"
-    def call
+  class NewMigration < Brut::CLI::Command
+    description "Create a new migration file"
+    args "migration_name"
+
+    def before_execute
+      ENV["RACK_ENV"] = "development"
+    end
+
+    def execute
       if @args.length == 0
-        raise "You must provide a name"
+        return abort_execution("You must provide a name for the migration")
       end
       migrations_dir = Brut.container.migrations_dir
       name = @args.join(" ").gsub(/[^\w\d\-]/,"-")
@@ -184,73 +266,74 @@ class Command
         file.puts "  end"
         file.puts "end"
       end
-      puts "#{file_name} created"
+      relative_path = file_name.relative_path_from(Brut.container.project_root)
+      puts "Migration created:\n    #{relative_path}"
     end
   end
 
-  class Status < Command
-    def call
-      connection = Sequel.connect(@database_uri.to_s)
+  class Status < Brut::CLI::Command
+    description "Check the status of the database and migrations"
+    opts.on("--env=ENVIRONMENT", "App environment to access.")
+
+    def before_execute
+      ENV["RACK_ENV"] = @command_options[:env]
+    end
+
+    def handle_bootstrap_exception(ex)
+      case ex
+      when Sequel::DatabaseConnectionError
+        uri_no_database = URI(Brut.container.database_url.to_s)
+        database_name = uri_no_database.path.gsub(/^\//,"")
+        uri_no_database.path = ""
+        begin
+          connection = Sequel.connect(uri_no_database.to_s)
+          puts "Database Server is Up"
+          puts "Database #{database_name} does not exist"
+        rescue => ex
+          puts ex.message
+        end
+        stop_execution
+      when Sequel::DatabaseError
+        if ex.cause.kind_of?(PG::UndefinedTable)
+          puts "Migrations need to be run"
+          continue_execution
+        else
+          super
+        end
+      end
+    end
+
+    def execute
+      database_name = URI(Brut.container.database_url).path
+      connection = Brut.container.sequel_db_handle
       puts "Database Server is Up"
-      puts "Database #{@database_name} exists"
+      puts "Database #{database_name} exists"
       migrations_run = if connection.table_exists?("schema_migrations")
                          connection["select filename from schema_migrations order by filename"].all.map { |_| _[:filename] }
                        else
                          []
                        end
-      max_length = migrations_run.map(&:length).max
-      printf_string = "%-#{max_length}s - %s\n"
-      puts printf_string
-      Dir[Brut.container.migrations_dir / "*.rb"].each do |file|
+      migration_files = Dir[Brut.container.migrations_dir / "*.rb"].map { |file|
         filename = Pathname(file).basename.to_s
+      }
+      max_length = migration_files.map(&:length).max
+      printf_string = "%-#{max_length}s - %s\n"
+      migration_files.each do |filename|
         applied = migrations_run.include?(filename)
         printf(printf_string,filename,applied ? "✅ APPLIED" : "❌ NOT APPLIED")
       end
-    rescue Sequel::DatabaseConnectionError
-      uri_no_database = URI(@database_uri.to_s)
-      uri_no_database.path = ""
-      begin
-        connection = Sequel.connect(uri_no_database.to_s)
-        puts "Database Server is Up"
-        puts "Database #{@database_name} does not exist"
-      rescue => ex
-        puts ex.message
-      end
-    rescue => ex
-      puts ex.class
-      puts ex.message
+      0
     end
   end
 end
-
-if ARGV[0].to_s.strip == ""
-  log "You must provide a command"
-  exit 1
-end
+exit Brut::CLI.app(DBApp,project_root: Pathname($0).dirname / "..")
 
 
-command_klass = Command.from_string(ARGV[0])
-ENV["RACK_ENV"] = (options[:app_env] || command_klass.default_env).to_s.strip
-
-if ENV["RACK_ENV"] == ""
-  log "--app-env is required"
-  exit 1
-end
-
-if command_klass.boot_app?
-  require "bundler"
-  Bundler.require
-  $LOAD_PATH << File.join(__dir__,"..","lib")
-  require_relative "../app/boot"
-else
-  require_relative "brut_cli"
-end
-
-command = command_klass.new(database_uri: URI(ENV["DATABASE_URL"]), args: ARGV[1..-1],options: options)
-
-if !command
-  log "'#{ARGV[0]}' is not a supported command"
-  exit 1
-end
-command.call
-
+#command = command_klass.new(database_uri: URI(ENV["DATABASE_URL"]), args: ARGV[1..-1],options: options)
+#
+#if !command
+#  log "'#{ARGV[0]}' is not a supported command"
+#  exit 1
+#end
+#command.call
+#

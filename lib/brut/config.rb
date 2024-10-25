@@ -129,11 +129,19 @@ class Brut::Config
       end
 
       c.store(
+        "database_url",
+        String,
+        "URL to the primary database - generally avoid this and use sequel_db_handle"
+      ) do
+        ENV.fetch("DATABASE_URL")
+      end
+
+      c.store(
         "sequel_db_handle",
         String,
         "URL connection string for the primary database"
-      ) do
-        Sequel.connect(ENV.fetch("DATABASE_URL"))
+      ) do |database_url|
+        Sequel.connect(database_url)
       end
 
       c.store_ensured_path(
@@ -352,7 +360,19 @@ class Brut::Config
         allow_app_override: true,
         allow_nil: true,
       ) do |log_dir,project_env|
-        if project_env.test?
+        env_log_file_name = ENV["BRUT_LOG_FILE_NAME"]
+        if env_log_file_name
+          if env_log_file_name == "false"
+            nil
+          else
+            path = Pathname(env_log_file_name)
+            if path.absolute?
+              path
+            else
+              log_dir / path
+            end
+          end
+        elsif project_env.test?
           log_dir / "test.log"
         elsif project_env.development?
           log_dir / "development.log"
@@ -368,7 +388,14 @@ class Brut::Config
         allow_app_override: true,
         allow_nil: true,
       ) do |project_env|
-        if project_env.test?
+        env_option = ENV["BRUT_LOG_STDOUT"]
+        if env_option && env_option != "false"
+          if env_option == "color"
+            { formatter: :color }
+          else
+            {}
+          end
+        elsif project_env.test?
           nil
         elsif project_env.development?
           { formatter: :color }

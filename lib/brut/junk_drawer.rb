@@ -64,6 +64,36 @@ class RichString
 
   def to_s_or_nil = @string.empty? ? nil : self.to_s
 
+  def ==(other)
+    if other.kind_of?(RichString)
+      self.to_s == other.to_s
+    elsif other.kind_of?(String)
+      self.to_s == other
+    else
+      false
+    end
+  end
+
+  def <=>(other)
+    if other.kind_of?(RichString)
+      self.to_s <=> other.to_s
+    elsif other.kind_of?(String)
+      self.to_s <=> other
+    else
+      super
+    end
+  end
+
+  def +(other)
+    if other.kind_of?(RichString)
+      RichString.new(self.to_s + other.to_s)
+    elsif other.kind_of?(String)
+      self.to_s + other
+    else
+      super(other)
+    end
+  end
+
 end
 
 module Brut::FussyTypeEnforcment
