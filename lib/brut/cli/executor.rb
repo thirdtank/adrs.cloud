@@ -7,22 +7,22 @@ class Brut::CLI::Executor
   def system!(*args)
     @out.puts "Executing #{args}"
     wait_thread = Open3.popen3(*args) do |_stdin,stdout,stderr,wait_thread|
-      o = stdout.read_nonblock(1, exception: false)
-      e = stderr.read_nonblock(1, exception: false)
+      o = stdout.read_nonblock(10, exception: false)
+      e = stderr.read_nonblock(10, exception: false)
       while o || e
         if o
           if o != :wait_readable
             @out.print o
             @out.flush
           end
-          o = stdout.read_nonblock(1, exception: false)
+          o = stdout.read_nonblock(10, exception: false)
         end
         if e
           if e != :wait_readable
             @err.print e
             @err.flush
           end
-          e = stderr.read_nonblock(1, exception: false)
+          e = stderr.read_nonblock(10, exception: false)
         end
       end
       wait_thread

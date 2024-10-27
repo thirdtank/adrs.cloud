@@ -139,5 +139,11 @@ module Brut
     autoload(:Options, "brut/cli/options")
     autoload(:Output, "brut/cli/output")
     autoload(:Executor, "brut/cli/executor")
+    module Apps
+      autoload(:DB,"brut/cli/apps/db")
+      autoload(:DB,"brut/cli/apps/test")
+      autoload(:DB,"brut/cli/apps/build_assets")
+      autoload(:DB,"brut/cli/apps/scaffold")
+    end
   end
 end
