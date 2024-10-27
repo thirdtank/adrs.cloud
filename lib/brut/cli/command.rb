@@ -78,7 +78,7 @@ class Brut::CLI::Command
   end
 
   def delegate_to_command(command_klass)
-    command = command_klass.new(command_options:, args:, out:, err:, executor: @executor)
+    command = command_klass.new(command_options: options, global_options:, args:, out:, err:, executor: @executor)
     as_execution_result(command.execute)
   end
 
