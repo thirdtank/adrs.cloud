@@ -88,12 +88,16 @@ class Brut::App
     if log_file_name
       SemanticLogger.add_appender(file_name: log_file_name.to_s)
     else
-      puts "Not logging to a file"
+      if project_env.production?
+        puts "Not logging to a file"
+      end
     end
     if log_to_stdout_options
       SemanticLogger.add_appender(**log_to_stdout_options.merge(io: $stdout))
     else
-      puts "Not logging to stdout"
+      if project_env.production?
+        puts "Not logging to stdout"
+      end
     end
     SemanticLogger["Brut"].info("Logging set up")
 

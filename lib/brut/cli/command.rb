@@ -29,13 +29,36 @@ class Brut::CLI::Command
     end
   end
 
-  def initialize(command_options:,args:)
-    @command_options = command_options || {}
-    @args            = args            || []
+  def self.requires_project_env(default: "development")
+    default_message = if default.nil?
+                        ""
+                      else
+                        " (default '#{default}')"
+                      end
+    opts.on("--env=ENVIRONMENT","Project environment#{default_message}")
+    @default_env = default
+    @requires_project_env = true
   end
 
+  def self.default_env           = @default_env
+  def self.requires_project_env? = @requires_project_env
+
+  def initialize(command_options:,args:,out:,err:,executor:)
+    @command_options = command_options
+    @args            = args
+    @out             = out
+    @err             = err
+    @executor        = executor
+    if self.class.default_env
+      @command_options.set_default(:env,self.class.default_env)
+    end
+  end
+
+  def system!(*args) = @executor.system!(*args)
+
+
   def delegate_to_command(command_klass)
-    command = command_klass.new(command_options: @command_options, args: @args)
+    command = command_klass.new(command_options: @command_options, args: @args, out: @out, err: @err, executor: @executor)
     as_execution_result(command.execute)
   end
 
@@ -44,6 +67,12 @@ class Brut::CLI::Command
   end
 
   def before_execute
+  end
+
+  def set_env_if_needed
+    if self.class.requires_project_env?
+      ENV["RACK_ENV"] = options.env
+    end
   end
 
   def handle_bootstrap_exception(ex)
@@ -55,4 +84,17 @@ class Brut::CLI::Command
     Bundler.require(:default, ENV["RACK_ENV"].to_sym)
     require "#{project_root}/app/boot"
   end
+
+private
+
+  def options = @command_options
+  def args    = @args
+  def out     = @out
+  def err     = @err
+
+  def puts(...)
+    warn("Your CLI apps should use out and err to produce terminal output, not puts", uplevel: 1)
+    Kernel.puts(...)
+  end
+
 end

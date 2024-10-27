@@ -16,6 +16,13 @@ class Brut::CLI::App
       @description = new_description
     end
   end
+  def self.default_command(new_command_name=nil)
+    if new_command_name.nil?
+      return @default_command || "help"
+    else
+      @default_command = new_command_name.nil? ? nil : new_command_name.to_s
+    end
+  end
   def self.opts
     self.option_parser
   end
@@ -25,8 +32,11 @@ class Brut::CLI::App
     end
   end
 
-  def initialize(global_options:)
+  def initialize(global_options:,out:,err:,executor:)
     @global_options = global_options
+    @out            = out
+    @err            = err
+    @executor       = executor
   end
 
   def before_execute
@@ -34,6 +44,7 @@ class Brut::CLI::App
 
   def execute!(command,project_root:)
     before_execute
+    command.set_env_if_needed
     command.before_execute
     bootstrap_result = begin
                          as_execution_result(command.bootstrap!(project_root:))
@@ -47,4 +58,14 @@ class Brut::CLI::App
   rescue Brut::CLI::Error => ex
     abort_execution(ex.message)
   end
+
+private
+
+  def out = @out
+  def err = @err
+  def puts(...)
+    warn("Your CLI apps should use out and err to produce terminal output, not puts", uplevel: 1)
+    Kernel.puts(...)
+  end
+
 end

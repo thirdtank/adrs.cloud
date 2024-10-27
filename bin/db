@@ -2,7 +2,6 @@
 
 require "sequel"
 require "uri"
-require "fileutils"
 require "date"
 require "pathname"
 
@@ -23,20 +22,16 @@ class DBApp < Brut::CLI::App
 
   class Seed < Brut::CLI::Command
     description "Load seed data into the database"
-    opts.on("--env=ENVIRONMENT", "App environment to access.")
-
-    def before_execute
-      ENV["RACK_ENV"] = @command_options[:env]
-    end
+    requires_project_env default: "development"
 
     def handle_bootstrap_exception(ex)
       case ex
       when Sequel::DatabaseConnectionError
-        puts "Database needs to be created"
+        err.puts "Database needs to be created"
         stop_execution
       when Sequel::DatabaseError
         if ex.cause.kind_of?(PG::UndefinedTable)
-          puts "Migrations need to be run"
+          err.puts "Migrations need to be run"
           stop_execution
         else
           super
@@ -56,18 +51,15 @@ class DBApp < Brut::CLI::App
       seed_data.load_seeds!
       0
     rescue Sequel::UniqueConstraintViolation => ex
-      puts "Seed data may have already been loaded: #{ex}"
+      out.puts "Seed data may have already been loaded: #{ex}"
     end
   end
 
   class Rebuild < Brut::CLI::Command
     description "Drop, re-create, and run migrations, effecitvely rebuilding the entire database"
-    opts.on("--env=ENVIRONMENT", "App environment to access.")
     opts.on("--[no-]seeds","Load seed data after applying migrations")
 
-    def before_execute
-      ENV["RACK_ENV"] = @command_options[:env]
-    end
+    requires_project_env default: "development"
 
     def handle_bootstrap_exception(ex)
       case ex
@@ -90,18 +82,18 @@ class DBApp < Brut::CLI::App
         result = delegate_to_command(Create)
         if result.ok?
           result = delegate_to_command(Migrate)
-          if @command_options[:seeds]
+          if options.seeds?
             if result.ok?
               result = delegate_to_command(Seed)
             else
-              puts "migrate failed"
+              err.puts "migrate failed"
             end
           end
         else
-          puts "create failed #{result}"
+          err.puts "create failed #{result}"
         end
       else
-        puts "drop failed"
+        err.puts "drop failed"
       end
       result
     end
@@ -109,7 +101,8 @@ class DBApp < Brut::CLI::App
 
   class Create < Brut::CLI::Command
     description "Create the database if it does not exist"
-    opts.on("--env=ENVIRONMENT", "App environment to access.")
+    requires_project_env default: "development"
+
     def handle_bootstrap_exception(ex)
       case ex
       when Sequel::DatabaseConnectionError
@@ -118,16 +111,16 @@ class DBApp < Brut::CLI::App
         uri_no_database.path = ""
         begin
           connection = Sequel.connect(uri_no_database.to_s)
-          puts "#{database_name} does not exit. Creating..."
+          out.puts "#{database_name} does not exit. Creating..."
           connection.run("CREATE DATABASE \"#{database_name}\"")
           connection.disconnect
         rescue => ex
-          puts ex.message
+          err.puts ex.message
         end
         stop_execution
       when Sequel::DatabaseError
         if ex.cause.kind_of?(PG::UndefinedTable)
-          puts "Migrations need to be run"
+          out.puts "Migrations need to be run"
           continue_execution
         else
           super
@@ -136,12 +129,9 @@ class DBApp < Brut::CLI::App
         super
       end
     end
-    def before_execute
-      ENV["RACK_ENV"] = @command_options[:env]
-    end
     def execute
       connection = Sequel.connect(Brut.container.database_url)
-      puts "Database already exists"
+      out.puts "Database already exists"
       connection.disconnect
       0
     rescue => ex
@@ -151,15 +141,12 @@ class DBApp < Brut::CLI::App
 
   class Drop < Brut::CLI::Command
     description "Drop the database if it exists"
-    opts.on("--env=ENVIRONMENT", "App environment to access.")
-    def before_execute
-      ENV["RACK_ENV"] = @command_options[:env]
-    end
+    requires_project_env default: "development"
 
     def handle_bootstrap_exception(ex)
       case ex
       when Sequel::DatabaseConnectionError
-        puts "Database does not exist"
+        out.puts "Database does not exist"
         stop_execution
       when Sequel::DatabaseError
         if ex.cause.kind_of?(PG::UndefinedTable)
@@ -176,7 +163,7 @@ class DBApp < Brut::CLI::App
       uri_no_database = URI(Brut.container.database_url.to_s)
       database_name = uri_no_database.path.gsub(/^\//,"")
       uri_no_database.path = ""
-      puts "Database exists. Dropping..."
+      out.puts "Database exists. Dropping..."
       begin
         Brut.container.sequel_db_handle.disconnect
       rescue Sequel::DatabaseConnectionError
@@ -192,16 +179,12 @@ class DBApp < Brut::CLI::App
 
   class Migrate < Brut::CLI::Command
     description "Apply any outstanding migrations to the database"
-    opts.on("--env=ENVIRONMENT", "App environment to access.")
-
-    def before_execute
-      ENV["RACK_ENV"] = @command_options[:env]
-    end
+    requires_project_env default: "development"
 
     def handle_bootstrap_exception(ex)
       case ex
       when Sequel::DatabaseConnectionError
-        puts "Database does not exist. Create it first"
+        err.puts "Database does not exist. Create it first"
         stop_execution
       when Sequel::DatabaseError
         if ex.cause.kind_of?(PG::UndefinedTable)
@@ -220,7 +203,7 @@ class DBApp < Brut::CLI::App
       Brut.container.sequel_db_handle.extension :brut_migrations
       migrations_dir = Brut.container.migrations_dir
       if !migrations_dir.exist?
-        puts "#{migrations_dir} doesn't exist"
+        err.puts "#{migrations_dir} doesn't exist"
         return
       end
       Brut.container.sequel_db_handle.extension :pg_array
@@ -240,7 +223,7 @@ class DBApp < Brut::CLI::App
       }
       Brut.container.sequel_db_handle.logger = logger
       Sequel::Migrator.run(Brut.container.sequel_db_handle,migrations_dir)
-      puts "Migrations applied"
+      out.puts "Migrations applied"
     end
   end
 
@@ -267,17 +250,13 @@ class DBApp < Brut::CLI::App
         file.puts "end"
       end
       relative_path = file_name.relative_path_from(Brut.container.project_root)
-      puts "Migration created:\n    #{relative_path}"
+      out.puts "Migration created:\n    #{relative_path}"
     end
   end
 
   class Status < Brut::CLI::Command
     description "Check the status of the database and migrations"
-    opts.on("--env=ENVIRONMENT", "App environment to access.")
-
-    def before_execute
-      ENV["RACK_ENV"] = @command_options[:env]
-    end
+    requires_project_env default: "development"
 
     def handle_bootstrap_exception(ex)
       case ex
@@ -287,15 +266,15 @@ class DBApp < Brut::CLI::App
         uri_no_database.path = ""
         begin
           connection = Sequel.connect(uri_no_database.to_s)
-          puts "Database Server is Up"
-          puts "Database #{database_name} does not exist"
+          out.puts "Database Server is Up"
+          out.puts "Database #{database_name} does not exist"
         rescue => ex
-          puts ex.message
+          err.puts ex.message
         end
         stop_execution
       when Sequel::DatabaseError
         if ex.cause.kind_of?(PG::UndefinedTable)
-          puts "Migrations need to be run"
+          err.puts "Migrations need to be run"
           continue_execution
         else
           super
@@ -306,8 +285,8 @@ class DBApp < Brut::CLI::App
     def execute
       database_name = URI(Brut.container.database_url).path
       connection = Brut.container.sequel_db_handle
-      puts "Database Server is Up"
-      puts "Database #{database_name} exists"
+      out.puts "Database Server is Up"
+      out.puts "Database #{database_name} exists"
       migrations_run = if connection.table_exists?("schema_migrations")
                          connection["select filename from schema_migrations order by filename"].all.map { |_| _[:filename] }
                        else

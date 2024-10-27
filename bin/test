@@ -5,76 +5,25 @@ require "pathname"
 require "fileutils"
 require "shellwords"
 
-ENV["RACK_ENV"] = "test"
-require_relative "brut_cli"
+# Not needed once Brut is modularized
+BRUT_PATH = File.join(File.dirname($0),"..","lib")
+$: << BRUT_PATH
+require "brut/cli"
 
-def parse_options
-  options = {
-    rebuild: :use_default,
-    rebuild_after: :use_default,
-    show_scaffold: false,
-    build_assets: true,
-    ignore: [],
-  }
-  OptionParser.new do |parser|
-    parser.banner = %{Usage: #{$0} [options] «command» [args]
+class TestApp < Brut::CLI::App
+  description "Run and audit tests of the app"
+  default_command :run
 
-Manage and run tests in the app
-
-COMMANDS
-
-    run   - runs non e2e tests (this is the default when no command given)
-    e2e   - runs e2e tests
-    js    - run JS-based tests
-    audit - show a list of all files without a corresponding test file 
-
-OPTIONS
-}
-    parser.on("--[no-]rebuild", "If set, the entire schema is rebuilt before tests run (default true for e2e, false otherwise)") do |value|
-      options[:rebuild] = !!value
-    end
-    parser.on("--[no-]rebuild-after", "If set, the entire schema is rebuilt after tests run (default true for e2e, false otherwise)") do |value|
-      options[:rebuild_after] = !!value
-    end
-    parser.on("--audit-type=[FILE_TYPE]", "If set, only audit files of this type" ) do |value|
-      options[:audit_type] = value.to_sym
-    end
-    parser.on("--show-scaffold", "If set, shows a scaffold command to generate missing tests" ) do |value|
-      options[:show_scaffold] = !!value
-    end
-    parser.on("--[no-]build-assets", "If set, assets are built before js tests") do |value|
-      options[:build_assets] = !!value
-    end
-    parser.on("--seed=SEED","If set, gives rspec this seed value") do |value|
-      options[:seed] = value
-    end
-    parser.on("--ignore=FILE","Ignore this file for auditing purposes. Can be specified more than once") do |value|
-      options[:ignore] << value
-    end
-  end.parse!
-  options.tap { |_| puts _ }
-end
-
-options = parse_options
-
-class Command
-  def self.from_string(string, args:, options:)
-    case string
-    when "run"   then Run.new(args:, options:)
-    when "e2e"   then RunE2E.new(args:, options:)
-    when "audit" then Audit.new(args:,options:)
-    when "js"    then JS.new(args:,options:)
-    else
-      nil
-    end
+  def before_execute
+    ENV["RACK_ENV"] = "test"
   end
 
-  def initialize(args:, options:)
-    @args    = args
-    @options = options
-  end
-
-  class Run < Command
+  class Run < Brut::CLI::Command
+    description "Run non-e2e tests"
+    opts.on("--[no-]rebuild", "If true, test database is rebuilt before tests are run (default false)")
+    opts.on("--[no-]rebuild-after", "If true, test database is rebuilt after tests are run (default false)")
+    opts.on("--seed SEED", "Set the random seed to allow duplicating a test run")
+    args "specs_to_run..."
 
     def rspec_command
       parts = [
@@ -82,81 +31,72 @@ class Command
         "-I", Brut.container.app_specs_dir,
         "-I", Brut.container.app_src_dir,
         "-I lib/", # not needed when Brut is gemified
-        "--tag ~e2e",
+        rspec_cli_args,
         "-P \"**/*.spec.rb\"",
       ]
-      if @options[:seed]
+      if options.seed?
         parts << "--seed #{@options[:seed]}"
       end
       parts.join(" ")
     end
 
-    def call
-      if @options[:rebuild] == :use_default
-        @options[:rebuild] = false
-      end
-      if @options[:rebuild_after] == :use_default
-        @options[:rebuild_after] = false
-      end
-      if @options[:rebuild]
+    def rspec_cli_args = "--tag ~e2e"
+
+    def rebuild_by_default?       = false
+    def rebuild_after_by_default? = false
+
+    def execute
+      Brut.container.sequel_db_handle.disconnect
+      if options.rebuild?(default: rebuild_by_default?)
         log "Rebuilding test database schema"
         system! "bin/db rebuild --env=test > /tmp/build-test-schema.log"
       end
-      if @args.empty?
+      if args.empty?
         log "Running all tests"
         system! "#{rspec_command} #{Brut.container.app_specs_dir}/"
       else
-        test_args = @args.map { |_|
+        test_args = args.map { |_|
           '"' + Shellwords.escape(_) + '"'
         }.join(" ")
         system! "#{rspec_command} #{test_args}"
       end
-      if @options[:rebuild_after]
+      if options.rebuild_after?(default: rebuild_after_by_default?)
         log "Re-Rebuilding test database schema"
         system! "bin/db rebuild --env=test > tmp/rebuild-test-schema.log"
       end
       0
-    rescue SystemExit => ex
-      log ex.message
-      1
     end
   end
+  class E2e < Run
+    description "Run e2e tests"
+    opts.on("--[no-]rebuild", "If true, test database is rebuilt before tests are run (default true)")
+    opts.on("--[no-]rebuild-after", "If true, test database is rebuilt after tests are run (default true)")
+    opts.on("--seed SEED", "Set the random seed to allow duplicating a test run")
+    args "specs_to_run..."
 
-  class RunE2E < Run
-    def rspec_command
-      [
-        "bin/rspec",
-        "-I", Brut.container.app_specs_dir,
-        "-I", Brut.container.app_src_dir,
-        "-I lib/", # not needed when Brut is gemified
-        "--tag e2e",
-        "-P \"**/*.spec.rb\"",
-      ].join(" ")
-    end
-    def call
-      if @options[:rebuild] == :use_default
-        @options[:rebuild] = true
-      end
-      if @options[:rebuild_after] == :use_default
-        @options[:rebuild_after] = true
-      end
-      super
-    end
+    def rspec_cli_args = "--tag e2e"
+    def rebuild_by_default?       = true
+    def rebuild_after_by_default? = true
   end
-
-  class JS < Command
-    def call
-      if @options[:build_assets]
-        log "Rebuilding assets"
-        system! "RACK_ENV=test bin/build-assets"
+  class JS < Brut::CLI::Command
+    description "Run JavaScript unit tests"
+    opts.on("--[no-]build-assets","Build all assets before running the tests")
+    def execute
+      if options.build_assets?
+        system!({ "RACK_ENV" => "test" }, "bin/build-assets")
       end
       system!({ "NODE_DISABLE_COLORS" => "1" },"npx mocha #{Brut.container.js_specs_dir} --no-color --extension 'spec.js' --recursive")
       0
     end
   end
+  class Audit < Brut::CLI::Command
+    description "Audits all of the app's classes to see if test files exist"
 
-  class Audit < Command
-    def call
+    opts.on("--ignore PATH[,PATH]","Ignore any files in these paths, relative to app root",Array)
+    opts.on("--type TYPE","Only audit this type of file")
+    opts.on("--show-scaffold","If set, shows the command to scaffold the missing tests")
+
+    def execute
       app_files = Dir["#{Brut.container.app_src_dir}/**/*"].select { |file|
         if file.start_with?(Brut.container.app_specs_dir.to_s)
           false
@@ -170,7 +110,7 @@ class Command
         Pathname(file)
       }.select { |pathname|
         relative_to_root = pathname.relative_path_from(Brut.container.project_root)
-        if @options[:ignore].include?(relative_to_root.to_s)
+        if options.ignore(default: []).include?(relative_to_root.to_s)
           false
         else
           true
@@ -179,7 +119,7 @@ class Command
         relative = pathname.relative_path_from(Brut.container.app_src_dir)
         test_file = Brut.container.project_root / "specs" / relative.dirname / "#{relative.basename(relative.extname)}.spec.rb"
         hash = {
-          source_file: pathname,
+          source_file: pathname.relative_path_from(Brut.container.project_root),
           test_file: test_file,
           test_expected: true,
         }
@@ -236,29 +176,30 @@ class Command
       printed_header = false
       audit.each do |file_audit|
         if !file_audit[:test_file].exist?
-          if @options[:audit_type].nil? || file_audit[:type] == @options[:audit_type]
+          if options.audit_type.nil? || file_audit[:type] == options.audit_type
             if file_audit[:test_expected]
               files_missing << file_audit[:source_file]
               if !printed_header
-                log "These files are missing tests:"
-                log ""
+                out.puts "These files are missing tests:"
+                out.puts ""
                 printed_header = true
               end
-              puts "#{file_audit[:type].to_s.ljust(15)} - #{file_audit[:source_file]}"
+              out.puts "#{file_audit[:type].to_s.ljust(15)} - #{file_audit[:source_file]}"
             end
           end
         end
       end
       if files_missing.empty?
-        log "All tests exists!"
+        out.puts "All tests exists!"
         0
       else
-        if @options[:show_scaffold]
+        if options.show_scaffold?
+          out.puts
           files_missing_args = files_missing.map { |file|
             '             "' + Shellwords.escape(file.to_s) + '"'
           }.join(" \\\n")
 
-          log "Run this command to generate empty tests:\n\nbin/scaffold test \\\n#{files_missing_args}"
+          out.puts "Run this command to generate empty tests:\n\nbin/scaffold test \\\n#{files_missing_args}"
         end
         1
       end
@@ -266,16 +207,5 @@ class Command
   end
 end
 
-command_name = if ARGV[0].to_s.strip == ""
-                 "run"
-               else
-                 ARGV[0].strip
-               end
-
-command = Command.from_string(command_name,args: ARGV[1..] || [],options:)
-if !command
-  command = Command.from_string("run",args: ARGV,options:)
-end
-
-exit command.call
+exit Brut::CLI.app(TestApp,project_root: Pathname($0).dirname / "..")
 
