@@ -19,6 +19,7 @@ module Brut
     autoload(:HttpMethod, "brut/front_end/http_method")
     autoload(:HttpStatus, "brut/front_end/http_status")
     autoload(:Session, "brut/front_end/session")
+    autoload(:AssetMetadata, "brut/front_end/asset_metadata")
   end
   module BackEnd
     autoload(:Result, "brut/back_end/result")

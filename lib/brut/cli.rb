@@ -48,9 +48,10 @@ module Brut
         exit 0
       end
       command_argv = rest[1..-1] || []
-      args = command_option_parser.order!(command_argv,into:command_options)
-      cli_app = app_klass.new(global_options:Brut::CLI::Options.new(global_options), out:, err:,executor:)
-      cmd = command_klass.new(command_options:Brut::CLI::Options.new(command_options),args:, out:,err:,executor:)
+      args = command_option_parser.parse!(command_argv,into:command_options)
+      global_options = Brut::CLI::Options.new(global_options)
+      cli_app = app_klass.new(global_options:, out:, err:, executor:)
+      cmd = command_klass.new(command_options:Brut::CLI::Options.new(command_options),global_options:, args:, out:, err:, executor:)
       result = cli_app.execute!(cmd, project_root:)
       if result.message
         if !result.ok?
@@ -91,6 +92,11 @@ module Brut
                               ""
                             end
 
+          description = if command.description && command.description.kind_of?(Proc)
+                          command.description.()
+                        else
+                          command.description
+                        end
           printf printf_string, command.command_name, command.description, default_message
         end
       end
@@ -109,14 +115,20 @@ module Brut
       out.puts_no_prefix
       out.puts_no_prefix "    " + command_klass.description
       out.puts_no_prefix
+      if command_klass.detailed_description
+        out.puts_no_prefix "    " + command_klass.detailed_description.strip
+        out.puts_no_prefix
+      end
       out.puts_no_prefix "GLOBAL OPTIONS"
       option_parser.summarize do |line|
         out.puts_no_prefix line
       end
-      out.puts_no_prefix
-      out.puts_no_prefix "COMMAND OPTIONS"
-      command_option_parser.summarize do |line|
-        out.puts_no_prefix line
+      if command_option_parser.top.list.length > 0
+        out.puts_no_prefix
+        out.puts_no_prefix "COMMAND OPTIONS"
+        command_option_parser.summarize do |line|
+          out.puts_no_prefix line
+        end
       end
     end
     autoload(:App, "brut/cli/app")

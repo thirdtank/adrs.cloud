@@ -31,19 +31,42 @@ class Brut::CLI::App
       opts.banner = "%{app} %{global_options} commands [command options] [args]"
     end
   end
+  def self.requires_project_env(default: "development")
+    default_message = if default.nil?
+                        ""
+                      else
+                        " (default '#{default}')"
+                      end
+    opts.on("--env=ENVIRONMENT","Project environment#{default_message}")
+    @default_env = default
+    @requires_project_env = true
+  end
+
+  def self.default_env           = @default_env
+  def self.requires_project_env? = @requires_project_env
 
   def initialize(global_options:,out:,err:,executor:)
     @global_options = global_options
     @out            = out
     @err            = err
     @executor       = executor
+    if self.class.default_env
+      @global_options.set_default(:env,self.class.default_env)
+    end
   end
 
   def before_execute
   end
 
+  def set_env_if_needed
+    if self.class.requires_project_env?
+      ENV["RACK_ENV"] = options.env
+    end
+  end
+
   def execute!(command,project_root:)
     before_execute
+    set_env_if_needed
     command.set_env_if_needed
     command.before_execute
     bootstrap_result = begin
@@ -61,6 +84,7 @@ class Brut::CLI::App
 
 private
 
+  def options = @global_options
   def out = @out
   def err = @err
   def puts(...)

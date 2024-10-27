@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 #
-require "optparse"
 require "pathname"
-require "fileutils"
 require "shellwords"
 
 # Not needed once Brut is modularized
@@ -48,11 +46,11 @@ class TestApp < Brut::CLI::App
     def execute
       Brut.container.sequel_db_handle.disconnect
       if options.rebuild?(default: rebuild_by_default?)
-        log "Rebuilding test database schema"
-        system! "bin/db rebuild --env=test > /tmp/build-test-schema.log"
+        out.puts "Rebuilding test database schema"
+        system! "bin/db rebuild --env=test"
       end
       if args.empty?
-        log "Running all tests"
+        out.puts "Running all tests"
         system! "#{rspec_command} #{Brut.container.app_specs_dir}/"
       else
         test_args = args.map { |_|
@@ -61,8 +59,8 @@ class TestApp < Brut::CLI::App
         system! "#{rspec_command} #{test_args}"
       end
       if options.rebuild_after?(default: rebuild_after_by_default?)
-        log "Re-Rebuilding test database schema"
-        system! "bin/db rebuild --env=test > tmp/rebuild-test-schema.log"
+        out.puts "Re-Rebuilding test database schema"
+        system! "bin/db rebuild --env=test"
       end
       0
     end

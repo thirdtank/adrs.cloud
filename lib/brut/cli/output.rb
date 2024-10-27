@@ -14,7 +14,7 @@ class Brut::CLI::Output
       objects << ""
     end
     objects.each do |object|
-      @io.puts(@prefix + object)
+      @io.puts(@prefix + object.to_s)
     end
     nil
   end

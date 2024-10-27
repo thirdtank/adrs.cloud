@@ -1,5 +1,5 @@
 web:    PORT=6502                                                                     bin/run
 sidekiq:                                                                              bin/run-sidekiq
-css:    SHELL=/bin/bash npx chokidar --initial -p "app/src/front_end/css/**/*"    -c "bin/build-css"
-js:     SHELL=/bin/bash npx chokidar --initial -p "app/src/front_end/js/**/*"     -c "bin/build-js"
-images: SHELL=/bin/bash npx chokidar --initial -p "app/src/front_end/images/**/*" -c "bin/build-images"
+css:    SHELL=/bin/bash npx chokidar --initial -p "app/src/front_end/css/**/*"    -c "bin/build-assets css"
+js:     SHELL=/bin/bash npx chokidar --initial -p "app/src/front_end/js/**/*"     -c "bin/build-assets js"
+images: SHELL=/bin/bash npx chokidar --initial -p "app/src/front_end/images/**/*" -c "bin/build-assets images"

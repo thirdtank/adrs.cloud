@@ -77,23 +77,9 @@ class DBApp < Brut::CLI::App
     end
 
     def execute
-      result = delegate_to_command(Drop)
-      if result.ok?
-        result = delegate_to_command(Create)
-        if result.ok?
-          result = delegate_to_command(Migrate)
-          if options.seeds?
-            if result.ok?
-              result = delegate_to_command(Seed)
-            else
-              err.puts "migrate failed"
-            end
-          end
-        else
-          err.puts "create failed #{result}"
-        end
-      else
-        err.puts "drop failed"
+      result = delegate_to_commands(Drop, Create, Migrate)
+      if result.ok? && options.seed?
+        result = delegate_to_command(Seed)
       end
       result
     end

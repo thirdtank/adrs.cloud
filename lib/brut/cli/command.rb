@@ -9,6 +9,13 @@ class Brut::CLI::Command
       @description = new_description
     end
   end
+  def self.detailed_description(new_description=nil)
+    if new_description.nil?
+      return @detailed_description.to_s
+    else
+      @detailed_description = new_description
+    end
+  end
   def self.args(new_args=nil)
     if new_args.nil?
       return @args.to_s
@@ -43,8 +50,9 @@ class Brut::CLI::Command
   def self.default_env           = @default_env
   def self.requires_project_env? = @requires_project_env
 
-  def initialize(command_options:,args:,out:,err:,executor:)
+  def initialize(command_options:,global_options:, args:,out:,err:,executor:)
     @command_options = command_options
+    @global_options  = global_options
     @args            = args
     @out             = out
     @err             = err
@@ -57,8 +65,20 @@ class Brut::CLI::Command
   def system!(*args) = @executor.system!(*args)
 
 
+  def delegate_to_commands(*command_klasses)
+    result = nil
+    command_klasses.each do |command_klass|
+      result = delegate_to_command(command_klass)
+      if !result.ok?
+        err.puts "#{command_klass.command_name} failed"
+        return result
+      end
+    end
+    result
+  end
+
   def delegate_to_command(command_klass)
-    command = command_klass.new(command_options: @command_options, args: @args, out: @out, err: @err, executor: @executor)
+    command = command_klass.new(command_options:, args:, out:, err:, executor: @executor)
     as_execution_result(command.execute)
   end
 
@@ -87,10 +107,11 @@ class Brut::CLI::Command
 
 private
 
-  def options = @command_options
-  def args    = @args
-  def out     = @out
-  def err     = @err
+  def options        = @command_options
+  def global_options = @global_options
+  def args           = @args
+  def out            = @out
+  def err            = @err
 
   def puts(...)
     warn("Your CLI apps should use out and err to produce terminal output, not puts", uplevel: 1)

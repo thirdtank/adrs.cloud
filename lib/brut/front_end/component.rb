@@ -54,23 +54,12 @@ class Brut::FrontEnd::Component
     end
 
     def reload
-      @metadata = JSON.parse(File.read(@metadata_file))["asset_metadata"]
-      if @metadata.nil?
-        raise "Asset metadata file '#{@metadata_file}' is corrupted. There is no top-level 'asset_metadata' key"
-      end
+      @asset_metadata = Brut::FrontEnd::AssetMetadata.new(asset_metadata_file: @metadata_file)
+      @asset_metadata.load!
     end
 
     def resolve(path)
-      extension = File.extname(path)
-      if @metadata[extension]
-        if @metadata[extension][path]
-          @metadata[extension][path]
-        else
-          raise "Asset metadata does not have a mapping for '#{path}'"
-        end
-      else
-        raise "Asset metadata has not been set up for files with extension '#{extension}'"
-      end
+      @asset_metadata.resolve(path)
     end
   end
 

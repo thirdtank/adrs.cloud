@@ -1,67 +1,126 @@
 #!/usr/bin/env ruby
 
-require "optparse"
 require "pathname"
-require "prism"
-require "fileutils"
 
-ENV["RACK_ENV"] = "development"
-require_relative "brut_cli"
+# Not needed once Brut is modularized
+BRUT_PATH = File.join(File.dirname($0),"..","lib")
+$: << BRUT_PATH
+require "brut/cli"
 
-def parse_options
-  options = {
-    overwrite: false,
-  }
-  OptionParser.new do |parser|
-    parser.banner = %{Usage: #{$0} [options] «command» [args]
+class ScaffoldApp < Brut::CLI::App
+  description "Create scaffolds of various files to help develop more quckly"
+  opts.on("--overwrite", "If set, any files that exists already will be overwritten by new scaffolds")
+  opts.on("--dry-run", "If set, no files are changed. You will see output of what would happen without this flag")
 
-Scaffolds various types of files.
-
-COMMANDS
-
-  test                - scaffolds test for the files given in args
-  component           - scaffolds a new component given by class name
-  custom-element-test - scaffolds a test for the custom element.js files given in the args
-
-OPTIONS
-}
-    parser.on("--overwrite", "If set, any files that exists already will be overwritten by new scaffolds") do |value|
-      options[:overwrite] = !!value
-    end
-    parser.on("--dry-run", "If set, no files are changed. You will see output of what would happen without this flag") do |value|
-      options[:dry_run] = !!value
-    end
-    parser.on("--page", "If set, this component will be placed in pages/ to allow it to be organized with an existing page") do |value|
-      options[:page_component] = !!value
-    end
-  end.parse!
-  options
-end
-
-options = parse_options
-
-class Command
-  def self.from_string(string, args:, options:)
-    case string
-    when "test"                then Test.new(args:, options:)
-    when "component"           then Component.new(args:,options:)
-    when "custom-element-test" then CustomElementTest.new(args:,options:)
-    else
-      nil
-    end
+  def before_execute
+    ENV["BRUT_LOG_FILE_NAME"] = "bin_db"
+    ENV["BRUT_LOG_STDOUT"]    = "true"
+    ENV["LOG_LEVEL"]          = "fatal"
+    ENV["RACK_ENV"] = "development"
   end
 
-  def initialize(args:, options:)
-    @args    = args
-    @options = options
-  end
-
-  class Component < Command
-    def call
-      if @args.length != 1
-        raise "component requires exactly one argument, got #{@args.length}"
+  class Test < Brut::CLI::Command
+    description "Create a test for a given file in the app"
+    args "source_file_paths..."
+    def execute
+      if args.empty?
+        err.puts "'test' requires one or more files to scaffold a test for"
+        return 1
       end
-      class_name = RichString.new(@args[0])
+      files_to_test_files = args.map { |arg|
+        Pathname(arg).expand_path
+      }.map { |pathname|
+        relative = pathname.relative_path_from(Brut.container.app_src_dir)
+        test_file = Brut.container.app_specs_dir / relative.dirname / "#{relative.basename(relative.extname)}.spec.rb"
+        [ pathname, test_file ]
+      }.to_h
+
+      non_existent_sources  = files_to_test_files.keys.select   { |pathname| !pathname.exist? }
+      existent_destinations = files_to_test_files.values.select { |pathname| pathname.exist? }
+
+      if non_existent_sources.any?
+        relative_paths = non_existent_sources.map { |pathname| pathname.relative_path_from(Brut.container.project_root) }
+        err.puts "Not all input files exist:"
+        relative_paths.each do |file|
+          err.puts file
+        end
+        return 1
+      end
+
+      if existent_destinations.any? && !global_options.overwrite?
+        relative_paths = existent_destinations.map { |pathname| pathname.relative_path_from(Brut.container.project_root) }
+        err.puts "Some files to be generated already exist. Set --overwrite to overwrite them:"
+        relative_paths.each do |file|
+          err.puts file
+        end
+        return 1
+      end
+
+      files_to_test_files.each do |source,destination|
+        result = Prism.parse_file(source.to_s)
+        if !result
+          raise "For some reason Prism did not parse #{source.to_s}"
+        end
+        classes = find_classes(result.value).map { |(module_nodes,class_node)|
+          (module_nodes.map(&:constant_path).map(&:full_name).map(&:to_s) + [class_node.constant_path.full_name.to_s]).compact.join("::")
+        }
+
+
+        out.puts "#{destination} will contain tests for:\n#{classes.join("\n")}\n\n"
+
+        code = ["require \"spec_helper\"\n"] + classes.map { |class_name|
+          %{RSpec.describe #{class_name} do
+  it "should have tests" do
+    expect(false).to eq(true)
+  end
+end}
+        }
+
+        if global_options.dry_run?
+          puts code
+        else
+          FileUtils.mkdir_p destination.dirname
+          File.open(destination,"w") do |file|
+            file.puts code
+          end
+        end
+      end
+
+      0
+    end
+
+  private
+
+    def find_classes(ast,current_modules = [])
+      classes = []
+      if ast.nil?
+        return classes
+      end
+      new_module = nil
+      if ast.kind_of?(Prism::ClassNode)
+        classes << [ current_modules, ast ]
+        new_module = ast
+      elsif ast.kind_of?(Prism::ModuleNode)
+        new_module = ast
+      end
+      ast.child_nodes.each do |child|
+        new_current_modules = current_modules + [ new_module ]
+        result = find_classes(child, new_current_modules.compact)
+        classes = classes + result
+      end
+      classes
+    end
+
+  end
+  class Component < Brut::CLI::Command
+    description "Create a new component, template, and associated test"
+    opts.on("--page","If set, this component is for a specific page and won't go with the other components")
+    args "ComponentName"
+    def execute
+      if args.length != 1
+        raise "component requires exactly one argument, got #{args.length}"
+      end
+      class_name = RichString.new(args[0])
       if class_name.to_s !~ /Component$/
         class_name = RichString.new(class_name.to_s + "Component")
       end
@@ -71,7 +130,7 @@ class Command
       components_src_dir   = Brut.container.components_src_dir
       components_specs_dir = Brut.container.components_specs_dir
 
-      if @options[:page_component]
+      if options.page?
         components_src_dir   = Brut.container.pages_src_dir
         components_specs_dir = Brut.container.pages_specs_dir
         if class_name.to_s !~ /::/
@@ -80,7 +139,7 @@ class Command
           existing_page = RichString.new(class_name.to_s.split(/::/)[0..-2].join("::")).underscorized.to_s + ".rb"
 
           if !(components_src_dir / existing_page).exist?
-            raise "#{existing_page} is expected to exist but does not"
+            raise "#{class_name} was set as a page component, however we cannot find the page it belongs in.  File #{existing_page} does not exist and should contain that page"
           end
         end
       end
@@ -95,14 +154,15 @@ class Command
         spec_path,
       ].select(&:exist?)
 
-      if exists.any?
+      if exists.any? && !global_options.overwrite?
         exists.each do |path|
-          log "'#{path}' exists already"
+          err.puts "'#{path.relative_path_from(Brut.container.project_root)}' exists already"
         end
+        err.puts "Re-run with --overwrite to overwrite these files"
         return 1
       end
 
-      if @options[:dry_run]
+      if global_options.dry_run?
         puts "FileUtils.mkdir_p #{source_path.dirname}"
         puts "FileUtils.mkdir_p #{html_source_path.dirname}"
         puts "FileUtils.mkdir_p #{spec_path.dirname}"
@@ -130,96 +190,27 @@ RSpec.describe #{class_name} do
 end}
         end
       end
-      log "Component source is in        #{source_path.relative_path_from(Brut.container.project_root)}"
-      log "Component HTML template is in #{html_source_path.relative_path_from(Brut.container.project_root)}"
-      log "Component test is in          #{spec_path.relative_path_from(Brut.container.project_root)}"
+      out.puts "Component source is in        #{source_path.relative_path_from(Brut.container.project_root)}"
+      out.puts "Component HTML template is in #{html_source_path.relative_path_from(Brut.container.project_root)}"
+      out.puts "Component test is in          #{spec_path.relative_path_from(Brut.container.project_root)}"
       0
     end
   end
-
-  class Test < Command
-    def call
-      if @args.empty?
-        log "'test' requires one or more files to scaffold a test for"
-        return 1
-      end
-      files_to_test_files = @args.map { |arg|
-        Pathname(arg).expand_path
-      }.map { |pathname|
-        relative = pathname.relative_path_from(Brut.container.app_src_dir)
-        test_file = Brut.container.app_src_dir / "specs" / relative.dirname / "#{relative.basename(relative.extname)}.spec.rb"
-        [ pathname, test_file ]
-      }.to_h
-
-      non_existent_sources  = files_to_test_files.keys.select   { |pathname| !pathname.exist? }
-      existent_destinations = files_to_test_files.values.select { |pathname| pathname.exist? }
-
-      if non_existent_sources.any?
-        relative_paths = non_existent_sources.map { |pathname| pathname.relative_path_from(Brut.container.project_root) }
-        log "Not all input files exist:"
-        relative_paths.each do |file|
-          log file
-        end
+  class CustomElementTest < Brut::CLI::Command
+    description "Create a test for a custom element in your app"
+    args "path_to_js_files..."
+    def execute
+      if args.empty?
+        err.puts "'custom-element-test' requires one or more files to scaffold a test for"
         return 1
       end
 
-      if existent_destinations.any? && !@options[:overwrite]
-        relative_paths = existent_destinations.map { |pathname| pathname.relative_path_from(Brut.container.project_root) }
-        log "Some files to be generated exist. Set --overwrite to overwrite them:"
-        relative_paths.each do |file|
-          log file
-        end
+      if args.any? { |file| Pathname(file).extname != ".js" }
+        err.puts "'custom-element-test' must be given only .js files"
         return 1
       end
 
-      files_to_test_files.each do |source,destination|
-        result = Prism.parse_file(source.to_s)
-        if !result
-          raise "WTF"
-        end
-        classes = find_classes(result.value).map { |(module_nodes,class_node)|
-          (module_nodes.map(&:constant_path).map(&:full_name).map(&:to_s) + [class_node.constant_path.full_name.to_s]).compact.join("::")
-        }
-
-
-        log "#{destination} will contain tests for:\n#{classes.join("\n")}\n\n"
-
-        code = ["require \"spec_helper\"\n"] + classes.map { |class_name|
-          %{RSpec.describe #{class_name} do
-  it "should have tests" do
-    expect(false).to eq(true)
-  end
-end}
-        }
-
-        if @options[:dry_run]
-          puts code
-        else
-
-          FileUtils.mkdir_p destination.dirname
-          File.open(destination,"w") do |file|
-            file.puts code
-          end
-        end
-      end
-
-      0
-
-    end
-  end
-  class CustomElementTest < Command
-    def call
-      if @args.empty?
-        log "'custom-element-test' requires one or more files to scaffold a test for"
-        return 1
-      end
-
-      if @args.any? { |file| Pathname(file).extname != ".js" }
-        log "'custom-element-test' must be given only .js files"
-        return 1
-      end
-
-      files_to_create = @args.map { |arg|
+      files_to_create = args.map { |arg|
         path = Pathname(arg).expand_path
         relative_path = path.relative_path_from(Brut.container.js_src_dir)
         relative_path_as_spec = relative_path.dirname / (relative_path.basename(relative_path.extname).to_s + ".spec.js")
@@ -231,8 +222,12 @@ end}
         spec.exist?
       }
 
-      if existing_files.any?
-        log "#{existing_files.join(', ')} exist. Aborting..."
+      if existing_files.any? && !global_options.overwrite?
+        relative_paths = existing_files.map { |_,pathname| pathname.relative_path_from(Brut.container.project_root) }
+        err.puts "Some files to be generated already exist. Set --overwrite to overwrite them:"
+        relative_paths.each do |file|
+          err.puts file
+        end
         return 1
       end
 
@@ -246,8 +241,7 @@ end}
           end
         }.compact.first
         description = tag_name || source_class
-        File.open(spec_file, "w") do |file|
-          file.puts %{import { withHTML } from "brut-js/testing/index.js"
+        code =  %{import { withHTML } from "brut-js/testing/index.js"
 
 describe("#{description}", () => {
   withHTML(`
@@ -257,45 +251,18 @@ describe("#{description}", () => {
     assert.fail("test goes here")
   })
 })}
+        if global_options.dry_run?
+          out.puts "Would generate this code:\n\n#{code}"
+        else
+          File.open(spec_file, "w") do |file|
+            file.puts code
+          end
         end
       end
 
       0
     end
   end
-
 end
+exit Brut::CLI.app(ScaffoldApp,project_root: Pathname($0).dirname / "..")
 
-
-def find_classes(ast,current_modules = [])
-  classes = []
-  if ast.nil?
-    return classes
-  end
-  new_module = nil
-  if ast.kind_of?(Prism::ClassNode)
-    classes << [ current_modules, ast ]
-    new_module = ast
-  elsif ast.kind_of?(Prism::ModuleNode)
-    new_module = ast
-  end
-  ast.child_nodes.each do |child|
-    new_current_modules = current_modules + [ new_module ]
-    result = find_classes(child, new_current_modules.compact)
-    classes = classes + result
-  end
-  classes
-end
-
-if ARGV[0].to_s.strip == ""
-  log "You must provide a command"
-  exit 1
-end
-
-command = Command.from_string(ARGV[0],args: ARGV[1..-1],options: options)
-if !command
-  log "'#{ARGV[0]}' is not a supported command"
-  exit 1
-end
-
-exit command.call
