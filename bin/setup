@@ -92,8 +92,15 @@ def setup
     log "No #{gitignore}, so make sure you DO NOT CHECK #{dot_env_local} IN!!!"
   end
 
-  log "Checking that you are set up with Heroku"
+  log "Setting up databases"
 
+  log "Re-creating dev database and loading seed data"
+  system! "bin/db rebuild --env=development --seed"
+
+  log "Re-creating test database"
+  system! "bin/db rebuild --env=test --seed"
+
+  log "Checking that you are set up with Heroku"
 
   log "All set up."
   if system("heroku whoami")
