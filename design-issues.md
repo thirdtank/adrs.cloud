@@ -1,5 +1,31 @@
 # Design Issues
 
+## Notification/Instrumentation
+
+Rails is generally pretty basic/simple.  We can do that, too:
+
+```
+Brut.container.instrumentation.instrument(event:) do
+  # code
+end
+
+Brut.container.instrumentation.subscribe(event:,events:,events_matching:) do |event|
+  # do something with event
+end
+```
+
+* How this works with logging: basic logging of "this happened" seems useful and not to be conflated with instrumentation.  This, the
+log need not be used to understand performance.
+* While OTEL should be supported, it should not be directly connected.
+* How to vet:
+  - produce trace info for each request that includes:
+    + overall request time/info
+    + per-component render time
+    + handler render time
+* Stretch goala:
+  - sidekiq middleware
+  - query performance https://github.com/signalfx/ruby-sequel-instrumentation/blob/master/lib/sequel/extensions/dataset_instrumentation.rb
+
 ## handle! vs render vs constructor
 
 There is a dissonance between components/pages that get their args via constructor and handlers which do not.

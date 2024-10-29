@@ -27,7 +27,8 @@ class Brut::Container
   # Store a named value for later.
   #
   # name:: The name of the value. This should be a string that is a valid Ruby identifier.
-  # type:: String of the name of the class taht represents the type of this value.
+  # type:: String or class that describes what type of value this should be. Can be a hash where each key is a string or class
+  # describing an allowed type and the values describe the interpretation of values of that type.
   # description:: Documentation as to what this value is for.
   # value:: if given, this is the value to use.
   # block:: If value is omitted, block will be evaluated the first time the value is
@@ -49,7 +50,7 @@ class Brut::Container
     if type.to_s == "boolean"
       name = "#{name}?".gsub(/\?\?$/,"?")
     end
-    self.validate_name!(name,type)
+    self.validate_name!(name:,type:,allow_app_override:)
     if value == :use_block
       if type == "boolean"
         derive_with = ->() { !!block.() }
@@ -178,9 +179,13 @@ private
 
   PATHNAME_NAME_REGEXP = /_(dir|file)$/
 
-  def validate_name!(name,type)
+  def validate_name!(name:,type:,allow_app_override:)
     if @container.key?(name)
-      raise ArgumentError.new("Name '#{name}' has already been specified - you cannot override it")
+      if allow_app_override
+        raise ArgumentError.new("Name '#{name}' has already been specified - to override it, use Brut.container.override")
+      else
+        raise ArgumentError.new("Name '#{name}' has already been specified - you cannot override it")
+      end
     end
     if type.to_s == "Pathname"
       if name != "project_root"

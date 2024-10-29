@@ -79,25 +79,16 @@ class Brut::App
                   project_root / ".env.#{project_env.to_s}.local")
     end
 
-    log_dir               = Brut.container.log_dir
-    log_file_name         = Brut.container.log_file_name
-    log_to_stdout_options = Brut.container.log_to_stdout_options
-
-    FileUtils.mkdir_p log_dir
     SemanticLogger.default_level = Brut.container.log_level
-    if log_file_name
-      SemanticLogger.add_appender(file_name: log_file_name.to_s)
-    else
-      if project_env.production?
-        puts "Not logging to a file"
-      end
+    semantic_logger_appenders = Brut.container.semantic_logger_appenders
+    if semantic_logger_appenders.kind_of?(Hash)
+      semantic_logger_appenders = [ semantic_logger_appenders ]
     end
-    if log_to_stdout_options
-      SemanticLogger.add_appender(**log_to_stdout_options.merge(io: $stdout))
-    else
-      if project_env.production?
-        puts "Not logging to stdout"
-      end
+    if semantic_logger_appenders.length == 0
+      raise "No loggers are set up - something is wrong"
+    end
+    semantic_logger_appenders.each do |appender|
+      SemanticLogger.add_appender(**appender)
     end
     SemanticLogger["Brut"].info("Logging set up")
 

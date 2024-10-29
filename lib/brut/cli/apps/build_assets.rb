@@ -7,6 +7,7 @@ class Brut::CLI::Apps::BuildAssets < Brut::CLI::App
   description "Build and manage code and assets destined for the browser, such as CSS, JS, or images"
   requires_project_env
   default_command :all
+  configure_only!
 
   def before_execute
     ENV["BRUT_LOG_FILE_NAME"] = "build_assets"

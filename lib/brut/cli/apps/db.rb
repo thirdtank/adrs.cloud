@@ -7,9 +7,7 @@ class Brut::CLI::Apps::DB < Brut::CLI::App
   description "Manage your database in development, test, and production"
 
   def before_execute
-    ENV["BRUT_LOG_FILE_NAME"] = "bin_db"
-    ENV["BRUT_LOG_STDOUT"]    = "true"
-    ENV["LOG_LEVEL"]          = "fatal"
+    ENV["LOG_LEVEL"] = "fatal"
   end
 
   class Seed < Brut::CLI::Command

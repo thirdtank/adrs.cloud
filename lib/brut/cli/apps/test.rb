@@ -25,8 +25,8 @@ class Brut::CLI::Apps::Test < Brut::CLI::App
         rspec_cli_args,
         "-P \"**/*.spec.rb\"",
       ]
-      if options.seed?
-        parts << "--seed #{@options[:seed]}"
+      if options.seed
+        parts << "--seed #{options.seed}"
       end
       parts.join(" ")
     end

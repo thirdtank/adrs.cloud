@@ -146,7 +146,7 @@ RSpec.describe AuthenticatedAccount do
     context "project provided" do
       it "returns ADRs in that project" do
         account = create(:account)
-        project = create(:project, account: account)
+        project = create(:project, name: account.projects.first.name + " 2",account: account)
         create(:adr, account:, project: account.projects.first)
         in_project_1 = create(:adr, account:, project: project)
         in_project_2 = create(:adr, account:, project: project)

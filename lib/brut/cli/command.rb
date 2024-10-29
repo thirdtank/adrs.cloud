@@ -99,10 +99,16 @@ class Brut::CLI::Command
     raise ex
   end
 
-  def bootstrap!(project_root:)
+  def bootstrap!(project_root:, configure_only:)
     require "bundler"
     Bundler.require(:default, ENV["RACK_ENV"].to_sym)
-    require "#{project_root}/app/boot"
+    if configure_only
+      require "#{project_root}/app/pre_boot"
+      ::App.new.configure_only!
+    else
+      require "#{project_root}/app/boot"
+    end
+    continue_execution
   end
 
 private

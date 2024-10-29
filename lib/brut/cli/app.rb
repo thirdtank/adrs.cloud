@@ -45,6 +45,11 @@ class Brut::CLI::App
   def self.default_env           = @default_env
   def self.requires_project_env? = @requires_project_env
 
+  def self.configure_only!
+    @configure_only = true
+  end
+  def self.configure_only? = !!@configure_only
+
   def initialize(global_options:,out:,err:,executor:)
     @global_options = global_options
     @out            = out
@@ -64,19 +69,26 @@ class Brut::CLI::App
     end
   end
 
+  def after_bootstrap
+  end
+
   def execute!(command,project_root:)
     before_execute
     set_env_if_needed
     command.set_env_if_needed
     command.before_execute
     bootstrap_result = begin
-                         as_execution_result(command.bootstrap!(project_root:))
+                         as_execution_result(
+                           command.bootstrap!(project_root:,
+                                              configure_only: self.class.configure_only?)
+                         )
                        rescue => ex
                          as_execution_result(command.handle_bootstrap_exception(ex))
                        end
     if bootstrap_result.stop?
       return bootstrap_result
     end
+    after_bootstrap
     as_execution_result(command.execute)
   rescue Brut::CLI::Error => ex
     abort_execution(ex.message)

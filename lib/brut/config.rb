@@ -62,7 +62,8 @@ class Brut::Config
         "project_env",
         ProjectEnvironment,
         "The environment of the running app, e.g. dev/test/prod",
-        ProjectEnvironment.new(ENV["RACK_ENV"]) )
+        ProjectEnvironment.new(ENV["RACK_ENV"])
+      )
 
       c.store(
         "eager_load_classes",
@@ -354,54 +355,43 @@ class Brut::Config
       )
 
       c.store(
-        "log_file_name",
-        String,
-        "Path to the log file to use, if any",
+        "semantic_logger_appenders_for_dev",
+        Array,
+        "List of appenders to be configured for SemanticLogger only in development (nil means to use semantic_logger_appenders)",
         allow_app_override: true,
-        allow_nil: true,
-      ) do |log_dir,project_env|
-        env_log_file_name = ENV["BRUT_LOG_FILE_NAME"]
-        if env_log_file_name
-          if env_log_file_name == "false"
-            nil
-          else
-            path = Pathname(env_log_file_name)
-            if path.absolute?
-              path
-            else
-              log_dir / path
-            end
-          end
-        elsif project_env.test?
-          log_dir / "test.log"
-        elsif project_env.development?
-          log_dir / "development.log"
-        else
-          nil
-        end
+        allow_nil: true
+      ) do |log_dir|
+        [
+          { formatter: :color, io: $stdout },
+          { file_name: (log_dir / "development.log").to_s },
+        ]
       end
 
       c.store(
-        "log_to_stdout_options",
-        Hash,
-        "Options for a stdout-based log appender, or nil if that should not be done",
-        allow_app_override: true,
-        allow_nil: true,
-      ) do |project_env|
-        env_option = ENV["BRUT_LOG_STDOUT"]
-        if env_option && env_option != "false"
-          if env_option == "color"
-            { formatter: :color }
-          else
-            {}
-          end
-        elsif project_env.test?
-          nil
-        elsif project_env.development?
-          { formatter: :color }
-        else
-          {}
+        "semantic_logger_appenders",
+        { Hash => "if only one appender is needed", Array => "to configure multiple appenders" },
+        "List of appenders to be configured for SemanticLogger",
+        allow_app_override: true
+      ) do |project_env,log_dir,semantic_logger_appenders_for_dev|
+        appenders = if project_env.development?
+                      semantic_logger_appenders_for_dev
+                    end
+        if appenders.nil?
+          appenders = { file_name: (log_dir / "test.log").to_s }
         end
+        if appenders.nil?
+          appenders = { io: $stdout }
+        end
+        appenders
+      end
+
+      c.store(
+        "instrumentation",
+        Brut::Infrastructure::Instrumentation,
+        "Interface for recording instrumentable events and subscribing to them",
+        allow_app_override: true
+      ) do |project_env|
+        Brut::Infrastructure::Instrumentation.new
       end
 
     end

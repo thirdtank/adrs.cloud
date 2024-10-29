@@ -195,22 +195,24 @@ module Brut::SinatraHelpers
       Brut.container.routing.register_page(path)
 
       get path do
-        route = Brut.container.routing.for(path: path,method: :get)
-        page_class = route.handler_class
-        request_context = Thread.current.thread_variable_get(:request_context)
-        constructor_args = request_context.as_constructor_args(
-          page_class,
-          request_params: params,
-        )
-        page_instance = page_class.new(**constructor_args)
-        result = page_instance.handle!
-        case result
-        in URI => uri
-          redirect to(uri.to_s)
-        in Brut::FrontEnd::HttpStatus => http_status
-          http_status.to_i
-        else
-          result
+        Brut.container.instrumentation.instrument(event: "GET:#{path}") do
+          route = Brut.container.routing.for(path: path,method: :get)
+          page_class = route.handler_class
+          request_context = Thread.current.thread_variable_get(:request_context)
+          constructor_args = request_context.as_constructor_args(
+            page_class,
+            request_params: params,
+          )
+          page_instance = page_class.new(**constructor_args)
+          result = page_instance.handle!
+          case result
+          in URI => uri
+            redirect to(uri.to_s)
+          in Brut::FrontEnd::HttpStatus => http_status
+            http_status.to_i
+          else
+            result
+          end
         end
       end
     end
