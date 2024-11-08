@@ -1,5 +1,11 @@
 # One Week Sprint
 
+       1 - Delete downloads? - needs sidekiq scheduler
+
+
+
+## Pre-Mexico
+
 CHECK  1 - Store provider and uid for auth
 
 CHECK  2 - Projects

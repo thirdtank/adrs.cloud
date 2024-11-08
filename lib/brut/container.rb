@@ -47,19 +47,20 @@ class Brut::Container
   def store(name,type,description,value=:use_block,allow_app_override: false,allow_nil: false,&block)
     # TODO: Check that value / block is used properly
     name = name.to_s
-    if type.to_s == "boolean"
-      name = "#{name}?".gsub(/\?\?$/,"?")
+    if type == "boolean"
+      type = :boolean
+    end
+    if type == :boolean
+      if name !~ /\?$/
+        raise ArgumentError, "#{name} is a boolean so must end with a question mark"
+      end
     end
     self.validate_name!(name:,type:,allow_app_override:)
     if value == :use_block
-      if type == "boolean"
-        derive_with = ->() { !!block.() }
-      else
-        derive_with = block
-      end
+      derive_with = block
       @container[name] = { value: nil, derive_with: derive_with }
     else
-      if type == "boolean"
+      if type == :boolean
         value = !!value
       end
       @container[name] = { value: value }
@@ -148,16 +149,23 @@ private
 
     value = x[:value]
 
-    if !value.nil?
+    if !value.nil? || (x[:allow_nil] && value.nil?)
       handle_path_values(name,x)
       return value
     end
 
     deriver = x[:derive_with]
+    if deriver.nil?
+      raise "Something is seriously wrong. '#{name}' was stored in container without a derive_with value"
+    end
 
     parameters = deriver.parameters(lambda: true)
     args = parameters.map { |param_description| param_description[1] }.map { |name_of_dependent_object| self.send(name_of_dependent_object) }
-    x[:value] = deriver.(*args)
+    value = deriver.(*args)
+    if x[:type] == :boolean
+      value = !!value
+    end
+    x[:value] = value
     if x[:value].nil?
       if !x[:allow_nil]
         raise "Something is wrong: #{name} had no value"

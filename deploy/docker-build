@@ -23,11 +23,11 @@ Brut.container.store_required_path(
 APP_SRC_PATH = File.join(Brut.container.project_root,"app","src")
 $: << APP_SRC_PATH
 
-require "app"
+require "web_app"
 require "pathname"
 
 log "Creating App"
-app = App.new
+app = WebApp.new
 log "Configuring App and Brut"
 app.configure_only!
 require "optparse"

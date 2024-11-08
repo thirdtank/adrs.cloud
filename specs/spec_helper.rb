@@ -1,7 +1,7 @@
 ENV["RACK_ENV"] = "test"
-require "bundler"
-Bundler.require
-require_relative "../app/boot"
+require_relative "../app/bootstrap"
+Bootstrap.new.bootstrap!
+
 require "brut/spec_support"
 
 require "nokogiri"

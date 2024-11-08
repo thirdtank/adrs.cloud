@@ -1,5 +1,4 @@
-require_relative "brut/container"
-require_relative "brut/app"
+require_relative "brut/framework"
 
 # Convention is as follows:
 #

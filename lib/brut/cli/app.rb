@@ -2,6 +2,7 @@ require "optparse"
 require_relative "../junk_drawer"
 class Brut::CLI::App
   include Brut::CLI::ExecutionResults
+
   def self.commands
     self.constants.map { |name|
       self.const_get(name)
@@ -60,28 +61,49 @@ class Brut::CLI::App
     end
   end
 
-  def before_execute
-  end
-
   def set_env_if_needed
     if self.class.requires_project_env?
       ENV["RACK_ENV"] = options.env
     end
   end
 
+  def load_env(project_root:)
+    if !ENV["RACK_ENV"]
+      ENV["RACK_ENV"] = "development"
+    end
+    env = ENV["RACK_ENV"]
+    if env != "production"
+      require "dotenv"
+      Dotenv.load(project_root / ".env.#{env}",
+                  project_root / ".env.#{env}.local")
+
+    end
+  end
+
+  def before_execute
+  end
+
   def after_bootstrap
+  end
+
+  def configure!
   end
 
   def execute!(command,project_root:)
     before_execute
     set_env_if_needed
     command.set_env_if_needed
+    load_env(project_root:)
     command.before_execute
     bootstrap_result = begin
-                         as_execution_result(
-                           command.bootstrap!(project_root:,
-                                              configure_only: self.class.configure_only?)
-                         )
+                         require "#{project_root}/app/bootstrap"
+                         bootstrap = Bootstrap.new
+                         if self.class.configure_only?
+                           bootstrap.configure_only!
+                         else
+                           bootstrap.bootstrap!
+                         end
+                         continue_execution
                        rescue => ex
                          as_execution_result(command.handle_bootstrap_exception(ex))
                        end
@@ -100,7 +122,7 @@ private
   def out = @out
   def err = @err
   def puts(...)
-    warn("Your CLI apps should use out and err to produce terminal output, not puts", uplevel: 1)
+    warn("Your CLI apps should use out.puts or err.puts or produce terminal output, not plain puts", uplevel: 1)
     Kernel.puts(...)
   end
 

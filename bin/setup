@@ -1,19 +1,32 @@
 #!/usr/bin/env ruby
 
 require_relative "bin_kit"
+require "optparse"
 
-def setup
-  log "Installing gems"
-  # Only do bundle install if the much-faster
-  # bundle check indicates we need to
-  system! "bundle check --no-color || bundle install --no-color --quiet"
+def setup(update_gems:,update_node:)
+  if update_gems
+    log "Updating gems"
+    system! "bundle update"
+  else
+    log "Installing gems"
+    # Only do bundle install if the much-faster
+    # bundle check indicates we need to
+    system! "bundle check --no-color || bundle install --no-color --quiet"
+  end
 
   # https://github.com/ddollar/foreman/wiki/Don't-Bundle-Foreman
   log "Installing foreman"
   system! "gem install foreman"
 
-  log "Installing Node Modules"
-  system! "npm --no-color --no-progress install"
+  if update_node
+    log "Updating Node Modules"
+    system! "npm --no-color --no-progress update"
+    log "Re-installing playwright/chromium if needed"
+    system! "node_modules/.bin/playwright install --with-deps chromium"
+  else
+    log "Installing Node Modules"
+    system! "npm --no-color --no-progress install"
+  end
 
   log "Ensuring tmp dir exists"
   system! "mkdir -p tmp"
@@ -104,7 +117,7 @@ def setup
 
   log "All set up."
   if system("heroku whoami")
-    log "You are logged in"
+    log "You are logged in to Heroku"
   else
     log "You are not logged into Heroku."
     log "Please run the following:"
@@ -132,8 +145,19 @@ def help
   log ""
 end
 
+options = {
+  update_gems: false,
+  update_node: false,
+}
+OptionParser.new do |opts|
+  opts.on("--update[=TYPE]","Update gems or modules to get the latest versions consistent with Gemfile or package.json. TYPE can be 'all', 'gems', or 'node'. If omitted, 'all' is assumed") do |value|
+    options[:update_gems] = value.nil? || value == "gems"
+    options[:update_node] = value.nil? || value == "node"
+  end
+end.parse!
+
 if ARGV[0] == "help"
   help
 else
-  setup
+  setup(**options)
 end

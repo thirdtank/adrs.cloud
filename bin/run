@@ -1,5 +1,8 @@
 #!/bin/sh
 
+set -e 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+
 PORT="${PORT:-6502}"
 RACK_ENV="${RACK_ENV:-development}"
 
@@ -32,4 +35,4 @@ if [ -f tmp/pidfile ]; then
 else
   echo "[ $0 ] No pidfile-Starting up"
 fi
-bin/puma --port "${PORT}" -C puma.config.rb --environment "${RACK_ENV}" --pid tmp/pidfile
+dotenv -f "${SCRIPT_DIR}/../.env.${RACK_ENV},${SCRIPT_DIR}/../.env.${RACK_ENV}.local" --ignore -- bin/puma --port "${PORT}" -C puma.config.rb --environment "${RACK_ENV}" --pid tmp/pidfile

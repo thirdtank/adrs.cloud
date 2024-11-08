@@ -1,25 +1,33 @@
 module Brut
+  # This is the namespace for Brut-provided CLI Apps.  This is not to be confused with Brut::CLIApp, which is the 
+  # basis for any brut-powered CLI app.
   module CLI
 
     def self.app(app_klass, project_root:)
-      out = Brut::CLI::Output.new(io: $stdout,prefix: "[ #{$0} ] ")
-      err = Brut::CLI::Output.new(io: $stderr,prefix: "[ #{$0} ] ")
+      out      = Brut::CLI::Output.new(io: $stdout,prefix: "[ #{$0} ] ")
+      err      = Brut::CLI::Output.new(io: $stderr,prefix: "[ #{$0} ] ")
       executor = Brut::CLI::Executor.new(out:,err:)
+
       global_options = {}
+
       option_parser = app_klass.option_parser
-      get_help = false
+
       option_parser.on("-h", "--help", "Get help") do
         show_global_help(option_parser:,app_klass:,out:)
         exit 0
       end
+
       rest = option_parser.order!(into:global_options)
+
       command_name = rest[0] || app_klass.default_command
+
       if !command_name
         err.puts "error: #{$0} requires a command"
         err.puts_no_prefix "\n"
         show_global_help(option_parser:,app_klass:,out:)
         exit 1
       end
+
       if command_name == "help"
         if rest[1]
           command_klass = app_klass.commands.detect { |c| c.name_matches?(rest[1]) }
@@ -35,24 +43,32 @@ module Brut
         show_global_help(option_parser:,app_klass:,out:)
         exit 0
       end
+
       command_klass = app_klass.commands.detect { |c| c.name_matches?(command_name) }
+
       if !command_klass
         show_global_help(option_parser:,app_klass:,out:)
         exit 1
       end
+
       command_options = {}
+
       command_option_parser = command_klass.option_parser
-      command_help = false
+
       command_option_parser.on("-h", "--help", "Get help on this command") do
         show_command_help(option_parser:,command_option_parser:,command_klass:,out:)
         exit 0
       end
+
       command_argv = rest[1..-1] || []
       args = command_option_parser.parse!(command_argv,into:command_options)
+
       global_options = Brut::CLI::Options.new(global_options)
       cli_app = app_klass.new(global_options:, out:, err:, executor:)
       cmd = command_klass.new(command_options:Brut::CLI::Options.new(command_options),global_options:, args:, out:, err:, executor:)
+
       result = cli_app.execute!(cmd, project_root:)
+
       if result.message
         if !result.ok?
           err.puts "error: #{result.message}"

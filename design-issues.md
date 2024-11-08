@@ -1,5 +1,22 @@
 # Design Issues
 
+## Playwright versions is a PITA
+
+playwright ruby must matc playwright and playwright must be used to install browsers
+
+## Bootstrapping & Overall Structure
+
+Brut, the framework, has configution and behavior it must set up and provide based on the actual app using the framework
+
+The app that uses Brut can override that configuration
+
+The web-app is part of the app and has routes/responds to HTTP
+
+There are CLI apps part of the app that perform functions
+
+Brut, the framework, provides CLI apps that must use the app's configuration in order to function
+
+
 ## Notification/Instrumentation
 
 Rails is generally pretty basic/simple.  We can do that, too:

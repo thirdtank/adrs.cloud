@@ -68,7 +68,7 @@ class Brut::CLI::Apps::DB < Brut::CLI::App
 
     def execute
       result = delegate_to_commands(Drop, Create, Migrate)
-      if result.ok? && options.seed?
+      if result.ok? && options.seeds?
         result = delegate_to_command(Seed)
       end
       result

@@ -10,7 +10,7 @@ class Brut::Config
   class DockerPathComponent
     PATH_REGEXP = /\A[a-z0-9]+(-|_)?[a-z0-9]+\z/
     def initialize(string)
-      if string.match?(PATH_REGEXP)
+      if string.to_s.match?(PATH_REGEXP)
         @string = string
       else
         raise ArgumentError.new("Value must be only lower case letters, digits, and may have at most one underscore: '#{string}'")
@@ -51,6 +51,8 @@ class Brut::Config
         app_organization
       )
 
+      # Brut Stuff that should not be changed
+
       c.store_ensured_path(
         "tmp_dir",
         "Temporary directory where ephemeral files can do"
@@ -64,27 +66,6 @@ class Brut::Config
         "The environment of the running app, e.g. dev/test/prod",
         ProjectEnvironment.new(ENV["RACK_ENV"])
       )
-
-      c.store(
-        "eager_load_classes",
-        :boolean,
-        "If true, classes are eagerly loaded upon startup",
-        true,
-        allow_app_override: true
-      )
-      c.store(
-        "auto_reload_classes",
-        :boolean,
-        "If true, classes are reloaded with each request. Useful only really for development",
-        allow_app_override: true
-      ) do |project_env|
-        no_reload_in_dev = ENV["BRUT_NO_RELOAD_IN_DEV"] == "true"
-        if project_env.development?
-          !no_reload_in_dev
-        else
-          false
-        end
-      end
 
       c.store_ensured_path(
         "log_dir",
@@ -122,14 +103,6 @@ class Brut::Config
       end
 
       c.store(
-        "log_level",
-        String,
-        "Log level to control how much logging is happening"
-      ) do
-        ENV["LOG_LEVEL"] || "debug"
-      end
-
-      c.store(
         "database_url",
         String,
         "URL to the primary database - generally avoid this and use sequel_db_handle"
@@ -139,8 +112,8 @@ class Brut::Config
 
       c.store(
         "sequel_db_handle",
-        String,
-        "URL connection string for the primary database"
+        Object,
+        "Handle to the database",
       ) do |database_url|
         Sequel.connect(database_url)
       end
@@ -339,6 +312,34 @@ class Brut::Config
       )
 
       c.store(
+        "instrumentation",
+        Brut::Infrastructure::Instrumentation,
+        "Interface for recording instrumentable events and subscribing to them",
+        allow_app_override: true
+      ) do |project_env|
+        Brut::Infrastructure::Instrumentation.new
+      end
+
+      # App can override
+
+      c.store(
+        "external_id_prefix",
+        String,
+        "String to use as a prefix for external ids in tables using the external_id feature. Nil means the feature is disabled",
+        nil,
+        allow_app_override: true,
+        allow_nil: true,
+      )
+
+      c.store(
+        "debug_zeitwerk?",
+        :boolean,
+        "If true, Zeitwerk's loading will be logged for debugging purposes. Do not enable this in production",
+        false,
+        allow_app_override: true,
+      )
+
+      c.store(
         "session_class",
         Class,
         "Class to use when wrapping the Rack session",
@@ -355,29 +356,19 @@ class Brut::Config
       )
 
       c.store(
-        "semantic_logger_appenders_for_dev",
-        Array,
-        "List of appenders to be configured for SemanticLogger only in development (nil means to use semantic_logger_appenders)",
-        allow_app_override: true,
-        allow_nil: true
-      ) do |log_dir|
-        [
-          { formatter: :color, io: $stdout },
-          { file_name: (log_dir / "development.log").to_s },
-        ]
-      end
-
-      c.store(
         "semantic_logger_appenders",
         { Hash => "if only one appender is needed", Array => "to configure multiple appenders" },
         "List of appenders to be configured for SemanticLogger",
         allow_app_override: true
-      ) do |project_env,log_dir,semantic_logger_appenders_for_dev|
+      ) do |project_env,log_dir|
         appenders = if project_env.development?
-                      semantic_logger_appenders_for_dev
+                      [
+                        { formatter: :color, io: $stdout },
+                        { file_name: (log_dir / "development.log").to_s },
+                      ]
                     end
         if appenders.nil?
-          appenders = { file_name: (log_dir / "test.log").to_s }
+          appenders = { file_name: (log_dir / "#{project_env}.log").to_s }
         end
         if appenders.nil?
           appenders = { io: $stdout }
@@ -386,12 +377,33 @@ class Brut::Config
       end
 
       c.store(
-        "instrumentation",
-        Brut::Infrastructure::Instrumentation,
-        "Interface for recording instrumentable events and subscribing to them",
+        "eager_load_classes?",
+        :boolean,
+        "If true, classes are eagerly loaded upon startup",
+        true,
+        allow_app_override: true
+      )
+
+      c.store(
+        "auto_reload_classes?",
+        :boolean,
+        "If true, classes are reloaded with each request. Useful only really for development",
         allow_app_override: true
       ) do |project_env|
-        Brut::Infrastructure::Instrumentation.new
+        no_reload_in_dev = ENV["BRUT_NO_RELOAD_IN_DEV"] == "true"
+        if project_env.development?
+          !no_reload_in_dev
+        else
+          false
+        end
+      end
+
+      c.store(
+        "log_level",
+        String,
+        "Log level to control how much logging is happening"
+      ) do
+        ENV["LOG_LEVEL"] || "debug"
       end
 
     end

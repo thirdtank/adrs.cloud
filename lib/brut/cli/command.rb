@@ -64,7 +64,6 @@ class Brut::CLI::Command
 
   def system!(*args) = @executor.system!(*args)
 
-
   def delegate_to_commands(*command_klasses)
     result = nil
     command_klasses.each do |command_klass|
@@ -104,7 +103,7 @@ class Brut::CLI::Command
     Bundler.require(:default, ENV["RACK_ENV"].to_sym)
     if configure_only
       require "#{project_root}/app/pre_boot"
-      ::App.new.configure_only!
+      Brut::Framework.new(app: ::App.new)
     else
       require "#{project_root}/app/boot"
     end
