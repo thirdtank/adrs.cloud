@@ -2,6 +2,7 @@ require "optparse"
 require_relative "../junk_drawer"
 class Brut::CLI::App
   include Brut::CLI::ExecutionResults
+  include Brut::I18n::ForCLI
 
   def self.commands
     self.constants.map { |name|

@@ -1,6 +1,6 @@
 require "rexml"
 class Brut::FrontEnd::Components::Timestamp < Brut::FrontEnd::Component
-  include Brut::I18n
+  include Brut::I18n::ForHTML
   def initialize(timestamp:, format: :full, skip_year_if_same: true, attribute_format: :iso_8601, **only_contains_class)
     @timestamp = timestamp
     formats = [ format ]

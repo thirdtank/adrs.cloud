@@ -163,3 +163,4 @@ module Brut
     end
   end
 end
+require_relative "i18n"

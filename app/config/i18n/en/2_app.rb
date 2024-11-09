@@ -320,6 +320,15 @@
           uid_changed: "The UID provided by GitHub is not the one used when you first signed up.",
         },
       },
-    }
+    },
+    clis: {
+      downloads: {
+        num_expired: {
+          zero: "There aren't any expired downloads",
+          one: "There is one expired download",
+          other: "There are %{count} expired downloads",
+        }
+      }
+    },
   },
 }

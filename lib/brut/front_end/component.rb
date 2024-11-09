@@ -205,7 +205,7 @@ class Brut::FrontEnd::Component
     end
   end
   include Helpers
-  include Brut::I18n
+  include Brut::I18n::ForHTML
 
 private
 

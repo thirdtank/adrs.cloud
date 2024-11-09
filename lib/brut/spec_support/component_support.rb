@@ -1,7 +1,7 @@
 require_relative "flash_support"
 module Brut::SpecSupport::ComponentSupport
   include Brut::SpecSupport::FlashSupport
-  include Brut::I18n
+  include Brut::I18n::ForHTML
 
   def render_and_parse(component,&block)
     if component.kind_of?(Brut::FrontEnd::Page)

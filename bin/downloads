@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require "pathname"
+
+# Not needed when Brut is Gemified
+BRUT_PATH = File.join(File.dirname($0),"..","lib")
+$: << BRUT_PATH
+require "brut/cli"
+
+APP_PATH = File.join(File.dirname($0),"..","app","src")
+$: << APP_PATH
+require "cli/downloads"
+
+exit Brut::CLI.app(DownloadsCLI,project_root: Pathname($0).dirname / "..")
+

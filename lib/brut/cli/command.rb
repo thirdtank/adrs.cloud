@@ -1,6 +1,7 @@
 require "optparse"
 class Brut::CLI::Command
   include Brut::CLI::ExecutionResults
+  include Brut::I18n::ForCLI
 
   def self.description(new_description=nil)
     if new_description.nil?
