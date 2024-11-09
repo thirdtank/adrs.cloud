@@ -7,29 +7,8 @@ end
 ENV["RACK_ENV"] = "production"
 
 require_relative "../bin/bin_kit"
-require "bundler"
-Bundler.setup(:default, ENV["RACK_ENV"].to_sym)
-
-# Not needed once Brut is modularized
-BRUT_PATH = File.join(File.dirname($0),"..","lib")
-$: << BRUT_PATH
-require "brut"
-
-Brut.container.store_required_path(
-  "project_root",
-  "Root of the entire project's source code checkout",
-  (Pathname(__dir__) / "..").expand_path)
-
-APP_SRC_PATH = File.join(Brut.container.project_root,"app","src")
-$: << APP_SRC_PATH
-
-require "web_app"
-require "pathname"
-
-log "Creating App"
-app = WebApp.new
-log "Configuring App and Brut"
-app.configure_only!
+require_relative "../app/bootstrap"
+Bootstrap.new.configure_only!
 require "optparse"
 
 def parse_options
