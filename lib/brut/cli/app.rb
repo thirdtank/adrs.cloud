@@ -40,7 +40,7 @@ class Brut::CLI::App
                         " (default '#{default}')"
                       end
     opts.on("--env=ENVIRONMENT","Project environment#{default_message}")
-    @default_env = default
+    @default_env = ENV["RACK_ENV"] || default
     @requires_project_env = true
   end
 
