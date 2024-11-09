@@ -12,6 +12,9 @@ class Brut::CLI::Command
   end
   def self.detailed_description(new_description=nil)
     if new_description.nil?
+      if @detailed_description.nil?
+        return @detailed_description
+      end
       return @detailed_description.to_s
     else
       @detailed_description = new_description

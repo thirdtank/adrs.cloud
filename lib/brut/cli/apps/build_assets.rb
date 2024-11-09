@@ -9,12 +9,6 @@ class Brut::CLI::Apps::BuildAssets < Brut::CLI::App
   default_command :all
   configure_only!
 
-  def before_execute
-    ENV["BRUT_LOG_FILE_NAME"] = "build_assets"
-    ENV["BRUT_LOG_STDOUT"]    = "true"
-    ENV["LOG_LEVEL"]          = "fatal"
-  end
-
   class All < Brut::CLI::Command
     description "Build all assets"
     opts.on("--[no-]clean","If set the metadata file used to map the files to their hashed values is deleted before assets are built")

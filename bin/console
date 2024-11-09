@@ -1,7 +1,13 @@
 #!/usr/bin/env ruby
 ENV["RACK_ENV"] = "development"
-require "bundler"
-Bundler.require
-$LOAD_PATH << File.join(__dir__,"..","lib")
-require_relative "../app/boot"
+if ENV["LOG_LEVEL"].to_s == ""
+  ENV["LOG_LEVEL"] = "warn"
+end
+require "pathname"
+require "dotenv"
+project_root = Pathname(__dir__) / ".."
+Dotenv.load(project_root / ".env.development",
+            project_root / ".env.development.local")
+require_relative project_root / "app" / "bootstrap"
+Bootstrap.new.bootstrap!
 binding.irb

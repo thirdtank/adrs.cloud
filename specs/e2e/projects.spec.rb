@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe "Manage Projects" do
   include Support::E2E::Login
-  include Brut::I18n
+  include Brut::I18n::ForHTML
   it "can add, edit, and archive projects" do
     account = create(:account)
 

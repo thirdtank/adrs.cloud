@@ -327,7 +327,12 @@
           zero: "There aren't any expired downloads",
           one: "There is one expired download",
           other: "There are %{count} expired downloads",
-        }
+        },
+        num_deleted: {
+          zero: "There weren't any expired downloads",
+          one: "The only expired download was deleted",
+          other: "All %{count} expired downloads were deleted",
+        },
       }
     },
   },

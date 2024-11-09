@@ -35,6 +35,10 @@ class Download
     DB::Download.where(Sequel.lit("delete_at < now()")).count
   end
 
+  def self.delete_expired
+    DB::Download.where(Sequel.lit("delete_at < now()")).delete
+  end
+
   def initialize(download:)
     @download = download
   end

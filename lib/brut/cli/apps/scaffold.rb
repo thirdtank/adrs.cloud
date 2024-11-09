@@ -6,9 +6,6 @@ class Brut::CLI::Apps::Scaffold < Brut::CLI::App
   opts.on("--dry-run", "If set, no files are changed. You will see output of what would happen without this flag")
 
   def before_execute
-    ENV["BRUT_LOG_FILE_NAME"] = "bin_db"
-    ENV["BRUT_LOG_STDOUT"]    = "true"
-    ENV["LOG_LEVEL"]          = "fatal"
     ENV["RACK_ENV"] = "development"
   end
 

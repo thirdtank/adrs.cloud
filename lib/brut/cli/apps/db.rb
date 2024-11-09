@@ -6,10 +6,6 @@ require "brut/cli"
 class Brut::CLI::Apps::DB < Brut::CLI::App
   description "Manage your database in development, test, and production"
 
-  def before_execute
-    ENV["LOG_LEVEL"] = "fatal"
-  end
-
   class Seed < Brut::CLI::Command
     description "Load seed data into the database"
     requires_project_env default: "development"
