@@ -96,6 +96,7 @@ module Brut::SinatraHelpers
     }
 
     sinatra_app.set :logging, true
+    sinatra_app.set :public_folder, Brut.container.public_root_dir
     sinatra_app.before do
 
       if Brut.container.auto_reload_classes?
@@ -195,7 +196,7 @@ module Brut::SinatraHelpers
       Brut.container.routing.register_page(path)
 
       get path do
-        Brut.container.instrumentation.instrument(event: "GET:#{path}") do
+        Brut.container.instrumentation.instrument(Brut::Instrumentation::HTTPEvent.new(name: :get_page, http_method: "GET", path: path )) do
           route = Brut.container.routing.for(path: path,method: :get)
           page_class = route.handler_class
           request_context = Thread.current.thread_variable_get(:request_context)
@@ -241,7 +242,7 @@ module Brut::SinatraHelpers
     #
     def form(path)
       route = Brut.container.routing.register_form(path)
-      self.define_handled_route(route)
+      self.define_handled_route(route, type: :form)
     end
 
     # Declare a form action that has no associated form elements.  This is used when you need to use a button to submit to the
@@ -252,7 +253,7 @@ module Brut::SinatraHelpers
     # to make sure there is no form defined.
     def action(path)
       route = Brut.container.routing.register_handler_only(path)
-      self.define_handled_route(route)
+      self.define_handled_route(route, type: :action)
     end
 
     # When you need to respond to a given path/method, but it's not a page nor a form.  For example, webhooks often
@@ -261,50 +262,52 @@ module Brut::SinatraHelpers
     # This will locate a handler class based on the same naming convention as for forms.
     def path(path, method:)
       route = Brut.container.routing.register_path(path, method: Brut::FrontEnd::HttpMethod.new(method))
-      self.define_handled_route(route)
+      self.define_handled_route(route,type: :generic)
     end
 
   private
 
-    def define_handled_route(original_brut_route)
+    def define_handled_route(original_brut_route,type:)
 
       method = original_brut_route.http_method.to_s.upcase
       path   = original_brut_route.path_template
 
       route method, path do
-        brut_route = Brut.container.routing.for(path:,method:)
+        Brut.container.instrumentation.instrument(Brut::Instrumentation::HTTPEvent.new(name: type, http_method: method, path: path)) do
+          brut_route = Brut.container.routing.for(path:,method:)
 
-        handler_class = brut_route.handler_class
-        form_class    = brut_route.respond_to?(:form_class) ? brut_route.form_class : nil
+          handler_class = brut_route.handler_class
+          form_class    = brut_route.respond_to?(:form_class) ? brut_route.form_class : nil
 
-        request_context = Thread.current.thread_variable_get(:request_context)
-        handler = handler_class.new
-        form = if form_class.nil?
-                 nil
-               else
-                 form_class.new(params: params)
-               end
+          request_context = Thread.current.thread_variable_get(:request_context)
+          handler = handler_class.new
+          form = if form_class.nil?
+                   nil
+                 else
+                   form_class.new(params: params)
+                 end
 
-        process_args = request_context.as_method_args(handler,:handle,request_params: params,form: form)
+          process_args = request_context.as_method_args(handler,:handle,request_params: params,form: form)
 
-        result = handler.handle!(**process_args)
+          result = handler.handle!(**process_args)
 
-        case result
-        in URI => uri
-          redirect to(uri.to_s)
-        in Brut::FrontEnd::Component => component_instance
-          render_html(component_instance).to_s
-        in [ Brut::FrontEnd::Component => component_instance, Brut::FrontEnd::HttpStatus => http_status ]
-          [
-            http_status.to_i,
-            render_html(component_instance).to_s,
-          ]
-        in Brut::FrontEnd::HttpStatus => http_status
-          http_status.to_i
-        in Brut::FrontEnd::Download => download
-          [ 200, download.headers, download.data ]
-        else
-          raise NoMatchingPatternError, "Result from #{handler.class}'s handle! method was a #{result.class}, which cannot be used to understand the response to generate"
+          case result
+          in URI => uri
+            redirect to(uri.to_s)
+          in Brut::FrontEnd::Component => component_instance
+            render_html(component_instance).to_s
+          in [ Brut::FrontEnd::Component => component_instance, Brut::FrontEnd::HttpStatus => http_status ]
+            [
+              http_status.to_i,
+              render_html(component_instance).to_s,
+            ]
+          in Brut::FrontEnd::HttpStatus => http_status
+            http_status.to_i
+          in Brut::FrontEnd::Download => download
+            [ 200, download.headers, download.data ]
+          else
+            raise NoMatchingPatternError, "Result from #{handler.class}'s handle! method was a #{result.class}, which cannot be used to understand the response to generate"
+          end
         end
       end
     end

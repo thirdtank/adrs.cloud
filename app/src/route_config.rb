@@ -4,12 +4,9 @@ class AdrApp < Sinatra::Base
 
   include Brut::SinatraHelpers
 
-  set :public_folder, Brut.container.public_root_dir
-
   use OmniAuth::Builder do
     provider :github, ENV.fetch("GITHUB_CLIENT_ID"), ENV.fetch("GITHUB_CLIENT_SECRET"), scope: "read:user,user:email"
   end
-
 
   before do
 

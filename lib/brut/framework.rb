@@ -90,11 +90,18 @@ class Brut::Framework
       end
     end
 
-    Brut.container.sequel_db_handle.logger = SemanticLogger["Sequel::Database"]
-    Sequel::Model.db = Brut.container.sequel_db_handle
-    Sequel::Model.db.extension :pg_array
+    Sequel::Database.extension :pg_array
+    Sequel::Database.extension :brut_instrumentation
+
+    sequel_db = Brut.container.sequel_db_handle
+    sequel_db.logger = SemanticLogger["Sequel::Database"]
+
+    Sequel::Model.db = sequel_db
+
+
     Sequel::Model.plugin :find_bang
     Sequel::Model.plugin :created_at
+
     if !Brut.container.external_id_prefix.nil?
       Sequel::Model.plugin :external_id, global_prefix: Brut.container.external_id_prefix
     end
@@ -103,6 +110,9 @@ class Brut::Framework
       @loader.eager_load
     else
       SemanticLogger["Brut"].info("Lazily loading app's classes")
+    end
+    Brut.container.instrumentation.subscribe do |event:,start:,stop:,exception:|
+      SemanticLogger["Instrumentation"].info("#{event.category}/#{event.subcategory}/#{event.name}: #{start}/#{stop} = #{stop-start}: #{exception&.message} (#{event.details})")
     end
     @app.boot!
     @booted = true

@@ -21,12 +21,13 @@ def setup(update_gems:,update_node:)
   if update_node
     log "Updating Node Modules"
     system! "npm --no-color --no-progress update"
-    log "Re-installing playwright/chromium if needed"
-    system! "node_modules/.bin/playwright install --with-deps chromium"
   else
     log "Installing Node Modules"
     system! "npm --no-color --no-progress install"
   end
+
+  log "Re-installing playwright/chromium if needed"
+  system! "node_modules/.bin/playwright install --with-deps chromium"
 
   log "Ensuring tmp dir exists"
   system! "mkdir -p tmp"

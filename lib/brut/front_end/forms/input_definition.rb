@@ -70,9 +70,9 @@ class Brut::FrontEnd::Forms::InputDefinition
     @minlength = type!( minlength , Numeric                   , "minlength")
     @name      = type!( name      , String                    , "name")
     @pattern   = type!( pattern   , String                    , "pattern")
-    @required  = type!( required  , [true, false]             , "required", :required)
+    @required  = type!( required  , [true, false]             , "required", required: true)
     @step      = type!( step      , Numeric                   , "step")
-    @type      = type!( type      , INPUT_TYPES_TO_CLASS.keys , "type", :required)
+    @type      = type!( type      , INPUT_TYPES_TO_CLASS.keys , "type", required: true)
 
     if @pattern.nil? && type == "email"
       @pattern = /^[^@]+@[^@]+\.[^@]+$/.source
@@ -90,7 +90,7 @@ class Brut::FrontEnd::Forms::SelectInputDefinition
   def initialize(name:, required: true)
     name = name.to_s
     @name     = type!( name      , String        , "name")
-    @required = type!( required  , [true, false] , "required", :required)
+    @required = type!( required  , [true, false] , "required", required:true)
   end
 
   # Create an Input based on this defitition, initializing it with the given value.

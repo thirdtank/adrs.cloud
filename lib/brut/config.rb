@@ -313,11 +313,14 @@ class Brut::Config
 
       c.store(
         "instrumentation",
-        Brut::Infrastructure::Instrumentation,
+        Brut::Instrumentation::Basic,
         "Interface for recording instrumentable events and subscribing to them",
-        allow_app_override: true
       ) do |project_env|
-        Brut::Infrastructure::Instrumentation.new
+        if project_env.production?
+          Brut::Instrumentation::Basic.new
+        else
+          Brut::Instrumentation::Basic::TypeChecking.new
+        end
       end
 
       # App can override
