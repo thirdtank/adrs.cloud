@@ -1,5 +1,5 @@
 class AccountByExternalIdPage < AppPage
-  attr_reader :authenticated_account, :selected_tab, :timezone_from_browser, :locale_from_browser
+  attr_reader :authenticated_account, :selected_tab, :timezone_from_browser, :http_accept_language
 
   Tab = Data.define(:name,:icon)
 
@@ -10,7 +10,7 @@ class AccountByExternalIdPage < AppPage
     @selected_tab          = tabs.detect { |t| t.name == tab } || tabs.first
     @authenticated_account = authenticated_account
     @timezone_from_browser = session.timezone_from_browser
-    @locale_from_browser   = session.locale_from_browser
+    @http_accept_language  = session.http_accept_language
   end
 
   def tabs

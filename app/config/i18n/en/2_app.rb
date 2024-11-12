@@ -209,6 +209,7 @@
             },
             locale: {
               title: "Locale",
+              unknown: "Unknown",
             },
           },
           limits: {

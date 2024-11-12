@@ -2,7 +2,7 @@
 class Brut::FrontEnd::Components::LocaleDetection < Brut::FrontEnd::Component
   def initialize(session:)
     @timezone = session.timezone_from_browser
-    @locale   = session.locale_from_browser
+    @locale   = session.http_accept_language.known? ? session.http_accept_language.weighted_locales.first&.locale : nil
   end
 
   def render

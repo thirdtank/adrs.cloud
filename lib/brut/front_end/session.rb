@@ -9,13 +9,9 @@ class Brut::FrontEnd::Session
     @rack_session = rack_session
   end
 
-  # If the browser has communicate the user's locale, this returns that value.
-  def locale_from_browser = self[:_locale_from_browser]
-
-  # Set the locale as reported by the browser.  Setting this in the session prevents repeated
-  # attempts to submit it from the browser.
-  def locale_from_browser=(locale)
-    self[:_locale_from_browser] = locale
+  def http_accept_language = Brut::I18n::HTTPAcceptLanguage.from_session(self[:_http_accept_language])
+  def http_accept_language=(http_accept_language)
+    self[:_http_accept_language] = http_accept_language.for_session
   end
 
   # Get the timezone as reported by the browser, as a TZInfo::Timezone.

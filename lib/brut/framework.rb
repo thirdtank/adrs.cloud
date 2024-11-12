@@ -39,7 +39,12 @@ class Brut::Framework
     end
     SemanticLogger["Brut"].info("Logging set up")
 
-    ::I18n.load_path += Dir[Brut.container.project_root / "app" / "config" / "i18n" / "**/*.rb"]
+    i18n_locales_path = Brut.container.project_root / "app" / "config" / "i18n"
+    locales = Dir[i18n_locales_path / "*"].map { |_|
+      Pathname(_).basename
+    }
+    ::I18n.load_path += Dir[i18n_locales_path / "**/*.rb"]
+    ::I18n.available_locales = locales.map(&:to_s).map(&:to_sym)
 
     Brut.container.store(
       "zeitwerk_loader",
@@ -94,7 +99,6 @@ class Brut::Framework
     Sequel::Database.extension :brut_instrumentation
 
     sequel_db = Brut.container.sequel_db_handle
-    sequel_db.logger = SemanticLogger["Sequel::Database"]
 
     Sequel::Model.db = sequel_db
 

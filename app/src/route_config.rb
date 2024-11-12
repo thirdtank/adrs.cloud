@@ -30,17 +30,12 @@ class AdrApp < Sinatra::Base
     if authenticated_account && authenticated_account.active?
       Thread.current.thread_variable_get(:request_context)[:authenticated_account] = authenticated_account
       logged_in = true
-      logger.info "Someone is logged in"
     end
 
     if requires_login
-      logger.info "Login required"
       if !logged_in
-        logger.info "No one is logged in"
         redirect to("/")
       end
-    else
-      logger.info "Login not required"
     end
   end
 

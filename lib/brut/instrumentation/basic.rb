@@ -21,7 +21,7 @@ class Brut::Instrumentation::Basic
     exception = nil
 
     begin
-      result = block.()
+      result = block.(event)
     rescue => ex
       exception = ex
     end

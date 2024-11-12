@@ -149,9 +149,11 @@
             <dt class="b"><%= t(page: "info.personal.timezone.title") %></dt>
             <dd><%= timezone_from_browser %><sup>&ddagger;</sup></dd>
           <% end %>
-          <% if locale_from_browser %>
-            <dt class="b"><%= t(page: "info.personal.locale.title") %></dt>
-            <dd><%= locale_from_browser %><sup>&ddagger;</sup></dd>
+          <dt class="b"><%= t(page: "info.personal.locale.title") %></dt>
+          <% if http_accept_language.known? %>
+            <dd><%= http_accept_language.weighted_locales.map(&:locale).join(", ") %><sup>&ddagger;</sup></dd>
+          <% else %>
+            <dd><%= t(page: "info.personal.locale.unknown") %><dd>
           <% end %>
         </dl>
         <p class="i f-1 p ml-3 mb-0 gray-400">

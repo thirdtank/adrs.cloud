@@ -6,29 +6,12 @@ playwright ruby must matc playwright and playwright must be used to install brow
 
 ## Notification/Instrumentation
 
-Rails is generally pretty basic/simple.  We can do that, too:
+Issue is that wrapping a method inside instrument do..end doesn't work if there are any return values.
 
-```
-Brut.container.instrumentation.instrument(event:) do
-  # code
-end
+Options:
 
-Brut.container.instrumentation.subscribe(event:,events:,events_matching:) do |event|
-  # do something with event
-end
-```
-
-* How this works with logging: basic logging of "this happened" seems useful and not to be conflated with instrumentation.  This, the
-log need not be used to understand performance.
-* While OTEL should be supported, it should not be directly connected.
-* How to vet:
-  - produce trace info for each request that includes:
-    + overall request time/info
-    + per-component render time
-    + handler render time
-* Stretch goala:
-  - sidekiq middleware
-  - query performance https://github.com/signalfx/ruby-sequel-instrumentation/blob/master/lib/sequel/extensions/dataset_instrumentation.rb
+* Let it be known?
+* allow instrumentation another way?  wrap it somehow in a lambda that does not have this issue?
 
 ## handle! vs render vs constructor
 

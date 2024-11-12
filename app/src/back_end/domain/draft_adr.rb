@@ -1,5 +1,7 @@
 class DraftAdr
 
+  include Brut::Instrumentation
+
   class AcceptedAdrValidator < Brut::BackEnd::Validators::FormValidator
     validate :context   , required: true , minlength: 10
     validate :facing    , required: true , minlength: 10
@@ -91,48 +93,51 @@ class DraftAdr
   end
 
   def save(form:)
-
-    if form.title.to_s.strip !~ /\s+/
-      form.server_side_constraint_violation(input_name: :title, key: :not_enough_words, context: { minwords: 2 })
-    end
-
-    if form.constraint_violations?
-      return form
-    end
-
-    project = DB::Project.find!(external_id: form.project_external_id)
-    if project.account != @adr.account
-      raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s account does not belong to account #{@adr.account.external_id}"
-    end
-
-    DB.transaction do
-      new_adr = @adr.external_id.nil?
-      @adr.update(title: form.title,
-                  context: form.context,
-                  facing: form.facing,
-                  decision: form.decision,
-                  neglected: form.neglected,
-                  achieve: form.achieve,
-                  accepting: form.accepting,
-                  because: form.because,
-                  project: project,
-                  tags: Tags.from_string(string: form.tags).to_a,
-                 )
-
-      if new_adr
-        propose_replacement_adr(form)
-        # XXX
-        refines_adr = DB::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
-        if refines_adr && refines_adr.project != project
-          raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s is not the same as the ADR being refined's project #{refines_adr.project.external_id}"
-        end
-        @adr.update(refines_adr_id: refines_adr&.id)
-      else
-        replaced_adr_may_not_change!(form)
-        refined_adr_may_not_change!(form)
+    instrument(name: "save", category: "domain", subcategory: self.class.name) do |event|
+      if form.title.to_s.strip !~ /\s+/
+        form.server_side_constraint_violation(input_name: :title, key: :not_enough_words, context: { minwords: 2 })
       end
+
+      if form.constraint_violations?
+        event.details[:constraint_violations] = true
+      else
+        project = DB::Project.find!(external_id: form.project_external_id)
+        if project.account != @adr.account
+          raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s account does not belong to account #{@adr.account.external_id}"
+        end
+
+        DB.transaction do
+          new_adr = @adr.external_id.nil?
+          @adr.update(title: form.title,
+                      context: form.context,
+                      facing: form.facing,
+                      decision: form.decision,
+                      neglected: form.neglected,
+                      achieve: form.achieve,
+                      accepting: form.accepting,
+                      because: form.because,
+                      project: project,
+                      tags: Tags.from_string(string: form.tags).to_a,
+                     )
+
+          if new_adr
+            event.details[:id] = "NEW"
+            propose_replacement_adr(form)
+            # XXX
+            refines_adr = DB::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
+            if refines_adr && refines_adr.project != project
+              raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s is not the same as the ADR being refined's project #{refines_adr.project.external_id}"
+            end
+            @adr.update(refines_adr_id: refines_adr&.id)
+          else
+            event.details[:id] = @adr.external_id
+            replaced_adr_may_not_change!(form)
+            refined_adr_may_not_change!(form)
+          end
+        end
+      end
+      form
     end
-    form
   end
 
 private
