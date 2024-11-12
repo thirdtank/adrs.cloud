@@ -1,8 +1,20 @@
 # Design Issues
 
+## Framework stuff missing
+
+* Better route definition
+* Build out remaining HTML5 validations etc.
+* Set up Rack::Attack
+* Something with CSP
+* Fix chokidar/foreman
+
 ## Playwright versions is a PITA
 
 playwright ruby must matc playwright and playwright must be used to install browsers
+
+## Import maps?
+
+* Need a local HTTP/2 web server
 
 ## Notification/Instrumentation
 
@@ -12,13 +24,6 @@ Options:
 
 * Let it be known?
 * allow instrumentation another way?  wrap it somehow in a lambda that does not have this issue?
-
-## chokidar doesn't get killed by foreman
-
-## handle! vs render vs constructor
-
-There is a dissonance between components/pages that get their args via constructor and handlers which do not.
-
 
 ## Deployment 
 
@@ -52,33 +57,6 @@ Need better support for html parsing and whatnot
 ## Logic useful to front-end and back-end - where does it go?
 
 ## Converting rich types in DB to and from strings needed for front-end
-
-## SQL/Data Layer is nowhere near as ergonomic as Active Record
-
-* having to figure out the associations is annoying
-* schema stuff is annoying
-
-Ideally:
-
-- Creating a table automatically:
-  - sets up a primary key
-  - optionally sets up an external id
-  - sets created\_at
-  - allows / requires commenting
-- A "model" should, automatically:
-  - have associations on it, based on schema (explicit, but pre-generated)
-  - allow rich type conversion to/from column type
-- Scheam ergonomics
-  - foreign keys super easy/constraints set up etc.
-  - fields not nullable by default
-
-* Sequel's migration API is OK
-  - need to default to non-null
-  - foreign\_key maybe needs default to non-null and default to an index
-  - `key` method to indicate that a set of columsn represent a key (and will make a unique index)
-  - somehow default to created\_at that gets set automatically
-  - bake in external ID support
-  - 
 
 ## Actions have a lot of "is the person logged in allowed to access this"
 

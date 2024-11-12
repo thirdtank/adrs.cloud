@@ -11,11 +11,29 @@ class Brut::Framework::App
   # actions where an app needs to exist inside some organizational context.
   def organization = id
 
-  # Override this to configure your app. This method should not make connections
-  # to external resources or servers and generally override existing configuration
-  # or set up internal structures. This is called after Brut's framework configuration
-  # has happened, but before the framework has booted.
-  def configure!
+  def self.routes(&block)
+    @routes_blocks ||= []
+    if block.nil?
+      @routes_blocks
+    else
+      @routes_blocks << block
+    end
+  end
+  def self.middleware(middleware=nil,*args,&block)
+    @middlewares ||= []
+    if middleware.nil? && args.empty? && block.nil?
+      @middlewares
+    else
+      @middlewares << [ middleware, args, block ]
+    end
+  end
+  def self.before(klass_name=nil)
+    @before ||= []
+    if klass_name.nil?
+      @before
+    else
+      @before << klass_name
+    end
   end
 
   # Override this to set up any runtime connections or execute other pre-flight
@@ -25,4 +43,5 @@ class Brut::Framework::App
   # your apps routes are set up.
   def boot!
   end
+
 end

@@ -1,23 +1,5 @@
 class Bootstrap
 
-  class ConfiguredBootstrap
-    def initialize(framework:)
-      @framework = framework
-    end
-    def bootstrap!
-      @framework.boot!
-      require "route_config"
-      Bootstraped.new(rack_app: AdrApp.new)
-    end
-  end
-
-  class Bootstraped
-    attr_reader :rack_app
-    def initialize(rack_app:)
-      @rack_app = rack_app
-    end
-  end
-
   def configure_only!
     require "bundler"
 
@@ -37,11 +19,29 @@ class Bootstrap
 
     require "app"
 
-    ConfiguredBootstrap.new(framework: Brut::Framework::MCP.new(app: ::App.new))
+    ConfiguredBootstrap.new(mcp: Brut::Framework::MCP.new(app_klass: ::App))
   end
 
   def bootstrap!
     self.configure_only!.bootstrap!
   end
+
+  class ConfiguredBootstrap
+    def initialize(mcp:)
+      @mcp = mcp
+    end
+    def bootstrap!
+      @mcp.boot!
+      Bootstraped.new(rack_app: @mcp.sinatra_app.new)
+    end
+  end
+
+  class Bootstraped
+    attr_reader :rack_app
+    def initialize(rack_app:)
+      @rack_app = rack_app
+    end
+  end
+
 
 end

@@ -27,30 +27,8 @@ class Brut::Framework::Config
   class AppOrganizationName < DockerPathComponent
   end
 
-  # Set up all the default Brut configuration. It is not adviable to 
-  # run a Brut-powered app without having called this.  By default, this
-  # is called from Brut::Framework::App.
-  def configure!(app_id:, app_organization:)
-
-    app_id           = AppId.new(app_id)
-    app_organization = AppOrganizationName.new(app_organization)
-
+  def configure!
     Brut.container do |c|
-
-      c.store(
-        "app_id",
-        AppId,
-        "Id to be used for the app when other processes need it. Should be the name of that app in letters and digits.",
-        app_id
-      )
-
-      c.store(
-        "app_organization",
-        AppOrganizationName,
-        "Id for the organization that owns or manages the app. This is used when the app must be referenced in systems with a hierarchy such as Docker or GitHub",
-        app_organization
-      )
-
       # Brut Stuff that should not be changed
 
       c.store_ensured_path(

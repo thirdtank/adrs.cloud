@@ -8,7 +8,7 @@ ENV["RACK_ENV"] = "production"
 
 require_relative "../bin/bin_kit"
 require_relative "../app/bootstrap"
-Bootstrap.new.configure_only!
+bootstrap = Bootstrap.new.configure_only!
 require "optparse"
 
 def parse_options
@@ -99,25 +99,25 @@ version = begin
           end
 
 platform = options[:platform] || "linux/amd64"
-heroku_app_name = Brut.container.app_id
+heroku_app_name = bootstrap.app.id
 
 log "Changing to #{ROOT_DIR}"
 images = {
   "web" => {
     cmd: "bin/run",
-    image_name: %{#{Brut.container.app_organization}/#{Brut.container.app_id}:#{version}-web},
+    image_name: %{#{bootstrap.app.organization}/#{bootstrap.app.id}:#{version}-web},
     dockerfile: "deploy/Dockerfile.web",
     heroku_image_name: "registry.heroku.com/#{heroku_app_name}/web",
   },
   "sidekiq" => {
     cmd: "bin/run-sidekiq",
-    image_name: %{#{Brut.container.app_organization}/#{Brut.container.app_id}:#{version}-sidekiq},
+    image_name: %{#{bootstrap.app.organization}/#{bootstrap.app.id}:#{version}-sidekiq},
     dockerfile: "deploy/Dockerfile.sidekiq",
     heroku_image_name: "registry.heroku.com/#{heroku_app_name}/sidekiq",
   },
   "release" => {
     cmd: "bin/release",
-    image_name: %{#{Brut.container.app_organization}/#{Brut.container.app_id}:#{version}-release},
+    image_name: %{#{bootstrap.app.organization}/#{bootstrap.app.id}:#{version}-release},
     dockerfile: "deploy/Dockerfile.release",
     heroku_image_name: "registry.heroku.com/#{heroku_app_name}/release",
   },

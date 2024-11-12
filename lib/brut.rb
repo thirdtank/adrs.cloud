@@ -19,6 +19,7 @@ module Brut
     autoload(:HttpStatus, "brut/front_end/http_status")
     autoload(:Session, "brut/front_end/session")
     autoload(:AssetMetadata, "brut/front_end/asset_metadata")
+    autoload(:RouteHook, "brut/front_end/route_hook")
   end
   module BackEnd
     autoload(:Result, "brut/back_end/result")
