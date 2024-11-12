@@ -34,6 +34,7 @@ class Bootstrap
       @mcp.boot!
       Bootstraped.new(rack_app: @mcp.sinatra_app.new)
     end
+    def app = @mcp.app
   end
 
   class Bootstraped
