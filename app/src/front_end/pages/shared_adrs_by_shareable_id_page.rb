@@ -21,7 +21,7 @@ class SharedAdrsByShareableIdPage < AppPage
 
   def shareable_path(adr)
     if !adr.shared?
-      raise Brut::BackEnd::Errors::Bug, "#{adr.external_id} is not share - this should not have been called"
+      bug! "#{adr.external_id} is not share - this should not have been called"
     end
     self.class.routing(shareable_id: adr.shareable_id)
   end

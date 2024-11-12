@@ -86,7 +86,7 @@ private
 
   def external_id_required!(external_id:,action:)
     if external_id.nil?
-      raise Brut::BackEnd::Errors::Bug, "You may not create a #{self.class} with action #{action} and no external_id."
+      bug! "You may not create a #{self.class} with action #{action} and no external_id."
     end
     external_id
   end

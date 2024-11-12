@@ -34,7 +34,7 @@ RSpec.describe AcceptedAdr do
 
       expect {
         AcceptedAdr.find!(external_id: adr.external_id,account:)
-      }.to raise_error(Brut::BackEnd::Errors::NotFound)
+      }.to raise_error(Brut::Framework::Errors::NotFound)
     end
     it "raises an error if the ADR exists on the account, but is not accepted" do
       adr = create(:adr)
@@ -42,7 +42,7 @@ RSpec.describe AcceptedAdr do
 
       expect {
         AcceptedAdr.find!(external_id: adr.external_id,account:)
-      }.to raise_error(Brut::BackEnd::Errors::NotFound)
+      }.to raise_error(Brut::Framework::Errors::NotFound)
     end
     it "returns an AcceptedAdr if the ADR can be found" do
       adr = create(:adr, :accepted)
@@ -141,7 +141,7 @@ RSpec.describe AcceptedAdr do
 
           expect {
             accepted_adr.propose_replacement(proposed_replacement_adr)
-          }.to raise_error(Brut::BackEnd::Errors::Bug)
+          }.to be_a_bug
         end
       end
       context "ADRs have different projects" do
@@ -159,7 +159,7 @@ RSpec.describe AcceptedAdr do
 
           expect {
             accepted_adr.propose_replacement(proposed_replacement_adr)
-          }.to raise_error(Brut::BackEnd::Errors::Bug)
+          }.to be_a_bug
 
         end
       end
@@ -176,7 +176,7 @@ RSpec.describe AcceptedAdr do
 
         expect {
           accepted_adr.propose_replacement(proposed_replacement_adr)
-        }.to raise_error(Brut::BackEnd::Errors::Bug)
+        }.to be_a_bug
       end
     end
   end

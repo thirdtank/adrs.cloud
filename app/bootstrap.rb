@@ -37,7 +37,7 @@ class Bootstrap
 
     require "app"
 
-    ConfiguredBootstrap.new(framework: Brut::Framework.new(app: ::App.new))
+    ConfiguredBootstrap.new(framework: Brut::Framework::MCP.new(app: ::App.new))
   end
 
   def bootstrap!

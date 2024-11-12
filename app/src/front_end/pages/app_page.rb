@@ -1,4 +1,3 @@
 class AppPage < Brut::FrontEnd::Page
-end
-module Admin
+  include Brut::Framework::Errors
 end

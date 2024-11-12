@@ -1,6 +1,6 @@
 require "omniauth"
 require "sidekiq"
-class App < Brut::App
+class App < Brut::Framework::App
   def id           = "adrsdotcloud"
   def organization = "third-tank"
 

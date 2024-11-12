@@ -1,4 +1,7 @@
 class AccountEntitlements
+
+  include Brut::Framework::Errors
+
   def self.find!(external_id:)
     self.new(account:DB::Account.find!(external_id:))
   end
@@ -9,7 +12,7 @@ class AccountEntitlements
 
   def grant_for_new_user
     if !@account.entitlement.nil?
-      raise Brut::BackEnd::Errors::Bug,"#{@account.external_id} already has entitlements"
+      bug! "#{@account.external_id} already has entitlements"
     end
     default = DB::EntitlementDefault.find!(internal_name: "basic")
     DB::Entitlement.create(account: @account, entitlement_default: default)

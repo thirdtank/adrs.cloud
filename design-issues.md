@@ -13,6 +13,8 @@ Options:
 * Let it be known?
 * allow instrumentation another way?  wrap it somehow in a lambda that does not have this issue?
 
+## chokidar doesn't get killed by foreman
+
 ## handle! vs render vs constructor
 
 There is a dissonance between components/pages that get their args via constructor and handlers which do not.

@@ -86,7 +86,7 @@ class Brut::CLI::Command
   end
 
   def execute
-    raise SubclassMustImplement
+    raise Brut::Framework::Errors::AbstractMethod
   end
 
   def before_execute

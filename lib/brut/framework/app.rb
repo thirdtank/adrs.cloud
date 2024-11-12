@@ -1,7 +1,7 @@
 # An "App" in Brut paralance is the collection of source code and configure that is needed to operate
 # a website. This includes everything needed to serve HTTP requests, but also includes ancillary
 # tasks and any related files required for the app to exist and function.
-class Brut::App
+class Brut::Framework::App
 
   # An identifier for this app that can be used as a hostname
   def id = raise "Subclass must implement"

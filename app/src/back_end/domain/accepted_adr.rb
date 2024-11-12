@@ -1,4 +1,8 @@
 class AcceptedAdr
+
+  include Brut::Framework::Errors
+  extend Brut::Framework::Errors
+
   def self.find(external_id:,account:)
     adr = DB::Adr.first(Sequel.lit("external_id = ? and account_id = ? and accepted_at is not null",external_id,account.id))
     if adr.nil?
@@ -10,7 +14,7 @@ class AcceptedAdr
   def self.find!(external_id:,account:)
     accepted_adr = self.find(external_id:,account:)
     if accepted_adr.nil?
-      raise Brut::BackEnd::Errors::NotFound, "Account #{account.id} does not have an ADR with ID #{external_id}"
+      raise Brut::Framework::Errors::NotFound.new(resource_name: "ADR",id: external_id,context: "Account #{account.id}")
     end
     accepted_adr
   end
@@ -38,13 +42,13 @@ class AcceptedAdr
 
   def propose_replacement(adr)
     if !self.class.find(external_id: adr.external_id, account: adr.account).nil?
-      raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with an accepted ADR"
+      bug! "You cannot replace an ADR with an accepted ADR"
     end
     if adr.account != @adr.account
-      raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with another account's ADR"
+      bug! "You cannot replace an ADR with another account's ADR"
     end
     if adr.project != @adr.project
-      raise Brut::BackEnd::Errors::Bug,"You cannot replace an ADR with another project's ADR (#{adr.project&.id} != #{@adr.project&.id})"
+      bug! "You cannot replace an ADR with another project's ADR (#{adr.project&.id} != #{@adr.project&.id})"
     end
     DB::ProposedAdrReplacement.create(
       replacing_adr_id: adr.id,

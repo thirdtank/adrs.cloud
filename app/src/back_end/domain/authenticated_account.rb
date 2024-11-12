@@ -1,4 +1,7 @@
 class AuthenticatedAccount < Account
+
+  include Brut::Framework::Errors
+
   attr_reader :session_id
 
   def self.find(session_id:)

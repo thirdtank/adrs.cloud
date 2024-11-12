@@ -8,7 +8,7 @@ RSpec.describe AdrTagsWithExternalIdHandler do
         form = AdrTagsWithExternalIdForm.new
         expect {
           handler.handle!(form: form, external_id: "foobar", authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
-        }.to raise_error(Brut::BackEnd::Errors::NotFound)
+        }.to raise_error(Brut::Framework::Errors::NotFound)
       end
     end
     context "adr exists" do
@@ -19,7 +19,7 @@ RSpec.describe AdrTagsWithExternalIdHandler do
           form = AdrTagsWithExternalIdForm.new
           expect {
             handler.handle!(form: form, external_id: adr.external_id, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
-          }.to raise_error(Brut::BackEnd::Errors::NotFound)
+          }.to raise_error(Brut::Framework::Errors::NotFound)
         end
       end
       context "account has access" do

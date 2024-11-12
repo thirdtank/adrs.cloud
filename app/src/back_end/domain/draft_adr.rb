@@ -1,5 +1,7 @@
 class DraftAdr
 
+  include Brut::Framework::Errors
+  extend Brut::Framework::Errors
   include Brut::Instrumentation
 
   class AcceptedAdrValidator < Brut::BackEnd::Validators::FormValidator
@@ -14,7 +16,7 @@ class DraftAdr
 
   def self.create(authenticated_account:)
     if !authenticated_account.entitlements.can_add_new?
-      raise Brut::BackEnd::Errors::Bug, "#{authenticated_account.account.external_id} has reached its plan limit - this should not have been called"
+      bug! "#{authenticated_account.account.external_id} has reached its plan limit - this should not have been called"
     end
     adr = DB::Adr.new(account: authenticated_account.account)
     DraftAdr.new(adr:)
@@ -85,7 +87,7 @@ class DraftAdr
 
   def reject!
     if @adr.accepted?
-      raise Brut::BackEnd::Errors::Bug, "ADR #{@adr.external_id} has been accepted - this method should not have been called"
+      bug! "ADR #{@adr.external_id} has been accepted - this method should not have been called"
     end
     if !@adr.rejected?
       @adr.update(rejected_at: Time.now)
@@ -103,7 +105,7 @@ class DraftAdr
       else
         project = DB::Project.find!(external_id: form.project_external_id)
         if project.account != @adr.account
-          raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s account does not belong to account #{@adr.account.external_id}"
+          bug! "Project #{form.project_external_id}'s account does not belong to account #{@adr.account.external_id}"
         end
 
         DB.transaction do
@@ -123,10 +125,9 @@ class DraftAdr
           if new_adr
             event.details[:id] = "NEW"
             propose_replacement_adr(form)
-            # XXX
             refines_adr = DB::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
             if refines_adr && refines_adr.project != project
-              raise Brut::BackEnd::Errors::Bug, "Project #{form.project_external_id}'s is not the same as the ADR being refined's project #{refines_adr.project.external_id}"
+              bug! "Project #{form.project_external_id}'s is not the same as the ADR being refined's project #{refines_adr.project.external_id}"
             end
             @adr.update(refines_adr_id: refines_adr&.id)
           else
@@ -157,7 +158,7 @@ private
 
     if !form_replaced_adr_external_id.nil? &&
         form_replaced_adr_external_id != proposed_replaced_adr_external_id
-      raise Brut::BackEnd::Errors::Bug,"#{@adr.external_id} is proposed to replace #{proposed_replaced_adr_external_id || 'nothing'}, however the provided form has #{form_replaced_adr_external_id || 'nothing'} as the proposed replacement."
+      bug! "#{@adr.external_id} is proposed to replace #{proposed_replaced_adr_external_id || 'nothing'}, however the provided form has #{form_replaced_adr_external_id || 'nothing'} as the proposed replacement."
     end
   end
   def refined_adr_may_not_change!(form)
@@ -166,13 +167,13 @@ private
 
     if !form_refines_adr_external_id.nil? &&
         form_refines_adr_external_id != refines_adr_external_id
-      raise Brut::BackEnd::Errors::Bug,"#{@adr.external_id} is refines #{refines_adr_external_id || 'nothing'}, however the provided form has #{form_refines_adr_external_id || 'nothing'} as the refinement."
+      bug! "#{@adr.external_id} is refines #{refines_adr_external_id || 'nothing'}, however the provided form has #{form_refines_adr_external_id || 'nothing'} as the refinement."
     end
   end
 
   def adr_to_replace_must_exist!(accepted_adr_to_replace,form)
     if accepted_adr_to_replace.nil?
-      raise Brut::BackEnd::Errors::Bug,"New ADR is proposed to replace #{form.replaced_adr_external_id}, however, that ADR does not exist in this account"
+      bug! "New ADR is proposed to replace #{form.replaced_adr_external_id}, however, that ADR does not exist in this account"
     end
   end
 end

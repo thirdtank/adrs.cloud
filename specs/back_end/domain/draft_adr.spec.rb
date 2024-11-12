@@ -296,7 +296,7 @@ RSpec.describe DraftAdr do
               replaced_adr_external_id: other_adr.external_id,
             }))
             draft_adr.save(form:)
-          }.to raise_error(Brut::BackEnd::Errors::Bug)
+          }.to be_a_bug
         end
         it "raises an error if the ADR being refined is in another project" do
           account = create(:account)
@@ -311,7 +311,7 @@ RSpec.describe DraftAdr do
           draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
           expect {
             draft_adr.save(form:)
-          }.to raise_error(Brut::BackEnd::Errors::Bug)
+          }.to be_a_bug
         end
         it "raises an error if the ADR being replaced is in another project" do
           account = create(:account)
@@ -326,7 +326,7 @@ RSpec.describe DraftAdr do
           draft_adr = described_class.create(authenticated_account: AuthenticatedAccount.new(account:))
           expect {
             draft_adr.save(form:)
-          }.to raise_error(Brut::BackEnd::Errors::Bug)
+          }.to be_a_bug
         end
       end
       context "form has client-side constraint violations" do
@@ -413,7 +413,7 @@ RSpec.describe DraftAdr do
 
             expect {
               described_class.find!(account:, external_id: adr.external_id).save(form:)
-            }.to raise_error(Brut::BackEnd::Errors::Bug)
+            }.to be_a_bug
           end
         end
         context "adr has not been proposed to replace another one" do
@@ -431,7 +431,7 @@ RSpec.describe DraftAdr do
 
             expect {
               described_class.find!(account:, external_id: adr.external_id).save(form:)
-            }.to raise_error(Brut::BackEnd::Errors::Bug)
+            }.to be_a_bug
           end
         end
         context "adr is a refinement of another ADR" do
@@ -450,7 +450,7 @@ RSpec.describe DraftAdr do
 
             expect {
               described_class.find!(account:, external_id: adr.external_id).save(form:)
-            }.to raise_error(Brut::BackEnd::Errors::Bug)
+            }.to be_a_bug
           end
         end
         context "adr is not a refinement of another ADR" do
@@ -468,7 +468,7 @@ RSpec.describe DraftAdr do
 
             expect {
               described_class.find!(account:, external_id: adr.external_id).save(form:)
-            }.to raise_error(Brut::BackEnd::Errors::Bug)
+            }.to be_a_bug
           end
         end
       end

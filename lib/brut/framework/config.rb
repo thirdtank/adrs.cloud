@@ -5,7 +5,7 @@ require "pathname"
 # This is a wrapper around a series of calls to Brut.container.store
 # but is a class and thus invokable, so that the configuration can
 # be controlled.
-class Brut::Config
+class Brut::Framework::Config
 
   class DockerPathComponent
     PATH_REGEXP = /\A[a-z0-9]+(-|_)?[a-z0-9]+\z/
@@ -29,7 +29,7 @@ class Brut::Config
 
   # Set up all the default Brut configuration. It is not adviable to 
   # run a Brut-powered app without having called this.  By default, this
-  # is called from Brut::App.
+  # is called from Brut::Framework::App.
   def configure!(app_id:, app_organization:)
 
     app_id           = AppId.new(app_id)
@@ -62,9 +62,9 @@ class Brut::Config
 
       c.store(
         "project_env",
-        ProjectEnvironment,
+        Brut::Framework::ProjectEnvironment,
         "The environment of the running app, e.g. dev/test/prod",
-        ProjectEnvironment.new(ENV["RACK_ENV"])
+        Brut::Framework::ProjectEnvironment.new(ENV["RACK_ENV"])
       )
 
       c.store_ensured_path(

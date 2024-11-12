@@ -4,9 +4,6 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
   include Brut::FrontEnd::HandlingResults
   using Brut::FrontEnd::Templates::HTMLSafeString::Refinement
 
-  uses :layout_locator
-  uses :page_locator
-
   def layout = "default"
 
   def before_render = nil
@@ -25,11 +22,11 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
   # Overrides component's render to add the concept of a layout.
   # A layout is an HTML/ERB file that will contain this page's contents.
   def render
-    self.layout_locator.locate(self.layout).
+    Brut.container.layout_locator.locate(self.layout).
       then { |layout_erb_file| Brut::FrontEnd::Template.new(layout_erb_file)
       } => layout_template
 
-    self.page_locator.locate(self.template_name).
+    Brut.container.page_locator.locate(self.template_name).
       then { |erb_file| Brut::FrontEnd::Template.new(erb_file)
       } => template
 
@@ -40,7 +37,7 @@ class Brut::FrontEnd::Page < Brut::FrontEnd::Component
 
   def self.page_name = self.name
   def page_name = self.class.page_name
-  def component_name = raise Brut::BackEnd::Errors::Bug,"#{self.class} is not a component"
+  def component_name = raise Brut::Framework::Errors::Bug,"#{self.class} is not a component"
 
 private
 

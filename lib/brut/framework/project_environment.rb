@@ -1,4 +1,4 @@
-class ProjectEnvironment
+class Brut::Framework::ProjectEnvironment
   def initialize(string_value)
     @value = case string_value
     when "development" then "development"

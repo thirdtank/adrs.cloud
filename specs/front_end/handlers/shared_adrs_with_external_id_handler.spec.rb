@@ -7,7 +7,7 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
         authenticated_account = create(:authenticated_account)
         expect {
           handler.handle!(external_id: "foobar", authenticated_account: , flash: empty_flash)
-        }.to raise_error(Brut::BackEnd::Errors::NotFound)
+        }.to raise_error(Brut::Framework::Errors::NotFound)
       end
     end
     context "adr exists" do
@@ -18,7 +18,7 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
 
           expect {
             handler.handle!(external_id: adr.external_id, authenticated_account:, flash: empty_flash)
-          }.to raise_error(Brut::BackEnd::Errors::NotFound)
+          }.to raise_error(Brut::Framework::Errors::NotFound)
         end
       end
       context "adr is shared" do

@@ -181,15 +181,15 @@ class Brut::CLI::Apps::DB < Brut::CLI::App
       Brut.container.sequel_db_handle.extension :pg_array
 
       logger = Logger.new(STDOUT)
-      logger.level = :info
+      logger.level = ENV["LOG_LEVEL"]
       indent = ""
       logger.formatter = proc { |severity,time,progname,message|
-        formatted = "#{indent}#{severity} - #{message}\n"
+        formatted = "#{indent} - #{message}\n"
         if message =~ /^Begin applying/
           indent = "   "
         elsif message =~ /^Finished applying/
           indent = ""
-          formatted = "#{indent}#{severity} - #{message}\n"
+          formatted = "#{indent} - #{message}\n"
         end
         formatted
       }

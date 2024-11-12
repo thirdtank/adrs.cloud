@@ -89,7 +89,7 @@ class GithubLinkedAccount < AuthenticatedAccount
 
   def deactivate!
     if @account.deactivated?
-      raise Brut::BackEnd::Errors::Bug,"#{@account.external_id} is already deactivated"
+      bug! "#{@account.external_id} is already deactivated"
     end
     @account.update(
       deactivated_at: Time.now,

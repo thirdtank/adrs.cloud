@@ -9,7 +9,7 @@ class Brut::FrontEnd::Handler
   include Brut::FrontEnd::HandlingResults
 
   def handle(**)
-    raise SubclassMustImplement
+    raise Brut::Framework::Errors::AbstractMethod
   end
 
   def handle!(**args)

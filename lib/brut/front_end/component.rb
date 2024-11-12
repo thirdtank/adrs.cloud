@@ -17,12 +17,7 @@ end
 #
 # The component has a few more smarts and helpers.
 class Brut::FrontEnd::Component
-  extend Brut::Container::Uses
   using Brut::FrontEnd::Templates::HTMLSafeString::Refinement
-
-  uses :component_locator
-  uses :svg_locator
-  uses :asset_path_resolver
 
   class TemplateLocator
     def initialize(paths:, extension:)
@@ -69,7 +64,7 @@ class Brut::FrontEnd::Component
     if @yielded_block
       @yielded_block.().html_safe!
     else
-      raise Brut::BackEnd::Errors::Bug, "No block was yielded to #{self.class.name}"
+      raise Brut::FrontEnd::Errors::Bug, "No block was yielded to #{self.class.name}"
 		end
 	end
 
@@ -80,7 +75,7 @@ class Brut::FrontEnd::Component
   # and sends it through ERB using this component as
   # the binding.
   def render
-    self.component_locator.locate(self.template_name).
+    Brut.container.component_locator.locate(self.template_name).
       then { |erb_file| Brut::FrontEnd::Template.new(erb_file) }.
       then { |template| template.render_template(self).html_safe! }
   end
@@ -137,14 +132,14 @@ class Brut::FrontEnd::Component
 
     # Inline an SVG into the page.
     def svg(svg)
-      self.svg_locator.locate(svg).then { |svg_file|
+      Brut.container.svg_locator.locate(svg).then { |svg_file|
         File.read(svg_file).html_safe!
       }
     end
 
     # Given a public path to an asset—the value you'd use in HTML—return
     # the same value, but with any content hashes that are part of the filename.
-    def asset_path(path) = self.asset_path_resolver.resolve(path)
+    def asset_path(path) = Brut.container.asset_path_resolver.resolve(path)
 
     # Render a form that should include CSRF protection.
     def form_tag(**attributes,&block)

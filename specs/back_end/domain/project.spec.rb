@@ -28,7 +28,7 @@ RSpec.describe Project do
         create(:project, account: account)
         expect {
           Project.create(authenticated_account: AuthenticatedAccount.new(account:))
-        }.to raise_error(Brut::BackEnd::Errors::Bug)
+        }.to be_a_bug
       end
     end
   end
@@ -131,7 +131,7 @@ RSpec.describe Project do
         project = Project.find!(account: authenticated_account.account,external_id: db_project.external_id)
         expect {
           project.archive
-        }.to raise_error(Brut::BackEnd::Errors::Bug)
+        }.to be_a_bug
       end
     end
     context "project has not been saved" do
@@ -140,7 +140,7 @@ RSpec.describe Project do
         project = Project.create(authenticated_account:)
         expect {
           project.archive
-        }.to raise_error(Brut::BackEnd::Errors::Bug)
+        }.to be_a_bug
       end
     end
     context "project not archived" do

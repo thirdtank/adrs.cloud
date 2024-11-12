@@ -2,7 +2,7 @@ require "fileutils"
 
 module Brut
   def self.container(&block)
-    @container ||= Brut::Container.new
+    @container ||= Brut::Framework::Container.new
     if !block.nil?
       block.(@container)
     end
@@ -19,7 +19,7 @@ end
 # and can depend on other values in this container.
 #
 # There is no namespacing/hierarchy.
-class Brut::Container
+class Brut::Framework::Container
   def initialize
     @container = {}
   end
@@ -123,22 +123,6 @@ class Brut::Container
   # Fetch a value given a name.
   def fetch(name)
     fetch_value(name.to_s)
-  end
-
-  # `extend` this module in a class to declare that your class requires
-  # values from this container.  This is more expedient than accessing
-  # the container inside your constructor.
-  module Uses
-    # Called at the class level, this declares that instanes of your class need
-    # access to the named value. This method will create an instance method for your class
-    # named for the variable.
-    def uses(name)
-      # TODO: Check if the method is defined
-      define_method(name) do
-        Brut.container.fetch(name)
-      end
-      private name
-    end
   end
 
 private
