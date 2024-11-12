@@ -1,5 +1,5 @@
 class Brut::Instrumentation::Event
-  include Brut::FussyTypeEnforcment
+  include Brut::Framework::FussyTypeEnforcement
 
   attr_reader :category,
               :subcategory,

@@ -2,7 +2,7 @@
 # as a template for creating inputs.  An Input has state, such as values and thus validity.
 # An InputDefinition is immutable and defines inputs.
 class Brut::FrontEnd::Forms::InputDefinition
-  include Brut::FussyTypeEnforcment
+  include Brut::Framework::FussyTypeEnforcement
   attr_reader :max,
               :maxlength,
               :min,
@@ -85,7 +85,7 @@ class Brut::FrontEnd::Forms::InputDefinition
   end
 end
 class Brut::FrontEnd::Forms::SelectInputDefinition
-  include Brut::FussyTypeEnforcment
+  include Brut::Framework::FussyTypeEnforcement
   attr_reader :required, :name
   def initialize(name:, required: true)
     name = name.to_s

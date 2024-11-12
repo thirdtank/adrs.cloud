@@ -7,6 +7,7 @@ module Brut
     autoload(:ProjectEnvironment,"brut/framework/project_environment")
     autoload(:Error,"brut/framework/errors")
     autoload(:Errors,"brut/framework/errors")
+    autoload(:FussyTypeEnforcement,"brut/framework/fussy_type_enforcement")
   end
 end
 require_relative "framework/mcp"
