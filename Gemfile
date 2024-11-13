@@ -15,8 +15,12 @@ gem "sinatra", require: false
 # Audit our dependencies
 gem "bundler-audit", groups: [ :test ]
 
+# This provides higher-level constructs to use for thread-unsafe operations
+gem "concurrent-ruby", require: "concurrent"
+
 # This allows us to make assertions about test setup that are not themselves tests
 gem "confidence-check", groups: [ :test ]
+
 
 # Dotenv manages the UNIX environment for dev and test
 gem "dotenv", groups: [:development, :test]

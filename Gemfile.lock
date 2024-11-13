@@ -150,6 +150,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler-audit
+  concurrent-ruby
   confidence-check
   dotenv
   factory_bot

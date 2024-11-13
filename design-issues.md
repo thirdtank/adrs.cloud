@@ -7,6 +7,7 @@ X Better route definition
 * Set up Rack::Attack
 * Something with CSP
 * Fix chokidar/foreman
+X Zeitwerk issues
 
 ## Playwright versions is a PITA
 

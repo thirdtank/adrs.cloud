@@ -25,5 +25,8 @@ class CheckLoginBeforeHook < Brut::FrontEnd::RouteHook
       end
     end
     continue
+  rescue => ex
+    puts "#{Thread.current}: #{ex.message}"
+    http_status(500)
   end
 end

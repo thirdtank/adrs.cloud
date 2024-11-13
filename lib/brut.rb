@@ -17,6 +17,8 @@ module Brut
     autoload(:HandlingResults, "brut/front_end/handling_results")
     autoload(:HttpMethod, "brut/front_end/http_method")
     autoload(:HttpStatus, "brut/front_end/http_status")
+    autoload(:Middleware, "brut/front_end/middleware")
+    autoload(:Middlewares, "brut/front_end/middleware")
     autoload(:Page, "brut/front_end/page")
     autoload(:RequestContext, "brut/front_end/request_context")
     autoload(:RouteHook, "brut/front_end/route_hook")

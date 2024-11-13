@@ -1,7 +1,6 @@
 class Brut::Instrumentation::Basic
   def initialize
-    @subscribers = Set.new
-    @semaphore = Thread::Mutex.new
+    @subscribers = Concurrent::Set.new
   end
 
   class TypeChecking < Brut::Instrumentation::Basic
@@ -50,20 +49,16 @@ class Brut::Instrumentation::Basic
     else
       subscriber = Brut::Instrumentation::Subscriber.from_proc(block)
     end
-    @semaphore.synchronize do
-      @subscribers << subscriber
-    end
+    @subscribers << subscriber
   end
 
   def notify(event:,start:,stop:,exception:)
     Thread.new do
-      @semaphore.synchronize do
-        @subscribers.each do |subscriber|
-          begin
-            subscriber.(event:,start:,stop:,exception:)
-          rescue => ex
-            warn "#{subscriber} raised #{ex}"
-          end
+      @subscribers.each do |subscriber|
+        begin
+          subscriber.(event:,start:,stop:,exception:)
+        rescue => ex
+          warn "#{subscriber} raised #{ex}"
         end
       end
     end

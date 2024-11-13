@@ -7,7 +7,6 @@ module Brut::FrontEnd
 
   module RouteHooks
     autoload(:LocaleDetection, "brut/front_end/route_hooks/locale_detection")
-    autoload(:Reload, "brut/front_end/route_hooks/reload")
     autoload(:SetupRequestContext, "brut/front_end/route_hooks/setup_request_context")
     autoload(:AgeFlash, "brut/front_end/route_hooks/age_flash")
     autoload(:CSP, "brut/front_end/route_hooks/csp")

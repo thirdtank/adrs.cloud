@@ -122,15 +122,19 @@ class Brut::Framework::MCP
     @sinatra_app = Class.new(Sinatra::Base)
     @sinatra_app.include(Brut::SinatraHelpers)
 
-    middlewares = [
+    default_middlewares = [
       [ Rack::Protection::AuthenticityToken, [ { allow_if: ->(env) { env["PATH_INFO"] =~ /^\/__brut\// } } ] ],
-    ] + @app.class.middleware
+    ]
+    if Brut.container.auto_reload_classes?
+      default_middlewares << Brut::FrontEnd::Middlewares::ReloadApp
+    end
+
+    middlewares = default_middlewares + @app.class.middleware
 
     middlewares.each do |(middleware,args,block)|
       @sinatra_app.use(middleware,*args,&block)
     end
     befores = [
-      Brut::FrontEnd::RouteHooks::Reload.name,
       Brut::FrontEnd::RouteHooks::SetupRequestContext.name,
       Brut::FrontEnd::RouteHooks::LocaleDetection.name,
     ] + @app.class.before
