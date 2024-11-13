@@ -27,7 +27,10 @@ class Brut::FrontEnd::Routing
     }
     @routes = Set.new(new_routes)
     @routes.each do |route|
-      add_routing_method(route)
+      handler_class = route.handler_class
+      if handler_class.name !~ /^Brut::[A-Z]/
+        add_routing_method(route)
+      end
     end
   end
 
@@ -99,7 +102,7 @@ class Brut::FrontEnd::Routing
   def add_routing_method(route)
     handler_class = route.handler_class
     if handler_class.respond_to?(:routing) && handler_class.method(:routing).owner != Brut::FrontEnd::Form
-      raise ArgumentError,"#{handler_class} (that handles path #{route.path_template}) implements ::routing, which it should not"
+      raise ArgumentError,"#{handler_class} (that handles path #{route.path_template}) got it's ::routing method from #{handler_class.method(:routing).owner}, meaning it has overridden the value fro Brut::FrontEnd::Form"
     end
     form_class = route.respond_to?(:form_class) ? route.form_class : nil
     [ handler_class, form_class ].compact.each do |klass|
@@ -171,6 +174,10 @@ class Brut::FrontEnd::Routing
           placeholder_camelized = RichString.new($1).camelize
           array[-1] << preposition
           array[-1] << placeholder_camelized.to_s
+        elsif array.empty? && path_part == "__brut"
+          array << "Brut"
+          array << "FrontEnd"
+          array << "Handlers"
         else
           array << RichString.new(path_part).camelize.to_s
         end

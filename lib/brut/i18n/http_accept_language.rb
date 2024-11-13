@@ -62,7 +62,7 @@ class Brut::I18n::HTTPAcceptLanguage
     def initialize
       super([ WeightedLocale.new(locale: "en", q: 1) ])
     end
-    def self.known? = false
+    def known? = false
   end
 
 end

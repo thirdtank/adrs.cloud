@@ -3,10 +3,13 @@ class Brut::FrontEnd::Components::LocaleDetection < Brut::FrontEnd::Component
   def initialize(session:)
     @timezone = session.timezone_from_browser
     @locale   = session.http_accept_language.known? ? session.http_accept_language.weighted_locales.first&.locale : nil
+    @url      = Brut::FrontEnd::Handlers::LocaleDetectionHandler.routing
   end
 
   def render
-    attributes = {}
+    attributes = {
+      "url" => @url,
+    }
     if @timezone
       attributes["timezone-from-server"] = @timezone.name
     end

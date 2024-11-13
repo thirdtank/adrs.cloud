@@ -35,6 +35,14 @@ class Brut::Framework::App
       @before << klass_name
     end
   end
+  def self.after(klass_name=nil)
+    @after ||= []
+    if klass_name.nil?
+      @after
+    else
+      @after << klass_name
+    end
+  end
 
   # Override this to set up any runtime connections or execute other pre-flight
   # code required *after* Brut has been set up and started.  You can rely on the

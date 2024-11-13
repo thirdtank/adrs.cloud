@@ -136,6 +136,7 @@ RSpec.configure do |config|
         env: env,
         session: app_session,
         flash: empty_flash,
+        body: nil,
         xhr: false,
       )
       Thread.current.thread_variable_set(:request_context, request_context)

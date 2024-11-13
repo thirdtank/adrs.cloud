@@ -4,12 +4,13 @@ module Brut
   # This information can be plucked out
   # by pages or components.
   class RequestContext
-    def initialize(env:,session:,flash:,xhr:)
+    def initialize(env:,session:,flash:,xhr:,body:)
       @hash = {
         env:,
         session:,
         flash:,
         xhr:,
+        body:,
         csrf_token: Rack::Protection::AuthenticityToken.token(env["rack.session"]),
         clock: Clock.new(session.timezone_from_browser),
       }
@@ -91,75 +92,10 @@ module Brut::SinatraHelpers
   def self.included(sinatra_app)
     sinatra_app.extend(ClassMethods)
 
-    sinatra_app.use Rack::Protection::AuthenticityToken, allow_if: ->(env) {
-      env["PATH_INFO"] == "/__brut/locale"
-    }
-
     sinatra_app.set :logging, false
     sinatra_app.set :public_folder, Brut.container.public_root_dir
-    sinatra_app.before do
-      if Brut.container.auto_reload_classes?
-        Brut.container.zeitwerk_loader.reload
-        Brut.container.routing.reload
-        Brut.container.asset_path_resolver.reload
-        ::I18n.reload!
-      end
-
-      app_session = Brut.container.session_class.new(rack_session: session)
-      http_accept_language = Brut::I18n::HTTPAcceptLanguage.from_header(env["HTTP_ACCEPT_LANGUAGE"])
-      if !app_session.http_accept_language.known?
-        app_session.http_accept_language = http_accept_language
-      end
-      best_locale = nil
-      app_session.http_accept_language.weighted_locales.each do |weighted_locale|
-        if ::I18n.available_locales.include?(weighted_locale.locale.to_sym)
-          best_locale = weighted_locale.locale.to_sym
-          break
-        elsif ::I18n.available_locales.include?(weighted_locale.primary_only.locale.to_sym)
-          best_locale = weighted_locale.primary_only.locale.to_sym
-          break
-        end
-      end
-      if best_locale
-        ::I18n.locale = best_locale
-      else
-        SemanticLogger["Brut"].warn("None of the user's locales are available: #{app_session.http_accept_language}")
-      end
-      flash = app_session.flash
-      app_session[:_flash] ||= flash
-      Thread.current.thread_variable_set(
-        :request_context,
-        Brut::RequestContext.new(env:,session:app_session,flash:,xhr: request.xhr?)
-      )
-    end
-    sinatra_app.after do
-      flash = Thread.current.thread_variable_get(:request_context)[:flash]
-      app_session = Brut.container.session_class.new(rack_session: session)
-      flash.age!
-      app_session.flash = flash
-    end
-    sinatra_app.post "/__brut/locale" do
-      begin
-        parsed = JSON.parse(request.body.read)
-        SemanticLogger["brut:__brut/locale"].info("Got #{parsed.class}/#{parsed}")
-        if parsed.kind_of?(Hash)
-          locale   = parsed["locale"]
-          timezone = parsed["timeZone"]
-
-          app_session = Brut.container.session_class.new(rack_session: session)
-
-          app_session.timezone_from_browser = timezone
-          if !app_session.http_accept_language.known?
-            app_session.http_accept_language = Brut::I18n::HTTPAcceptLanguage.from_browser(locale)
-          end
-        else
-          SemanticLogger["brut:__brut/locale"].warn("Got a #{parsed.class} from /__brut/locale instead of a hash")
-        end
-      rescue => ex
-        SemanticLogger["brut:__brut/locale"].warn("Got #{ex} from /__brut/locale instead of a parseable JSON object")
-      end
-      200
-    end
+    sinatra_app.path("/__brut/csp-reporting",method: :post)
+    sinatra_app.path("/__brut/locale_detection",method: :post)
   end
 
   # @private

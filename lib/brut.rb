@@ -13,6 +13,7 @@ module Brut
     autoload(:Flash, "brut/front_end/flash")
     autoload(:Form, "brut/front_end/form")
     autoload(:Handler, "brut/front_end/handler")
+    autoload(:Handlers, "brut/front_end/handler")
     autoload(:HandlingResults, "brut/front_end/handling_results")
     autoload(:Routing, "brut/front_end/routing")
     autoload(:HttpMethod, "brut/front_end/http_method")
@@ -20,6 +21,7 @@ module Brut
     autoload(:Session, "brut/front_end/session")
     autoload(:AssetMetadata, "brut/front_end/asset_metadata")
     autoload(:RouteHook, "brut/front_end/route_hook")
+    autoload(:RouteHooks, "brut/front_end/route_hook")
   end
   module BackEnd
     autoload(:Result, "brut/back_end/result")

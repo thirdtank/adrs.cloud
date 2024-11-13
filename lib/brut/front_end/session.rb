@@ -9,15 +9,15 @@ class Brut::FrontEnd::Session
     @rack_session = rack_session
   end
 
-  def http_accept_language = Brut::I18n::HTTPAcceptLanguage.from_session(self[:_http_accept_language])
+  def http_accept_language = Brut::I18n::HTTPAcceptLanguage.from_session(self[:__brut_http_accept_language])
   def http_accept_language=(http_accept_language)
-    self[:_http_accept_language] = http_accept_language.for_session
+    self[:__brut_http_accept_language] = http_accept_language.for_session
   end
 
   # Get the timezone as reported by the browser, as a TZInfo::Timezone.
   # If none is available or the browser reported an invalid value, this returns nil.
   def timezone_from_browser
-    tz_name = self[:_timezone_from_browser]
+    tz_name = self[:__brut_timezone_from_browser]
     if tz_name.nil?
       return nil
     end
@@ -35,7 +35,7 @@ class Brut::FrontEnd::Session
     if timezone.kind_of?(TZInfo::Timezone)
       timezone = timezone.name
     end
-    self[:_timezone_from_browser] = timezone
+    self[:__brut_timezone_from_browser] = timezone
   end
 
   def[](key) = @rack_session[key.to_s]
@@ -48,9 +48,9 @@ class Brut::FrontEnd::Session
 
   # Access the flash, as an instance of whatever class has been configured.
   def flash
-    Brut.container.flash_class.from_h(self[:_flash])
+    Brut.container.flash_class.from_h(self[:__brut_flash])
   end
   def flash=(new_flash)
-    self[:_flash] = new_flash.to_h
+    self[:__brut_flash] = new_flash.to_h
   end
 end

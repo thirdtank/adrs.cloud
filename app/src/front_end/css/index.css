@@ -1,6 +1,7 @@
 @import "melange-css/melange.css";
 @import "textarea.css";
 @import "button.css";
+@import "svgs.css";
 
 @font-face {
   font-family: "Monaspace Xenon";
@@ -26,14 +27,6 @@ html {
 
 code {
   font-family: var(--mg-ff-mono);
-}
-
-svg {
-  width: 1em;
-  height: 1em;
-}
-svg path {
-  fill: currentColor;
 }
 
 :root {
@@ -272,7 +265,7 @@ brut-tabs.adr-page-tabs [role=tab] {
   border-bottom-left-radius: var(--mg-bw-4);
   border-top-left-radius: var(--mg-bw-4);
   color: var(--mg-gray-800);
-  background-color: none;
+  background-color: transparent;
   text-align: right;
 }
 brut-tabs.adr-page-tabs [role=tab] * {

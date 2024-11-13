@@ -116,60 +116,83 @@ class Brut::Framework::MCP
       SemanticLogger["Instrumentation"].info("#{event.category}/#{event.subcategory}/#{event.name}: #{start}/#{stop} = #{stop-start}: #{exception&.message} (#{event.details})")
     end
     @app.boot!
+
     require "sinatra/base"
+
     @sinatra_app = Class.new(Sinatra::Base)
     @sinatra_app.include(Brut::SinatraHelpers)
 
-    @app.class.middleware.each do |(middleware,args,block)|
+    middlewares = [
+      [ Rack::Protection::AuthenticityToken, [ { allow_if: ->(env) { env["PATH_INFO"] =~ /^\/__brut\// } } ] ],
+    ] + @app.class.middleware
+
+    middlewares.each do |(middleware,args,block)|
       @sinatra_app.use(middleware,*args,&block)
     end
-    @app.class.before.each do |klass_name|
-      klass = klass_name.to_s.split(/::/).reduce(Module) { |mod,part|
-        mod.const_get(part)
-      }
-      before_method = klass.instance_method(:before)
-      @sinatra_app.before do
-        args = {}
+    befores = [
+      Brut::FrontEnd::RouteHooks::Reload.name,
+      Brut::FrontEnd::RouteHooks::SetupRequestContext.name,
+      Brut::FrontEnd::RouteHooks::LocaleDetection.name,
+    ] + @app.class.before
 
-        request_context = Thread.current.thread_variable_get(:request_context)
-        app_session = Brut.container.session_class.new(rack_session: session)
+    afters = [
+      Brut::FrontEnd::RouteHooks::AgeFlash.name,
+      Brut::FrontEnd::RouteHooks::CSP.name,
+    ] + @app.class.after
 
-        before_method.parameters.each do |(type,name)|
-          if name.to_s == "**" || name.to_s == "*"
-            raise ArgumentError,"#{method.class}##{method.name} accepts '#{name}' and not keyword args. Define it in your class to accept the keyword arguments your method needs"
+    [
+      [ befores, :before ],
+      [ afters,  :after  ],
+    ].each do |hooks,method|
+      hooks.each do |klass_name|
+        klass = klass_name.to_s.split(/::/).reduce(Module) { |mod,part|
+          mod.const_get(part)
+        }
+        hook_method = klass.instance_method(method)
+        @sinatra_app.send(method) do
+          args = {}
+
+          hook_method.parameters.each do |(type,name)|
+            if name.to_s == "**" || name.to_s == "*"
+              raise ArgumentError,"#{method.class}##{method.name} accepts '#{name}' and not keyword args. Define it in your class to accept the keyword arguments your method needs"
+            end
+            if ![ :key,:keyreq ].include?(type)
+              raise ArgumentError,"#{name} is not a keyword arg, but is a #{type}"
+            end
+
+            if name == :request_context
+              args[name] = Thread.current.thread_variable_get(:request_context)
+            elsif name == :app_session
+              args[name] = Brut.container.session_class.new(rack_session: session)
+            elsif name == :request
+              args[name] = request
+            elsif name == :response
+              args[name] = response
+            elsif name == :env
+              args[name] = env
+            elsif type == :keyreq
+              raise ArgumentError,"#{method} argument '#{name}' is required, but it's not available in a #{method} hook"
+            else
+              # this keyword arg has a default value which will be used
+            end
           end
-          if ![ :key,:keyreq ].include?(type)
-            raise ArgumentError,"#{name} is not a keyword arg, but is a #{type}"
-          end
 
-          if name == :request_context
-            args[name] = request_context
-          elsif name == :app_session
-            args[name] = app_session
-          elsif name == :request
-            args[name] = request
-          elsif type == :keyreq
-            raise ArgumentError,"#{method} argument '#{name}' is required, but it's not available in a before hook"
+          hook = klass.new
+          result = hook.send(method,**args)
+          case result
+          in URI => uri
+            redirect to(uri.to_s)
+          in Brut::FrontEnd::HttpStatus => http_status
+            halt http_status.to_i
+          in FalseClass
+            halt 500
+          in NilClass
+            nil
+          in TrueClass
+            nil
           else
-            # this keyword arg has a default value which will be used
+            raise NoMatchingPatternError, "Result from #{method} hook #{klass}'s #{method} method was a #{result.class} (#{result.to_s} as a string), which cannot be used to understand the response to generate. Return nil or true if processing should proceed"
           end
-        end
-
-        before_hook = klass.new
-        result = before_hook.before(**args)
-        case result
-        in URI => uri
-          redirect to(uri.to_s)
-        in Brut::FrontEnd::HttpStatus => http_status
-          halt http_status.to_i
-        in FalseClass
-          halt 500
-        in NilClass
-          nil
-        in TrueClass
-          nil
-        else
-          raise NoMatchingPatternError, "Result from before hook #{klass}'s before method was a #{result.class} (#{result.to_s} as a string), which cannot be used to understand the response to generate. Return nil or true if processing should proceed"
         end
       end
     end

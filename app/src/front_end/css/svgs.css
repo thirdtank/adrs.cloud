@@ -1,0 +1,12 @@
+svg {
+  width: 1em;
+  height: 1em;
+}
+svg path {
+  fill: currentColor;
+}
+
+.database-download-icon, .edit-list-icon, .megaphone-icon, .quality-badge-checkmark-icon, .access-hand-key-icon, .brush-pencil-icon {
+  fill-rule:evenodd;
+  clip-rule:evenodd;
+}
