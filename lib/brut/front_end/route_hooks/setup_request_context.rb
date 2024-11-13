@@ -4,7 +4,7 @@ class Brut::FrontEnd::RouteHooks::SetupRequestContext < Brut::FrontEnd::RouteHoo
     app_session[:_flash] ||= flash
     Thread.current.thread_variable_set(
       :request_context,
-      Brut::RequestContext.new(env:,session:app_session,flash:,xhr: request.xhr?,body: request.body)
+      Brut::FrontEnd::RequestContext.new(env:,session:app_session,flash:,xhr: request.xhr?,body: request.body)
     )
     continue
   end

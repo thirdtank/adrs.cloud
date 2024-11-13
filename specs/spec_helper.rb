@@ -132,7 +132,7 @@ RSpec.configure do |config|
         "rack.session" => session
       }
       app_session = Brut.container.session_class.new(rack_session: session)
-      request_context = Brut::RequestContext.new(
+      request_context = Brut::FrontEnd::RequestContext.new(
         env: env,
         session: app_session,
         flash: empty_flash,
