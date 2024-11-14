@@ -26,3 +26,6 @@
 # Devs can override as needed, but this is not how
 # configuration is to be shared
 /.rspec
+
+# Temp dump
+/moved

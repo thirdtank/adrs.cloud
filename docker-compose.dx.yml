@@ -8,6 +8,10 @@ services:
         source: "./"
         target: "/root/work"
         consistency: "consistent"
+      - type: bind
+        source: "../brut"
+        target: "/root/local-gems/brut"
+        consistency: "consistent"
       # This allows docker build commands run inside Docker to work
       - type: bind
         source: "/var/run/docker.sock"

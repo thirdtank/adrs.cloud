@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 
+require "bundler"
+Bundler.require
 require "pathname"
 
-# Not needed when Brut is Gemified
-BRUT_PATH = File.join(File.dirname($0),"..","lib")
-$: << BRUT_PATH
 require "brut/cli"
 
 APP_PATH = File.join(File.dirname($0),"..","app","src")

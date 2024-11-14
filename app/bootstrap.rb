@@ -4,7 +4,6 @@ class Bootstrap
     require "bundler"
 
     Bundler.require(:default, ENV.fetch("RACK_ENV").to_sym)
-    $LOAD_PATH << File.join(__dir__,"..","lib") # Only needed since Brut is not a gem
 
     require "brut"
     require "pathname"
