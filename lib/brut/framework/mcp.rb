@@ -36,7 +36,7 @@ class Brut::Framework::MCP
     end
     SemanticLogger["Brut"].info("Logging set up")
 
-    i18n_locales_path = Brut.container.project_root / "app" / "config" / "i18n"
+    i18n_locales_path = Brut.container.config_dir / "i18n"
     locales = Dir[i18n_locales_path / "*"].map { |_|
       Pathname(_).basename
     }
