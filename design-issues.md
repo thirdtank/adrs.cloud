@@ -3,71 +3,43 @@
 ## Framework stuff missing
 
 X Better route definition
-* Build out remaining HTML5 validations etc.
+X Build out remaining HTML5 validations etc. - wait until use-cases arise?
 X Set up Rack::Attack - need a cache and this is out of scope for now
 X Something with CSP
-* Fix chokidar/foreman
+X Fix chokidar/foreman
 X Zeitwerk issues
 
-## Playwright versions is a PITA
+## Second app ideas
 
-playwright ruby must matc playwright and playwright must be used to install browsers
+- Med reminder - you enter in meds and times of day and it reminds you via SMS
+  - Pros - very simple
+  - Cons - Twilio integration is annoying
 
-## Import maps?
+- Alimento TRES - dinner time only, but refocused on recurring meals
+  - Pros - generally know what it needs to do
+  - Cons - possibly complex?
 
-* Need a local HTTP/2 web server
+- Cross-poster - monitors your mastodon account and x-posts to BlueSky
+  - Pros - useful, has legs?
+  - Cons - difficult to operate, API integration could be annoying
+- Drum Machine - "analog" drum machine in browser that can save patches and patterns
+  - Pros - fun to build, would be a good demo of front-end stuff
+  - Cons - the most work
 
-## Notification/Instrumentation
+## Summarized Other Stuff
 
-Issue is that wrapping a method inside instrument do..end doesn't work if there are any return values.
-
-Options:
-
-* Let it be known?
-* allow instrumentation another way?  wrap it somehow in a lambda that does not have this issue?
-
-## Deployment 
-
-* Building the docker image is very slow, likely due to architecture differences
-
-## Logging
-
-* Seems a mess
-* Exceptions are getting swallowed/not logged
-
-## Form Validation Complexity
-
-* Chasing down the parts was hard
-* A "there were validation issues" was hard
-* How to make `<brut-form>` and friends extensible?
-* Perhaps each page could have its own custom element?
-
-## Testing Components and Pages
-
-Need better support for html parsing and whatnot
-
-## Rich Test Failures
-
-* What did we expect
-* What did we find
-* Why did we expect what we did
-* What else did we find that's useful
-
-- Formatted for terminal and/or browser
-
-## Logic useful to front-end and back-end - where does it go?
-
-## Converting rich types in DB to and from strings needed for front-end
-
-## Actions have a lot of "is the person logged in allowed to access this"
-
-* This could be put into the "request context" concept, however the request context should really be scoped to the HTTP request.
-* "Action" context?
-    - bag of whatever
-    - not easy to put stuff into it
-    - created for any call into the backend: HTTP, task, job
-    - expose the "inject stuff via kwargs" pattern
-
-
-
+- How can I run Playwright in headed mode and reap its benefits?
+- Import Maps for JS?  This won't eliminate need for building
+- Instrumentation needs to be better thought through:
+  - Nested spans
+  - Reporting to some system
+  - Ergonomic API
+- Deployment is heroku-specific and very slow
+  - build a somewhat canonical dockerfile?  No idea how to test that.
+- Logging is inconsistent and maybe overlaps with instrumentation
+- Beef up form validation in general. It feels alpha
+- Can page/component testing be more ergonomic?
+- Can test failures be made more ergonomic?
+- Type conversions between DB and app?
+- Authorization and Authentication - is there a way to make this better without forcing an implementation?
 
