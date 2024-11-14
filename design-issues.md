@@ -4,7 +4,7 @@
 
 X Better route definition
 * Build out remaining HTML5 validations etc.
-* Set up Rack::Attack
+X Set up Rack::Attack - need a cache and this is out of scope for now
 * Something with CSP
 * Fix chokidar/foreman
 X Zeitwerk issues

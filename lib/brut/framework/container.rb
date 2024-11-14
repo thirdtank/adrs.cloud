@@ -27,8 +27,8 @@ class Brut::Framework::Container
   # Store a named value for later.
   #
   # name:: The name of the value. This should be a string that is a valid Ruby identifier.
-  # type:: String or class that describes what type of value this should be. Can be a hash where each key is a string or class
-  # describing an allowed type and the values describe the interpretation of values of that type.
+  # type:: Description of the type that the value should conform to. if this value is "boolean" or :boolean, then
+  #        the value will be coerced into `true` or `false`. Otherwise, this serves as documentation for now.
   # description:: Documentation as to what this value is for.
   # value:: if given, this is the value to use.
   # block:: If value is omitted, block will be evaluated the first time the value is

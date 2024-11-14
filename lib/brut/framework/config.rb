@@ -382,11 +382,34 @@ class Brut::Framework::Config
       c.store(
         "log_level",
         String,
-        "Log level to control how much logging is happening"
+        "Log level to control how much logging is happening",
+        allow_app_override: true,
       ) do
         ENV["LOG_LEVEL"] || "debug"
       end
 
+      c.store(
+        "csp_class",
+        Class,
+        "Route Hook to use for setting the Content-Security-Policy header",
+        allow_app_override: true,
+        allow_nil: true,
+      ) do |project_env|
+        if project_env.development?
+          Brut::FrontEnd::RouteHooks::CSPNoInlineScripts
+        else
+          Brut::FrontEnd::RouteHooks::CSPNoInlineStylesOrScripts
+        end
+      end
+
+      c.store(
+        "csp_reporting_class",
+        Class,
+        "Route Hook to use for setting the Content-Security-Policy-Report-Only header",
+        Brut::FrontEnd::RouteHooks::CSPNoInlineStylesOrScripts::ReportOnly,
+        allow_app_override: true,
+        allow_nil: true,
+      )
     end
   end
 end

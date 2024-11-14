@@ -108,7 +108,6 @@ class CheckDownload extends BaseCustomElement {
   }
 
   #reloadPage() {
-    return
     if (this.#reloadDelay > 0) {
       console.log("Delaying the reload to allow you to read these errors")
       setTimeout(() => { window.location.reload() },this.#reloadDelay)

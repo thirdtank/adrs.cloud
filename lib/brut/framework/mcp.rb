@@ -135,14 +135,15 @@ class Brut::Framework::MCP
       @sinatra_app.use(middleware,*args,&block)
     end
     befores = [
-      Brut::FrontEnd::RouteHooks::SetupRequestContext.name,
-      Brut::FrontEnd::RouteHooks::LocaleDetection.name,
+      Brut::FrontEnd::RouteHooks::SetupRequestContext,
+      Brut::FrontEnd::RouteHooks::LocaleDetection,
     ] + @app.class.before
 
     afters = [
-      Brut::FrontEnd::RouteHooks::AgeFlash.name,
-      Brut::FrontEnd::RouteHooks::CSP.name,
-    ] + @app.class.after
+      Brut::FrontEnd::RouteHooks::AgeFlash,
+      Brut.container.csp_class,
+      Brut.container.csp_reporting_class,
+    ].compact + @app.class.after
 
     [
       [ befores, :before ],
