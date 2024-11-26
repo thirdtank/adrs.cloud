@@ -1,4 +1,4 @@
-import { BaseCustomElement, BrutTabs } from "brut-js"
+import { BaseCustomElement, Tabs } from "brut-js"
 
 class IncludeQueryParams extends BaseCustomElement {
   static tagName = "adr-include-query-params"
@@ -18,7 +18,7 @@ class IncludeQueryParams extends BaseCustomElement {
       return
     }
     window.addEventListener("popstate",this.#pushStateChanged)
-    document.querySelectorAll(BrutTabs.tagName).forEach( (element) => {
+    document.querySelectorAll(Tabs.tagName).forEach( (element) => {
       element.addEventListener("brut:tabselected",this.#pushStateChanged)
     })
     const queryParams = new URLSearchParams(window.location.search)

@@ -22,6 +22,7 @@ X Zeitwerk issues
 - Cross-poster - monitors your mastodon account and x-posts to BlueSky
   - Pros - useful, has legs?
   - Cons - difficult to operate, API integration could be annoying
+
 - Drum Machine - "analog" drum machine in browser that can save patches and patterns
   - Pros - fun to build, would be a good demo of front-end stuff
   - Cons - the most work

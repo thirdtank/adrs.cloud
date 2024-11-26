@@ -91,10 +91,10 @@
                     <a class="blue-400 ws-nowrap" href="<%= EditProjectByExternalIdPage.routing(external_id: project.external_id) %>"><%= t(:edit) %></a>
                     <% if project.active? %>
                       <%= form_tag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id), method: :post) do %>
-                        <brut-confirm
+                        <brut-confirm-submit
                           message="<%= t(page: "projects.archive_confirmation") %>">
                           <button class="tdu pointer blue-400 bn bg-none"><%= t(page: "projects.archive") %></button>
-                        </brut-confirm>
+                        </brut-confirm-submit>
                       <% end %>
                     <% end %>
                   </div>

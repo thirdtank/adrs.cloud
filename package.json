@@ -4,11 +4,11 @@
   "type": "module",
   "license": "UNLICENSED",
   "dependencies": {
+    "brut-js": "^0.0.4",
     "melange-cli": "^1.0.0-RC4",
     "melange-css": "^1.0.0-RC4"
   },
   "devDependencies": {
-    "brut-js": "file:./lib/brut-js",
     "chokidar-cli": "^3.0.0",
     "esbuild": "^0.20.2",
     "jsdoc": "^4.0.3",

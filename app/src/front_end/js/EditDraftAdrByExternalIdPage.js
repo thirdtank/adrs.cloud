@@ -1,4 +1,4 @@
-import { BaseCustomElement, BrutForm, BrutConstraintViolationMessage } from "brut-js"
+import { BaseCustomElement, Form } from "brut-js"
 import AnnouncementBanner from "./AnnouncementBanner"
 
 class EditDraftAdrByExternalIdPage extends BaseCustomElement {
@@ -33,9 +33,9 @@ class EditDraftAdrByExternalIdPage extends BaseCustomElement {
   }
 
   update() {
-    const brutForm = this.querySelector(BrutForm.tagName)
+    const brutForm = this.querySelector(Form.tagName)
     if (!brutForm) {
-      this.logger.info("Could not find a %s, so not adding any behavior",BrutForm.tagName)
+      this.logger.info("Could not find a %s, so not adding any behavior",Form.tagName)
     }
 
     brutForm.addEventListener("brut:invalid", this.#showConstraintValidationError)

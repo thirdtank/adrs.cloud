@@ -1,4 +1,4 @@
-import { BaseCustomElement, BrutMessage } from "brut-js"
+import { BaseCustomElement, Message } from "brut-js"
 
 class AnnouncementBanner extends BaseCustomElement {
   static tagName = "adr-announcement-banner"
@@ -44,7 +44,7 @@ class AnnouncementBanner extends BaseCustomElement {
   update() {
     const roleToShow = this.#shownRole || this.#defaultShownRole
     this.querySelectorAll("[role]").forEach( (element) => {
-      element.querySelectorAll(`p,${BrutMessage.tagName}`).forEach( (child) => {
+      element.querySelectorAll(`p,${Message.tagName}`).forEach( (child) => {
         if (child.dataset.appendedBy == AnnouncementBanner.tagName) {
           element.removeChild(child)
         }
@@ -57,11 +57,11 @@ class AnnouncementBanner extends BaseCustomElement {
         element.removeAttribute("hidden")
         if (this.#shownMessageKey) {
           // Hide all existing <p> elements
-          element.querySelectorAll(`p,${BrutMessage.tagName}`).forEach( (child) => {
+          element.querySelectorAll(`p,${Message.tagName}`).forEach( (child) => {
             child.dataset.hiddenBy = AnnouncementBanner.tagName
             child.setAttribute("hidden",true) 
           })
-          const newChild = BrutMessage.createElement(document,{key:this.#shownMessageKey})
+          const newChild = Message.createElement(document,{key:this.#shownMessageKey})
           newChild.dataset.appendedBy = AnnouncementBanner.tagName
           element.appendChild(newChild)
         }

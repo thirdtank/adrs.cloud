@@ -1,9 +1,9 @@
 <% if confirmation_message %>
-<brut-confirm
+<brut-confirm-submit
   message="<%= confirmation_message %>"
   show-warnings="<%= label %>"
   class="<%= width_class %>"
-  dialog-id="<%= confirm_dialog %>">
+  dialog="<%= confirm_dialog %>">
 <% end %>
 <button 
   <% if type %>
@@ -31,5 +31,5 @@
   <%= label %>
 </button>
 <% if confirmation_message %>
-</brut-confirm>
+</brut-confirm-submit>
 <% end %>

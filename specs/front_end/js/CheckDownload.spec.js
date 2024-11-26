@@ -1,4 +1,4 @@
-import { withHTML } from "brut-js/testing/index.js"
+import { withHTML } from "./SpecHelper.js"
 
 describe("<adr-check-download>", () => {
   context("Response is good", () => {
