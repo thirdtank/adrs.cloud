@@ -108,11 +108,15 @@ def setup(update_gems:,update_node:)
 
   log "Setting up databases"
 
-  log "Re-creating dev database and loading seed data"
-  system! "bin/db rebuild --env=development --seed"
+  log "Re-creating dev database"
+  system! "bin/db rebuild --env=development"
 
   log "Re-creating test database"
-  system! "bin/db rebuild --env=test --seed"
+  system! "bin/db rebuild --env=test"
+
+  log "Seeding dev database"
+  system! "bin/db seed --env=development"
+
 
   log "Checking that you are set up with Heroku"
 

@@ -2,6 +2,7 @@ PATH
   remote: /root/local-gems/brut
   specs:
     brut (0.0.1)
+      concurrent-ruby
       dotenv
       factory_bot
       faker

@@ -101,14 +101,14 @@ RSpec.describe ButtonComponent do
       locator = Support::HtmlLocator.new(html)
 
       button = locator.element!("button")
-      expect(button.parent.name).to eq("brut-confirm")
+      expect(button.parent.name).to eq("brut-confirm-submit")
       expect(button.parent).to have_html_attribute(message: "Are you sure?")
     end
     it "does not use brut-confirmation by default" do
       button = described_class.new(label: "Test")
       html = render_and_parse(button)
 
-      expect(html.css("brut-confirm").size).to eq(0)
+      expect(html.css("brut-confirm-submit").size).to eq(0)
     end
   end
 end
