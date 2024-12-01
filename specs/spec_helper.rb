@@ -131,10 +131,10 @@ RSpec.configure do |config|
       env = {
         "rack.session" => session
       }
-      app_session = Brut.container.session_class.new(rack_session: session)
+      session = Brut.container.session_class.new(rack_session: session)
       request_context = Brut::FrontEnd::RequestContext.new(
         env: env,
-        session: app_session,
+        session: session,
         flash: empty_flash,
         body: nil,
         xhr: false,
