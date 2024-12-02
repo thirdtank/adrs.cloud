@@ -14,7 +14,7 @@ RSpec.describe NewDraftAdrPage do
 
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash:)
 
-      result = render_and_parse(page)
+      result = render(page)
       expect(result.kind_of?(URI)).to eq(true)
       expect(result).to be_routing_for(AdrsPage)
       expect(flash.alert).to eq(:add_new_limit_exceeded)

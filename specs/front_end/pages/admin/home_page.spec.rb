@@ -4,7 +4,7 @@ RSpec.describe Admin::HomePage do
     it "renders the page" do
       authenticated_account = create(:authenticated_account, :admin)
       result = described_class.new(flash: empty_flash, authenticated_account:).handle!
-      expect(result).to have_rendered
+      expect(result).not_to have_returned_http_status
     end
   end
   describe "authenticated_account is not entitled to this page" do

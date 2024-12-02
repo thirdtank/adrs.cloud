@@ -6,8 +6,8 @@ RSpec.describe Admin::AccountsPage do
 
       page = described_class.new(search_string: "", authenticated_account:)
 
-      rendered_html = render_and_parse(page)
-      expect(rendered_html).to have_returned_http_status(404)
+      result = render(page)
+      expect(result).to have_returned_http_status(404)
     end
   end
   context "authenticated_account is an admin" do
