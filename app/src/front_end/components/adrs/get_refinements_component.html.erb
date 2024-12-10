@@ -39,11 +39,11 @@
             </td>
             <td class="pv-2 pr-2">
               <% if refining_adr.accepted? %>
-                <%= timestamp(refining_adr.accepted_at) %>
+                <%= time_tag(timestamp: refining_adr.accepted_at) %>
               <% elsif refining_adr.rejected? %>
-                <%= timestamp(refining_adr.rejected_at) %>
+                <%= time_tag(timestamp: refining_adr.rejected_at) %>
               <% else %>
-                <%= timestamp(refining_adr.created_at) %>
+                <%= time_tag(timestamp: refining_adr.created_at) %>
               <% end %>
             </td>
           </tr>

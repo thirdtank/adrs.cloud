@@ -42,7 +42,7 @@ class AdrsByExternalIdPage::BannerComponent < AppComponent
       render_yielded_block
     else
       t(page: @i18n_key) do
-        timestamp(@timestamp,class: @timestamp_font_weight, format: :date)
+        time_tag(timestamp: @timestamp,class: @timestamp_font_weight, format: :date)
       end
     end
   end

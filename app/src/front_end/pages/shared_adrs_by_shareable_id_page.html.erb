@@ -11,7 +11,7 @@
           <div class="tl">
             <div class="f-2">
               <%= t(page: :replaced_on) do %>
-                <%= timestamp(adr.replaced_by_adr.accepted_at,class: "fw-6", format: :date) %>
+                <%= time_tag(timestamp: adr.replaced_by_adr.accepted_at,class: "fw-6", format: :date) %>
               <% end %>
               <% if adr.replaced_by_adr.shared? %>
                 <%= t(page: :replaced_by) do %>
@@ -27,11 +27,11 @@
         ">
         <% if adr.replaced? %>
           <%= t(page: :originally_accepted) do %>
-            <%= timestamp(adr.accepted_at,class: "fw-6", format: :date) %>
+            <%= time_tag(timestamp: adr.accepted_at,class: "fw-6", format: :date) %>
           <% end %>
         <% else %>
           <%= t(page: :accepted) do %>
-            <%= timestamp(adr.accepted_at,class: "fw-6", format: :date) %>
+            <%= time_tag(timestamp: adr.accepted_at,class: "fw-6", format: :date) %>
           <% end %>
         <% end %>
       </h3>
@@ -43,7 +43,7 @@
         </h3>
       <% end %>
       <%= t(page: :created) do %>
-        <%= timestamp(adr.created_at, class: "fw-5", format: :date) %>
+        <%= time_tag(timestamp: adr.created_at, class: "fw-5", format: :date) %>
       <% end %>
     </div>
     <section class="pt-3 adr-content">

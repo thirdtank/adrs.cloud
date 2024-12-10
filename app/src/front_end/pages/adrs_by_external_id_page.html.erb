@@ -169,7 +169,7 @@
                   </div>
                   <div class="f-1">
                     <%= t(page: :replaced_on) do %>
-                      <%= timestamp(adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date) %>
+                      <%= time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date) %>
                     <% end %>
                   </div>
                 </div>

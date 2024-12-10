@@ -7,7 +7,7 @@
       </span>
     </h3>
     <p class="p i">
-      <%= t(component: :download_ready_text, created: timestamp(download.created_at, format: :full_with_tz), deleted: timestamp(download.delete_at, format: :full_with_tz)) %>
+      <%= t(component: :download_ready_text, created: time_tag(timestamp: download.created_at, format: :full_with_tz), deleted: time_tag(timestamp: download.delete_at, format: :full_with_tz)) %>
     </p>
     <a href="<%= DownloadsWithExternalIdHandler.routing(external_id: download.external_id) %>" class="f-3 green-200 db">
       <%= t(component: :download) %>
