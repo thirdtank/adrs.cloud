@@ -1,15 +1,15 @@
 <<%= container_tag %> class="flex flex-column gap-1 w-100">
   <%= component(input_component) %>
   <div class="text-field-error-label">
-    <brut-constraint-violation-messages show-warnings input-name="<%= input_name %>" class="flex flex-wrap items-baseline">
+    <brut-cv-messages show-warnings input-name="<%= input_name %>" class="flex flex-wrap items-baseline">
       <% constraint_violations.each do |constraint| %>
         <% if !constraint.client_side? %>
-          <brut-constraint-violation-message server-side show-warnings>
+          <brut-cv server-side input-name="<%= input_name %>" show-warnings>
             <%= t("cv.be.#{constraint}", **constraint.context).capitalize %>
-          </brut-constraint-violation-message>
+          </brut-cv>
         <% end %>
       <% end %>
-    </brut-constraint-violation-messages>
+    </brut-cv-messages>
   </div>
   <% if !labeled_elsewhere? %>
     <div class="text-field-label"><%= label %></div>

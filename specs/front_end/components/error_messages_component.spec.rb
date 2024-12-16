@@ -11,7 +11,7 @@ RSpec.describe ErrorMessagesComponent do
 
     html = render_and_parse(component)
     locator = Support::HtmlLocator.new(html)
-    expect(html.name).to eq("brut-constraint-violation-message")
+    expect(html.name).to eq("brut-cv")
     expect(html).to have_html_attribute("input-name" => "foo")
     expect(html.text.strip).to eq("This field must have at least 10 words")
 

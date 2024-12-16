@@ -4,9 +4,9 @@
   "type": "module",
   "license": "UNLICENSED",
   "dependencies": {
-    "brut-js": "^0.0.7",
-    "melange-cli": "^1.0.0-RC4",
-    "melange-css": "^1.0.0-RC4"
+    "brut-js": "^0.0.8",
+    "melange-cli": "^1.0.0-RC5",
+    "melange-css": "^1.0.0-RC5"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",

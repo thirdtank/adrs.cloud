@@ -237,7 +237,7 @@ brut-ajax-submit[submitted] [data-submitted-icon] {
   }
 }
 
-brut-constraint-violation-message ~ brut-constraint-violation-message::before {
+brut-cv ~ brut-cv::before {
   content: ", ";
 }
 

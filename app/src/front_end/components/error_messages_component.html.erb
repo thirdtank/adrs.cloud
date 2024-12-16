@@ -1,7 +1,7 @@
 <% form.constraint_violations(server_side_only: true).each do |input_name, constraints| %>
   <% constraints.each do |constraint| %>
-    <brut-constraint-violation-message input-name="<%= input_name %>">
+    <brut-cv input-name="<%= input_name %>">
       <%= t("cv.be.#{constraint}", **constraint.context).capitalize %>
-    </brut-constraint-violation-message>
+    </brut-cv>
   <% end %>
 <% end %>
