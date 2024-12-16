@@ -21,24 +21,24 @@ html {
 }
 
 :root {
-  --mg-ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
-  --mg-ff-mono: 'Monaspace Xenon', monospace;
+  --ff-cursive: 'Segoe Print', 'Bradley Hand', Chilanka, casual, cursive;
+  --ff-mono: 'Monaspace Xenon', monospace;
 }
 
 code {
-  font-family: var(--mg-ff-mono);
+  font-family: var(--ff-mono);
 }
 
 :root {
-  --mg-green-100: #002602;
-  --mg-green-200: #004104;
-  --mg-green-300: #008108;
-  --mg-green-400: #00DA0D;
-  --mg-green-500: #27ff34;
-  --mg-green-600: #80FF87;
-  --mg-green-700: #C0FFC4;
-  --mg-green-800: #ECFFED;
-  --mg-green-900: #FBFFFB;
+  --green-100: #002602;
+  --green-200: #004104;
+  --green-300: #008108;
+  --green-400: #00DA0D;
+  --green-500: #27ff34;
+  --green-600: #80FF87;
+  --green-700: #C0FFC4;
+  --green-800: #ECFFED;
+  --green-900: #FBFFFB;
 }
 
 .w-quarter {
@@ -59,7 +59,7 @@ code {
 }
 
 .active-bg-gray-300:active {
-  background-color: var(--mg-gray-300);
+  background-color: var(--gray-300);
 }
 
 .cursor-not-allowed {
@@ -77,15 +77,15 @@ dl.dl-grid {
 }
 
 .rendered-markdown p {
-  line-height: var(--mg-lh-copy);
-  max-width: var(--mg-tw-wide);
+  line-height: var(--lh-copy);
+  max-width: var(--tw-wide);
 }
 .rendered-markdown p:first-child {
   margin-top: 0;
 }
 
 .bg-red-600-a20 {
-  background-color: rgb(from var(--mg-red-600) r g b / 20%);
+  background-color: rgb(from var(--red-600) r g b / 20%);
 }
 
 .rotating {
@@ -101,43 +101,43 @@ dl.dl-grid {
 
 .text-field {
   /* Text fields appear sunken into the page */
-  box-shadow: inset 0 0 calc(1.25 * var(--mg-sp-1)) calc(0.25 * var(--mg-sp-1)) var(--mg-gray-400);
+  box-shadow: inset 0 0 calc(1.25 * var(--sp-1)) calc(0.25 * var(--sp-1)) var(--gray-400);
   border-style: solid;
   border-width: thin;
-  border-color: var(--mg-gray-400);
-  border-radius: var(--mg-bw-2);
-  font-size: var(--mg-fs-3);
-  padding: var(--mg-sp-3);
+  border-color: var(--gray-400);
+  border-radius: var(--bw-2);
+  font-size: var(--fs-3);
+  padding: var(--sp-3);
   background-color: white;
 }
 
 .text-field--small {
-  font-size: var(--mg-fs-2);
-  padding: var(--mg-sp-2);
+  font-size: var(--fs-2);
+  padding: var(--sp-2);
 }
 
 .text-field--tiny {
-  font-size: var(--mg-fs-1);
-  padding: var(--mg-sp-2);
+  font-size: var(--fs-1);
+  padding: var(--sp-2);
 }
 
 .text-field::placeholder {
   /** Placeholder text should be obviously different, so make it smaller size */
-  font-size: var(--mg-fs-2);
+  font-size: var(--fs-2);
   font-weight: 300;
 }
 
 .text-field:hover {
   /* Subtle purple on hover */
-  border-color: var(--mg-purple-600);
+  border-color: var(--purple-600);
 }
 
 .text-field:focus {
   /* More obvious purple on focus */
-  outline-color: var(--mg-purple-600);
+  outline-color: var(--purple-600);
   outline-style: solid;
   outline-width: 2px;
-  box-shadow: inset 0 0 calc(1.25 * var(--mg-sp-1)) calc(0.25 * var(--mg-sp-1)) var(--mg-gray-300);
+  box-shadow: inset 0 0 calc(1.25 * var(--sp-1)) calc(0.25 * var(--sp-1)) var(--gray-300);
 }
 
 .text-field--tiny:focus {
@@ -147,17 +147,17 @@ dl.dl-grid {
 .text-field-label {
   /** Label needs to be closer to the field, but not too close.
       This should split it properly, but still fit into the grid */
-  padding-top: calc(0.25 * var(--mg-sp-2));
-  padding-bottom: calc(1.75 * var(--mg-sp-2));
+  padding-top: calc(0.25 * var(--sp-2));
+  padding-bottom: calc(1.75 * var(--sp-2));
 }
 
 .checkbox-label, .text-field-label {
   font-weight: 300;
-  font-size: var(--mg-fs-2);
+  font-size: var(--fs-2);
 }
 
 .text-field-label--small {
-  font-size: var(--mg-fs-1);
+  font-size: var(--fs-1);
 }
 
 .text-field-error-label {
@@ -184,14 +184,14 @@ form[data-submitted] input:invalid ~ .text-field-error-label,
 textarea[data-invalid] ~ .text-field-error-label,
 .textarea-container[data-invalid] ~ .text-field-error-label,
 form[data-submitted] textarea:invalid ~ .text-field-error-label {
-  color: var(--mg-red-300);
-  background-color: var(--mg-red-700);
+  color: var(--red-300);
+  background-color: var(--red-700);
   border-top-right-radius: 999px;
   border-bottom-right-radius: 999px;
   align-items: center;
   font-weight: 500;
-  font-size: var(--mg-fs-2);
-  padding: var(--mg-sp-2);
+  font-size: var(--fs-2);
+  padding: var(--sp-2);
   display: flex;
 }
 
@@ -242,29 +242,29 @@ brut-constraint-violation-message ~ brut-constraint-violation-message::before {
 }
 
 table.striped tbody tr:nth-child(even) {
-  background-color: var(--mg-gray-800);
+  background-color: var(--gray-800);
 }
 
 brut-tabs.adr-page-tabs {
   display: flex;
   flex-direction: column;
-  gap: var(--mg-sp-2);
-  padding-left: var(--mg-sp-3);
+  gap: var(--sp-2);
+  padding-left: var(--sp-3);
 }
 
 brut-tabs.adr-page-tabs [role=tab] {
   cursor: pointer;
-  height: calc(2.5 * var(--mg-sp-3));
+  height: calc(2.5 * var(--sp-3));
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-decoration: none;
-  padding: var(--mg-sp-2);
-  padding-left: var(--mg-sp-3);
-  padding-right: var(--mg-sp-3);
-  border-bottom-left-radius: var(--mg-bw-4);
-  border-top-left-radius: var(--mg-bw-4);
-  color: var(--mg-gray-800);
+  padding: var(--sp-2);
+  padding-left: var(--sp-3);
+  padding-right: var(--sp-3);
+  border-bottom-left-radius: var(--bw-4);
+  border-top-left-radius: var(--bw-4);
+  color: var(--gray-800);
   background-color: transparent;
   text-align: right;
 }
@@ -272,13 +272,13 @@ brut-tabs.adr-page-tabs [role=tab] * {
   pointer-events: none;
 }
 brut-tabs.adr-page-tabs [role=tab]:hover {
-  color: var(--mg-gray-700);
-  background-color: var(--mg-gray-300);
+  color: var(--gray-700);
+  background-color: var(--gray-300);
 }
 
 brut-tabs.adr-page-tabs [role=tab][aria-selected=true],
 brut-tabs.adr-page-tabs [role=tab][aria-selected=true]:hover {
-  color: var(--mg-gray-100);
-  background-color: var(--mg-gray-900);
+  color: var(--gray-100);
+  background-color: var(--gray-900);
 }
 

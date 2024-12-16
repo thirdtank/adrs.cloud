@@ -19,8 +19,8 @@ services:
     entrypoint: /root/show-help-in-app-container-then-wait.sh
     working_dir: /root/work
     ports:
-      - "6502:6502"
-      - "6503:6503"
+      - "8088:6502"
+      - "8089:6503"
   postgres:
     image: postgres:16
     pull_policy: "missing"

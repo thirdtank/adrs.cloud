@@ -2,18 +2,18 @@
 .button {
   border-style: solid;
   border-width: 1px;
-  border-radius: var(--mg-bw-3);
-  box-shadow: calc(0.25 * var(--mg-sp-1))
-              calc(0.25 * var(--mg-sp-1))
-              calc(0.5 * var(--mg-sp-1))
+  border-radius: var(--bw-3);
+  box-shadow: calc(0.25 * var(--sp-1))
+              calc(0.25 * var(--sp-1))
+              calc(0.5 * var(--sp-1))
               0;
   z-index: 2;
   cursor: pointer;
   /* It appears to be "above" the screen, so should be a bit offset
    * so that the shadow is what would appear to align with things on the 
    * screen directly */
-  transform: translateX(calc(-0.25 * var(--mg-sp-1)))
-             translateY(calc(-0.25 * var(--mg-sp-1)));
+  transform: translateX(calc(-0.25 * var(--sp-1)))
+             translateY(calc(-0.25 * var(--sp-1)));
 }
 
 /** When pressed or disabled, they are at the same level as the screen */
@@ -32,7 +32,7 @@
 .button:disabled,
 .button:disabled svg path {
   filter: grayscale(80%); 
-  color: var(--mg-gray-500) !important; /* !important to override color in the button color classes */
+  color: var(--gray-500) !important; /* !important to override color in the button color classes */
 }
 
 .button span:has(svg) {
@@ -43,52 +43,52 @@
 }
 
 .button--size--large span:has(svg) {
-  width: var(--mg-sp-4);
-  height: var(--mg-sp-4);
+  width: var(--sp-4);
+  height: var(--sp-4);
 }
 
 .button--size--normal span:has(svg) {
-  width: calc(1.5 * var(--mg-sp-3));
-  height: calc(1.5 * var(--mg-sp-3));
+  width: calc(1.5 * var(--sp-3));
+  height: calc(1.5 * var(--sp-3));
 }
 
 .button--size--small span:has(svg) {
-  width: calc(1.5 * var(--mg-sp-2));
-  height: calc(1.5 * var(--mg-sp-2));
+  width: calc(1.5 * var(--sp-2));
+  height: calc(1.5 * var(--sp-2));
 }
 
 .button--size--tiny span:has(svg) {
-  width: calc(1.125 * var(--mg-sp-2));
-  height: calc(1.125 * var(--mg-sp-2));
+  width: calc(1.125 * var(--sp-2));
+  height: calc(1.125 * var(--sp-2));
 }
 
 /** Sizing */
 .button.button--size--large {
-  padding-left: var(--mg-sp-4);
-  padding-right: var(--mg-sp-4);
-  padding-top: var(--mg-sp-3);
-  padding-bottom: var(--mg-sp-3);
-  font-size: var(--mg-fs-4);
+  padding-left: var(--sp-4);
+  padding-right: var(--sp-4);
+  padding-top: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  font-size: var(--fs-4);
 }
 .button.button--size--normal {
-  padding: var(--mg-sp-3);
-  font-size: var(--mg-fs-3);
+  padding: var(--sp-3);
+  font-size: var(--fs-3);
 }
 
 .button.button--size--small {
-  padding-left: var(--mg-sp-3);
-  padding-right: var(--mg-sp-3);
-  padding-top: var(--mg-sp-2);
-  padding-bottom: var(--mg-sp-2);
-  font-size: var(--mg-fs-2);
+  padding-left: var(--sp-3);
+  padding-right: var(--sp-3);
+  padding-top: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  font-size: var(--fs-2);
 }
 
 .button.button--size--tiny {
-  padding-left: var(--mg-sp-2);
-  padding-right: var(--mg-sp-2);
-  padding-top: var(--mg-sp-1);
-  padding-bottom: var(--mg-sp-1);
-  font-size: var(--mg-fs-1);
+  padding-left: var(--sp-2);
+  padding-right: var(--sp-2);
+  padding-top: var(--sp-1);
+  padding-bottom: var(--sp-1);
+  font-size: var(--fs-1);
 }
 
 /** Variants to allow for "button bars" */
@@ -113,34 +113,34 @@
 
 /** Colors */
 .button.button--color--red {
-  background-color: var(--mg-red-800);
-  border-color: var(--mg-red-700);
-  color: var(--mg-red-200);
+  background-color: var(--red-800);
+  border-color: var(--red-700);
+  color: var(--red-200);
 }
 .button.button--color--orange {
-  background-color: var(--mg-orange-800);
-  border-color: var(--mg-orange-700);
-  color: var(--mg-orange-200);
+  background-color: var(--orange-800);
+  border-color: var(--orange-700);
+  color: var(--orange-200);
 }
 .button.button--color--yellow {
-  background-color: var(--mg-yellow-800);
-  border-color: var(--mg-yellow-700);
-  color: var(--mg-yellow-200);
+  background-color: var(--yellow-800);
+  border-color: var(--yellow-700);
+  color: var(--yellow-200);
 }
 .button.button--color--green {
-  background-color: var(--mg-green-800);
-  border-color: var(--mg-green-700);
-  color: var(--mg-green-200);
+  background-color: var(--green-800);
+  border-color: var(--green-700);
+  color: var(--green-200);
 }
 .button.button--color--inverse_green {
-  background-color: var(--mg-green-200);
-  border-color: var(--mg-green-300);
-  color: var(--mg-green-800);
-  box-shadow: calc(0.25 * var(--mg-sp-1))
-              calc(0.25 * var(--mg-sp-1))
-              calc(0.5 * var(--mg-sp-1))
+  background-color: var(--green-200);
+  border-color: var(--green-300);
+  color: var(--green-800);
+  box-shadow: calc(0.25 * var(--sp-1))
+              calc(0.25 * var(--sp-1))
+              calc(0.5 * var(--sp-1))
               0
-              var(--mg-green-500)
+              var(--green-500)
               ;
 }
 .button.button--color--inverse_green:active,
@@ -148,24 +148,24 @@
   box-shadow: none;
 }
 .button.button--color--blue {
-  background-color: var(--mg-blue-800);
-  border-color: var(--mg-blue-700);
-  color: var(--mg-blue-200);
+  background-color: var(--blue-800);
+  border-color: var(--blue-700);
+  color: var(--blue-200);
 }
 .button.button--color--purple {
-  background-color: var(--mg-purple-800);
-  border-color: var(--mg-purple-700);
-  color: var(--mg-purple-200);
+  background-color: var(--purple-800);
+  border-color: var(--purple-700);
+  color: var(--purple-200);
 }
 
 .button.button--color--gray {
-  background-color: var(--mg-gray-800);
-  border-color: var(--mg-gray-700);
-  color: var(--mg-gray-200);
+  background-color: var(--gray-800);
+  border-color: var(--gray-700);
+  color: var(--gray-200);
 }
 
 .button.button--color--white {
-  background-color: var(--mg-white);
-  border-color: var(--mg-gray-900);
-  color: var(--mg-black-ish);
+  background-color: var(--white);
+  border-color: var(--gray-900);
+  color: var(--black-ish);
 }

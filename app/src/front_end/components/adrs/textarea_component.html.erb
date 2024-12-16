@@ -4,12 +4,10 @@
     <%= component(input_component) %>
   </div>
   <div class="text-field-error-label">
-    <brut-constraint-violation-messages>
-    </brut-constraint-violation-messages>
-    <brut-constraint-violation-messages input-name="<%= input_name %>" server-side class="flex flex-wrap items-baseline">
+    <brut-constraint-violation-messages input-name="<%= input_name %>" class="flex flex-wrap items-baseline">
     <% constraint_violations.each do |constraint| %>
       <% if !constraint.client_side? %>
-        <brut-constraint-violation-message>
+        <brut-constraint-violation-message server-side>
           <%= t("cv.be.#{constraint}", **constraint.context).capitalize %>
         </brut-constraint-violation-message>
       <% end %>
