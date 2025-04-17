@@ -30,10 +30,6 @@ class App < Brut::Framework::App
         project_env.development?
       end
     end
-
-    if Brut.container.project_env.development?
-      require "opentelemetry-exporter-zipkin"
-    end
   end
 
   def boot!

@@ -27,9 +27,6 @@ gem "omniauth"
 # Login with GitHub. OmniAuth recommends using the version specifier, so we do
 gem "omniauth-github", "~> 2.0.0"
 
-# We use Zipkin to examine OTel traces in dev
-gem "opentelemetry-exporter-zipkin", groups: [ :development ]
-
 # This provides middlwares for Sidekiq and OTel
 gem "opentelemetry-instrumentation-sidekiq"
 
