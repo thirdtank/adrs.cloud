@@ -1,5 +1,6 @@
 require "brut/back_end/seed_data"
-
+module Seed
+end
 class Seed::One < Brut::BackEnd::SeedData
   include FactoryBot::Syntax::Methods
   def seed!
@@ -19,7 +20,7 @@ class Seed::One < Brut::BackEnd::SeedData
            "achieve": "We aim to: Ensure robust support for complex queries and data relationships; Leverage PostgreSQL's advanced features like window functions, JSON support, and table partitioning; Benefit from PostgreSQL's superior ACID compliance for transactional integrity.",
            "accepting": "We are accepting the potential trade-off of PostgreSQL being slightly more complex to manage and set up than MySQL. We may also encounter a smaller pool of developers with expertise in PostgreSQL compared to MySQL.",
            "because": "PostgreSQL offers better support for complex queries, ACID compliance, and scalability, which aligns with our long-term needs for the application. Its advanced data types and overall flexibility make it a better fit than MySQL for our current and future use cases.",
-           tags: [ "database", "PostgreSQL", "MySQL" ].map(&:downcase),
+           tags: [ "database", "postgresql", "mysql" ],
            created_at: Time.now  - (60 * 60 * 48),
            accepted_at: Time.now,
            shareable_id: "shared-from-seeds"

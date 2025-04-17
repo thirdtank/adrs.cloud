@@ -6,25 +6,29 @@ services:
     volumes:
       - type: bind
         source: "./"
-        target: "/root/work"
+        target: "/home/appuser/work"
         consistency: "consistent"
       - type: bind
         source: "../brut"
-        target: "/root/local-gems/brut"
+        target: "/home/appuser/local-gems/brut"
         consistency: "consistent"
       # This allows docker build commands run inside Docker to work
       - type: bind
         source: "/var/run/docker.sock"
         target: "/var/run/docker.sock"
-    entrypoint: /root/show-help-in-app-container-then-wait.sh
-    working_dir: /root/work
+    entrypoint: /home/appuser/show-help-in-app-container-then-wait.sh
+    working_dir: /home/appuser/work
     ports:
-      - "8088:6502"
-      - "8089:6503"
+      - "6504:6502"
+      - "6505:6503"
   postgres:
-    image: postgres:16
+    image: postgres:16.4
     pull_policy: "missing"
     environment:
       POSTGRES_PASSWORD: postgres
   redis:
     image: valkey/valkey:7.2
+  otel-desktop-viewer:
+    image: davetron5000/otel-desktop-viewer:alpine-3
+    ports:
+      - "8001:8000"

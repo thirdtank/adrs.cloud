@@ -2,12 +2,64 @@ FROM ruby:3.4
 
 SHELL [ "/bin/bash", "-o", "pipefail", "-c" ]
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
 # These packages are needed to set up other repos to install other
 # packages and/or are useful in installing other software
+#
+# - ca-certificates  - needed by Postgres client
+# - curl             - needed by various installation instructions
+# - gnupg            - needed to install Docker
+# - lsb-release      - needed by Postgres install instructions
+# - rsync            - needed by Brut's build_assets command
+# - vim              - needed when we want to edit files inside container
 RUN apt-get -y clean && \
     apt-get -y update && \
-    apt-get install --quiet --yes ca-certificates curl gnupg rsync
+    apt-get install --quiet --yes \
+      ca-certificates \
+      curl \
+      gnupg \
+      lsb-release \
+      rsync \
+      vim
+
+# These are dependencies needed to install Chromium via Playright. You can check this list via
+#
+#     npx playwright install-deps --dry-run chromium
+#
+RUN apt-get install -y --no-install-recommends libasound2 \
+                                               libatk-bridge2.0-0 \
+                                               libatk1.0-0 \
+                                               libatspi2.0-0 \
+                                               libcairo2 \
+                                               libcups2 \
+                                               libdbus-1-3 \
+                                               libdrm2 \
+                                               libgbm1 \
+                                               libglib2.0-0 \
+                                               libnspr4 \
+                                               libnss3 \
+                                               libpango-1.0-0 \
+                                               libx11-6 \
+                                               libxcb1 \
+                                               libxcomposite1 \
+                                               libxdamage1 \
+                                               libxext6 \
+                                               libxfixes3 \
+                                               libxkbcommon0 \
+                                               libxrandr2 \
+                                               xvfb \
+                                               fonts-noto-color-emoji \
+                                               fonts-unifont \
+                                               libfontconfig1 \
+                                               libfreetype6 \
+                                               xfonts-scalable \
+                                               fonts-liberation \
+                                               fonts-ipafont-gothic \
+                                               fonts-wqy-zenhei \
+                                               fonts-tlwg-loma-otf \
+                                               fonts-freefont-ttf
+
 
 # Install Docker itself. Note that this is installed only what is needed to run
 # the Docker CLI - the docker-compose.dx.yml will connect this docker's socket
@@ -28,32 +80,68 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
                        docker-compose-plugin
 
 
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
-RUN apt-get -y install lsb-release && \
-    sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
+# Install Postgres Client, per https://www.postgresql.org/download/linux/debian/
+# Note that ca-certificates and curl are installed above
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update && \
     apt-get -y install postgresql-client-16
 
+# Update RubyGems and Bundler
 RUN echo "gem: --no-document" >> ~/.gemrc && \
     gem update --system && \
     gem install bundler
 
-# Install playwright and the chromium browser only
-RUN gem install playwright-ruby-client && \
-    ruby -r 'playwright' -e 'puts Playwright::COMPATIBLE_PLAYWRIGHT_VERSION.strip' > /tmp/playwright-version.txt && \
-    echo "npm install -g playwright@`cat /tmp/playwright-version.txt`" | sh && \
-    playwright install --with-deps chromium
+# Setup a non-root user
 
-# Install the Heroku Toolbelt - using this because they say ARM requires this method
-# Based on https://devcenter.heroku.com/articles/heroku-cli#install-with-npm
-RUN npm install -g heroku
+# Their user id, which ideally matches their user id on the host
+ARG user_uid=10001
+# Their group id, which ideally matches their group id on the host
+ARG user_gid=10002
+# The group id that can access /var/run/docker.sock on the host.
+# If this isn't mapped properly, no docker-out-of-docker commands will work
+ARG docker_gid=10003
+# Can be set to ',0' in order to add the user to roo's group
+ARG sadly_user_must_be_added_to_root=
+
+# Create the user's group ID if it does not exist
+RUN getent group ${user_gid} || groupadd --gid ${user_gid} appgroup
+# Create the docker group id if it does not exist
+RUN getent group ${docker_gid} || groupadd --gid ${docker_gid} hostdocker
+# Create the user
+RUN useradd --uid ${user_uid} --gid ${user_gid} --groups ${sadly_user_must_be_added_to_root}${docker_gid} --create-home --home-dir /home/appuser appuser && \
+    echo ". ~/.bash_customizations" >> /home/appuser/.bashrc && \
+    echo ". ~/.bash_customizations.local" >> /home/appuser/.bashrc
+
+COPY --chown=appuser:${user_gid} dx/show-help-in-app-container-then-wait.sh /home/appuser
+COPY --chown=appuser:${user_gid} dx/bash_customizations /home/appuser/.bash_customizations
+COPY --chown=appuser:${user_gid} dx/bash_customizations.local /home/appuser/.bash_customizations.local
+
+# NOT including the group here as that will place the user's environment
+# ONLY in that group and not in all the groups in which they are a part.
+USER appuser
+
+# Setup a place to install gems locally. See bash_customizations for
+# where this is used in the PATH. Setting PATH here seems fraught:
+# https://stackoverflow.com/questions/27093612/in-a-dockerfile-how-to-update-path-environment-variable
+RUN mkdir -p /home/appuser/local-gems/gem-home
+ENV GEM_HOME=/home/appuser/local-gems/gem-home
+
+# Install NodeJS, per https://nodejs.org/en/download
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
+    \. "$HOME/.nvm/nvm.sh" && \
+    nvm install 20 && \
+    node -v && nvm current && npm -v
 
 
-ENV EDITOR=vim
-RUN apt-get install -y vim && \
-    echo "set -o vi" >> /root/.bashrc
+# Per Heroku docs at https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli
+# ARM must use this method of install
+RUN \. "$HOME/.nvm/nvm.sh" && nvm use default  && \
+    npm install -g heroku
 
-COPY dx/show-help-in-app-container-then-wait.sh /root
+# Install the version of playwright that matches Gemfile.lock
+ARG PLAYWRIGHT_VERSION
+RUN \. "$HOME/.nvm/nvm.sh" && \
+    nvm use default && \
+    npm install -g playwright@$PLAYWRIGHT_VERSION && \
+    npx playwright install chromium

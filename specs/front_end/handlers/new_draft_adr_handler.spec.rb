@@ -28,7 +28,7 @@ RSpec.describe NewDraftAdrHandler do
 
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:title, key: :not_enough_words)
-        expect(flash.alert).to eq(:new_adr_invalid)
+        expect(flash.alert).to eq("new_adr_invalid")
         expect(result.class).to eq(NewDraftAdrPage)
         expect(result.form).to eq(form)
       end
@@ -47,7 +47,7 @@ RSpec.describe NewDraftAdrHandler do
         adr = DB::Adr.last
 
         expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
-        expect(flash[:notice]).to eq(:adr_created)
+        expect(flash[:notice]).to eq("adr_created")
       end
       context "there is a refines_adr_external_id" do
         context "this account cannot access it" do
@@ -67,7 +67,7 @@ RSpec.describe NewDraftAdrHandler do
             expect(adr.title).to eq("This is a test")
             expect(adr.refines_adr).to eq(nil)
             expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
-            expect(flash[:notice]).to eq(:adr_created)
+            expect(flash[:notice]).to eq("adr_created")
           end
         end
         context "this account can access it" do
@@ -87,7 +87,7 @@ RSpec.describe NewDraftAdrHandler do
             expect(adr.title).to eq("This is a test")
             expect(adr.refines_adr).to eq(adr_being_refined)
             expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
-            expect(flash[:notice]).to eq(:adr_created)
+            expect(flash[:notice]).to eq("adr_created")
           end
         end
       end
@@ -108,7 +108,7 @@ RSpec.describe NewDraftAdrHandler do
           expect(adr.title).to eq("This is a test")
           expect(adr.proposed_to_replace_adr).to eq(adr_being_replaced)
           expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
-          expect(flash[:notice]).to eq(:adr_created)
+          expect(flash[:notice]).to eq("adr_created")
         end
       end
     end

@@ -20,7 +20,7 @@ RSpec.describe EditProjectWithExternalIdHandler do
         result = handler.handle!(external_id:project.external_id,authenticated_account:,form:,flash:)
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:name, key: :taken)
-        expect(flash.alert).to eq(:save_project_invalid)
+        expect(flash.alert).to eq("save_project_invalid")
         expect(result.class).to eq(EditProjectByExternalIdPage)
         expect(result.form).to eq(form)
       end

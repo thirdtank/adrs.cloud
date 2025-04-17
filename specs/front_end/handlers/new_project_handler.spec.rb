@@ -17,7 +17,7 @@ RSpec.describe NewProjectHandler do
         result = handler.handle!(authenticated_account:,form:,flash:)
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:name, key: :taken)
-        expect(flash.alert).to eq(:new_project_invalid)
+        expect(flash.alert).to eq("new_project_invalid")
         expect(result.class).to eq(NewProjectPage)
         expect(result.form).to eq(form)
       end

@@ -8,7 +8,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
         authenticated_account = create(:authenticated_account)
         expect {
           handler.handle!(external_id: "foobar", authenticated_account:, flash: empty_flash)
-        }.to raise_error(Sequel::NoMatchingRow)
+        }.to raise_error(Brut::Framework::Errors::NotFound)
       end
     end
     context "adr exists" do
@@ -19,7 +19,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
 
           expect {
             handler.handle!(external_id: adr.external_id, authenticated_account:, flash: empty_flash)
-          }.to raise_error(Sequel::NoMatchingRow)
+          }.to raise_error(Brut::Framework::Errors::NotFound)
         end
 
       end
@@ -30,7 +30,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
 
           expect {
             handler.handle!(external_id: adr.external_id, authenticated_account:, flash: empty_flash)
-          }.to raise_error(Sequel::NoMatchingRow)
+          }.to raise_error(Brut::Framework::Errors::NotFound)
         end
       end
       context "adr has not been accepted" do
@@ -43,7 +43,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
             return_value = handler.handle!(external_id: adr.external_id, authenticated_account:, flash:)
 
             expect(return_value).to be_routing_for(AdrsPage)
-            expect(flash[:notice]).to eq(:adr_rejected)
+            expect(flash[:notice]).to eq("adr_rejected")
 
             adr.refresh
 
@@ -59,7 +59,7 @@ RSpec.describe RejectedAdrsWithExternalIdHandler do
 
             expect {
               handler.handle!(external_id: adr.external_id, authenticated_account: , flash: empty_flash)
-            }.to raise_error(Sequel::NoMatchingRow)
+            }.to raise_error(Brut::Framework::Errors::NotFound)
           end
         end
       end

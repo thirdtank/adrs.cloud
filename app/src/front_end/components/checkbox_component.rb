@@ -3,7 +3,7 @@ class CheckboxComponent < AppComponent
   def initialize(form:,label:,input_name:)
     @label = label
     @input_name = input_name
-    @constraint_violations = form[@input_name].validity_state
+    @constraint_violations = form.input(@input_name).validity_state
     @checkbox = Brut::FrontEnd::Components::Inputs::TextField.for_form_input(
       form:,
       input_name:,

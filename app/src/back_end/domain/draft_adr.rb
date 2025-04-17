@@ -95,13 +95,13 @@ class DraftAdr
   end
 
   def save(form:)
-    instrument(name: "save", category: "domain", subcategory: self.class.name) do |event|
+    span("DraftAdr.save") do |span|
       if form.title.to_s.strip !~ /\s+/
         form.server_side_constraint_violation(input_name: :title, key: :not_enough_words, context: { minwords: 2 })
       end
 
       if form.constraint_violations?
-        event.details[:constraint_violations] = true
+        span.add_attributes(constraint_violations: true)
       else
         project = DB::Project.find!(external_id: form.project_external_id)
         if project.account != @adr.account
@@ -123,7 +123,7 @@ class DraftAdr
                      )
 
           if new_adr
-            event.details[:id] = "NEW"
+            span.add_attributes(id: :new)
             propose_replacement_adr(form)
             refines_adr = DB::Adr.find(external_id: form.refines_adr_external_id, account_id: @adr.account.id)
             if refines_adr && refines_adr.project != project
@@ -131,7 +131,7 @@ class DraftAdr
             end
             @adr.update(refines_adr_id: refines_adr&.id)
           else
-            event.details[:id] = @adr.external_id
+            span.add_attributes(id: @adr.external_id)
             replaced_adr_may_not_change!(form)
             refined_adr_may_not_change!(form)
           end

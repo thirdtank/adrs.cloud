@@ -10,6 +10,30 @@ class App < Brut::Framework::App
     end
     Brut.container.override("session_class",AppSession)
     Brut.container.override("external_id_prefix","ad")
+    Brut.container.override("fallback_host") do |project_env|
+      if project_env.production?
+        raise "this must be set"
+      else
+        URI("http://localhost:6502")
+      end
+    end
+    Brut.container.store(
+      "flush_spans_in_sidekiq?",
+      "Boolean",
+      "True if sidekiq jobs should flush all OTel spans after the job completes"
+    ) do |project_env|
+      if ENV["FLUSH_SPANS_IN_SIDEKIQ"] == "true"
+        true
+      elsif ENV["FLUSH_SPANS_IN_SIDEKIQ"] == "false"
+        false
+      else
+        project_env.development?
+      end
+    end
+
+    if Brut.container.project_env.development?
+      require "opentelemetry-exporter-zipkin"
+    end
   end
 
   def boot!
@@ -19,6 +43,19 @@ class App < Brut::Framework::App
         ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
       }
       config.logger = SemanticLogger["Sidekiq:server"]
+      if Brut.container.flush_spans_in_sidekiq?
+        SemanticLogger[self.class].info("Sidekiq jobs will flush spans")
+        config.server_middleware do |chain|
+          if defined? OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware
+            chain.insert_before OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware,
+                                Brut::BackEnd::Sidekiq::Middlewares::Server::FlushSpans
+          else
+            SemanticLogger["Sidekiq:server"].warn("OpenTelemetry::Instrumentation::Sidekiq::Middlewares::Server::TracerMiddleware not defined")
+          end
+        end
+      else
+        SemanticLogger[self.class].info("Sidekiq jobs will not flush spans")
+      end
     end
 
     Sidekiq.configure_client do |config|
@@ -28,6 +65,7 @@ class App < Brut::Framework::App
       }
       config.logger = SemanticLogger["Sidekiq:client"]
     end
+
   end
 
   middleware OmniAuth::Builder do

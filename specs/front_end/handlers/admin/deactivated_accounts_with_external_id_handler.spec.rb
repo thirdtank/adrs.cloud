@@ -24,7 +24,7 @@ RSpec.describe Admin::DeactivatedAccountsWithExternalIdHandler do
         account.reload
 
         expect(result).to be_routing_for(Admin::HomePage)
-        expect(flash.notice).to eq(:account_deactivated)
+        expect(flash.notice).to eq("account_deactivated")
         expect(account.deactivated?).to eq(true)
       end
     end

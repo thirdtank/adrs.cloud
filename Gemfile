@@ -1,21 +1,37 @@
 source "https://rubygems.org"
 
-gem "brut", path: "/root/local-gems/brut"
+gem "brut", path: "/home/appuser/local-gems/brut"
+#gem "brut", "0.0.10"
+
+# dotenv manages environment variables for our development and test environments
+gem "dotenv", groups: [ :development, :test ]
 
 # Audit our dependencies
 gem "bundler-audit", groups: [ :test ]
 
 # This provides higher-level constructs to use for thread-unsafe operations
-gem "concurrent-ruby", require: "concurrent"
+#gem "concurrent-ruby", require: "concurrent"
 
 # This allows us to make assertions about test setup that are not themselves tests
 gem "confidence-check", groups: [ :test ]
+
+# FactoryBot manages test and seed data
+gem "factory_bot", groups: [ :test ]
+
+# Faker is used to create realistic data for test and seed data.
+gem "faker", groups: [ :test ]
 
 # Omniauth handles user login et. al.
 gem "omniauth"
 
 # Login with GitHub. OmniAuth recommends using the version specifier, so we do
 gem "omniauth-github", "~> 2.0.0"
+
+# We use Zipkin to examine OTel traces in dev
+gem "opentelemetry-exporter-zipkin", groups: [ :development ]
+
+# This provides middlwares for Sidekiq and OTel
+gem "opentelemetry-instrumentation-sidekiq"
 
 # We use Postgres
 gem "pg"

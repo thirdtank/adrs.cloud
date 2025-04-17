@@ -8,7 +8,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
         form                  = AcceptedAdrsWithExternalIdForm.new
         expect {
           handler.handle!(form:,authenticated_account:,external_id: "foobar", flash:empty_flash)
-        }.to raise_error(Sequel::NoMatchingRow)
+        }.to raise_error(Brut::Framework::Errors::NotFound)
       end
     end
     context "adr exists" do
@@ -19,7 +19,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
           form                  = AcceptedAdrsWithExternalIdForm.new
           expect {
             handler.handle!(form:,authenticated_account:,external_id: adr.external_id, flash: empty_flash)
-          }.to raise_error(Sequel::NoMatchingRow)
+          }.to raise_error(Brut::Framework::Errors::NotFound)
         end
       end
       context "account can access it" do
@@ -37,7 +37,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
 
             expect(result.class).to eq(EditDraftAdrByExternalIdPage)
             expect(result.form).to be(form)
-            expect(flash.alert).to eq(:adr_cannot_be_accepted)
+            expect(flash.alert).to eq("adr_cannot_be_accepted")
             expect(form.constraint_violations?).to eq(true)
             expect(form).to have_constraint_violation(:context   , key: :required)
             expect(form).to have_constraint_violation(:facing    , key: :required)
@@ -68,7 +68,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
 
               result = handler.handle!(form:,authenticated_account:,flash:,external_id: adr.external_id)
               expect(result).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
-              expect(flash[:notice]).to eq(:adr_accepted)
+              expect(flash[:notice]).to eq("adr_accepted")
               adr.reload
 
               expect(adr.accepted_at).to be_within(1_000).of(Time.now)
@@ -94,7 +94,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
 
               expect {
                 handler.handle!(form:,authenticated_account:,flash:empty_flash, external_id: adr.external_id )
-              }.to raise_error(Sequel::NoMatchingRow)
+              }.to raise_error(Brut::Framework::Errors::NotFound)
             end
           end
           context "it is intended to replace another ADR that is accepted" do
@@ -121,7 +121,7 @@ RSpec.describe AcceptedAdrsWithExternalIdHandler do
 
               result = handler.handle!(form:,authenticated_account:,flash:,external_id: adr.external_id)
               expect(result).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
-              expect(flash[:notice]).to eq(:adr_accepted)
+              expect(flash[:notice]).to eq("adr_accepted")
 
               adr.reload
               adr_to_replace.reload

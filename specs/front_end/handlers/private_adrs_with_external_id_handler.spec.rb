@@ -31,7 +31,7 @@ RSpec.describe PrivateAdrsWithExternalIdHandler do
           adr.reload
 
           expect(adr.shareable_id).to   eq(nil)
-          expect(flash[:notice]).to eq(:sharing_stopped)
+          expect(flash[:notice]).to eq("sharing_stopped")
           expect(return_value).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
         end
       end
@@ -46,7 +46,7 @@ RSpec.describe PrivateAdrsWithExternalIdHandler do
           adr.reload
 
           expect(adr.shareable_id).to   eq(nil)
-          expect(flash[:notice]).to eq(:sharing_stopped)
+          expect(flash[:notice]).to eq("sharing_stopped")
           expect(return_value).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
         end
       end

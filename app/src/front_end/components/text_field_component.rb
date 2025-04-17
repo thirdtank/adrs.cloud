@@ -19,7 +19,7 @@ class TextFieldComponent < AppComponent
       placeholder:,
       input_id: @input_id
     )
-    @constraint_violations = form[@input_name].validity_state
+    @constraint_violations = form.input(@input_name).validity_state
   end
 
   def container_tag = @label.nil? ? "div" : "label"

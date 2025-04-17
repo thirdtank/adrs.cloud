@@ -38,7 +38,7 @@ RSpec.describe Admin::AccountEntitlementsWithExternalIdHandler do
 
           result = handler.handle!(form:,external_id: account.external_id,flash: flash,authenticated_account:)
           expect(result).to be_routing_for(Admin::AccountsByExternalIdPage, external_id: account.external_id, authenticated_account:)
-          expect(flash.notice).to eq(:entitlements_saved)
+          expect(flash.notice).to eq("entitlements_saved")
         end
       end
     end

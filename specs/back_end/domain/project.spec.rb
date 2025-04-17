@@ -7,7 +7,7 @@ RSpec.describe Project do
 
       expect {
         Project.find!(external_id: project.external_id,account: account)
-      }.to raise_error(Sequel::NoMatchingRow)
+      }.to raise_error(Brut::Framework::Errors::NotFound)
     end
   end
   describe "::create" do

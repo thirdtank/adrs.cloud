@@ -17,7 +17,7 @@ RSpec.describe NewDraftAdrPage do
       result = render(page)
       expect(result.kind_of?(URI)).to eq(true)
       expect(result).to be_routing_for(AdrsPage)
-      expect(flash.alert).to eq(:add_new_limit_exceeded)
+      expect(flash.alert).to eq("add_new_limit_exceeded")
     end
   end
   context "form is invalid" do

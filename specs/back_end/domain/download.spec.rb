@@ -72,7 +72,7 @@ RSpec.describe Download do
           account = create(:account)
           expect {
             Download.find!(account:,external_id:db_download.external_id)
-          }.to raise_error(Sequel::NoMatchingRow)
+          }.to raise_error(Brut::Framework::Errors::NotFound)
         end
       end
     end
@@ -81,7 +81,7 @@ RSpec.describe Download do
         account = create(:account)
         expect {
           Download.find!(account:,external_id:"nonexistent")
-        }.to raise_error(Sequel::NoMatchingRow)
+        }.to raise_error(Brut::Framework::Errors::NotFound)
       end
     end
   end

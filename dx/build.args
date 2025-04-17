@@ -1,0 +1,6 @@
+# This is generated - see build.pre
+PLAYWRIGHT_VERSION=1.48.1
+user_uid=1000
+user_gid=1000
+docker_gid=984
+sadly_user_must_be_added_to_root=

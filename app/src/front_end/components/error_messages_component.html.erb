@@ -1,4 +1,4 @@
-<% form.constraint_violations(server_side_only: true).each do |input_name, constraints| %>
+<% form.constraint_violations(server_side_only: true).each do |input_name, (constraints,_index)| %>
   <% constraints.each do |constraint| %>
     <brut-cv input-name="<%= input_name %>">
       <%= t("cv.be.#{constraint}", **constraint.context).capitalize %>

@@ -34,7 +34,7 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
 
           expect(adr.shareable_id).not_to eq(initial_shareable_id)
           expect(adr.shareable_id).not_to eq(nil)
-          expect(flash[:notice]).to eq(:adr_shared)
+          expect(flash[:notice]).to eq("adr_shared")
           expect(return_value).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
         end
       end
@@ -49,7 +49,7 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
           adr.reload
 
           expect(adr.shareable_id).not_to eq(nil)
-          expect(flash[:notice]).to eq(:adr_shared)
+          expect(flash[:notice]).to eq("adr_shared")
           expect(return_value).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
         end
       end

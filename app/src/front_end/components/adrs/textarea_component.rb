@@ -9,7 +9,7 @@ class Adrs::TextareaComponent < AppComponent
       input_name: @input_name,
       html_attributes: { class: "textarea", rows: 5, }
     )
-    @constraint_violations = form[@input_name].validity_state
+    @constraint_violations = form.input(@input_name).validity_state
   end
 
   def invalid? = @input_component.sanitized_attributes.key?("data-invalid")

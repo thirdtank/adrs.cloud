@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+
+. "${SCRIPT_DIR}/dx.sh.lib"
+
+require_command "id"
+require_command "grep"
+require_command "sed"
+require_command "uname"
+
+echo "# This is generated - see build.pre" > "${SCRIPT_DIR}"/build.args
+PLAYWRIGHT_VERSION=$(grep playwright-ruby-client Gemfile.lock  | grep '(' | sed 's/^.*(//' | sed 's/).*$//' | grep -v ^=)
+if [ -z "${PLAYWRIGHT_VERSION}" ]; then
+  echo "[ $0 ] Could not find precise version of playwright-ruby-client from Gemfile.lock"
+  exit 1
+fi
+echo PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION} >> "${SCRIPT_DIR}"/build.args
+user_uid=$(id -u)
+user_gid=$(id -g)
+docker_gid=
+sadly_user_must_be_added_to_root=
+OS=$(uname)
+if [ "${OS}" == "Darwin" ] ; then
+  docker_gid=$(stat -f %g /var/run/docker.sock)
+  sadly_user_must_be_added_to_root="0,"
+else
+  if [ "${OS}" == "Linux" ] ; then
+  docker_gid=$(stat -c %g /var/run/docker.sock)
+  else
+    log "Could not determine OS, which is needed to know how to invoke stat to figure out the group id of /var/run/docker.sock"
+    log "Docker commands will not work"
+  fi
+fi
+echo user_uid=${user_uid} >> "${SCRIPT_DIR}"/build.args
+echo user_gid=${user_gid} >> "${SCRIPT_DIR}"/build.args
+echo docker_gid=${docker_gid} >> "${SCRIPT_DIR}"/build.args
+echo sadly_user_must_be_added_to_root=${sadly_user_must_be_added_to_root} >> "${SCRIPT_DIR}"/build.args

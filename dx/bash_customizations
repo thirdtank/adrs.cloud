@@ -1,0 +1,4 @@
+export GEM_HOME=${HOME}/local-gems/gem-home
+export PATH=${PATH}:${GEM_HOME}/bin
+. ~/.nvm/nvm.sh
+nvm use default

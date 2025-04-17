@@ -33,7 +33,7 @@ RSpec.describe Admin::NewAccountHandler do
           result = handler.handle!(form:, flash: flash, authenticated_account:)
 
           expect(result).to be_routing_for(Admin::HomePage)
-          expect(flash.notice).to eq(:account_created)
+          expect(flash.notice).to eq("account_created")
         end
       end
     end

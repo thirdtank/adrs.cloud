@@ -27,7 +27,7 @@ def setup(update_gems:,update_node:)
   end
 
   log "Re-installing playwright/chromium if needed"
-  system! "node_modules/.bin/playwright install --with-deps chromium"
+  system! "node_modules/.bin/playwright install chromium"
 
   log "Ensuring tmp dir exists"
   system! "mkdir -p tmp"
