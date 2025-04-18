@@ -2,6 +2,7 @@
 @import "textarea.css";
 @import "button.css";
 @import "svgs.css";
+@import "pages/HomePage.css";
 
 @font-face {
   font-family: "Monaspace Xenon";
@@ -56,6 +57,10 @@ code {
 
 .bg-none {
   background-color: transparent;
+}
+
+.bg-50 {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .active-bg-gray-300:active {

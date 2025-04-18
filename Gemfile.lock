@@ -144,6 +144,8 @@ GEM
       opentelemetry-api (~> 1.0)
     ostruct (0.6.1)
     pg (1.5.9)
+    phlex (2.2.1)
+      zeitwerk (~> 2.7)
     playwright-ruby-client (1.51.0)
       concurrent-ruby (>= 1.1.6)
       mime-types (>= 3.0)
@@ -239,6 +241,7 @@ DEPENDENCIES
   omniauth-github (~> 2.0.0)
   opentelemetry-instrumentation-sidekiq
   pg
+  phlex
   playwright-ruby-client
   puma
   redcarpet

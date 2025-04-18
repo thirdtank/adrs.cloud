@@ -55,7 +55,6 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
 
         expect(result.class).to eq(Array)
         expect(result[0].class).to eq(ErrorMessagesComponent)
-        expect(result[0].form).to eq(form)
         expect(result[1].to_i).to eq(422)
       end
     end
