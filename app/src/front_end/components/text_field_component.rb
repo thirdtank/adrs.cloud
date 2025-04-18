@@ -1,5 +1,4 @@
-class TextFieldComponent < AppComponent
-  attr_reader :label, :input_name, :input_component, :constraint_violations
+class TextFieldComponent < AppComponent2
   def initialize(label:,form:, input_name: nil, autofocus: false, placeholder: false)
     @input_id = nil
     @label = if label.kind_of?(Hash)
@@ -10,7 +9,7 @@ class TextFieldComponent < AppComponent
                  raise ArgumentError,"Hash for a label must have an id: element: #{label.keys.map(&:to_s).join(", ")}"
                end
              else
-               label
+               label.to_s
              end
     @input_name = input_name.kind_of?(Symbol) ? input_name.to_s : input_name
     @input_component = create_input_component(
@@ -22,11 +21,46 @@ class TextFieldComponent < AppComponent
     @constraint_violations = form.input(@input_name).validity_state
   end
 
-  def container_tag = @label.nil? ? "div" : "label"
   def labeled_elsewhere? = @label.nil?
   def invalid? = @input_component.sanitized_attributes.key?("data-invalid")
 
+  def view_template
+    if @label.nil?
+      div(class: "flex flex-coumn gap-1 w-100") do
+        internal_view_template
+      end
+    else
+      label(class: "flex flex-coumn gap-1 w-100") do
+        internal_view_template
+      end
+    end
+  end
+
+  def internal_view_template
+    input_component
+    div(class: "text-field-error-label") do
+      brut_cv_messages(show_warnings: true, input_name: @input_name, class: "flex flex-wrap items-baseline") do
+        @constraint_violations.each do |constraint|
+          if !constraint.client_side?
+            brut_cv(server_side: true, input_name: @input_name, show_warnings: true) do
+              t("cv.be.#{constraint}", **constraint.context).capitalize.to_s
+            end
+          end
+        end
+      end
+    end
+    if !labeled_elsewhere?
+      div(class: "text-field-label") do
+        plain(@label)
+      end
+    end
+  end
+
 private
+
+  def input_component
+    raw(safe(@input_component.render.to_s))
+  end
 
   def create_input_component(form:,autofocus:,placeholder:,input_id:)
     input_html_attributes = {

@@ -1,12 +1,4 @@
-class AnnouncementBannerComponent < Phlex::HTML
-  include Brut::I18n::ForHTML
-    def inline_svg(svg)
-      Brut.container.svg_locator.locate(svg).then { |svg_file|
-        File.read(svg_file)
-      }
-    end
-  register_element :adr_announcement_banner
-
+class AnnouncementBannerComponent < AppComponent2
   def initialize(flash:, site_announcement: :default_site_announcement, clock:)
     @shown_role = if flash.alert?
                     "alert"
@@ -59,7 +51,7 @@ class AnnouncementBannerComponent < Phlex::HTML
           class: css_classes + default_classes,
         ) do
           span(class: "w-2 flex flex-column justify-center") do
-            raw(safe(inline_svg(icon)))
+            inline_svg(icon)
           end
           p(class: "p ma-0") do
             if i18_key

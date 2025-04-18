@@ -2,6 +2,12 @@ class TextareaComponent < TextFieldComponent
 
 private
 
+  def input_component
+    div(class: "textarea-container", data_invalid: invalid?) do
+      raw(safe(@input_component.render.to_s))
+    end
+  end
+
   def create_input_component(form:,autofocus:,placeholder:,input_id:)
     input_html_attributes = {
       autofocus: autofocus,

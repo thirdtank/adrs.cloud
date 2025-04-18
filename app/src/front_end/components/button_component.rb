@@ -1,17 +1,4 @@
-class ButtonComponent < AppComponent
-  attr_reader :size,
-              :color,
-              :label,
-              :aria_label,
-              :icon,
-              :confirmation_message,
-              :confirm_dialog,
-              :type,
-              :formaction,
-              :disabled,
-              :value,
-              :title
-
+class ButtonComponent < AppComponent2
   def initialize(size: :normal,
                  color: "gray",
                  label:,
@@ -28,10 +15,10 @@ class ButtonComponent < AppComponent
                  type: nil)
     @size                 =   size
     @color                =   color
-    @label                =   label
-    @aria_label           =   aria_label
+    @label                =   label&.to_s
+    @aria_label           =   aria_label&.to_s
     @icon                 =   icon
-    @formaction           =   formaction
+    @formaction           =   formaction&.to_str
     @disabled             = !!disabled
     @confirmation_message =   confirm
     @confirm_dialog       =   confirm_dialog
@@ -42,16 +29,16 @@ class ButtonComponent < AppComponent
 
     @title                =   if @disabled
                                 if disabled == true
-                                  label
+                                  label&.to_s
                                 else
                                   disabled.to_s
                                 end
                               elsif title
-                                title
+                                title&.to_s
                               elsif aria_label
-                                aria_label
+                                aria_label&.to_s
                               else
-                                label
+                                label&.to_s
                               end
   end
 
@@ -73,6 +60,35 @@ class ButtonComponent < AppComponent
       "w-100"
     else
       ""
+    end
+  end
+
+  def view_template
+    if @confirmation_message
+      brut_confirm_submit(message: @confirmation_message.to_s, show_warnings: @label, class: width_class, dialog: @confirm_dialog) do
+        button_only
+      end
+    else
+      button_only
+    end
+  end
+  def button_only
+    attributes = {
+      title: @title,
+      class: "flex items-center justify-center #{width_class} gap-2 button button--size--#{ @size } button--color--#{ @color } #{ variant_class }",
+      aria_label: @aria_label || @label,
+      disabled: @disabled,
+      type: @type,
+      formaction: @formaction,
+      value: @value,
+    }
+    button(**attributes) do
+      if @icon
+        span(aria_hidden: true) do
+          inline_svg(@icon)
+        end
+      end
+      plain(@label)
     end
   end
 end

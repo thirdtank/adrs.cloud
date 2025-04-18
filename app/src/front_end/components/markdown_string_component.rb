@@ -1,4 +1,4 @@
-class MarkdownStringComponent < AppComponent
+class MarkdownStringComponent < AppComponent2
   class Markdown < Redcarpet::Render::HTML
     def header(text,header_level)
       super.header(text,header_level.to_i + 3)
@@ -17,10 +17,10 @@ class MarkdownStringComponent < AppComponent
       autolink: true,
       quote: true,
     )
-    @html = html_safe!(markdown.render(string.to_s))
+    @html = markdown.render(string.to_s)
   end
 
-  def render
-    @html
+  def view_template
+    raw(safe(@html))
   end
 end

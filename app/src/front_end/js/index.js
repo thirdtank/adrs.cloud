@@ -15,3 +15,4 @@ document.addEventListener("DOMContentLoaded", () => {
   AnnouncementBanner.define()
   CheckDownload.define()
 })
+
