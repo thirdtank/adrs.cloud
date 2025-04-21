@@ -1,4 +1,4 @@
-class AdrsByExternalIdPage::BannerComponent < AppComponent
+class AdrsByExternalIdPage::BannerComponent < AppComponent2
   attr_reader :color, :background_color, :font_weight, :font_size, :padding, :margin
 
   def initialize(background_color:,
@@ -35,14 +35,29 @@ class AdrsByExternalIdPage::BannerComponent < AppComponent
                  "pa-3"
                end
   end
+
   def glow? = @glow
 
-  def contents
-    if @timestamp == :use_block
-      render_yielded_block
-    else
-      t(page: @i18n_key) do
-        time_tag(timestamp: @timestamp,class: @timestamp_font_weight, format: :date)
+  def view_template
+    h3(
+      class: [
+        "lh-title",
+        "br-2",
+        "measure",
+        margin,
+        font_size,
+        color,
+        padding,
+        background_color,
+        glow? ? "text-glow" : "",
+        font_weight]
+    ) do
+      if @timestamp == :use_block
+        yield
+      else
+        plain(t(page: @i18n_key) do
+          time_tag(timestamp: @timestamp,class: @timestamp_font_weight, format: :date)
+        end.to_s)
       end
     end
   end
