@@ -42,7 +42,7 @@
   <section class="bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start">
     <%= component(AnnouncementBannerComponent) %>
     <div class="overflow-y-scroll w-100">
-      <%= tab_panel("projects") do %>
+      <%= component(AccountByExternalIdPage::TabPanelComponent.new(tab_name: "projects", selected_name: selected_tab.name)) do %>
         <table class="collapse mv-3 striped w-100">
           <caption class="sr-only">Projects</caption>
           <thead>
@@ -112,7 +112,7 @@
           </p>
         <% end %>
       <% end %>
-      <%= tab_panel("download") do %>
+      <%= component(AccountByExternalIdPage::TabPanelComponent.new(tab_name: "download", selected_name: selected_tab.name)) do %>
         <% if authenticated_account.has_download? %>
           <adr-check-download
             aria-live="polite"
@@ -140,7 +140,7 @@
           <% end %>
         <% end %>
       <% end %>
-      <%= tab_panel("info") do %>
+      <%= component(AccountByExternalIdPage::TabPanelComponent.new(tab_name: "info", selected_name: selected_tab.name)) do %>
         <h3 class="f-3 ma-0"><%= t(page: "info.personal.title") %></h3>
         <dl class="dl-grid gap-2 ml-3">
           <dt class="b"><%= t(page: "info.personal.email.title") %></dt>

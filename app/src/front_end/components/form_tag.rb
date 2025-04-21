@@ -14,8 +14,8 @@ class FormTag < Phlex::HTML
       end
       begin
         route = Brut.container.routing.route(form_class)
-        html_attributes[:method] = route.http_method
-        html_attributes[:action] = route.path(**route_params)
+        html_attributes[:method] = route.http_method.to_s
+        html_attributes[:action] = route.path(**route_params).to_s
       rescue Brut::Framework::Errors::MissingParameter
         raise ArgumentError, "You specified #{form_class} (or an instance of it), but it requires more url parameters than were found in route_params: (or route_params: was omitted). Please add all required parameters to route_params: or use `action: #{form_class}.routing(..params..), method: [:get|:post]` instead"
       end

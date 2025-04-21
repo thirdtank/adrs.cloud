@@ -1,4 +1,4 @@
-class AccountByExternalIdPage::TabPanelComponent < AppComponent
+class AccountByExternalIdPage::TabPanelComponent < AppComponent2
   attr_reader :tab_name
   def initialize(tab_name:, selected_name:)
     @tab_name = tab_name
@@ -7,7 +7,21 @@ class AccountByExternalIdPage::TabPanelComponent < AppComponent
 
   def selected? = @selected
 
-  def content
-    render_yielded_block
+  def view_template
+    section(
+      class: "pa-3",
+      role: "tabpanel",
+      tabindex: 0,
+      hidden: !selected?,
+      id: "#{tab_name }-panel"
+    ) do
+      h2(class: "f-4 ma-0") do
+        t(page: [ "tabs", tab_name, "title" ]).to_s
+      end
+      p(class: "p f-2") do
+        t(page: [ "tabs", tab_name, "intro" ]).to_s
+      end
+      yield
+    end
   end
 end

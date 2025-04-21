@@ -20,9 +20,4 @@ class AccountByExternalIdPage < AppPage
       Tab.new(name: "info",      icon: "speedometer-icon"),
     ]
   end
-
-  def tab_panel(tab_name,&block)
-    component(AccountByExternalIdPage::TabPanelComponent.new(tab_name: tab_name, selected_name: selected_tab.name),&block)
-  end
-
 end
