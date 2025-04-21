@@ -37,8 +37,10 @@ RSpec.describe "Create and Edit an ADR" do
     info = page.locator("[role=status]")
     expect(info).to have_text("ADR Created")
 
+    with_clues do
     back_link = page.locator("a", hasText: "Back")
     back_link.click
+    end
 
     table = page.locator("table", has: page.locator("caption", hasText: "Draft ADRs"))
     row = table.locator("tr[title='Proper Title']")

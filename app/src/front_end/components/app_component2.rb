@@ -33,4 +33,11 @@ class AppComponent2 < Phlex::HTML
       raw(safe(svg_content))
     }
   end
+
+  def form_tag(**args, &block)
+    render FormTag.new(**args,&block)
+  end
+
+  def self.component_name = self.name
+  def component_name = self.class.component_name
 end

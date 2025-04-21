@@ -1,6 +1,6 @@
 require "digest"
 
-class Adrs::TagComponent < AppComponent
+class Adrs::TagComponent < AppComponent2
   COLORS = [
     "orange",
     "red",
@@ -38,5 +38,34 @@ class Adrs::TagComponent < AppComponent
 
 
   def link? = @link
+
+  def view_template
+    span(class: "dib #{padding} br-left-1 br-right-3 bg-#{color}-#{background_weight} #{color}-300 ba bc-#{color}-#{border_weight} f-1 fw-normal ttl tracked-right") do
+      if link?
+        a(
+          class: "#{ color }-300 fw-#{ weight } flex items-center gap-1",
+          href: AdrsPage.routing(tag: tag).to_s
+        ) do
+          icon_markup
+          span { plain(tag) }
+        end
+      else
+        span(
+          class: "#{ color }-300 fw-#{ weight } flex items-center gap-1"
+        ) do
+          icon_markup
+          span { plain(tag) }
+        end
+      end
+    end
+  end
+
+  def icon_markup
+    if icon
+      span(class: "f-1 flex flex-column justify-center") do
+        inline_svg(icon)
+      end
+    end
+  end
 end
 
