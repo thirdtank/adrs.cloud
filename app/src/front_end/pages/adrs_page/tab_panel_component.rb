@@ -1,4 +1,4 @@
-class AdrsPage::TabPanelComponent < AppComponent
+class AdrsPage::TabPanelComponent < AppComponent2
 
   attr_reader :tab, :columns, :adrs, :tag, :project
 
@@ -29,17 +29,73 @@ class AdrsPage::TabPanelComponent < AppComponent
   def column_value(adr,column)
     if column.to_s =~ /_at$/
       value = adr.send(column)
-      html_tag(:span, class: "ws-nowrap gray-400 fw-5") {
+      span(class: "ws-nowrap gray-400 fw-5") {
         time_tag(timestamp: value, format: :date)
       }
     elsif column == :title
-      component(AdrsPage::AdrTitleComponent.new(adr:))
+      render(AdrsPage::AdrTitleComponent.new(adr:))
     elsif column == :project
-      html_tag(:span, class: "ws-nowrap b") {
-        adr.project.name
-      }
+      span(class: "ws-nowrap b") { adr.project.name }
     else
       adr.send(column)
+    end
+  end
+
+  def view_template
+    section(
+      role: "tabpanel",
+      tabindex: 0,
+      id: "#{ tab }-panel",
+      class: "w-100" ,
+      hidden: !selected?
+    ) do
+    h2(class:"ph-3 f-5 b ma-0 mt-4") do
+      div(class:"flex items-center gap-2") do
+        span { t(page: tab).to_s }
+        if !tag.nil?
+          render(Adrs::TagComponent.new(tag: tag, link: false))
+        end
+      end
+      if !project.nil?
+        span(class:"f-1") { "Project:" }
+        span(class:"i f-1 fw-3") { project.name }
+      end
+    end
+  if adrs.any?
+    table(class:"collapse ma-3 striped") do
+      caption(class:"sr-only") { t(page: "captions.#{tab}").to_s }
+      thead do
+        tr do
+          columns.each do |column|
+            th(class:"tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
+              t(page: "columns.#{column}").to_s
+            end
+          end
+          th(class:"tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
+            span(class: "sr-only") { t(page: "columns.actions").to_s }
+          end
+        end 
+      end 
+      tbody do
+        adrs.each do |adr|
+          tr(title: adr.title, id: adr.external_id) do
+            columns.each_with_index do |column, index|
+              td(class: "#{index == 0 ? "w-100 bl f-3" : "f-2"} pa-2 lh-copy va-middle bb br bc-gray-600") do
+                column_value(adr,column)
+              end
+            end
+            td(class:"pa-2 tr va-middle bb br bc-gray-600") do
+              a(class: "blue-400 ws-nowrap", href: action_routing(adr).to_s) do
+                t(page: action_name).to_s
+              end
+            end
+          end
+        end
+      end
+    end
+  else
+    p(class:"ma-3 p i") { t(page: :none).to_s }
+  end
     end
   end
 end

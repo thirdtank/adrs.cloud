@@ -34,10 +34,33 @@ class AppComponent2 < Phlex::HTML
     }
   end
 
+  def time_tag(timestamp:nil,**component_options, &contents)
+    args = component_options.merge(timestamp:)
+    clock= Thread.current.thread_variable_get(:request_context)[:clock]
+    raw(safe(Brut::FrontEnd::Components::Time.new(**args,&contents).render(clock:).to_s))
+  end
+
   def form_tag(**args, &block)
     render FormTag.new(**args,&block)
   end
 
   def self.component_name = self.name
   def component_name = self.class.component_name
+
+  def page_name
+    @page_name ||= begin
+                     page = self.class.name.split(/::/).reduce(Module) { |accumulator,class_path_part|
+                       if accumulator.ancestors.include?(Brut::FrontEnd::Page)
+                         accumulator
+                       else
+                         accumulator.const_get(class_path_part)
+                       end
+                     }
+                     if page.ancestors.include?(Brut::FrontEnd::Page)
+                       page.name
+                     else
+                       raise "#{self.class} is not nested inside a page, so #page_name should not have been called"
+                     end
+                   end
+  end
 end
