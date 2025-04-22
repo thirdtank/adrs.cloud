@@ -1,4 +1,4 @@
-class EditDraftAdrByExternalIdPage < AppPage
+class EditDraftAdrByExternalIdPage < AppPage2
   attr_reader :draft_adr, :form, :projects
   def initialize(authenticated_account:, external_id:, form: nil)
     @draft_adr     = authenticated_account.draft_adrs.find!(external_id:)
@@ -7,4 +7,40 @@ class EditDraftAdrByExternalIdPage < AppPage
   end
   # XXX: Remove or recreate this
   def adr_path(adr) = AdrsByExternalIdPage.routing(external_id: adr.external_id)
+
+  def page_template
+    adr_edit_draft_by_external_id_page(show_warnings: true) do
+      raw(safe(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_updated").render.to_s))
+      raw(safe(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_not_updated").render.to_s))
+      global_component(AnnouncementBannerComponent)
+      header do
+        h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") { t(page: :edit).to_s }
+        if draft_adr.refining?
+          h3(class:"mt-1 fw-4 f-2 i flex items-center justify-center gap-2") do
+            span(class:"w-2 gray-300") do
+              inline_svg("adjust-control-icon")
+            end
+            span do
+              link = safe(%{<a class="blue-300" href="#{ adr_path(draft_adr.adr_refining) }">#{ draft_adr.adr_refining.title }</a>})
+              raw(safe(t(page: :refines, block: link).to_s))
+            end
+          end
+        end
+        if draft_adr.replacing?
+          h3(class: "mt-1 fw-4 f-2 i flex items-center justify-center gap-2") do
+            span(class: "w-2 gray-300") do
+              inline_svg("change-icon")
+            end
+            span do
+              link = safe(%{<a class="blue-300" href="#{ adr_path(draft_adr.adr_replacing) }">#{ draft_adr.adr_replacing.title }</a>})
+              raw(safe(t(page: :proposed_replacement, block: link).to_s))
+            end
+          end
+        end
+      end
+      section(class: "pa-3") do
+        render(Adrs::FormComponent.new(form, action: :edit, external_id: @draft_adr.external_id, projects: projects))
+      end
+    end
+  end
 end

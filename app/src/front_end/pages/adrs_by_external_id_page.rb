@@ -240,7 +240,7 @@ class AdrsByExternalIdPage < AppPage2
                          end
                          div(class: "f-1") do
                            raw(safe(t(page: :replaced_on) do
-                             clock= Thread.current.thread_variable_get(:request_context)[:clock]
+                             clock = Thread.current.thread_variable_get(:request_context)[:clock]
                              safe(Brut::FrontEnd::Components::Time.new(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date).render(clock:).to_s)
                            end.to_s))
                          end

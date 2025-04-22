@@ -186,7 +186,7 @@ class Adrs::FormComponent < AppComponent2
                 end
               end
               div(
-                data_submitting_icon: true,
+                data_submitted_icon: true,
                 class: "w-3 h-3 mh-auto mv-auto top-0 left-0 right-0 bottom-0 pos-absolute"
               ) do
                 inline_svg("check-mark-icon")

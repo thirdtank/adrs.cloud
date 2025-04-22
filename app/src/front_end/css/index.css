@@ -207,6 +207,10 @@ brut-ajax-submit[submitted] button {
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
 }
+brut-ajax-submit [data-loading-animation],
+brut-ajax-submit [data-submitted-icon] {
+  /*display: none;*/
+}
 
 brut-ajax-submit [data-loading-animation],
 brut-ajax-submit [data-submitted-icon] {
