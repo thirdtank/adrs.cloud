@@ -6,7 +6,7 @@ RSpec.describe Admin::AccountsPage do
 
       page = described_class.new(search_string: "", authenticated_account:)
 
-      result = render(page)
+      result = page.handle!
       expect(result).to have_returned_http_status(404)
     end
   end
@@ -46,7 +46,7 @@ RSpec.describe Admin::AccountsPage do
         page = described_class.new(search_string: "@gmail.com", authenticated_account:)
 
         rendered_html = render_and_parse(page)
-        expect(rendered_html.text).to include("None Matched")
+        expect(rendered_html.text).to include("Nothing Matched")
       end
     end
   end

@@ -1,4 +1,4 @@
-class Admin::BasePage < AppPage
+class Admin::BasePage < AppPage2
   def initialize(authenticated_account:)
     @authenticated_account = authenticated_account
   end

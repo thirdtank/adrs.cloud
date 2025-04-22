@@ -1,4 +1,5 @@
 class AppPage2 < Phlex::HTML
+  include Brut::FrontEnd::HandlingResults
   include Brut::Framework::Errors
   include Brut::I18n::ForHTML
 
@@ -23,6 +24,8 @@ class AppPage2 < Phlex::HTML
   register_element :adr_check_download
   register_element :adr_edit_draft_by_external_id_page
   register_element :adr_entitlement_effective
+  register_element :adr_entitlement_default
+  register_element :adr_entitlement_override
   register_element :adr_include_query_params
   register_element :adr_tag_editor
 
@@ -57,6 +60,26 @@ class AppPage2 < Phlex::HTML
       ].join("_")).camelize
     )
     render layout_class.new(page_name:,&block)
+  end
+
+  def before_render = nil
+
+  def handle!
+    case before_render
+    in URI => uri
+      uri
+    in Brut::FrontEnd::HttpStatus => http_status
+      http_status
+    else
+      self.call
+    end
+  end
+
+
+  def view_template
+    with_layout do
+      page_template
+    end
   end
 
   # Convienience method for {.page_name}.
