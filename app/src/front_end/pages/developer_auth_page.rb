@@ -1,8 +1,6 @@
-class DeveloperAuthPage < AppPage
-  class PhlexComponent < Phlex::HTML
-    include Brut::FrontEnd::Component::Helpers
-    include Brut::I18n::ForHTML
-    def view_template
+class DeveloperAuthPage < AppPage2
+  def view_template
+    with_layout do
       section(class: "mh-auto w-50") do
         h1 { "Auth" }
         render FormTag.new(action: "/auth/developer/callback", method: :get) do
@@ -15,9 +13,4 @@ class DeveloperAuthPage < AppPage
       end
     end
   end
-
-  def phlex_component
-    PhlexComponent.new
-  end
-
 end

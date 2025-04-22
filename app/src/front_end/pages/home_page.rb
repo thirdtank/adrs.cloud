@@ -1,22 +1,14 @@
-class HomePage < AppPage
+class HomePage < AppPage2
   def initialize(flash:)
-    @phlex_component = PhlexComponent.new(flash:)
+    @error_message = flash.alert
   end
 
-  class PhlexComponent < Phlex::HTML
+  def form_tag(**args, &block)
+    render FormTag.new(**args,&block)
+  end
 
-    include Brut::FrontEnd::Component::Helpers
-    include Brut::I18n::ForHTML
-
-    def initialize(flash:)
-      @error_message = flash.alert
-    end
-
-    def form_tag(**args, &block)
-      render FormTag.new(**args,&block)
-    end
-
-    def view_template
+  def view_template
+    with_layout do
       div(class: "HomePage w-100 flex items-center") do
         main(class: "w-third h-100vh bg-purple-800 purple-100 flex flex-column items-end justify-center br bc-purple-700") do
           header(class: "ph-3 mb-5") do
@@ -79,6 +71,4 @@ class HomePage < AppPage
       end
     end
   end
-
-  def phlex_component = @phlex_component
 end
