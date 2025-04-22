@@ -1,5 +1,6 @@
 class AdrsByExternalIdPage::BannerComponent < AppComponent2
   attr_reader :color, :background_color, :font_weight, :font_size, :padding, :margin
+  def page_name = "AdrsByExternalIdPage"
 
   def initialize(background_color:,
                  color:,
@@ -55,9 +56,9 @@ class AdrsByExternalIdPage::BannerComponent < AppComponent2
       if @timestamp == :use_block
         yield
       else
-        plain(t(page: @i18n_key) do
-          time_tag(timestamp: @timestamp,class: @timestamp_font_weight, format: :date)
-        end.to_s)
+        clock = Thread.current.thread_variable_get(:request_context)[:clock]
+        time = safe(Brut::FrontEnd::Components::Time.new(timestamp: @timestamp, class: @timestamp_font_weight, format: :date).render(clock:).to_s)
+        raw(safe(t(page: @i18n_key, block: time).to_s))
       end
     end
   end

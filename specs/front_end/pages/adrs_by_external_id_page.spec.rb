@@ -148,7 +148,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  external_id: adr.external_id)
 
       parsed_html = render_and_parse(page)
-      html_locator = Support::HtmlLocator.new(render_and_parse(page))
+      html_locator = Support::HtmlLocator.new(parsed_html)
 
       expect(parsed_html.text).to     include(t(page: :accepted, block: ""))
       expect(parsed_html.text).not_to include(t(page: :originally_accepted, block: ""))
@@ -171,7 +171,7 @@ RSpec.describe AdrsByExternalIdPage do
                                  external_id: adr.external_id)
 
       parsed_html = render_and_parse(page)
-      html_locator = Support::HtmlLocator.new(render_and_parse(page))
+      html_locator = Support::HtmlLocator.new(parsed_html)
 
       expect(parsed_html.text).to     include(t(page: :accepted, block: ""))
       expect(parsed_html.text).not_to include(t(page: :originally_accepted, block: ""))

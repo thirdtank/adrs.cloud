@@ -28,6 +28,8 @@ class AppPage2 < Phlex::HTML
   register_element :adr_entitlement_override
   register_element :adr_include_query_params
   register_element :adr_tag_editor
+  register_element :adr_tag_editor_view
+  register_element :adr_tag_editor_edit
 
   def inline_svg(svg)
     Brut.container.svg_locator.locate(svg).then { |svg_file|
