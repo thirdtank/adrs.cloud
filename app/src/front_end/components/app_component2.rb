@@ -58,6 +58,8 @@ class AppComponent2 < Phlex::HTML
                      }
                      if page.ancestors.include?(Brut::FrontEnd::Page)
                        page.name
+                     elsif page.respond_to?(:page_name)
+                       page.page_name
                      else
                        raise "#{self.class} is not nested inside a page, so #page_name should not have been called"
                      end

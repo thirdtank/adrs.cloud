@@ -5,7 +5,7 @@ RSpec.describe Admin::AccountsByExternalIdPage do
       authenticated_account = create(:authenticated_account)
       account = create(:account)
 
-      result = described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:).handle!
+      result = render(described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:))
       expect(result).to have_returned_http_status(404)
     end
   end
