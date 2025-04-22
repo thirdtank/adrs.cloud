@@ -1,18 +1,24 @@
-class SharedAdrsByShareableIdPage < AppPage
+class SharedAdrsByShareableIdPage < AppPage2
   attr_reader :adr
 
   def initialize(shareable_id:)
     @adr = DB::Adr.find!(shareable_id:)
   end
 
-  def field(name, label_additional_clases: "")
-    html_tag(:section, "aria-label": name, class: "flex flex-column gap-2 ph-3") {
-      html_tag(:h4, class: "ma-0 f-1 ttu fw-6 #{label_additional_clases}") {
-        t(page: [ :fields, name ])
-      } + html_tag(:div, class: "measure-wide rendered-markdown") {
-        component(MarkdownStringComponent.new(adr.send(name)))
+  def field(name, label_additional_classes: "")
+    section(
+      aria_label: name,
+            class: "flex flex-column gap-2 ph-3"
+    ) do
+      h4(
+        class: "ma-0 f-1 ttu fw-6 #{label_additional_classes}"
+      ) {
+        raw(safe(t(page: [ :fields, name ]).to_s))
       }
-    }
+      div(class: "measure-wide rendered-markdown") do
+        render(MarkdownStringComponent.new(adr.send(name)))
+      end
+    end
   end
 
   def shareable_refined_by_adrs
@@ -24,6 +30,87 @@ class SharedAdrsByShareableIdPage < AppPage
       bug! "#{adr.external_id} is not share - this should not have been called"
     end
     self.class.routing(shareable_id: adr.shareable_id)
+  end
+
+  def page_template
+    div(class: "flex-ns items-start gap-3 justify-center") do
+      div(role: "none", class:"w-quarter db-ns db")
+      article(class: "w-50-ns ph-0 bg-white #{ adr.replaced? ? 'gray-600' : 'black' } ba-ns bc-gray-600 br-2 mv-3 shadow-3-ns pos-relative") do
+        h2(class: "tc measure-narrow ph-1 mh-auto lh-title fs-5 mt-3 mb-1 #{ adr.replaced? ? 'tds' : '' }") { adr.title }
+        div(class: "tc f-1 mb-3") do
+          if adr.replaced?
+            h3(class: "lh-title f-3 fw-5 pa-2 mh-3 ba br-2 bc-red-300 red-900 bg-red-300 flex items-center gap-3") do
+              div(class: "w-3") do
+                inline_svg("change-icon")
+              end
+              div(class: "tl") do
+                div(class: "f-2") do
+                  raw(safe(t(
+                    page: :replaced_on,
+                    block:
+                    raw_time_tag(timestamp: adr.replaced_by_adr.accepted_at,class: "fw-6", format: :date)
+                  ).to_s))
+                  if adr.replaced_by_adr.shared?
+                    link = safe(%{<a class="db red-900" href="#{ shareable_path(adr.replaced_by_adr)}">#{adr.replaced_by_adr.title }</a>})
+                    raw(safe(t(page: :replaced_by, block: link).to_s))
+                  end
+                end
+              end
+            end
+          end
+          h3(class: "lh-title fw-5 pa-2 mh-3 ba br-2 #{ adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' }") do
+            if adr.replaced?
+              raw(safe(
+                t(
+                  page: :originally_accepted,
+                  block: raw_time_tag(timestamp: adr.accepted_at,class: "fw-6", format: :date)
+                 ).to_s
+              ))
+            else
+              raw(safe(
+                t(
+                  page: :accepted,
+                  block: raw_time_tag(timestamp: adr.accepted_at,class: "fw-6", format: :date)
+                ).to_s
+              ))
+            end
+          end
+          if !adr.replaced_adr.nil? && adr.replaced_adr.shared?
+            h3(class: "lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900") do
+              link = safe(%{<a class="green-300" href="#{ shareable_path(adr.replaced_adr) }">#{ adr.replaced_adr.title }</a>})
+              raw(safe(t(page: :replaced, block: link).to_s))
+            end
+          end
+          raw(safe(t(page: :created, block: raw_time_tag(timestamp: adr.created_at, class: "fw-5", format: :date)).to_s))
+        end
+        section(class: "pt-3 adr-content") do
+          field("context")
+          field("facing")
+          div(class: "mb-3 pb-1 pt-3 f-3 br-right-2 #{ adr.accepted? ? 'bg-green-800 green-200' : 'bg-yellow-800 yellow-100' }") do
+            field("decision", label_additional_classes: "tdu f-2")
+          end
+          field("neglected")
+          field("achieve")
+          field("accepting")
+          field("because")
+        end
+        if adr.refines? && adr.refines_adr.shared?
+          section(aria_label: "context", class: "bt bc-gray-800") do
+            h3(class: "lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-blue-800 blue-300 bg-blue-900 flex items-center gap-2") do
+              div(class: "w-2") do
+                inline_svg("adjust-control-icon")
+              end
+              div(class: "tl") do
+                link = safe(%{<a class="blue-300" href="#{ shareable_path(adr.refines_adr) }">#{ adr.refines_adr.title }</a>})
+                raw(safe(t(page: :refines, block: link).to_s))
+              end
+            end
+          end
+        end
+        render(Adrs::GetRefinementsComponent.new(refined_by_adrs: shareable_refined_by_adrs, shareable_paths: true, gradient: false, constrain_width: false))
+      end
+      div(role:"none", class:"w-quarter db-ns dn")
+    end
   end
 end
 
