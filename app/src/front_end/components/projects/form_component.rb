@@ -60,7 +60,8 @@ class Projects::FormComponent < AppComponent2
           class: "red-300"
         ) do
           span(role:"none") { raw(safe("&larr;")) }
-          go_back_label
+          whitespace
+          plain(go_back_label.to_s)
         end
       end
     end

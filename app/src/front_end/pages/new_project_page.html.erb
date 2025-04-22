@@ -1,7 +1,0 @@
-<%= component(AnnouncementBannerComponent) %>
-<header>
-<h2 class="tc ma-0 mt-3 ttu tracked-tight f-5"><%= t(page: :new_project) %></h2>
-</header>
-<section class="pa-3">
-  <%= component(Projects::FormComponent.new(form,action: :new, account_external_id: account_external_id)) %>
-</section>

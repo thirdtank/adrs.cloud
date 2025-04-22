@@ -157,7 +157,7 @@ dl.dl-grid {
 }
 
 .checkbox-label, .text-field-label {
-  font-weight: 300;
+  font-weight: 600;
   font-size: var(--fs-2);
 }
 

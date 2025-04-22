@@ -1,7 +1,21 @@
-class NewProjectPage < AppPage
+class NewProjectPage < AppPage2
   attr_reader :form, :account_external_id
   def initialize(form:nil, authenticated_account:)
     @form                = form || NewProjectForm.new
     @account_external_id = authenticated_account.external_id
+  end
+
+  def view_template
+    with_layout do
+      global_component(AnnouncementBannerComponent)
+      header do
+        h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") do
+          t(page: :new_project).to_s
+        end
+      end
+      section(class: "pa-3") do
+        render Projects::FormComponent.new(form,action: :new, account_external_id: account_external_id)
+      end
+    end
   end
 end

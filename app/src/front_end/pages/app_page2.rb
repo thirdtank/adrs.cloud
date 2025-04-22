@@ -65,4 +65,7 @@ class AppPage2 < Phlex::HTML
   # @!visibility private
   def component_name = raise Brut::Framework::Errors::Bug,"#{self.class} is not a component"
 
+  def global_component(component_klass)
+    render Brut::FrontEnd::RequestContext.inject(component_klass)
+  end
 end

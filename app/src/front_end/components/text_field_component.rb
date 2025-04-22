@@ -26,11 +26,11 @@ class TextFieldComponent < AppComponent2
 
   def view_template
     if @label.nil?
-      div(class: "flex flex-coumn gap-1 w-100") do
+      div(class: "flex flex-column gap-1 w-100") do
         internal_view_template
       end
     else
-      label(class: "flex flex-coumn gap-1 w-100") do
+      label(class: "flex flex-column gap-1 w-100") do
         internal_view_template
       end
     end

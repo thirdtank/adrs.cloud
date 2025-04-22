@@ -3,7 +3,7 @@ class DeveloperAuthPage < AppPage2
     with_layout do
       section(class: "mh-auto w-50") do
         h1 { "Auth" }
-        render FormTag.new(action: "/auth/developer/callback", method: :get) do
+        form_tag(action: "/auth/developer/callback", method: :get) do
           label(class: "db mb-3") do
             input(type: "email", name: "email", class: "db pa-2 br-2 ba bc-black", autofocus: true)
             plain("Email Address")
