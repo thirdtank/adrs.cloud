@@ -1,4 +1,4 @@
-class AdrsPage < AppPage
+class AdrsPage < AppPage2
 
   attr_reader :tag, :tab, :entitlements, :authenticated_account, :project
 
@@ -31,15 +31,150 @@ class AdrsPage < AppPage
   def can_add_new? = @entitlements.can_add_new?
 
   def project_select
-    component(Brut::FrontEnd::Components::Inputs::Select.new(
-      name: "project_external_id",
-      include_blank: { value: "ALL", text_content: "All" },
-      options: authenticated_account.projects,
-      selected_value: project&.external_id,
-      value_attribute: :external_id,
-      option_text_attribute: :name,
-      html_attributes: { class: "w-6" }))
+    raw(
+      safe(
+        Brut::FrontEnd::Components::Inputs::Select.new(
+          name: "project_external_id",
+          include_blank: { value: "ALL", text_content: "All" },
+          options: authenticated_account.projects,
+          selected_value: project&.external_id,
+          value_attribute: :external_id,
+          option_text_attribute: :name,
+          html_attributes: { class: "w-6" }
+        ).render.to_s
+      )
+    )
   end
 
+  def page_template
+    section(class:"flex w-100") do
+      nav(class:"bg-gray-200 gray-800 w-6 h-100vh flex flex-column justify-between") do
+        div(class:"flex flex-column overflow-y-scroll") do
+          header(class:"pa-3 w-100 pt-4 flex items-center gap-2") do
+            h1(class:"f-4 ma-0 flex items-center gap-2") do
+              span(class:"f-5") {
+                inline_svg("architectural-icon")
+              }
+              plain(t(:adrscloud).to_s)
+            end
+          end
+          div(class:"pb-3 pr-3") do
+            if can_add_new?
+              a(
+                href: NewDraftAdrPage.routing.to_s,
+                class: "green-500 bc-green-200 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300"
+              ) do
+                t(page: :add_new).to_s
+              end
+            else
+              span(class:"gray-700 i bc-gray-200 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed", title: t(:add_new_limit_exceeded).to_s) do
+                t(page: :add_new).to_s
+              end
+            end
+          end
+          render(
+            AdrsPage::TabComponent.new(
+              tabs: {
+                accepted: "check-mark-icon",
+                drafts: "edit-list-icon",
+                replaced: "change-icon",
+                rejected: "recycle-bin-line-icon",
+              },
+              selected_tab: tab,
+              css_class: "adr-page-tabs",
+            )
+          )
+        end
+        div(class:"w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3") do
+          a(
+            class:"orange-800 f-1 db",
+            href: AccountByExternalIdPage.routing(external_id: authenticated_account.external_id).to_s
+          ) do
+            t(page: :your_account).to_s
+          end
+          a(class:"orange-800 f-1 db",href: HelpPage.routing.to_s) { t(:help).to_s }
+          a(class:"orange-800 f-1 db",href: LogoutHandler.routing.to_s) { t(:logout).to_s }
+        end
+      end
+      section(class:"bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start") do
+        global_component(AnnouncementBannerComponent)
+        div(class:"overflow-y-scroll w-100") do
+          div(class:"mh-3 mt-3 shadow-1 dib bg-purple-900 br-2") do
+            adr_include_query_params do
+              form(class:"pa-3 flex items-center gap-3 bb bc-gray-700") do
+                label(class:"flex items-center gap-2") do
+                  span(class:"f-1 fw-6") { "Project:" }
+                  brut_autosubmit { project_select }
+                end
+                label(class:"flex items-center gap-2") do
+                  span(class:"f-1 fw-6") { "Tag:" }
+                  input(
+                    type: "search",
+                    name: "tag",
+                    value: tag,
+                    id: "tag-search-input",
+                    class: "text-field text-field--tiny",
+                    placeholder: t(page: :tag_filter_placeholder).to_s
+                  )
+                end
+                render(
+                  ButtonComponent.new(
+                    size: :tiny,
+                    color: :purple,
+                    label: "Filter",
+                    icon: "layer-icon"
+                  )
+                )
+                if filtered?
+                  a(
+                    href: "?",
+                    class: "blue-400 f-1"
+                  ) do
+                    t(page: :remove_filter).to_s
+                  end
+                end
+              end
+            end
+          end
+          render(
+            AdrsPage::TabPanelComponent.new(adrs: accepted_adrs,
+                                            tag: tag,
+                                            project: project,
+                                            selected: tab == :accepted,
+                                            tab: :accepted,
+                                            columns: [ :title, :project, :accepted_at ],
+                                            action: :view)
+          )
+          render(
+            AdrsPage::TabPanelComponent.new(adrs: draft_adrs,
+                                            tab: :drafts,
+                                            tag: tag,
+                                            project: project,
+                                            selected: tab == :drafts,
+                                            columns: [ :title, :project, :created_at ],
+                                            action: :edit)
+          )
+          render(
+            AdrsPage::TabPanelComponent.new(adrs: replaced_adrs,
+                                            selected: tab == :replaced,
+                                            tab: :replaced,
+                                            tag: tag,
+                                            project: project,
+                                            columns: [ :title, :project, :created_at ],
+                                            action: :view)
+          )
+          render(
+            AdrsPage::TabPanelComponent.new(adrs: rejected_adrs,
+                                            tab: :rejected,
+                                            selected: tab == :rejected,
+                                            tag: tag,
+                                            project: project,
+                                            columns: [ :title, :project, :created_at, :rejected_at ],
+                                            action: :view)
+          )
+        end
+      end
+    end
+  end
 end
 

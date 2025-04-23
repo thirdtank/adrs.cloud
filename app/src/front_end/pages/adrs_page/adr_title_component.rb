@@ -1,4 +1,5 @@
 class AdrsPage::AdrTitleComponent < AppComponent2
+  def page_name = "AdrsPage"
   attr_reader :adr
   def initialize(adr:)
     @adr = adr
