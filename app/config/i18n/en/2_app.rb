@@ -143,7 +143,7 @@
       },
       SharedAdrsByShareableIdPage: {
         replaced_on: "Replaced on %{block}",
-        replaced_by: "reaplaced by “%{block}”",
+        replaced_by: "replaced by “%{block}”",
         accepted: "Accepted %{block}",
         created: "Created %{block}",
         originally_accepted: "Originally Accepted %{block}",

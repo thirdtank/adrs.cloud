@@ -45,14 +45,21 @@ class SharedAdrsByShareableIdPage < AppPage2
               end
               div(class: "tl") do
                 div(class: "f-2") do
-                  raw(safe(t(
-                    page: :replaced_on,
-                    block:
-                    raw_time_tag(timestamp: adr.replaced_by_adr.accepted_at,class: "fw-6", format: :date)
-                  ).to_s))
+                  raw(t2(page: :replaced_on) do
+                    time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
+                  end)
                   if adr.replaced_by_adr.shared?
-                    link = safe(%{<a class="db red-900" href="#{ shareable_path(adr.replaced_by_adr)}">#{adr.replaced_by_adr.title }</a>})
-                    raw(safe(t(page: :replaced_by, block: link).to_s))
+                    whitespace
+                    raw(
+                      t2(page: :replaced_by) do
+                        a(
+                          class: "red-900",
+                          href: shareable_path(adr.replaced_by_adr).to_s
+                        ) {
+                          adr.replaced_by_adr.title
+                        }
+                      end
+                    )
                   end
                 end
               end
@@ -60,28 +67,32 @@ class SharedAdrsByShareableIdPage < AppPage2
           end
           h3(class: "lh-title fw-5 pa-2 mh-3 ba br-2 #{ adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' }") do
             if adr.replaced?
-              raw(safe(
-                t(
-                  page: :originally_accepted,
-                  block: raw_time_tag(timestamp: adr.accepted_at,class: "fw-6", format: :date)
-                 ).to_s
-              ))
+              raw(t2(page: :originally_accepted) do
+                time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
+              end)
             else
-              raw(safe(
-                t(
-                  page: :accepted,
-                  block: raw_time_tag(timestamp: adr.accepted_at,class: "fw-6", format: :date)
-                ).to_s
-              ))
+              raw(t2(page: :accepted) do
+                time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
+              end)
             end
           end
           if !adr.replaced_adr.nil? && adr.replaced_adr.shared?
             h3(class: "lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900") do
-              link = safe(%{<a class="green-300" href="#{ shareable_path(adr.replaced_adr) }">#{ adr.replaced_adr.title }</a>})
-              raw(safe(t(page: :replaced, block: link).to_s))
+              raw(
+                t2(page: :replaced_by) do
+                  a(
+                    class: "green-300",
+                    href: shareable_path(adr.replaced_adr).to_s
+                  ) {
+                    adr.replaced_adr.title
+                  }
+                end
+              )
             end
           end
-          raw(safe(t(page: :created, block: raw_time_tag(timestamp: adr.created_at, class: "fw-5", format: :date)).to_s))
+          raw(t2(page: :created) do
+            time_tag(timestamp: adr.created_at, class: "fw-5", format: :date)
+          end)
         end
         section(class: "pt-3 adr-content") do
           field("context")
@@ -101,8 +112,16 @@ class SharedAdrsByShareableIdPage < AppPage2
                 inline_svg("adjust-control-icon")
               end
               div(class: "tl") do
-                link = safe(%{<a class="blue-300" href="#{ shareable_path(adr.refines_adr) }">#{ adr.refines_adr.title }</a>})
-                raw(safe(t(page: :refines, block: link).to_s))
+                raw(
+                  t2(page: :refines) do
+                    a(
+                      class: "blue-300",
+                      href: shareable_path(adr.refines_adr).to_s
+                    ) {
+                      adr.refines_adr.title
+                    }
+                  end
+                )
               end
             end
           end
