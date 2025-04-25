@@ -62,11 +62,11 @@ class Adrs::GetRefinementsComponent < AppComponent2
               end
               td(class:"pv-2 pr-2") do
                 if refining_adr.accepted?
-                  t(component: :is_accepted).to_s
+                  t(component: :is_accepted)
                 elsif refining_adr.rejected?
-                  t(component: :is_rejected).to_s
+                  t(component: :is_rejected)
                 else
-                  t(component: :is_draft).to_s
+                  t(component: :is_draft)
                 end
               end
               td(class:"pv-2 pr-2") do

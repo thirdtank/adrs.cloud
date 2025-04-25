@@ -25,16 +25,16 @@ class NewDraftAdrPage < AppPage2
     global_component(AnnouncementBannerComponent)
     header do
       h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") do
-        t(page: :draft_new).to_s
+        t(page: :draft_new)
       end
       if refines_adr
         h3(class: "tc mt-0 f-4") do
-          t(page: :refines, title: refines_adr.title).to_s
+          t(page: :refines, title: refines_adr.title)
         end
       end
       if replaces_adr
         h3(class: "tc mt-0 f-4") do
-          t(page: :replaces, title: replaces_adr.title).to_s
+          t(page: :replaces, title: replaces_adr.title)
         end
       end
     end

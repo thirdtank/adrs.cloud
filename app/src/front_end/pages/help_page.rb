@@ -17,11 +17,9 @@ class HelpPage < AppPage2
         class: "db mt-4 blue-300 tc",
         href: AdrsPage.routing.to_s
       ) do
-        raw(
-          safe(
-            "&larr; " + t(:back).to_s
-          )
-        )
+        raw(safe("&;larr"))
+        whitespace
+        t(:back)
       end
     end
   end

@@ -14,7 +14,7 @@ class AdrsByExternalIdPage < AppPage2
   def field(name, label_additional_clases: "")
     section(aria_label: name, class: "flex flex-column gap-2 ph-3") {
       h4(class: "ma-0 f-1 ttu fw-6 #{label_additional_clases}") {
-        t(page: [ :fields, name ]).to_s
+        t(page: [ :fields, name ])
       }
       div(class: "measure-wide rendered-markdown") {
         render(MarkdownStringComponent.new(adr.send(name)))
@@ -64,7 +64,7 @@ class AdrsByExternalIdPage < AppPage2
             div(class: "flex flex-column gap-3 items-end mt-1 pb-3 bb bc-gray-600") do
               if editable?
                 a(class: "db mt-3 w-100 tc pv-2 ba br-1 bc-blue-500 f-2 fw-5 blue-400", href: "EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id)") do
-                  t(page: :edit_adr).to_s
+                  t(page: :edit_adr)
                 end
               elsif accepted?
                 form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2 w-100") do
@@ -106,7 +106,7 @@ class AdrsByExternalIdPage < AppPage2
                       href: SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id).to_s
                     ) do
                       span { inline_svg("external-link-icon") }
-                      span { t(page: :view_share_page).to_s }
+                      span { t(page: :view_share_page) }
                     end
                   end
                 end
@@ -152,7 +152,7 @@ class AdrsByExternalIdPage < AppPage2
                           render(Adrs::TagComponent.new(tag: tag))
                         end
                       else
-                        span(class: "f-1 gray-400 i") { t(page: :no_tags).to_s }
+                        span(class: "f-1 gray-400 i") { t(page: :no_tags) }
                       end
                     end
                   end
@@ -203,8 +203,8 @@ class AdrsByExternalIdPage < AppPage2
           end
         end
         div(class: "w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3") do
-          a(class: "orange-800 f-1 db", href: "HelpPage.routing"){ t(:help).to_s }
-          a(class: "orange-800 f-1 db", href: "LogoutHandler.routing") { t(:logout).to_s }
+          a(class: "orange-800 f-1 db", href: "HelpPage.routing"){ t(:help) }
+          a(class: "orange-800 f-1 db", href: "LogoutHandler.routing") { t(:logout) }
         end
       end
       section(class: "bg-gray-900 gray-100 w-100 h-100vh flex flex-column items-start shadow-1") do
@@ -217,7 +217,7 @@ class AdrsByExternalIdPage < AppPage2
                 class: "ff-cursive f-6 fw-7 red-300 bg-red-600-a20 pa-2 pos-absolute ba br-1 bc-red-300 top-5 right--3",
                 style: "transform: rotate(33deg);"
               ) do
-                t(:draft).to_s
+                t(:draft)
               end
             end
           end

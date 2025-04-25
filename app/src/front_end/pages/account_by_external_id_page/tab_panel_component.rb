@@ -19,10 +19,10 @@ class AccountByExternalIdPage::TabPanelComponent < AppComponent2
       id: "#{tab_name }-panel"
     ) do
       h2(class: "f-4 ma-0") do
-        t(page: [ "tabs", tab_name, "title" ]).to_s
+        t(page: [ "tabs", tab_name, "title" ])
       end
       p(class: "p f-2") do
-        t(page: [ "tabs", tab_name, "intro" ]).to_s
+        t(page: [ "tabs", tab_name, "intro" ])
       end
       yield
     end

@@ -53,7 +53,7 @@ class AccountByExternalIdPage < AppPage2
                 class: "ws-nowrap"
               ) do
                 span(class: "flex items-center justify-end gap-2") do
-                  span { t(page: [ "tabs", tab.name, "title" ] ).to_s }
+                  span { t(page: [ "tabs", tab.name, "title" ] ) }
                   span(class: "w-2") { inline_svg(tab.icon) }
                 end
               end
@@ -61,9 +61,9 @@ class AccountByExternalIdPage < AppPage2
           end
         end
         div(class: "w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3") do
-          a(class: "orange-800 f-1 db", href:AdrsPage.routing.to_s) {  t(page: :your_adrs).to_s }
-          a(class: "orange-800 f-1 db", href:HelpPage.routing.to_s) { t(:help).to_s }
-          a(class: "orange-800 f-1 db", href:LogoutHandler.routing.to_s) { t(:logout).to_s }
+          a(class: "orange-800 f-1 db", href:AdrsPage.routing.to_s) {  t(page: :your_adrs) }
+          a(class: "orange-800 f-1 db", href:HelpPage.routing.to_s) { t(:help) }
+          a(class: "orange-800 f-1 db", href:LogoutHandler.routing.to_s) { t(:logout) }
         end
       end
       section(class: "bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start") do
@@ -75,17 +75,17 @@ class AccountByExternalIdPage < AppPage2
               thead do
                 tr do
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-                    t(page: "projects.columns.name" ).to_s
+                    t(page: "projects.columns.name" )
                   end
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-                    t(page: "projects.columns.description" ).to_s
+                    t(page: "projects.columns.description" )
                   end
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-                    t(page: "projects.columns.sharing" ).to_s
+                    t(page: "projects.columns.sharing" )
                   end
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
                     span(class: "sr-only") do
-                      t(page: "projects.columns.actions" ).to_s
+                      t(page: "projects.columns.actions" )
                     end
                   end
                 end
@@ -97,7 +97,7 @@ class AccountByExternalIdPage < AppPage2
                       plain(project.name)
                       if project.archived?
                         span(class: "dib f-1 ph-2 pv-1 bg-red-900 gray-400 ba bc-gray-700 br-bl-4 br-tl-1 br-br-1 br-tr-4") { 
-                          t(page: [ "projects", "archived" ]).to_s
+                          t(page: [ "projects", "archived" ])
                         }
                       end
                     end
@@ -111,11 +111,11 @@ class AccountByExternalIdPage < AppPage2
                             inline_svg("globe-network-icon")
                           }
                           span {
-                            t(page: [ "projects", "default_shared" ]).to_s
+                            t(page: [ "projects", "default_shared" ])
                           }
                         else
                           span(class: "w-2 flex flex-column justify-center") { inline_svg("lock-icon") }
-                          span { t(page: [ "projects", "default_private" ]).to_s }
+                          span { t(page: [ "projects", "default_private" ]) }
                         end
                       end
                     end
@@ -125,15 +125,15 @@ class AccountByExternalIdPage < AppPage2
                           class: "blue-400 ws-nowrap",
                           href: EditProjectByExternalIdPage.routing(external_id: project.external_id).to_s
                         ) {
-                          t(:edit).to_s 
+                          t(:edit) 
                         }
                         if project.active?
                           form_tag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id).to_s, method: :post) do
                             brut_confirm_submit(
-                              message: t(page: "projects.archive_confirmation").to_s
+                              message: t(page: "projects.archive_confirmation")
                             ) do
                               button(class: "tdu pointer blue-400 bn bg-none") {
-                                t(page: "projects.archive").to_s
+                                t(page: "projects.archive")
                               }
                             end
                           end
@@ -149,7 +149,7 @@ class AccountByExternalIdPage < AppPage2
                 href: NewProjectPage.routing.to_s,
                 class: "db pv-3 blue-300 f-3"
               ) {
-                t(page: "projects.add_new").to_s
+                t(page: "projects.add_new")
               }
             else
               p(class: "p i gray-400") do
@@ -179,34 +179,34 @@ class AccountByExternalIdPage < AppPage2
                   icon: "database-download-icon",
                 ))
                 p(class: "p i") do
-                  t(page: "download.create_download_explanation").to_s
+                  t(page: "download.create_download_explanation")
                 end
               end
             end
           end
           render(AccountByExternalIdPage::TabPanelComponent.new(tab_name: "info", selected_name: selected_tab.name)) do
-            h3(class: "f-3 ma-0") { t(page: "info.personal.title").to_s }
+            h3(class: "f-3 ma-0") { t(page: "info.personal.title") }
             dl(class: "dl-grid gap-2 ml-3") do
-              dt(class: "b") { t(page: "info.personal.email.title").to_s }
+              dt(class: "b") { t(page: "info.personal.email.title") }
               dd { 
                 plain(authenticated_account.account.email)
                 sup { raw(safe("&dagger;")) }
               }
               if timezone_from_browser
-                dt(class: "b") { t(page: "info.personal.timezone.title").to_s }
+                dt(class: "b") { t(page: "info.personal.timezone.title") }
                 dd {
                   plain(timezone_from_browser.to_s)
                   sup { raw(safe("&ddagger;")) }
                 }
               end
-              dt(class: "b") { t(page: "info.personal.locale.title").to_s }
+              dt(class: "b") { t(page: "info.personal.locale.title") }
               if http_accept_language.known?
                 dd { 
                   plain(http_accept_language.weighted_locales.map(&:locale).join(", "))
                   sup { raw(safe("&ddagger;")) }
                 }
               else
-                dd { t(page: "info.personal.locale.unknown").to_s }
+                dd { t(page: "info.personal.locale.unknown") }
               end
             end
             p(class: "i f-1 p ml-3 mb-0 gray-400") do
@@ -217,7 +217,7 @@ class AccountByExternalIdPage < AppPage2
               sup { raw(safe("&ddagger;")) }
               plain(t(page: "info.personal.timezone.note").to_s)
             end
-            h3(class: "f-3 ma-0 mt-4" ) { t(page: "info.limits.title").to_s }
+            h3(class: "f-3 ma-0 mt-4" ) { t(page: "info.limits.title") }
             p(class: "p ma-0 fw-4 mt-2") do
               raw(safe(t(page: :contact_support_for_limit_increase).to_s))
             end
@@ -231,10 +231,10 @@ class AccountByExternalIdPage < AppPage2
               )
               div(class: "p f-1 gray-300") do
                 if authenticated_account.entitlements.can_add_new?
-                  t(:adrs_remaining_counts, num: authenticated_account.entitlements.non_rejected_adrs_remaining, max: authenticated_account.entitlements.max_non_rejected_adrs).to_s
+                  t(:adrs_remaining_counts, num: authenticated_account.entitlements.non_rejected_adrs_remaining, max: authenticated_account.entitlements.max_non_rejected_adrs)
                 else
                   p(class: "p ma-0 fw-7 red-300") do
-                    t(:add_new_limit_exceeded).to_s
+                    t(:add_new_limit_exceeded)
                   end
                 end
               end
@@ -247,10 +247,10 @@ class AccountByExternalIdPage < AppPage2
               )
               div(class: "p f-1 gray-300") do
                 if authenticated_account.entitlements.can_add_new_project?
-                  t(:projects_remaining_counts, num: authenticated_account.entitlements.projects_remaining, max: authenticated_account.entitlements.max_projects).to_s
+                  t(:projects_remaining_counts, num: authenticated_account.entitlements.projects_remaining, max: authenticated_account.entitlements.max_projects)
                 else
                   p(class: "p ma-0 fw-7 red-300") do
-                    t(:project_limit_exceeded).to_s
+                    t(:project_limit_exceeded)
                   end
                 end
               end

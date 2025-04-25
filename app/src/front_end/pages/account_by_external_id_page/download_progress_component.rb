@@ -9,13 +9,13 @@ class AccountByExternalIdPage::DownloadProgressComponent < AppComponent2
       div(class: "pa-3 bn shadow-1 br-3 bg-green-900 green-200 dib") do
         h3(class: "ma-0 f-3 flex items-center gap-2") do
           span(class: "w-2") { inline_svg("database-download-icon") }
-          span { t(component: :download_ready).to_s }
+          span { t(component: :download_ready) }
         end
         p(class: "p i") do
-          t(component: :download_ready_text, created: time_tag(timestamp: download.created_at, format: :full_with_tz), deleted: time_tag(timestamp: download.delete_at, format: :full_with_tz)).to_s
+          t(component: :download_ready_text, created: time_tag(timestamp: download.created_at, format: :full_with_tz), deleted: time_tag(timestamp: download.delete_at, format: :full_with_tz))
         end
         a(href: DownloadsWithExternalIdHandler.routing(external_id: download.external_id).to_s, class:"f-3 green-200 db") do
-          t(component: :download).to_s
+          t(component: :download)
         end
         form_tag(for: DownloadsHandler, class: "mt-4") do
           render(ButtonComponent.new(
@@ -26,7 +26,7 @@ class AccountByExternalIdPage::DownloadProgressComponent < AppComponent2
             confirm: t(component: :create_new_confirmation),
           ))
           p(class: "p i f-1") do
-            t(component: :create_new_explanation).to_s
+            t(component: :create_new_explanation)
           end
         end
       end
@@ -36,10 +36,10 @@ class AccountByExternalIdPage::DownloadProgressComponent < AppComponent2
           span(class: "w-2 flex items-center rotating") do
             inline_svg("loader-icon")
           end
-          span { t(component: :download_being_assembled).to_s }
+          span { t(component: :download_being_assembled) }
         end
         p(class: "p i mb-0") do
-          t(component: :assembled_message).to_s
+          t(component: :assembled_message)
         end
       end
     end

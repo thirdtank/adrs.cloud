@@ -33,7 +33,7 @@ class AdrsPage::TabComponent < AppComponent2
           id: "#{ tab_name}-tab"
         ) do
           span(class: "flex items-center justify-end gap-2") do
-            span { t(page: [ "tabs", tab_name ]).to_s }
+            span { t(page: [ "tabs", tab_name ]) }
             if svg_name
               span(class:"w-2") { inline_svg(svg_name) }
             end

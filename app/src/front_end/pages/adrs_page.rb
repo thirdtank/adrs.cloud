@@ -64,11 +64,11 @@ class AdrsPage < AppPage2
                 href: NewDraftAdrPage.routing.to_s,
                 class: "green-500 bc-green-200 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300"
               ) do
-                t(page: :add_new).to_s
+                t(page: :add_new)
               end
             else
-              span(class:"gray-700 i bc-gray-200 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed", title: t(:add_new_limit_exceeded).to_s) do
-                t(page: :add_new).to_s
+              span(class:"gray-700 i bc-gray-200 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed", title: t(:add_new_limit_exceeded)) do
+                t(page: :add_new)
               end
             end
           end
@@ -90,10 +90,10 @@ class AdrsPage < AppPage2
             class:"orange-800 f-1 db",
             href: AccountByExternalIdPage.routing(external_id: authenticated_account.external_id).to_s
           ) do
-            t(page: :your_account).to_s
+            t(page: :your_account)
           end
-          a(class:"orange-800 f-1 db",href: HelpPage.routing.to_s) { t(:help).to_s }
-          a(class:"orange-800 f-1 db",href: LogoutHandler.routing.to_s) { t(:logout).to_s }
+          a(class:"orange-800 f-1 db",href: HelpPage.routing.to_s) { t(:help) }
+          a(class:"orange-800 f-1 db",href: LogoutHandler.routing.to_s) { t(:logout)}
         end
       end
       section(class:"bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start") do
@@ -114,7 +114,7 @@ class AdrsPage < AppPage2
                     value: tag,
                     id: "tag-search-input",
                     class: "text-field text-field--tiny",
-                    placeholder: t(page: :tag_filter_placeholder).to_s
+                    placeholder: t(page: :tag_filter_placeholder)
                   )
                 end
                 render(
@@ -130,7 +130,7 @@ class AdrsPage < AppPage2
                     href: "?",
                     class: "blue-400 f-1"
                   ) do
-                    t(page: :remove_filter).to_s
+                    t(page: :remove_filter)
                   end
                 end
               end

@@ -14,7 +14,7 @@ class EditDraftAdrByExternalIdPage < AppPage2
       raw(safe(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_not_updated").render.to_s))
       global_component(AnnouncementBannerComponent)
       header do
-        h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") { t(page: :edit).to_s }
+        h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") { t(page: :edit) }
         if draft_adr.refining?
           h3(class:"mt-1 fw-4 f-2 i flex items-center justify-center gap-2") do
             span(class:"w-2 gray-300") do

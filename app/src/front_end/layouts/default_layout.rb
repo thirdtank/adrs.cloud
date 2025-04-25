@@ -39,7 +39,7 @@ class DefaultLayout < Phlex::HTML
         meta(charset: "utf-8")
         meta(content: "width=device-width,initial-scale=1", name:"viewport")
         title do
-          t(:page_title).to_s
+          t(:page_title)
         end
         meta(content: "website", property:"og:type")
         raw(safe(Brut::FrontEnd::Components::PageIdentifier.new(@page_name).render.to_s))

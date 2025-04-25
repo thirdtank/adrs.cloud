@@ -55,7 +55,7 @@ class AnnouncementBannerComponent < AppComponent2
           end
           p(class: "p ma-0") do
             if i18_key
-              t(i18_key, time: time).to_s
+              t(i18_key, time: time)
             end
           end
         end
