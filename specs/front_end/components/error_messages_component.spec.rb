@@ -13,7 +13,7 @@ RSpec.describe ErrorMessagesComponent do
     locator = Support::HtmlLocator.new(html)
     expect(html.name).to eq("brut-cv")
     expect(html).to have_html_attribute("input-name" => "foo")
-    expect(html.text.strip).to eq("This field must have at least 10 words")
+    expect(html.text.strip).to eq("this field must have at least 10 words")
 
   end
 end

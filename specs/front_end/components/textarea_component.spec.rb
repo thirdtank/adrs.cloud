@@ -55,7 +55,7 @@ RSpec.describe TextareaComponent do
 
       expect(violations[0]).to have_html_attribute("server-side")
       expect(violations[0]).to have_html_attribute("input-name" => "foo")
-      expect(violations[0].text.strip).to eq("This field must have at least 2 words")
+      expect(violations[0].text.strip).to eq("this field must have at least 2 words")
     end
   end
 end

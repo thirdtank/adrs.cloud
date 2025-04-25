@@ -2,7 +2,6 @@ require "spec_helper"
 
 RSpec.describe "Manage Projects" do
   include Support::E2E::Login
-  include Brut::I18n::ForHTML
   it "can add, edit, and archive projects" do
     account = create(:account)
 
@@ -31,7 +30,7 @@ RSpec.describe "Manage Projects" do
     name_field.fill(account.projects.first.name)
 
     submit_button.click
-    expect(name_field).to have_text(t("general.cv.be.taken", field: t("general.cv.this_field")).capitalize.to_s)
+    expect(name_field).to have_text(t("general.cv.be.taken", field: t("general.cv.this_field")))
 
     name_field.fill("Some New Project")
     submit_button.click
@@ -53,7 +52,7 @@ RSpec.describe "Manage Projects" do
     submit_button = page.locator("form button[title='#{t("components.Projects::FormComponent.actions.edit")}']")
 
     submit_button.click
-    expect(name_field).to have_text(t("general.cv.be.taken", field: t("general.cv.this_field")).capitalize.to_s)
+    expect(name_field).to have_text(t("general.cv.be.taken", field: t("general.cv.this_field")))
 
     name_field.fill("Some Changed Project")
     description_field = page.locator("textarea[name='description']")

@@ -1,6 +1,7 @@
 require "spec_helper"
 
 RSpec.describe SharedAdrsByShareableIdPage do
+
   context "replaced" do
     context "replacing ADR is private" do
       it "shows the replaced ADR's title and time, shows it's been replaced, but not the name or link" do

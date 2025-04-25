@@ -2,7 +2,6 @@ require "spec_helper"
 
 RSpec.describe "Download all data", e2e_timeout: 30_000 do
   include Support::E2E::Login
-  include Brut::I18n::ForHTML
   it "can add, edit, and archive projects" do
     account = create(:account)
     create(:adr, account: account)

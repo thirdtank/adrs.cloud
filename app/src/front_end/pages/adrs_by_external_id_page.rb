@@ -233,16 +233,23 @@ class AdrsByExternalIdPage < AppPage2
                      div(class: "tl") do
                        div(class: "flex flex-column gap-2") do
                          div do
-                           link = safe(
-                             "<a class='red-900' href='#{adr_path(adr.replaced_by_adr)}'>#{ adr.replaced_by_adr.title }</a>"
+                           raw(
+                             t(page: :replaced_by) {
+                               a(
+                                 class: "red-900",
+                                 href: adr_path(adr.replaced_by_adr).to_s
+                               ) {
+                                 adr.replaced_by_adr.title
+                               }
+                             }
                            )
-                           raw(safe(t(page: :replaced_by, block: link).to_s))
                          end
                          div(class: "f-1") do
-                           raw(safe(t(page: :replaced_on) do
-                             clock = Thread.current.thread_variable_get(:request_context)[:clock]
-                             safe(Brut::FrontEnd::Components::Time.new(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date).render(clock:).to_s)
-                           end.to_s))
+                           raw(
+                             t(page: :replaced_on) {
+                               time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
+                             }
+                           )
                          end
                        end
                      end
@@ -259,8 +266,16 @@ class AdrsByExternalIdPage < AppPage2
                end
                if !adr.replaced_adr.nil?
                  banner(color: "green-200", background_color: "bg-green-900", font_size: "f-1") do
-                   link = safe(%{<a class="green-300" href="#{adr_path(adr.replaced_adr)}">#{adr.replaced_adr.title}</a>})
-                   raw(safe(t(page: :replaces, block: link).to_s))
+                   raw(
+                     t(page: :replaces) {
+                       a(
+                         class: "green-300",
+                         href: adr_path(adr.replaced_adr).to_s
+                       ) {
+                         adr.replaced_adr.title
+                       }
+                     }
+                   )
                  end
                end
                if adr.refines?
@@ -270,8 +285,16 @@ class AdrsByExternalIdPage < AppPage2
                        inline_svg("adjust-control-icon")
                      end
                      div(class: "tl f-1") do
-                       link = safe("<a class='blue-300' href=#{adr_path(adr.refines_adr)}>#{adr.refines_adr.title}</a>")
-                       raw(safe(t(page: :refines, block: link).to_s))
+                       raw(
+                         t(page: :refines) {
+                           a(
+                             class: "blue-300",
+                             href: adr_path(adr.refines_adr).to_s
+                           ) {
+                             adr.refines_adr.title
+                           }
+                         }
+                       )
                      end
                    end
                  end

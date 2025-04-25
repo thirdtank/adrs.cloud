@@ -21,8 +21,16 @@ class EditDraftAdrByExternalIdPage < AppPage2
               inline_svg("adjust-control-icon")
             end
             span do
-              link = safe(%{<a class="blue-300" href="#{ adr_path(draft_adr.adr_refining) }">#{ draft_adr.adr_refining.title }</a>})
-              raw(safe(t(page: :refines, block: link).to_s))
+              raw(
+                t(page: :refines) {
+                  a(
+                    class: "blue-300",
+                    href: adr_path(draft_adr.adr_refining).to_s
+                  ) {
+                    draft_adr.adr_refining.title
+                  }
+                }
+              )
             end
           end
         end
@@ -32,8 +40,16 @@ class EditDraftAdrByExternalIdPage < AppPage2
               inline_svg("change-icon")
             end
             span do
-              link = safe(%{<a class="blue-300" href="#{ adr_path(draft_adr.adr_replacing) }">#{ draft_adr.adr_replacing.title }</a>})
-              raw(safe(t(page: :proposed_replacement, block: link).to_s))
+              raw(
+                t(page: :proposed_replacement) {
+                  a(
+                    class: "blue-300",
+                    href: adr_path(draft_adr.adr_replacing).to_s
+                  ) {
+                    draft_adr.adr_replacing.title
+                  }
+                }
+              )
             end
           end
         end

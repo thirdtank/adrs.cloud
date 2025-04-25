@@ -23,7 +23,7 @@ RSpec.describe CheckboxComponent do
 
       expect(violations[0]).to have_html_attribute("server-side")
       expect(violations[0]).to have_html_attribute("input-name" => "foo")
-      expect(violations[0].text.strip).to eq("This field is required")
+      expect(violations[0].text.strip).to eq("this field is required")
     end
   end
   context "when there are no server-side constraint violations" do

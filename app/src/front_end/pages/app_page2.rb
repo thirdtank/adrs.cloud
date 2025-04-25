@@ -39,10 +39,6 @@ class AppPage2 < Phlex::HTML
     }
   end
 
-  def t2(**args, &block)
-    safe(t(**args.merge(block: safe(capture(&block)))).to_s)
-  end
-
   def time_tag(timestamp:nil,**component_options, &contents)
     args = component_options.merge(timestamp:)
     clock= Thread.current.thread_variable_get(:request_context)[:clock]

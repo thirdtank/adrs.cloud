@@ -23,7 +23,7 @@ RSpec.describe "Create and Edit an ADR" do
 
     error = page.locator("[role=alert]")
     expect(error).to have_text("ADR cannot be created. See below.")
-    expect(title_field).to have_text("This field must have at least 2 words")
+    expect(title_field).to have_text("this field must have at least 2 words")
 
     title_field.fill("Proper Title")
     project_selector = page.locator("select[name='project_external_id']")

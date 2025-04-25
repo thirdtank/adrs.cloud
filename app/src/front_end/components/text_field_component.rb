@@ -43,7 +43,7 @@ class TextFieldComponent < AppComponent2
         @constraint_violations.each do |constraint|
           if !constraint.client_side?
             brut_cv(server_side: true, input_name: @input_name, show_warnings: true) do
-              t("cv.be.#{constraint}", **constraint.context).capitalize.to_s
+              t("cv.be.#{constraint}", **constraint.context)
             end
           end
         end

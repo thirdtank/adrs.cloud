@@ -30,7 +30,7 @@ RSpec.describe "Accept an ADR" do
     confirm_button.click
 
     context_field = page.locator("label", has: page.locator("textarea[name='context']"))
-    expect(context_field).to have_text("This field is required")
+    expect(context_field).to have_text("this field is required")
 
     context_field.locator("textarea").fill("This is some context")
 
