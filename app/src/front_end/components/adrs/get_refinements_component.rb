@@ -36,7 +36,7 @@ class Adrs::GetRefinementsComponent < AppComponent2
         span(class: "w-2") do
           inline_svg("adjust-control-icon")
         end
-        plain(t(component: :refinements).to_s)
+        raw(t(component: :refinements))
       end
       table(class: "collapse w-100 mh-auto f-1") do
         thead do

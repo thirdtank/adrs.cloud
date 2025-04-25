@@ -55,7 +55,7 @@ class AdrsPage < AppPage2
               span(class:"f-5") {
                 inline_svg("architectural-icon")
               }
-              plain(t(:adrscloud).to_s)
+              raw(t(:adrscloud))
             end
           end
           div(class:"pb-3 pr-3") do

@@ -51,7 +51,7 @@ class AdrsByExternalIdPage < AppPage2
                 span(class: "f-5") do
                   inline_svg("architectural-icon")
                 end
-                plain(t(:adrscloud).to_s)
+                raw(t(:adrscloud))
               end
             end
             a(class: "f-2 fw-5 blue-800 db pt-3",

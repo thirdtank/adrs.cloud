@@ -31,7 +31,7 @@ class AccountByExternalIdPage < AppPage2
                 span(class: "f-5") do
                   inline_svg("architectural-icon")
                 end
-                plain(t(:adrscloud).to_s)
+                raw(t(:adrscloud))
               end
             end
           end
@@ -153,8 +153,8 @@ class AccountByExternalIdPage < AppPage2
               }
             else
               p(class: "p i gray-400") do
-                plain(t(page: :project_limit_exceeded).to_s)
-                plain(t(page: :contact_support_for_limit_increase).to_s)
+                raw(t(page: :project_limit_exceeded))
+                raw(t(page: :contact_support_for_limit_increase))
               end
             end
           end
@@ -211,11 +211,11 @@ class AccountByExternalIdPage < AppPage2
             end
             p(class: "i f-1 p ml-3 mb-0 gray-400") do
               sup { raw(safe("&dagger;")) }
-              plain(t(page: "info.personal.email.note").to_s)
+              raw(t(page: "info.personal.email.note"))
             end
             p(class: "i f-1 p ml-3 mt-0 gray-400") do
               sup { raw(safe("&ddagger;")) }
-              plain(t(page: "info.personal.timezone.note").to_s)
+              raw(t(page: "info.personal.timezone.note"))
             end
             h3(class: "f-3 ma-0 mt-4" ) { t(page: "info.limits.title") }
             p(class: "p ma-0 fw-4 mt-2") do
