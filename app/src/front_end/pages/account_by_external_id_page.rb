@@ -219,7 +219,7 @@ class AccountByExternalIdPage < AppPage2
             end
             h3(class: "f-3 ma-0 mt-4" ) { t(page: "info.limits.title") }
             p(class: "p ma-0 fw-4 mt-2") do
-              raw(safe(t(page: :contact_support_for_limit_increase).to_s))
+              raw(t(page: :contact_support_for_limit_increase))
             end
             div(class: "w-50 pa-3 flex flex-column items-center") do
               meter(

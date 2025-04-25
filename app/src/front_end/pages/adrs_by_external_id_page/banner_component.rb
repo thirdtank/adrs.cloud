@@ -56,9 +56,11 @@ class AdrsByExternalIdPage::BannerComponent < AppComponent2
       if @timestamp == :use_block
         yield
       else
-        clock = Thread.current.thread_variable_get(:request_context)[:clock]
-        time = safe(Brut::FrontEnd::Components::Time.new(timestamp: @timestamp, class: @timestamp_font_weight, format: :date).render(clock:).to_s)
-        raw(safe(t(page: @i18n_key, block: time).to_s))
+        raw(
+          t(page: @i18n_key) {
+            time_tag(timestamp: @timestamp, class: @timestamp_font_weight, format: :date)
+          }
+        )
       end
     end
   end

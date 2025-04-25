@@ -13,7 +13,7 @@ class SharedAdrsByShareableIdPage < AppPage2
       h4(
         class: "ma-0 f-1 ttu fw-6 #{label_additional_classes}"
       ) {
-        raw(safe(t(page: [ :fields, name ]).to_s))
+        raw(t(page: [ :fields, name ]))
       }
       div(class: "measure-wide rendered-markdown") do
         render(MarkdownStringComponent.new(adr.send(name)))
