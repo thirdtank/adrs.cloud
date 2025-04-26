@@ -1,4 +1,4 @@
-class Adrs::TextareaComponent < AppComponent2
+class Adrs::TextareaComponent < AppComponent
   def initialize(form:, input_name:, label:, context:)
     @label = label.to_s
     @context = context.to_s

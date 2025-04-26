@@ -1,4 +1,4 @@
-class CheckboxComponent < AppComponent2
+class CheckboxComponent < AppComponent
   def initialize(form:,label:,input_name:)
     @form = form
     @label = label.to_s

@@ -1,4 +1,4 @@
-class AnnouncementBannerComponent < AppComponent2
+class AnnouncementBannerComponent < AppComponent
   def initialize(flash:, site_announcement: :default_site_announcement, clock:)
     @shown_role = if flash.alert?
                     "alert"

@@ -1,4 +1,4 @@
-class AccountByExternalIdPage::TabPanelComponent < AppComponent2
+class AccountByExternalIdPage::TabPanelComponent < AppComponent
   attr_reader :tab_name
   def initialize(tab_name:, selected_name:)
     @tab_name = tab_name

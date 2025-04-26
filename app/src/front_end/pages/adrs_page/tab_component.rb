@@ -1,4 +1,4 @@
-class AdrsPage::TabComponent < AppComponent2
+class AdrsPage::TabComponent < AppComponent
   attr_reader :css_class
   def initialize(tabs:,selected_tab:, css_class: "")
     @tabs         = tabs

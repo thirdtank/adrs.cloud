@@ -1,4 +1,4 @@
-class Adrs::FormComponent < AppComponent2
+class Adrs::FormComponent < AppComponent
 
   attr_reader :form, :action_label, :form_action, :go_back_label, :projects_input
 

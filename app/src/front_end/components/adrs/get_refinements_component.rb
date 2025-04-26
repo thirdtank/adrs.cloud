@@ -1,4 +1,4 @@
-class Adrs::GetRefinementsComponent < AppComponent2
+class Adrs::GetRefinementsComponent < AppComponent
   attr_reader :refined_by_adrs
   def initialize(refined_by_adrs:, shareable_paths: false, gradient: true, constrain_width: true)
     @refined_by_adrs =   refined_by_adrs

@@ -1,4 +1,4 @@
-class ConfirmationDialogComponent < AppComponent2
+class ConfirmationDialogComponent < AppComponent
   def view_template
     brut_confirmation_dialog(show_warnings: true) do
       dialog(class:"ba bw-2 bc-gray-600 br-2 shadow-4 bg-red-900 pa-3") do

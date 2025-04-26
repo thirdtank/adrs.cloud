@@ -1,4 +1,4 @@
-class TextFieldComponent < AppComponent2
+class TextFieldComponent < AppComponent
   def initialize(label:,form:, input_name: nil, autofocus: false, placeholder: false)
     @input_id = nil
     @label = if label.kind_of?(Hash)

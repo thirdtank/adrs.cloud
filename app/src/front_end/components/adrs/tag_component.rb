@@ -1,6 +1,6 @@
 require "digest"
 
-class Adrs::TagComponent < AppComponent2
+class Adrs::TagComponent < AppComponent
   COLORS = [
     "orange",
     "red",

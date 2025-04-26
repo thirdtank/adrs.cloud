@@ -1,4 +1,4 @@
-class AdrsByExternalIdPage::BannerComponent < AppComponent2
+class AdrsByExternalIdPage::BannerComponent < AppComponent
   attr_reader :color, :background_color, :font_weight, :font_size, :padding, :margin
   def page_name = "AdrsByExternalIdPage"
 

@@ -1,4 +1,4 @@
-class ErrorMessagesComponent < AppComponent2
+class ErrorMessagesComponent < AppComponent
   def initialize(form:)
     @form = form
   end

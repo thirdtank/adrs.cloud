@@ -1,4 +1,4 @@
-class Projects::FormComponent < AppComponent2
+class Projects::FormComponent < AppComponent
   attr_reader :form, :action_label, :form_action, :go_back_label, :account_external_id
   def initialize(form, action:, external_id: nil, account_external_id:)
 

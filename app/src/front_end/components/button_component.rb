@@ -1,4 +1,4 @@
-class ButtonComponent < AppComponent2
+class ButtonComponent < AppComponent
   def initialize(size: :normal,
                  color: "gray",
                  label:,

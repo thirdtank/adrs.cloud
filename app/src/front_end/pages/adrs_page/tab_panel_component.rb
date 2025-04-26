@@ -1,4 +1,4 @@
-class AdrsPage::TabPanelComponent < AppComponent2
+class AdrsPage::TabPanelComponent < AppComponent
 
   attr_reader :tab, :columns, :adrs, :tag, :project
 
