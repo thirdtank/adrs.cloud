@@ -1,4 +1,4 @@
-class HelpPage < AppPage2
+class HelpPage < AppPage
   def page_template
     header(class: "pa-4 bg-gray-200 gray-800") do
       h1(class: "tc") { "Help & Support" }

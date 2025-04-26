@@ -1,4 +1,4 @@
-class AdrsByExternalIdPage < AppPage2
+class AdrsByExternalIdPage < AppPage
   attr_reader :adr
 
   def initialize(authenticated_account:, external_id:)

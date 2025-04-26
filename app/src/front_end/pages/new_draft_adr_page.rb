@@ -1,4 +1,4 @@
-class NewDraftAdrPage < AppPage2
+class NewDraftAdrPage < AppPage
   attr_reader :form, :refines_adr, :replaces_adr, :projects
   def initialize(form: nil, authenticated_account:, flash:)
     @form                 = form || NewDraftAdrForm.new

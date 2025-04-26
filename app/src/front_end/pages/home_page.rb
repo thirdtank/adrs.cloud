@@ -1,4 +1,4 @@
-class HomePage < AppPage2
+class HomePage < AppPage
   def initialize(flash:)
     @error_message = flash.alert
   end

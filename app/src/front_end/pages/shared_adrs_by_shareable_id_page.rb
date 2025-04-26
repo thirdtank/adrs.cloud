@@ -1,4 +1,4 @@
-class SharedAdrsByShareableIdPage < AppPage2
+class SharedAdrsByShareableIdPage < AppPage
   attr_reader :adr
 
   def initialize(shareable_id:)

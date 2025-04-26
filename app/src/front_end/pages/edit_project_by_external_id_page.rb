@@ -1,4 +1,4 @@
-class EditProjectByExternalIdPage < AppPage2
+class EditProjectByExternalIdPage < AppPage
   attr_reader :form, :project, :account_external_id
   def initialize(form:nil,external_id:,authenticated_account:)
     @project             = DB::Project.find!(external_id: external_id, account: authenticated_account.account)

@@ -1,4 +1,4 @@
-class AdrsPage < AppPage2
+class AdrsPage < AppPage
 
   attr_reader :tag, :tab, :entitlements, :authenticated_account, :project
 

@@ -1,4 +1,4 @@
-class DeveloperAuthPage < AppPage2
+class DeveloperAuthPage < AppPage
   def page_template
     section(class: "mh-auto w-50") do
       h1 { "Auth" }

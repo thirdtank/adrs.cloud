@@ -1,4 +1,4 @@
-class AccountByExternalIdPage < AppPage2
+class AccountByExternalIdPage < AppPage
   attr_reader :authenticated_account, :selected_tab, :timezone_from_browser, :http_accept_language
 
   Tab = Data.define(:name,:icon)
