@@ -36,10 +36,7 @@ class AppComponent2 < Phlex::HTML
 
   def time_tag(timestamp:nil,**component_options, &contents)
     args = component_options.merge(timestamp:)
-    clock= Thread.current.thread_variable_get(:request_context)[:clock]
-    raw(
-      safe(Brut::FrontEnd::Components::Time.new(**args,&contents).render(clock:).to_s)
-    )
+    render Brut::FrontEnd::Components::Time.new(**args,&contents)
   end
 
   def form_tag(**args, &block)
