@@ -47,11 +47,10 @@ class DefaultLayout < Phlex::HTML
         script(defer: true, src: asset_path("/js/app.js"))
         render(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.fe"))
         render(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.this_field"))
-        raw(
-          safe(
-            Brut::FrontEnd::RequestContext.inject(
-              Brut::FrontEnd::Components::LocaleDetection
-            ).render.to_s
+        render(Brut::FrontEnd::Components::Traceparent.new)
+        render(
+          Brut::FrontEnd::RequestContext.inject(
+            Brut::FrontEnd::Components::LocaleDetection
           )
         )
       end

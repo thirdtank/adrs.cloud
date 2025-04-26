@@ -18,11 +18,10 @@ RSpec.describe CheckboxComponent do
       checkbox = html.css("input[type=checkbox]").first
       expect(checkbox).not_to eq(nil)
       expect(checkbox[:value]).to eq("true")
-      violations = html.css("brut-cv")
+      violations = html.css("brut-cv-messages[input-name='foo'] brut-cv")
       expect(violations.size).to eq(1)
 
       expect(violations[0]).to have_html_attribute("server-side")
-      expect(violations[0]).to have_html_attribute("input-name" => "foo")
       expect(violations[0].text.strip).to eq("this field is required")
     end
   end

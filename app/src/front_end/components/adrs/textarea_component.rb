@@ -3,12 +3,12 @@ class Adrs::TextareaComponent < AppComponent2
     @label = label.to_s
     @context = context.to_s
     @input_name = input_name
+    @form = form
     @input_component = Brut::FrontEnd::Components::Inputs::Textarea.for_form_input(
-      form: form,
+      form: @form,
       input_name: @input_name,
       html_attributes: { class: "textarea", rows: 5, }
     )
-    @constraint_violations = form.input(@input_name).validity_state
   end
 
   def invalid? = @input_component.invalid?
@@ -20,18 +20,13 @@ class Adrs::TextareaComponent < AppComponent2
         render @input_component
       end
       div(class: "text-field-error-label") do
-        brut_cv_messages(
-          input_name: @input_name,
-          class: "flex flex-wrap items-baseline"
-        ) do
-        end
-        @constraint_violations.each do |constraint|
-          if !constraint.client_side?
-            brut_cv(server_side: true, input_name: @input_name) do
-              t("cv.be.#{constraint}", **constraint.context)
-            end
-          end
-        end
+        render(
+          Brut::FrontEnd::Components::ConstraintViolations.new(
+            form: @form,
+            input_name: @input_name,
+            class: "flex flex-wrap items-baseline"
+          )
+        )
       end
       div(class: "text-field-label") do
         span(class: "f-1") { @context }

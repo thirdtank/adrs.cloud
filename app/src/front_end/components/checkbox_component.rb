@@ -1,11 +1,11 @@
 class CheckboxComponent < AppComponent2
   def initialize(form:,label:,input_name:)
+    @form = form
     @label = label.to_s
     @input_name = input_name.to_s
-    @constraint_violations = form.input(@input_name).validity_state
     @checkbox = Brut::FrontEnd::Components::Inputs::TextField.for_form_input(
-      form:,
-      input_name:,
+      form: @form,
+      input_name: @input_name,
     )
   end
 
@@ -16,15 +16,13 @@ class CheckboxComponent < AppComponent2
         plain(@label)
       end
       div(class: "text-field-error-label") do
-        brut_cv_messages(input_name: @input_name,class: "flex flex-wrap items-baseline") do
-          @constraint_violations.each do |constraint|
-            if !constraint.client_side?
-              brut_cv(server_side: true, input_name: @input_name) do
-                t("cv.be.#{constraint}", **constraint.context)
-              end
-            end
-          end
-        end
+        render(
+          Brut::FrontEnd::Components::ConstraintViolations.new(
+            form: @form,
+            input_name: @input_name,
+            class: "flex flex-wrap items-baseline"
+          )
+        )
       end
     end
   end

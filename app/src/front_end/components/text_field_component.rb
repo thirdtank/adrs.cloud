@@ -11,14 +11,14 @@ class TextFieldComponent < AppComponent2
              else
                label.to_s
              end
+    @form = form
     @input_name = input_name.kind_of?(Symbol) ? input_name.to_s : input_name
     @input_component = create_input_component(
-      form:,
+      form: @form,
       autofocus:,
       placeholder:,
       input_id: @input_id
     )
-    @constraint_violations = form.input(@input_name).validity_state
   end
 
   def labeled_elsewhere? = @label.nil?
@@ -39,15 +39,13 @@ class TextFieldComponent < AppComponent2
   def internal_view_template
     input_component
     div(class: "text-field-error-label") do
-      brut_cv_messages(show_warnings: true, input_name: @input_name, class: "flex flex-wrap items-baseline") do
-        @constraint_violations.each do |constraint|
-          if !constraint.client_side?
-            brut_cv(server_side: true, input_name: @input_name, show_warnings: true) do
-              t("cv.be.#{constraint}", **constraint.context)
-            end
-          end
-        end
-      end
+      render(
+        Brut::FrontEnd::Components::ConstraintViolations.new(
+          form: @form,
+          input_name: @input_name,
+          class: "flex flex-wrap items-baseline"
+        )
+      )
     end
     if !labeled_elsewhere?
       div(class: "text-field-label") do
