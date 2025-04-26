@@ -48,7 +48,7 @@ class AppPage2 < Phlex::HTML
   end
 
   def form_tag(**args, &block)
-    render FormTag.new(**args,&block)
+    render Brut::FrontEnd::Components::FormTag.new(**args,&block)
   end
 
   def layout = "default"
