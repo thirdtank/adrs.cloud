@@ -11,7 +11,7 @@ class CheckboxComponent < AppComponent2
 
   def view_template
     label(class:"flex items-center gap-3") do
-      raw(safe(@checkbox.render.to_s))
+      render @checkbox
       div(class: "checkbox-label") do
         plain(@label)
       end

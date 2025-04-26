@@ -31,18 +31,14 @@ class AdrsPage < AppPage2
   def can_add_new? = @entitlements.can_add_new?
 
   def project_select
-    raw(
-      safe(
-        Brut::FrontEnd::Components::Inputs::Select.new(
-          name: "project_external_id",
-          include_blank: { value: "ALL", text_content: "All" },
-          options: authenticated_account.projects,
-          selected_value: project&.external_id,
-          value_attribute: :external_id,
-          option_text_attribute: :name,
-          html_attributes: { class: "w-6" }
-        ).render.to_s
-      )
+    render Brut::FrontEnd::Components::Inputs::Select.new(
+      name: "project_external_id",
+      include_blank: { value: "ALL", text_content: "All" },
+      options: authenticated_account.projects,
+      selected_value: project&.external_id,
+      value_attribute: :external_id,
+      option_text_attribute: :name,
+      html_attributes: { class: "w-6" }
     )
   end
 

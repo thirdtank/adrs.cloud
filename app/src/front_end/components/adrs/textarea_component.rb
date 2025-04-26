@@ -11,13 +11,13 @@ class Adrs::TextareaComponent < AppComponent2
     @constraint_violations = form.input(@input_name).validity_state
   end
 
-  def invalid? = @input_component.sanitized_attributes.key?("data-invalid")
+  def invalid? = @input_component.invalid?
 
   def view_template
     label(class: "flex flex-column gap-1 w-100") do
       div(class: "textarea-container", data_invalid: invalid?) do
         div(class: "inner-label") { @label }
-        raw(safe(@input_component.render.to_s))
+        render @input_component
       end
       div(class: "text-field-error-label") do
         brut_cv_messages(

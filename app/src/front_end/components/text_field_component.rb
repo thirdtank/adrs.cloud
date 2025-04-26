@@ -22,7 +22,7 @@ class TextFieldComponent < AppComponent2
   end
 
   def labeled_elsewhere? = @label.nil?
-  def invalid? = @input_component.sanitized_attributes.key?("data-invalid")
+  def invalid? = @input_component.invalid?
 
   def view_template
     if @label.nil?
@@ -59,7 +59,7 @@ class TextFieldComponent < AppComponent2
 private
 
   def input_component
-    raw(safe(@input_component.render.to_s))
+    render @input_component
   end
 
   def create_input_component(form:,autofocus:,placeholder:,input_id:)

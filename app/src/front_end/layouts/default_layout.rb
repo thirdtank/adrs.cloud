@@ -42,11 +42,11 @@ class DefaultLayout < Phlex::HTML
           t(:page_title)
         end
         meta(content: "website", property:"og:type")
-        raw(safe(Brut::FrontEnd::Components::PageIdentifier.new(@page_name).render.to_s))
+        render(Brut::FrontEnd::Components::PageIdentifier.new(@page_name))
         link(rel: "stylesheet", href: asset_path("/css/styles.css"))
         script(defer: true, src: asset_path("/js/app.js"))
-        raw(safe(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.fe").render.to_s))
-        raw(safe(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.this_field").render.to_s))
+        render(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.fe"))
+        render(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.this_field"))
         raw(
           safe(
             Brut::FrontEnd::RequestContext.inject(

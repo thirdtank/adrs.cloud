@@ -92,7 +92,7 @@ class Adrs::FormComponent < AppComponent2
       ) do
         label(class: "flex items-center gap-2 mb-3") do
           span { "Project" }
-          raw(safe(projects_input.render.to_s))
+          render projects_input
         end
         render(
           TextFieldComponent.new(

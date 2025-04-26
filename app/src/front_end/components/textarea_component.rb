@@ -4,7 +4,7 @@ private
 
   def input_component
     div(class: "textarea-container", data_invalid: invalid?) do
-      raw(safe(@input_component.render.to_s))
+      render @input_component
     end
   end
 
