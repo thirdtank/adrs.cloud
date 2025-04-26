@@ -5,9 +5,6 @@ class AccountByExternalIdPage::TabPanelComponent < AppComponent
     @selected = tab_name == selected_name
   end
 
-  def self.page_name = "AccountByExternalIdPage"
-  def page_name = "AccountByExternalIdPage"
-
   def selected? = @selected
 
   def view_template

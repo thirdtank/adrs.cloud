@@ -6,8 +6,6 @@ class AdrsPage::TabComponent < AppComponent
     @css_class    = css_class
   end
 
-  def page_name = "AdrsPage"
-
   def each_tab(&block)
     @tabs.each do |tab,svg|
       tab = tab.to_sym

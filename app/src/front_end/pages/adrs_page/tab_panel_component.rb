@@ -2,9 +2,6 @@ class AdrsPage::TabPanelComponent < AppComponent
 
   attr_reader :tab, :columns, :adrs, :tag, :project
 
-  def self.page_name = "AdrsPage"
-  def page_name = "AdrsPage"
-
   def initialize(adrs:, tab:, columns:, selected: false, action:, tag:, project:)
     @adrs         =   adrs
     @tab          =   tab
