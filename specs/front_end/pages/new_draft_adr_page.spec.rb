@@ -57,7 +57,7 @@ RSpec.describe NewDraftAdrPage do
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
-      expect(rendered_html.text).to include(escape_html(adr_being_refined.title))
+      expect(rendered_html.text).to include(CGI.escapeHTML(adr_being_refined.title))
     end
   end
   context "proposing to replace another ADR" do
@@ -70,7 +70,7 @@ RSpec.describe NewDraftAdrPage do
 
       rendered_html = render_and_parse(page)
       expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
-      expect(rendered_html.text).to include(escape_html(adr_being_replaced.title))
+      expect(rendered_html.text).to include(CGI.escapeHTML(adr_being_replaced.title))
     end
   end
 

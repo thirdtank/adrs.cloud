@@ -40,9 +40,7 @@ RSpec.describe "Accept an ADR" do
     confirm_button = page.locator("brut-confirmation-dialog button[value='ok']")
     confirm_button.click
 
-    with_clues do
     expect(page.locator("h2")).to have_text(adr.title)
-    end
     expect(page.locator("section[aria-label='context']")).to   have_text("This is some context")
     expect(page.locator("section[aria-label='facing']")).to    have_text(adr.facing)
     expect(page.locator("section[aria-label='decision']")).to  have_text(adr.decision)
