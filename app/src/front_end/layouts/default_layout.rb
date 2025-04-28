@@ -1,4 +1,5 @@
 class DefaultLayout < Brut::FrontEnd::Layout
+  include Brut::FrontEnd::Components
   register_element :adr_announcement_banner
   register_element :adr_check_download
   register_element :adr_edit_draft_by_external_id_page
@@ -20,12 +21,12 @@ class DefaultLayout < Brut::FrontEnd::Layout
           t(:page_title)
         end
         meta(content: "website", property:"og:type")
-        render(Brut::FrontEnd::Components::PageIdentifier.new(@page_name))
+        PageIdentifier(@page_name)
         link(rel: "stylesheet", href: asset_path("/css/styles.css"))
         script(defer: true, src: asset_path("/js/app.js"))
-        render(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.fe"))
-        render(Brut::FrontEnd::Components::I18nTranslations.new("general.cv.this_field"))
-        render(Brut::FrontEnd::Components::Traceparent.new)
+        I18nTranslations("general.cv.fe")
+        I18nTranslations("general.cv.this_field")
+        Traceparent()
         render(
           Brut::FrontEnd::RequestContext.inject(
             Brut::FrontEnd::Components::LocaleDetection

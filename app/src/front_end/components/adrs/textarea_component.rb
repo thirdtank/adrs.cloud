@@ -20,12 +20,10 @@ class Adrs::TextareaComponent < AppComponent
         render @input_component
       end
       div(class: "text-field-error-label") do
-        render(
-          Brut::FrontEnd::Components::ConstraintViolations.new(
-            form: @form,
-            input_name: @input_name,
-            class: "flex flex-wrap items-baseline"
-          )
+        ConstraintViolations(
+          form: @form,
+          input_name: @input_name,
+          class: "flex flex-wrap items-baseline"
         )
       end
       div(class: "text-field-label") do

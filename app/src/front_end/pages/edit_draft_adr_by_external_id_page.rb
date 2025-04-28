@@ -10,8 +10,8 @@ class EditDraftAdrByExternalIdPage < AppPage
 
   def page_template
     adr_edit_draft_by_external_id_page(show_warnings: true) do
-      render(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_updated"))
-      render(Brut::FrontEnd::Components::I18nTranslations.new("pages.EditDraftAdrByExternalIdPage.adr_not_updated"))
+      I18nTranslations("pages.EditDraftAdrByExternalIdPage.adr_updated")
+      I18nTranslations("pages.EditDraftAdrByExternalIdPage.adr_not_updated")
       global_component(AnnouncementBannerComponent)
       header do
         h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") { t(page: :edit) }

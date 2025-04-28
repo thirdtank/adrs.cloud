@@ -31,7 +31,7 @@ class AdrsPage < AppPage
   def can_add_new? = @entitlements.can_add_new?
 
   def project_select
-    render Brut::FrontEnd::Components::Inputs::Select.new(
+    Inputs::Select(
       name: "project_external_id",
       include_blank: { value: "ALL", text_content: "All" },
       options: authenticated_account.projects,

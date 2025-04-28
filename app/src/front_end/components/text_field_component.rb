@@ -39,12 +39,10 @@ class TextFieldComponent < AppComponent
   def internal_view_template
     input_component
     div(class: "text-field-error-label") do
-      render(
-        Brut::FrontEnd::Components::ConstraintViolations.new(
-          form: @form,
-          input_name: @input_name,
-          class: "flex flex-wrap items-baseline"
-        )
+      ConstraintViolations(
+        form: @form,
+        input_name: @input_name,
+        class: "flex flex-wrap items-baseline"
       )
     end
     if !labeled_elsewhere?

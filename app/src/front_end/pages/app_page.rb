@@ -1,5 +1,6 @@
 class AppPage < Brut::FrontEnd::Page
   include Brut::Framework::Errors
+  include Brut::FrontEnd::Components
   register_element :adr_announcement_banner
   register_element :adr_check_download
   register_element :adr_edit_draft_by_external_id_page
