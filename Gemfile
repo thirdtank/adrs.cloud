@@ -30,8 +30,6 @@ gem "omniauth-github", "~> 2.0.0"
 # This provides middlwares for Sidekiq and OTel
 gem "opentelemetry-instrumentation-sidekiq"
 
-gem "phlex"
-
 # We use Postgres
 gem "pg"
 
@@ -43,6 +41,9 @@ gem "puma"
 
 # Redcarpet parses and renders Markdown
 gem "redcarpet"
+
+# REXML is used to create HTML for downloads XXX: Could use phlex
+gem "rexml"
 
 # Uses RSpec for testing
 gem "rspec", groups: [ :test ]

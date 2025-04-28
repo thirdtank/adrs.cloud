@@ -56,7 +56,7 @@ class Adrs::GetRefinementsComponent < AppComponent
           refined_by_adrs.each do |refining_adr|
             tr do
               td(class:"pv-2 pr-2") do
-                a(class:"blue-300", href:path(refining_adr).to_s) do
+                a(class:"blue-300", href:path(refining_adr)) do
                   refining_adr.title
                 end
               end

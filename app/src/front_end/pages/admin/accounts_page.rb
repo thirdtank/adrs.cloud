@@ -34,7 +34,7 @@ class Admin::AccountsPage < Admin::BasePage
                 td(class: "bb bc-gray-500 pa-2") do
                   a(
                     class:"blue-300",
-                    href: edit_account_path(account).to_s
+                    href: edit_account_path(account)
                   ) do
                     "Edit"
                   end
@@ -48,7 +48,7 @@ class Admin::AccountsPage < Admin::BasePage
           "Nothing Matched #{search_string}"
         end
       end
-      a(href: Admin::HomePage.routing.to_s, class: "db mt-3") do
+      a(href: Admin::HomePage.routing, class: "db mt-3") do
         raw(safe("&larr; Back"))
       end
     end

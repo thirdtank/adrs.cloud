@@ -85,7 +85,7 @@ class AdrsPage::TabPanelComponent < AppComponent
               end
             end
             td(class:"pa-2 tr va-middle bb br bc-gray-600") do
-              a(class: "blue-400 ws-nowrap", href: action_routing(adr).to_s) do
+              a(class: "blue-400 ws-nowrap", href: action_routing(adr)) do
                 t(page: action_name)
               end
             end

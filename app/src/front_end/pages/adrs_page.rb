@@ -57,7 +57,7 @@ class AdrsPage < AppPage
           div(class:"pb-3 pr-3") do
             if can_add_new?
               a(
-                href: NewDraftAdrPage.routing.to_s,
+                href: NewDraftAdrPage.routing,
                 class: "green-500 bc-green-200 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300"
               ) do
                 t(page: :add_new)
@@ -84,12 +84,12 @@ class AdrsPage < AppPage
         div(class:"w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3") do
           a(
             class:"orange-800 f-1 db",
-            href: AccountByExternalIdPage.routing(external_id: authenticated_account.external_id).to_s
+            href: AccountByExternalIdPage.routing(external_id: authenticated_account.external_id)
           ) do
             t(page: :your_account)
           end
-          a(class:"orange-800 f-1 db",href: HelpPage.routing.to_s) { t(:help) }
-          a(class:"orange-800 f-1 db",href: LogoutHandler.routing.to_s) { t(:logout)}
+          a(class:"orange-800 f-1 db",href: HelpPage.routing) { t(:help) }
+          a(class:"orange-800 f-1 db",href: LogoutHandler.routing) { t(:logout)}
         end
       end
       section(class:"bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start") do

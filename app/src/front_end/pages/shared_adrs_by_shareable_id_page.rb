@@ -56,7 +56,7 @@ class SharedAdrsByShareableIdPage < AppPage
                       t(page: :replaced_by) do
                         a(
                           class: "red-900",
-                          href: shareable_path(adr.replaced_by_adr).to_s
+                          href: shareable_path(adr.replaced_by_adr)
                         ) {
                           adr.replaced_by_adr.title
                         }
@@ -84,7 +84,7 @@ class SharedAdrsByShareableIdPage < AppPage
                 t(page: :replaced_by) do
                   a(
                     class: "green-300",
-                    href: shareable_path(adr.replaced_adr).to_s
+                    href: shareable_path(adr.replaced_adr)
                   ) {
                     adr.replaced_adr.title
                   }
@@ -118,7 +118,7 @@ class SharedAdrsByShareableIdPage < AppPage
                   t(page: :refines) do
                     a(
                       class: "blue-300",
-                      href: shareable_path(adr.refines_adr).to_s
+                      href: shareable_path(adr.refines_adr)
                     ) {
                       adr.refines_adr.title
                     }

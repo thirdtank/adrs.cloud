@@ -56,7 +56,7 @@ class Projects::FormComponent < AppComponent
           render(ButtonComponent.new(size: "normal", color: "blue", label: action_label, icon: "layer-icon"))
         end
         a(
-          href: AccountByExternalIdPage.routing(external_id: account_external_id, tab: :projects).to_s,
+          href: AccountByExternalIdPage.routing(external_id: account_external_id, tab: :projects),
           class: "red-300"
         ) do
           span(role:"none") { raw(safe("&larr;")) }

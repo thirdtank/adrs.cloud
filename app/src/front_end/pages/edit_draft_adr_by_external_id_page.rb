@@ -25,7 +25,7 @@ class EditDraftAdrByExternalIdPage < AppPage
                 t(page: :refines) {
                   a(
                     class: "blue-300",
-                    href: adr_path(draft_adr.adr_refining).to_s
+                    href: adr_path(draft_adr.adr_refining)
                   ) {
                     draft_adr.adr_refining.title
                   }
@@ -44,7 +44,7 @@ class EditDraftAdrByExternalIdPage < AppPage
                 t(page: :proposed_replacement) {
                   a(
                     class: "blue-300",
-                    href: adr_path(draft_adr.adr_replacing).to_s
+                    href: adr_path(draft_adr.adr_replacing)
                   ) {
                     draft_adr.adr_replacing.title
                   }

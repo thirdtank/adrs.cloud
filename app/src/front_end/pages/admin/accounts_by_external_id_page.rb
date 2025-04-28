@@ -40,7 +40,7 @@ class Admin::AccountsByExternalIdPage < Admin::BasePage
     end
     section(class:"mh-auto w-two-thirds") do
       nav(class: "w-100 flex items-center pa-3") do
-        a(href: Admin::HomePage.routing.to_s) do
+        a(href: Admin::HomePage.routing) do
           raw(safe("&larr; #{t(:back)}"))
         end
       end
@@ -52,7 +52,7 @@ class Admin::AccountsByExternalIdPage < Admin::BasePage
       }
       brut_form do
         form_tag(
-          action: form.class.routing(external_id: account.external_id).to_s,
+          action: form.class.routing(external_id: account.external_id),
           method: :post
         ) do
           table(class: "collapse w-100") do

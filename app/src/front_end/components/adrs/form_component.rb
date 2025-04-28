@@ -57,7 +57,7 @@ class Adrs::FormComponent < AppComponent
     if !@form.new_record?
       render(
         ButtonComponent.new(
-          formaction: RejectedAdrsWithExternalIdHandler.routing(external_id: @external_id).to_s,
+          formaction: RejectedAdrsWithExternalIdHandler.routing(external_id: @external_id),
           size: "small",
           color: "red",
           label: t(component: [ :actions, :reject ]),
@@ -72,7 +72,7 @@ class Adrs::FormComponent < AppComponent
     if !@form.new_record?
       render(
         ButtonComponent.new(
-          formaction: AcceptedAdrsWithExternalIdForm.routing(external_id: @external_id).to_s,
+          formaction: AcceptedAdrsWithExternalIdForm.routing(external_id: @external_id),
           size: "small",
           color: "green",
           label: t(component: [ :actions, :accept ]),
@@ -201,7 +201,7 @@ class Adrs::FormComponent < AppComponent
           accept_button
         end
         a(
-          href: AdrsPage.routing.to_s,
+          href: AdrsPage.routing,
           class: "red-300"
         ) do
           span(role: "none") { raw(safe("&larr;")) }

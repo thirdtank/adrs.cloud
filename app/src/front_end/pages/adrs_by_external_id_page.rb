@@ -9,7 +9,7 @@ class AdrsByExternalIdPage < AppPage
   def can_add_new? = @can_add_new
   def can_edit_tags? = self.accepted?
   # XXX: Remove or recreate this
-  def adr_path(adr) = AdrsByExternalIdPage.routing(external_id: adr.external_id).to_s
+  def adr_path(adr) = AdrsByExternalIdPage.routing(external_id: adr.external_id)
 
   def field(name, label_additional_clases: "")
     section(aria_label: name, class: "flex flex-column gap-2 ph-3") {
@@ -55,7 +55,7 @@ class AdrsByExternalIdPage < AppPage
               end
             end
             a(class: "f-2 fw-5 blue-800 db pt-3",
-              href:AdrsPage.routing.to_s
+              href:AdrsPage.routing
              ) do
                raw(safe("&larr; #{t(:view_all)}"))
              end
@@ -103,7 +103,7 @@ class AdrsByExternalIdPage < AppPage
                     a(
                       class: "blue-300 f-1 db flex items-center justify-end gap-1 pr-1 w-100",
                       target:"_blank",
-                      href: SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id).to_s
+                      href: SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id)
                     ) do
                       span { inline_svg("external-link-icon") }
                       span { t(page: :view_share_page) }
@@ -171,7 +171,7 @@ class AdrsByExternalIdPage < AppPage
               if can_edit_tags?
                 adr_tag_editor_edit(class: "dn pos-absolute z-2") do
                   form_tag(
-                    action: AdrTagsWithExternalIdForm.routing(external_id: adr.external_id).to_s,
+                    action: AdrTagsWithExternalIdForm.routing(external_id: adr.external_id),
                     method: "post",
                     class: "flex flex-column items-end gap-2 mt-2 pa-3 shadow-3 ba bc-gray-700 z-3 bg-white"
 
@@ -237,7 +237,7 @@ class AdrsByExternalIdPage < AppPage
                              t(page: :replaced_by) {
                                a(
                                  class: "red-900",
-                                 href: adr_path(adr.replaced_by_adr).to_s
+                                 href: adr_path(adr.replaced_by_adr)
                                ) {
                                  adr.replaced_by_adr.title
                                }
@@ -270,7 +270,7 @@ class AdrsByExternalIdPage < AppPage
                      t(page: :replaces) {
                        a(
                          class: "green-300",
-                         href: adr_path(adr.replaced_adr).to_s
+                         href: adr_path(adr.replaced_adr)
                        ) {
                          adr.replaced_adr.title
                        }
@@ -289,7 +289,7 @@ class AdrsByExternalIdPage < AppPage
                          t(page: :refines) {
                            a(
                              class: "blue-300",
-                             href: adr_path(adr.refines_adr).to_s
+                             href: adr_path(adr.refines_adr)
                            ) {
                              adr.refines_adr.title
                            }

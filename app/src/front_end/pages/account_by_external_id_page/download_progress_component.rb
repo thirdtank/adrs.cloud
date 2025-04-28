@@ -14,7 +14,7 @@ class AccountByExternalIdPage::DownloadProgressComponent < AppComponent
         p(class: "p i") do
           t(component: :download_ready_text, created: time_tag(timestamp: download.created_at, format: :full_with_tz), deleted: time_tag(timestamp: download.delete_at, format: :full_with_tz))
         end
-        a(href: DownloadsWithExternalIdHandler.routing(external_id: download.external_id).to_s, class:"f-3 green-200 db") do
+        a(href: DownloadsWithExternalIdHandler.routing(external_id: download.external_id), class:"f-3 green-200 db") do
           t(component: :download)
         end
         form_tag(for: DownloadsHandler, class: "mt-4") do

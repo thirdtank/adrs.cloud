@@ -44,7 +44,7 @@ class Adrs::TagComponent < AppComponent
       if link?
         a(
           class: "#{ color }-300 fw-#{ weight } flex items-center gap-1",
-          href: AdrsPage.routing(tag: tag).to_s
+          href: AdrsPage.routing(tag: tag)
         ) do
           icon_markup
           span { plain(tag) }

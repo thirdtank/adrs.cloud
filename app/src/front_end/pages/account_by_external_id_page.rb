@@ -61,9 +61,9 @@ class AccountByExternalIdPage < AppPage
           end
         end
         div(class: "w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3") do
-          a(class: "orange-800 f-1 db", href:AdrsPage.routing.to_s) {  t(page: :your_adrs) }
-          a(class: "orange-800 f-1 db", href:HelpPage.routing.to_s) { t(:help) }
-          a(class: "orange-800 f-1 db", href:LogoutHandler.routing.to_s) { t(:logout) }
+          a(class: "orange-800 f-1 db", href:AdrsPage.routing) {  t(page: :your_adrs) }
+          a(class: "orange-800 f-1 db", href:HelpPage.routing) { t(:help) }
+          a(class: "orange-800 f-1 db", href:LogoutHandler.routing) { t(:logout) }
         end
       end
       section(class: "bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start") do
@@ -123,12 +123,12 @@ class AccountByExternalIdPage < AppPage
                       div(class: "flex items-baseline gap-2") do
                         a(
                           class: "blue-400 ws-nowrap",
-                          href: EditProjectByExternalIdPage.routing(external_id: project.external_id).to_s
+                          href: EditProjectByExternalIdPage.routing(external_id: project.external_id)
                         ) {
                           t(:edit) 
                         }
                         if project.active?
-                          form_tag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id).to_s, method: :post) do
+                          form_tag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id), method: :post) do
                             brut_confirm_submit(
                               message: t(page: "projects.archive_confirmation")
                             ) do
@@ -146,7 +146,7 @@ class AccountByExternalIdPage < AppPage
             end
             if authenticated_account.entitlements.can_add_new_project?
               a(
-                href: NewProjectPage.routing.to_s,
+                href: NewProjectPage.routing,
                 class: "db pv-3 blue-300 f-3"
               ) {
                 t(page: "projects.add_new")
@@ -164,7 +164,7 @@ class AccountByExternalIdPage < AppPage
                 aria_live: "polite",
                 aria_atomic: "true",
                 log_request_errors: true,
-                download_url: ReadyDownloadsWithExternalIdHandler.routing(external_id: authenticated_account.download.external_id).to_s,
+                download_url: ReadyDownloadsWithExternalIdHandler.routing(external_id: authenticated_account.download.external_id),
                 ready: authenticated_account.download.ready?,
                 show_warnings: true
               ) do
