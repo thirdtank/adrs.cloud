@@ -42,8 +42,8 @@ gem "puma"
 # Redcarpet parses and renders Markdown
 gem "redcarpet"
 
-# REXML is used to create HTML for downloads XXX: Could use phlex
-gem "rexml"
+# REXML parses the download HTML for testing only
+gem "rexml", groups: [ :test ]
 
 # Uses RSpec for testing
 gem "rspec", groups: [ :test ]

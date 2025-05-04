@@ -1,4 +1,4 @@
-require "rexml"
+require "phlex"
 class Download
 
   extend Forwardable
@@ -48,45 +48,53 @@ class Download
     AssembleDownloadJob.perform_in(1,external_id)
   end
 
+  class PhlexComponent < Phlex::HTML
+    def initialize(download:)
+      @download = download
+    end
+
+    def view_template
+      html do
+        body do
+          main do
+            section(title: "adrs") do
+              @download.account.adrs.each do |adr|
+                section(id: adr.external_id) do
+                  h2 { adr.title }
+                  dl do
+                    adr.as_json.each do |key, value|
+                      if key != :external_id && key != :title
+                        dt { key.to_s }
+                        dd { value.to_s }
+                      end
+                    end
+                  end
+                end
+              end
+            end
+            section(title: "projects") do
+              @download.account.projects.each do |project|
+                section(id: project.external_id) do
+                  h2 { project.name }
+                  dl do
+                    project.as_json.each do |key,value|
+                      if key != :external_id && key != :name
+                        dt { key.to_s }
+                        dd { value.to_s }
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
   def assemble
-    html = REXML::Document.new("<!DOCTYPE html>")
-    main = html.add_element("html").add_element("body").add_element("main")
-
-    adrs = main.add_element("section")
-    adrs.add_attribute("title","adrs")
-    projects = main.add_element("section")
-    projects.add_attribute("title","projects")
-
-    @download.account.adrs.each do |adr|
-      section = adrs.add_element("section")
-      section.add_attribute("id",adr.external_id)
-      h2 = section.add_element("h2")
-      h2.text = adr.title
-      dl = section.add_element("dl")
-      adr.as_json.each do |key,value|
-        if key != :external_id && key != :title
-          dt = dl.add_element("dt")
-          dt.text=key.to_s
-          dd = dl.add_element("dd")
-          dd.text=value.to_s
-        end
-      end
-    end
-    @download.account.projects.each do |project|
-      section = projects.add_element("section")
-      section.add_attribute("id",project.external_id)
-      h2 = section.add_element("h2")
-      h2.text = project.name
-      dl = section.add_element("dl")
-      project.as_json.each do |key,value|
-        if key != :external_id && key != :name
-          dt = dl.add_element("dt")
-          dt.text=key.to_s
-          dd = dl.add_element("dd")
-          dd.text=value
-        end
-      end
-    end
+    html = PhlexComponent.new(download: @download).call
     @download.update(
       data_ready_at: Time.now,
       delete_at: Time.now + (60 * 60 * 24),

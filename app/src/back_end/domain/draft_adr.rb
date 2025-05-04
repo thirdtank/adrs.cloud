@@ -2,7 +2,6 @@ class DraftAdr
 
   include Brut::Framework::Errors
   extend Brut::Framework::Errors
-  include Brut::Instrumentation
 
   class AcceptedAdrValidator < Brut::BackEnd::Validators::FormValidator
     validate :context   , required: true , minlength: 10
@@ -95,7 +94,8 @@ class DraftAdr
   end
 
   def save(form:)
-    span("DraftAdr.save") do |span|
+    Brut.container.instrumentation.span("DraftAdr.save") do |span|
+
       if form.title.to_s.strip !~ /\s+/
         form.server_side_constraint_violation(input_name: :title, key: :not_enough_words, context: { minwords: 2 })
       end

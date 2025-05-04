@@ -124,9 +124,9 @@ RSpec.describe Download do
       expect(download.data_ready_at).to be_within(10).of(Time.now)
       expect(download.delete_at).to be_within(10).of(Time.now + (60 * 60 * 24))
 
-      doc = REXML::Document.new(download.all_data)
+      doc = REXML::Document.new(download.all_data.strip)
       expect(doc[0].name).to eq("html")
-      html = doc[1]
+      html = doc[0]
       expect(html.class).to eq(REXML::Element)
       expect(html.name).to eq("html")
       expect(html.length).to eq(1)
@@ -203,7 +203,7 @@ RSpec.describe Download do
         }
         hash = project.as_json
         as_hash.each do |key,value|
-          expect(value.to_s).to eq(hash[key.to_sym].to_s)
+          expect(value.to_s).to eq(hash[key.to_sym].to_s),key
         end
       end
     end
