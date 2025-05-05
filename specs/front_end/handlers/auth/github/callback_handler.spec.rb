@@ -14,7 +14,10 @@ RSpec.describe Auth::Github::CallbackHandler do
             }
           }
         }
-        result = described_class.new.handle!(env:, flash: empty_flash, session:)
+        flash = empty_flash
+        handler = described_class.new(env: env, flash: flash, session: session)
+
+        result = handler.handle!
 
         expect(result).to be_routing_for(AdrsPage)
         expect(session.logged_in_account_id).to eq(account.external_id)
@@ -35,8 +38,9 @@ RSpec.describe Auth::Github::CallbackHandler do
         }
 
         flash = empty_flash
+        handler = described_class.new(env: env, flash: flash, session: session)
 
-        result = described_class.new.handle!(env:, flash:, session:)
+        result = handler.handle!
 
         expect(result.class).to eq(HomePage)
         expect(flash.alert).to eq("auth.no_account")
@@ -57,9 +61,9 @@ RSpec.describe Auth::Github::CallbackHandler do
           }
         }
       }
-      result = described_class.new.handle!(env: env,
-                                           flash: flash,
-                                           session: session)
+      handler = described_class.new(env: env, flash: flash, session: session)
+
+      result = handler.handle!
       expect(result.class).to eq(HomePage)
       expect(flash.alert).to eq("auth.no_account")
       expect(session.logged_in?).to eq(false)
@@ -79,9 +83,9 @@ RSpec.describe Auth::Github::CallbackHandler do
           }
         }
       }
-      result = described_class.new.handle!(env: env,
-                                           flash: flash,
-                                           session: session)
+      handler = described_class.new(env: env, flash: flash, session: session)
+
+      result = handler.handle!
       expect(result.class).to eq(HomePage)
       expect(flash.alert).to eq("domain.account.github.uid_used_by_other_account")
       expect(session.logged_in?).to eq(false)

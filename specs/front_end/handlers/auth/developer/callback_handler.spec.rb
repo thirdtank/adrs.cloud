@@ -4,10 +4,10 @@ RSpec.describe Auth::Developer::CallbackHandler do
     it "sets the id in the session and redirects to the AdrsPage" do
       account = create(:account)
       session = empty_session
+      flash = empty_flash
+      handler = described_class.new(email: account.email, flash: flash, session: session)
 
-      result = described_class.new.handle!(email: account.email,
-                                           flash: empty_flash,
-                                           session: session)
+      result = handler.handle!
       expect(result).to be_routing_for(AdrsPage)
       expect(session.logged_in_account_id).to eq(account.external_id)
     end
@@ -16,9 +16,9 @@ RSpec.describe Auth::Developer::CallbackHandler do
     it "sets an error in the flash and redirects to the HomePage" do
       flash = empty_flash
       session = empty_session
-      result = described_class.new.handle!(email: "nope@example.com",
-                                           flash: flash,
-                                           session: session)
+      handler = described_class.new(email: "nope@example.com", flash: flash, session: session)
+
+      result = handler.handle!
       expect(result.class).to eq(HomePage)
       expect(flash.alert).to eq("auth.no_account")
       expect(session.logged_in?).to eq(false)

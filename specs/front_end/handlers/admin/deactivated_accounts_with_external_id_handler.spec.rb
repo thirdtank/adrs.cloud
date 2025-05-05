@@ -1,15 +1,14 @@
 require "spec_helper"
 RSpec.describe Admin::DeactivatedAccountsWithExternalIdHandler do
-  subject(:handler) { described_class.new }
-
   describe "#handle!" do
     context "authenticated_account is not an admin" do
       it "404s" do
         authenticated_account = create(:authenticated_account)
         account = create(:account)
         flash = empty_flash
+        handler = described_class.new(external_id: account.external_id, flash: flash, authenticated_account: authenticated_account)
 
-        result = handler.handle!(external_id: account.external_id, flash:, authenticated_account:)
+        result = handler.handle!
 
         expect(result).to have_returned_http_status(404)
       end
@@ -19,8 +18,9 @@ RSpec.describe Admin::DeactivatedAccountsWithExternalIdHandler do
         authenticated_account = create(:authenticated_account, :admin)
         account = create(:account)
         flash = empty_flash
+        handler = described_class.new(external_id: account.external_id, flash: flash, authenticated_account: authenticated_account)
 
-        result = handler.handle!(external_id: account.external_id, flash:, authenticated_account:)
+        result = handler.handle!
         account.reload
 
         expect(result).to be_routing_for(Admin::HomePage)

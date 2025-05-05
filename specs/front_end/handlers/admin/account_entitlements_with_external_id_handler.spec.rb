@@ -1,13 +1,15 @@
 require "spec_helper"
 RSpec.describe Admin::AccountEntitlementsWithExternalIdHandler do
-  subject(:handler) { described_class.new }
   describe "#handle!" do
     context "authenticated_account does not have admin access" do
       it "404s" do
         authenticated_account = create(:authenticated_account)
         account = create(:account)
         form = Admin::AccountEntitlementsWithExternalIdForm.new
-        result = handler.handle!(form:,external_id: account.external_id,flash: empty_flash, authenticated_account:)
+        flash = empty_flash
+        handler = described_class.new(form: form, external_id: account.external_id, flash: flash, authenticated_account: authenticated_account)
+
+        result = handler.handle!
         expect(result).to have_returned_http_status(404)
       end
     end
@@ -20,7 +22,10 @@ RSpec.describe Admin::AccountEntitlementsWithExternalIdHandler do
             max_non_rejected_adrs: "-1",
             external_id: account.external_id
           })
-          result = handler.handle!(form:,external_id: account.external_id,flash: empty_flash, authenticated_account:)
+          flash = empty_flash
+          handler = described_class.new(form: form, external_id: account.external_id, flash: flash, authenticated_account: authenticated_account)
+
+          result = handler.handle!
           expect(form.constraint_violations?).to eq(true)
           expect(result.class).to eq(Admin::AccountsByExternalIdPage)
         end
@@ -35,8 +40,9 @@ RSpec.describe Admin::AccountEntitlementsWithExternalIdHandler do
           })
           flash = empty_flash
           expect(form.constraint_violations?).to eq(false),form.constraint_violations.inspect
+          handler = described_class.new(form: form, external_id: account.external_id, flash: flash, authenticated_account: authenticated_account)
 
-          result = handler.handle!(form:,external_id: account.external_id,flash: flash,authenticated_account:)
+          result = handler.handle!
           expect(result).to be_routing_for(Admin::AccountsByExternalIdPage, external_id: account.external_id, authenticated_account:)
           expect(flash.notice).to eq("entitlements_saved")
         end
