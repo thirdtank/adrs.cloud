@@ -9,9 +9,9 @@ class RefinedAdrsWithExistingExternalIdHandler < AppHandler
     form = NewDraftAdrForm.new(
       params: {
         refines_adr_external_id: @existing_external_id,
-        project_external_id: @accepted_adr.project.external_id,
+        project_external_id: accepted_adr.project.external_id,
       }
     )
-    NewDraftAdrPage.new(form:,authenticated_account:,flash: @flash)
+    NewDraftAdrPage.new(form:,authenticated_account: @authenticated_account,flash: @flash)
   end
 end

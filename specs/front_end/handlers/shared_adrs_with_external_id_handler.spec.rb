@@ -1,12 +1,13 @@
 require "spec_helper"
 RSpec.describe SharedAdrsWithExternalIdHandler do
-  subject(:handler) { described_class.new }
   describe "#handle!" do
     context "adr does not exist" do
       it "raises not found" do
         authenticated_account = create(:authenticated_account)
+        flash = empty_flash
+        handler = described_class.new(external_id: "foobar", authenticated_account: authenticated_account, flash: flash)
         expect {
-          handler.handle!(external_id: "foobar", authenticated_account: , flash: empty_flash)
+          handler.handle!
         }.to raise_error(Brut::Framework::Errors::NotFound)
       end
     end
@@ -15,9 +16,10 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
         it "raises not found" do
           authenticated_account = create(:authenticated_account)
           adr                   = create(:adr)
-
+          flash = empty_flash
+          handler = described_class.new(external_id: adr.external_id, authenticated_account: authenticated_account, flash: flash)
           expect {
-            handler.handle!(external_id: adr.external_id, authenticated_account:, flash: empty_flash)
+            handler.handle!
           }.to raise_error(Brut::Framework::Errors::NotFound)
         end
       end
@@ -27,8 +29,9 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
           initial_shareable_id  = SecureRandom.uuid
           adr                   = create(:adr, :accepted, account: authenticated_account.account, shareable_id: initial_shareable_id)
           flash                 = empty_flash
+          handler = described_class.new(external_id: adr.external_id, authenticated_account: authenticated_account, flash: flash)
 
-          return_value = handler.handle!(external_id: adr.external_id, authenticated_account:, flash:)
+          return_value = handler.handle!
 
           adr.reload
 
@@ -43,8 +46,9 @@ RSpec.describe SharedAdrsWithExternalIdHandler do
           authenticated_account = create(:authenticated_account)
           adr                   = create(:adr, :accepted, account: authenticated_account.account, shareable_id: nil)
           flash                 = empty_flash
+          handler = described_class.new(external_id: adr.external_id, authenticated_account: authenticated_account, flash: flash)
 
-          return_value = handler.handle!(external_id: adr.external_id, authenticated_account:, flash:)
+          return_value = handler.handle!
 
           adr.reload
 
