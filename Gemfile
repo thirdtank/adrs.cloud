@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "brut", path: "/home/appuser/local-gems/brut"
-#gem "brut", "0.0.10"
+#gem "brut", "0.0.21"
 
 # dotenv manages environment variables for our development and test environments
 gem "dotenv", groups: [ :development, :test ]
