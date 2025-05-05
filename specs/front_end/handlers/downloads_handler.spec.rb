@@ -1,21 +1,22 @@
 require "spec_helper"
 RSpec.describe DownloadsHandler do
-  subject(:handler) { described_class.new }
   describe "#handle!" do
     context "download already exists" do
       context "download is in progress" do
         it "does nothing" do
           authenticated_account = create(:authenticated_account)
-          download              = create(:download, account: authenticated_account.account)
+          download = create(:download, account: authenticated_account.account)
+          flash = empty_flash
+          handler = described_class.new(authenticated_account: authenticated_account, flash: flash)
 
           result = nil
           expect {
-            result = handler.handle!(authenticated_account:,flash:empty_flash)
+            result = handler.handle!
           }.not_to change {
             DB::Download.count
           }
 
-          expect(result).to be_routing_for(AccountByExternalIdPage,external_id: authenticated_account.external_id, tab: "download")
+          expect(result).to be_routing_for(AccountByExternalIdPage, external_id: authenticated_account.external_id, tab: "download")
           download = DB::Download.find(id: download.id)
           expect(download).not_to eq(nil)
           expect(download.data_ready_at).to eq(nil)
@@ -24,11 +25,13 @@ RSpec.describe DownloadsHandler do
       context "download is complete" do
         it "deletes the download and creates a new one" do
           authenticated_account = create(:authenticated_account)
-          download              = create(:download, :ready, account: authenticated_account.account)
+          download = create(:download, :ready, account: authenticated_account.account)
+          flash = empty_flash
+          handler = described_class.new(authenticated_account: authenticated_account, flash: flash)
 
-          result = handler.handle!(authenticated_account:,flash:empty_flash)
+          result = handler.handle!
 
-          expect(result).to be_routing_for(AccountByExternalIdPage,external_id: authenticated_account.external_id, tab: "download")
+          expect(result).to be_routing_for(AccountByExternalIdPage, external_id: authenticated_account.external_id, tab: "download")
           download = DB::Download.find(id: download.id)
           expect(download).to eq(nil)
           expect(authenticated_account.account.download).not_to eq(nil)
@@ -39,10 +42,12 @@ RSpec.describe DownloadsHandler do
     context "no download" do
       it "creates a new one" do
         authenticated_account = create(:authenticated_account)
+        flash = empty_flash
+        handler = described_class.new(authenticated_account: authenticated_account, flash: flash)
 
-        result = handler.handle!(authenticated_account:,flash:empty_flash)
+        result = handler.handle!
 
-        expect(result).to be_routing_for(AccountByExternalIdPage,external_id: authenticated_account.external_id, tab: "download")
+        expect(result).to be_routing_for(AccountByExternalIdPage, external_id: authenticated_account.external_id, tab: "download")
         expect(authenticated_account.account.download).not_to eq(nil)
         expect(authenticated_account.account.download.data_ready_at).to eq(nil)
       end

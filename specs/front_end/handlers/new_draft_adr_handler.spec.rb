@@ -1,12 +1,10 @@
 require "spec_helper"
 
 RSpec.describe NewDraftAdrHandler do
-  subject(:handler) { described_class.new }
   describe "#handle!" do
     context "limit on adrs exceeded" do
       it "returns a 403 as this should never have been posted to" do
         authenticated_account = create(:authenticated_account)
-
         authenticated_account.account.entitlement.update(max_non_rejected_adrs: 3)
 
         3.times do
@@ -14,7 +12,10 @@ RSpec.describe NewDraftAdrHandler do
         end
 
         form = NewDraftAdrForm.new
-        result = handler.handle!(form:,authenticated_account:,flash: empty_flash)
+        flash = empty_flash
+        handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
+
+        result = handler.handle!
         expect(result.to_i).to eq(403)
       end
     end
@@ -22,9 +23,10 @@ RSpec.describe NewDraftAdrHandler do
       it "has violations on the form, an error message in the flash, and re-renders the page" do
         authenticated_account = create(:authenticated_account)
         form = NewDraftAdrForm.new(params: { title: "aaaaaaaaa"})
-
         flash = empty_flash
-        result = handler.handle!(form: , authenticated_account:, flash:)
+        handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
+
+        result = handler.handle!
 
         expect(form.constraint_violations?).to eq(true)
         expect(form).to have_constraint_violation(:title, key: :not_enough_words)
@@ -41,12 +43,13 @@ RSpec.describe NewDraftAdrHandler do
           project_external_id: authenticated_account.account.projects.first.external_id
         })
         flash = empty_flash
+        handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
 
-        result = handler.handle!(form:,authenticated_account:,flash:)
+        result = handler.handle!
 
         adr = DB::Adr.last
 
-        expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
+        expect(result).to be_routing_for(EditDraftAdrByExternalIdPage, external_id: adr.external_id)
         expect(flash[:notice]).to eq("adr_created")
       end
       context "there is a refines_adr_external_id" do
@@ -60,13 +63,14 @@ RSpec.describe NewDraftAdrHandler do
               project_external_id: authenticated_account.account.projects.first.external_id
             })
             flash = empty_flash
+            handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
 
-            result = handler.handle!(form:,authenticated_account:,flash:)
+            result = handler.handle!
 
             adr = DB::Adr.last
             expect(adr.title).to eq("This is a test")
             expect(adr.refines_adr).to eq(nil)
-            expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
+            expect(result).to be_routing_for(EditDraftAdrByExternalIdPage, external_id: adr.external_id)
             expect(flash[:notice]).to eq("adr_created")
           end
         end
@@ -80,13 +84,14 @@ RSpec.describe NewDraftAdrHandler do
               project_external_id: authenticated_account.account.projects.first.external_id
             })
             flash = empty_flash
+            handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
 
-            result = handler.handle!(form:,authenticated_account:,flash:)
+            result = handler.handle!
 
             adr = DB::Adr.last
             expect(adr.title).to eq("This is a test")
             expect(adr.refines_adr).to eq(adr_being_refined)
-            expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
+            expect(result).to be_routing_for(EditDraftAdrByExternalIdPage, external_id: adr.external_id)
             expect(flash[:notice]).to eq("adr_created")
           end
         end
@@ -98,16 +103,17 @@ RSpec.describe NewDraftAdrHandler do
           form = NewDraftAdrForm.new(params: {
             title: "This is a test",
             replaced_adr_external_id: adr_being_replaced.external_id,
-              project_external_id: authenticated_account.account.projects.first.external_id
+            project_external_id: authenticated_account.account.projects.first.external_id
           })
           flash = empty_flash
+          handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
 
-          result = handler.handle!(form:,authenticated_account:,flash:)
+          result = handler.handle!
 
           adr = DB::Adr.last
           expect(adr.title).to eq("This is a test")
           expect(adr.proposed_to_replace_adr).to eq(adr_being_replaced)
-          expect(result).to be_routing_for(EditDraftAdrByExternalIdPage,external_id:adr.external_id)
+          expect(result).to be_routing_for(EditDraftAdrByExternalIdPage, external_id: adr.external_id)
           expect(flash[:notice]).to eq("adr_created")
         end
       end

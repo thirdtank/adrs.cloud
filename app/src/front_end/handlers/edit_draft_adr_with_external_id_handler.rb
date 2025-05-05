@@ -1,27 +1,35 @@
 class EditDraftAdrWithExternalIdHandler < AppHandler
-  def handle(form:, external_id:, authenticated_account:, xhr:, flash:)
-    draft_adr = authenticated_account.draft_adrs.find!(external_id:external_id)
-    form = draft_adr.save(form:)
+  def initialize(form:, external_id:, authenticated_account:, xhr:, flash:)
+    @form = form
+    @external_id = external_id
+    @authenticated_account = authenticated_account
+    @xhr = xhr
+    @flash = flash
+  end
 
-    if form.constraint_violations?
-      if xhr
+  def handle
+    draft_adr = @authenticated_account.draft_adrs.find!(external_id: @external_id)
+    @form = draft_adr.save(form: @form)
+
+    if @form.constraint_violations?
+      if @xhr
         [
-          ErrorMessagesComponent.new(form:),
+          ErrorMessagesComponent.new(form: @form),
           http_status(422),
         ]
       else
-        flash.alert = :update_adr_invalid
+        @flash.alert = :update_adr_invalid
         EditDraftAdrByExternalIdPage.new(
-          form:,
-          authenticated_account:,
+          form: @form,
+          authenticated_account: @authenticated_account,
           external_id: draft_adr.external_id,
         )
       end
     else
-      if xhr
+      if @xhr
         http_status(200)
       else
-        flash.notice = :adr_updated
+        @flash.notice = :adr_updated
         redirect_to(AdrsByExternalIdPage, external_id: draft_adr.external_id)
       end
     end

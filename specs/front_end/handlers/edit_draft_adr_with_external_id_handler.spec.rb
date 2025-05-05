@@ -8,12 +8,9 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
         adr.title = "aaaaa"
         form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
         flash = empty_flash
+        handler = described_class.new(form: form, external_id: adr.external_id, authenticated_account: authenticated_account, xhr: false, flash: flash)
 
-        result = described_class.new.handle!(form: form,
-                                             external_id: adr.external_id,
-                                             authenticated_account:,
-                                             xhr: false,
-                                             flash:)
+        result = handler.handle!
 
         expect(result.class).to eq(EditDraftAdrByExternalIdPage)
         expect(flash.alert).to eq("update_adr_invalid")
@@ -28,14 +25,12 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
           title: adr.title,
           project_external_id: adr.project.external_id,
         })
+        flash = empty_flash
+        handler = described_class.new(form: form, external_id: adr.external_id, authenticated_account: authenticated_account, xhr: false, flash: flash)
 
-        result = described_class.new.handle!(form: form,
-                                             external_id: adr.external_id,
-                                             authenticated_account:,
-                                             xhr: false,
-                                             flash: empty_flash)
+        result = handler.handle!
 
-        expect(result).to be_routing_for(AdrsByExternalIdPage,external_id: adr.external_id)
+        expect(result).to be_routing_for(AdrsByExternalIdPage, external_id: adr.external_id)
       end
     end
   end
@@ -46,12 +41,10 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
         adr = create(:adr, account: authenticated_account.account)
         adr.title = "aaaaa"
         form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
+        flash = empty_flash
+        handler = described_class.new(form: form, external_id: adr.external_id, authenticated_account: authenticated_account, xhr: true, flash: flash)
 
-        result = described_class.new.handle!(form: form,
-                                             external_id: adr.external_id,
-                                             authenticated_account:,
-                                             xhr: true,
-                                             flash: empty_flash)
+        result = handler.handle!
 
         expect(result.class).to eq(Array)
         expect(result[0].class).to eq(ErrorMessagesComponent)
@@ -66,12 +59,10 @@ RSpec.describe EditDraftAdrWithExternalIdHandler do
           title: adr.title,
           project_external_id: authenticated_account.account.projects.first.external_id,
         })
+        flash = empty_flash
+        handler = described_class.new(form: form, external_id: adr.external_id, authenticated_account: authenticated_account, xhr: true, flash: flash)
 
-        result = described_class.new.handle!(form: form,
-                                             external_id: adr.external_id,
-                                             authenticated_account: authenticated_account,
-                                             xhr: true,
-                                             flash: empty_flash)
+        result = handler.handle!
 
         expect(result.to_i).to eq(200)
       end

@@ -1,8 +1,13 @@
 class LogoutHandler < AppHandler
-  def handle(flash:, session:)
-    session.logout!
+  def initialize(flash:, session:)
+    @flash = flash
+    @session = session
+  end
 
-    flash.notice = "auth.logged_out"
+  def handle
+    @session.logout!
+
+    @flash.notice = "auth.logged_out"
     redirect_to(HomePage)
   end
 end
