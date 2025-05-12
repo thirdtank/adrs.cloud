@@ -13,7 +13,7 @@ class SharedAdrsByShareableIdPage < AppPage
       h4(
         class: "ma-0 f-1 ttu fw-6 #{label_additional_classes}"
       ) {
-        raw(t(page: [ :fields, name ]))
+        raw(t([ :fields, name ]))
       }
       div(class: "measure-wide rendered-markdown") do
         render(MarkdownStringComponent.new(adr.send(name)))
@@ -46,14 +46,14 @@ class SharedAdrsByShareableIdPage < AppPage
               div(class: "tl") do
                 div(class: "f-2") do
                   raw(
-                    t(page: :replaced_on) { 
+                    t(:replaced_on) { 
                       time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
                     }
                   )
                   if adr.replaced_by_adr.shared?
                     whitespace
                     raw(
-                      t(page: :replaced_by) do
+                      t(:replaced_by) do
                         a(
                           class: "red-900",
                           href: shareable_path(adr.replaced_by_adr)
@@ -69,11 +69,11 @@ class SharedAdrsByShareableIdPage < AppPage
           end
           h3(class: "lh-title fw-5 pa-2 mh-3 ba br-2 #{ adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' }") do
             if adr.replaced?
-              raw(t(page: :originally_accepted) do
+              raw(t(:originally_accepted) do
                 time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
               end)
             else
-              raw(t(page: :accepted) do
+              raw(t(:accepted) do
                 time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
               end)
             end
@@ -81,7 +81,7 @@ class SharedAdrsByShareableIdPage < AppPage
           if !adr.replaced_adr.nil? && adr.replaced_adr.shared?
             h3(class: "lh-title f-1 fw-5 pa-2 mh-3 ba br-2 bc-green-200 green-200 bg-green-900") do
               raw(
-                t(page: :replaced_by) do
+                t(:replaced_by) do
                   a(
                     class: "green-300",
                     href: shareable_path(adr.replaced_adr)
@@ -92,7 +92,7 @@ class SharedAdrsByShareableIdPage < AppPage
               )
             end
           end
-          raw(t(page: :created) do
+          raw(t(:created) do
             time_tag(timestamp: adr.created_at, class: "fw-5", format: :date)
           end)
         end
@@ -115,7 +115,7 @@ class SharedAdrsByShareableIdPage < AppPage
               end
               div(class: "tl") do
                 raw(
-                  t(page: :refines) do
+                  t(:refines) do
                     a(
                       class: "blue-300",
                       href: shareable_path(adr.refines_adr)

@@ -108,8 +108,8 @@ RSpec.describe AdrsByExternalIdPage do
 
       parsed_html = render_and_parse(page)
 
-      accept_text = t(page: :accepted, block: "")
-      originally_accept_text = t(page: :originally_accepted, block: "")
+      accept_text = t("pages.AdrsByExternalIdPage.accepted", block: "")
+      originally_accept_text = t("pages.AdrsByExternalIdPage.originally_accepted", block: "")
       expect(parsed_html.text).to include(accept_text)
       expect(parsed_html.text).not_to include(originally_accept_text)
 
@@ -128,8 +128,8 @@ RSpec.describe AdrsByExternalIdPage do
 
       parsed_html = render_and_parse(page)
 
-      expect(parsed_html.text).not_to include(t(page: :accepted, block: ""))
-      expect(parsed_html.text).to     include(t(page: :rejected, block: ""))
+      expect(parsed_html.text).not_to include(t("pages.AdrsByExternalIdPage.accepted", block: ""))
+      expect(parsed_html.text).to     include(t("pages.AdrsByExternalIdPage.rejected", block: ""))
 
       expect(parsed_html.css("button[title='Replace']").size).to eq(0)
       expect(parsed_html.css("button[title='Refine']").size).to eq(0)
@@ -150,12 +150,12 @@ RSpec.describe AdrsByExternalIdPage do
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
-      expect(parsed_html.text).to     include(t(page: :accepted, block: ""))
-      expect(parsed_html.text).not_to include(t(page: :originally_accepted, block: ""))
+      expect(parsed_html.text).to     include(t("pages.AdrsByExternalIdPage.accepted", block: ""))
+      expect(parsed_html.text).not_to include(t("pages.AdrsByExternalIdPage.originally_accepted", block: ""))
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to include(t(page: :share))
-      element = html_locator.element!("button[title='#{t(page: :stop_sharing)}']")
+      expect(element.text.strip).to include(t("pages.AdrsByExternalIdPage.share"))
+      element = html_locator.element!("button[title='#{t("pages.AdrsByExternalIdPage.stop_sharing")}']")
       expect(element).not_to have_html_attribute(disabled: true)
 
       element = html_locator.element!("adr-tag-editor-edit textarea")
@@ -173,13 +173,13 @@ RSpec.describe AdrsByExternalIdPage do
       parsed_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
-      expect(parsed_html.text).to     include(t(page: :accepted, block: ""))
-      expect(parsed_html.text).not_to include(t(page: :originally_accepted, block: ""))
+      expect(parsed_html.text).to     include(t("pages.AdrsByExternalIdPage.accepted", block: ""))
+      expect(parsed_html.text).not_to include(t("pages.AdrsByExternalIdPage.originally_accepted", block: ""))
 
       element = html_locator.element!("button[disabled]")
-      expect(element.text.strip).to include(t(page: :stop_sharing_short))
-      expect(element["aria-label"]).to eq(t(page: :stop_sharing).to_s)
-      element = html_locator.element!("button[title='#{t(page: :share)}']")
+      expect(element.text.strip).to include(t("pages.AdrsByExternalIdPage.stop_sharing_short"))
+      expect(element["aria-label"]).to eq(t("pages.AdrsByExternalIdPage.stop_sharing").to_s)
+      element = html_locator.element!("button[title='#{t("pages.AdrsByExternalIdPage.share")}']")
       expect(element).not_to have_html_attribute(disabled: true)
     end
   end

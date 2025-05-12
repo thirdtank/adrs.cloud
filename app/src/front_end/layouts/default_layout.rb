@@ -24,8 +24,8 @@ class DefaultLayout < Brut::FrontEnd::Layout
         PageIdentifier(@page_name)
         link(rel: "stylesheet", href: asset_path("/css/styles.css"))
         script(defer: true, src: asset_path("/js/app.js"))
-        I18nTranslations("general.cv.fe")
-        I18nTranslations("general.cv.this_field")
+        I18nTranslations("cv.fe")
+        I18nTranslations("cv.this_field")
         Traceparent()
         render(
           Brut::FrontEnd::RequestContext.inject(

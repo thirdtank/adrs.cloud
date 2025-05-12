@@ -56,7 +56,7 @@ class AdrsByExternalIdPage::BannerComponent < AppComponent
         yield
       else
         raw(
-          t(page: @i18n_key) {
+          t(@i18n_key) {
             time_tag(timestamp: @timestamp, class: @timestamp_font_weight, format: :date)
           }
         )

@@ -16,10 +16,10 @@ class AccountByExternalIdPage::TabPanelComponent < AppComponent
       id: "#{tab_name }-panel"
     ) do
       h2(class: "f-4 ma-0") do
-        t(page: [ "tabs", tab_name, "title" ])
+        t([ "tabs", tab_name, "title" ])
       end
       p(class: "p f-2") do
-        t(page: [ "tabs", tab_name, "intro" ])
+        t([ "tabs", tab_name, "intro" ])
       end
       yield
     end

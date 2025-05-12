@@ -36,7 +36,7 @@ class Adrs::GetRefinementsComponent < AppComponent
         span(class: "w-2") do
           inline_svg("adjust-control-icon")
         end
-        raw(t(component: :refinements))
+        raw(t(:refinements))
       end
       table(class: "collapse w-100 mh-auto f-1") do
         thead do
@@ -62,11 +62,11 @@ class Adrs::GetRefinementsComponent < AppComponent
               end
               td(class:"pv-2 pr-2") do
                 if refining_adr.accepted?
-                  t(component: :is_accepted)
+                  t(:is_accepted)
                 elsif refining_adr.rejected?
-                  t(component: :is_rejected)
+                  t(:is_rejected)
                 else
-                  t(component: :is_draft)
+                  t(:is_draft)
                 end
               end
               td(class:"pv-2 pr-2") do

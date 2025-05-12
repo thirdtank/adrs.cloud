@@ -53,7 +53,7 @@ class AccountByExternalIdPage < AppPage
                 class: "ws-nowrap"
               ) do
                 span(class: "flex items-center justify-end gap-2") do
-                  span { t(page: [ "tabs", tab.name, "title" ] ) }
+                  span { t([ "tabs", tab.name, "title" ] ) }
                   span(class: "w-2") { inline_svg(tab.icon) }
                 end
               end
@@ -61,7 +61,7 @@ class AccountByExternalIdPage < AppPage
           end
         end
         div(class: "w-100 bg-gray-300 gray-900 flex flex-column gap-2 ph-3 pv-3") do
-          a(class: "orange-800 f-1 db", href:AdrsPage.routing) {  t(page: :your_adrs) }
+          a(class: "orange-800 f-1 db", href:AdrsPage.routing) {  t(:your_adrs) }
           a(class: "orange-800 f-1 db", href:HelpPage.routing) { t(:help) }
           a(class: "orange-800 f-1 db", href:LogoutHandler.routing) { t(:logout) }
         end
@@ -75,17 +75,17 @@ class AccountByExternalIdPage < AppPage
               thead do
                 tr do
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-                    t(page: "projects.columns.name" )
+                    t("projects.columns.name" )
                   end
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-                    t(page: "projects.columns.description" )
+                    t("projects.columns.description" )
                   end
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-                    t(page: "projects.columns.sharing" )
+                    t("projects.columns.sharing" )
                   end
                   th(class: "tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
                     span(class: "sr-only") do
-                      t(page: "projects.columns.actions" )
+                      t("projects.columns.actions" )
                     end
                   end
                 end
@@ -97,7 +97,7 @@ class AccountByExternalIdPage < AppPage
                       plain(project.name)
                       if project.archived?
                         span(class: "dib f-1 ph-2 pv-1 bg-red-900 gray-400 ba bc-gray-700 br-bl-4 br-tl-1 br-br-1 br-tr-4") { 
-                          t(page: [ "projects", "archived" ])
+                          t( "projects.archived" )
                         }
                       end
                     end
@@ -111,11 +111,11 @@ class AccountByExternalIdPage < AppPage
                             inline_svg("globe-network-icon")
                           }
                           span {
-                            t(page: [ "projects", "default_shared" ])
+                            t("projects.default_shared")
                           }
                         else
                           span(class: "w-2 flex flex-column justify-center") { inline_svg("lock-icon") }
-                          span { t(page: [ "projects", "default_private" ]) }
+                          span { t("projects.default_private") }
                         end
                       end
                     end
@@ -130,10 +130,10 @@ class AccountByExternalIdPage < AppPage
                         if project.active?
                           form_tag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id), method: :post) do
                             brut_confirm_submit(
-                              message: t(page: "projects.archive_confirmation")
+                              message: t("projects.archive_confirmation")
                             ) do
                               button(class: "tdu pointer blue-400 bn bg-none") {
-                                t(page: "projects.archive")
+                                t("projects.archive")
                               }
                             end
                           end
@@ -149,12 +149,12 @@ class AccountByExternalIdPage < AppPage
                 href: NewProjectPage.routing,
                 class: "db pv-3 blue-300 f-3"
               ) {
-                t(page: "projects.add_new")
+                t("projects.add_new")
               }
             else
               p(class: "p i gray-400") do
-                raw(t(page: :project_limit_exceeded))
-                raw(t(page: :contact_support_for_limit_increase))
+                raw(t(:project_limit_exceeded))
+                raw(t(:contact_support_for_limit_increase))
               end
             end
           end
@@ -175,51 +175,51 @@ class AccountByExternalIdPage < AppPage
                 render(ButtonComponent.new(
                   size: :large,
                   color: :green,
-                  label: t(page: "download.create_download"),
+                  label: t("downloads.create_download"),
                   icon: "database-download-icon",
                 ))
                 p(class: "p i") do
-                  t(page: "download.create_download_explanation")
+                  t("downloads.create_download_explanation")
                 end
               end
             end
           end
           render(AccountByExternalIdPage::TabPanelComponent.new(tab_name: "info", selected_name: selected_tab.name)) do
-            h3(class: "f-3 ma-0") { t(page: "info.personal.title") }
+            h3(class: "f-3 ma-0") { t("info.personal.title") }
             dl(class: "dl-grid gap-2 ml-3") do
-              dt(class: "b") { t(page: "info.personal.email.title") }
+              dt(class: "b") { t("info.personal.email.title") }
               dd { 
                 plain(authenticated_account.account.email)
                 sup { raw(safe("&dagger;")) }
               }
               if timezone_from_browser
-                dt(class: "b") { t(page: "info.personal.timezone.title") }
+                dt(class: "b") { t("info.personal.timezone.title") }
                 dd {
                   plain(timezone_from_browser.to_s)
                   sup { raw(safe("&ddagger;")) }
                 }
               end
-              dt(class: "b") { t(page: "info.personal.locale.title") }
+              dt(class: "b") { t("info.personal.locale.title") }
               if http_accept_language.known?
                 dd { 
                   plain(http_accept_language.weighted_locales.map(&:locale).join(", "))
                   sup { raw(safe("&ddagger;")) }
                 }
               else
-                dd { t(page: "info.personal.locale.unknown") }
+                dd { t("info.personal.locale.unknown") }
               end
             end
             p(class: "i f-1 p ml-3 mb-0 gray-400") do
               sup { raw(safe("&dagger;")) }
-              raw(t(page: "info.personal.email.note"))
+              raw(t("info.personal.email.note"))
             end
             p(class: "i f-1 p ml-3 mt-0 gray-400") do
               sup { raw(safe("&ddagger;")) }
-              raw(t(page: "info.personal.timezone.note"))
+              raw(t("info.personal.timezone.note"))
             end
-            h3(class: "f-3 ma-0 mt-4" ) { t(page: "info.limits.title") }
+            h3(class: "f-3 ma-0 mt-4" ) { t("info.limits.title") }
             p(class: "p ma-0 fw-4 mt-2") do
-              raw(t(page: :contact_support_for_limit_increase))
+              raw(t(:contact_support_for_limit_increase))
             end
             div(class: "w-50 pa-3 flex flex-column items-center") do
               meter(

@@ -51,7 +51,7 @@ class AdrsPage::TabPanelComponent < AppComponent
     ) do
     h2(class:"ph-3 f-5 b ma-0 mt-4") do
       div(class:"flex items-center gap-2") do
-        span { t(page: tab) }
+        span { t(tab) }
         if !tag.nil?
           render(Adrs::TagComponent.new(tag: tag, link: false))
         end
@@ -63,16 +63,16 @@ class AdrsPage::TabPanelComponent < AppComponent
     end
   if adrs.any?
     table(class:"collapse ma-3 striped") do
-      caption(class:"sr-only") { t(page: "captions.#{tab}") }
+      caption(class:"sr-only") { t("captions.#{tab}") }
       thead do
         tr do
           columns.each do |column|
             th(class:"tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-              t(page: "columns.#{column}")
+              t("columns.#{column}")
             end
           end
           th(class:"tl ws-nowrap f-1 ttu b pa-2 bb bc-gray-600") do
-            span(class: "sr-only") { t(page: "columns.actions") }
+            span(class: "sr-only") { t("columns.actions") }
           end
         end 
       end 
@@ -86,7 +86,7 @@ class AdrsPage::TabPanelComponent < AppComponent
             end
             td(class:"pa-2 tr va-middle bb br bc-gray-600") do
               a(class: "blue-400 ws-nowrap", href: action_routing(adr)) do
-                t(page: action_name)
+                t(action_name)
               end
             end
           end
@@ -94,7 +94,7 @@ class AdrsPage::TabPanelComponent < AppComponent
       end
     end
   else
-    p(class:"ma-3 p i") { t(page: :none) }
+    p(class:"ma-3 p i") { t(:none) }
   end
     end
   end

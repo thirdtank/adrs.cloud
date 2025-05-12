@@ -60,11 +60,11 @@ class AdrsPage < AppPage
                 href: NewDraftAdrPage.routing,
                 class: "green-500 bc-green-200 f-3 tc w-100 db bt bb br br-right-1 bg-black pa-2 active-bg-gray-300"
               ) do
-                t(page: :add_new)
+                t(:add_new)
               end
             else
               span(class:"gray-700 i bc-gray-200 f-3 tc w-100 db bt bb br br-right-1 pa-2 bg-gray-600 cursor-not-allowed", title: t(:add_new_limit_exceeded)) do
-                t(page: :add_new)
+                t(:add_new)
               end
             end
           end
@@ -86,7 +86,7 @@ class AdrsPage < AppPage
             class:"orange-800 f-1 db",
             href: AccountByExternalIdPage.routing(external_id: authenticated_account.external_id)
           ) do
-            t(page: :your_account)
+            t(:your_account)
           end
           a(class:"orange-800 f-1 db",href: HelpPage.routing) { t(:help) }
           a(class:"orange-800 f-1 db",href: LogoutHandler.routing) { t(:logout)}
@@ -110,7 +110,7 @@ class AdrsPage < AppPage
                     value: tag,
                     id: "tag-search-input",
                     class: "text-field text-field--tiny",
-                    placeholder: t(page: :tag_filter_placeholder)
+                    placeholder: t(:tag_filter_placeholder)
                   )
                 end
                 render(
@@ -126,7 +126,7 @@ class AdrsPage < AppPage
                     href: "?",
                     class: "blue-400 f-1"
                   ) do
-                    t(page: :remove_filter)
+                    t(:remove_filter)
                   end
                 end
               end

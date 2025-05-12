@@ -11,7 +11,7 @@ class HelpPage < AppPage
         "support@adrs.cloud"
       end
       p(class:"p mh-auto") do
-        raw(safe(t(page: :support_message).to_s))
+        raw(safe(t(:support_message).to_s))
       end
       a(
         class: "db mt-4 blue-300 tc",

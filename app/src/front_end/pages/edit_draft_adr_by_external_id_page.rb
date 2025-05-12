@@ -14,7 +14,7 @@ class EditDraftAdrByExternalIdPage < AppPage
       I18nTranslations("pages.EditDraftAdrByExternalIdPage.adr_not_updated")
       global_component(AnnouncementBannerComponent)
       header do
-        h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") { t(page: :edit) }
+        h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") { t(:edit) }
         if draft_adr.refining?
           h3(class:"mt-1 fw-4 f-2 i flex items-center justify-center gap-2") do
             span(class:"w-2 gray-300") do
@@ -22,7 +22,7 @@ class EditDraftAdrByExternalIdPage < AppPage
             end
             span do
               raw(
-                t(page: :refines) {
+                t(:refines) {
                   a(
                     class: "blue-300",
                     href: adr_path(draft_adr.adr_refining)
@@ -41,7 +41,7 @@ class EditDraftAdrByExternalIdPage < AppPage
             end
             span do
               raw(
-                t(page: :proposed_replacement) {
+                t(:proposed_replacement) {
                   a(
                     class: "blue-300",
                     href: adr_path(draft_adr.adr_replacing)

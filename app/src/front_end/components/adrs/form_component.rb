@@ -15,23 +15,23 @@ class Adrs::FormComponent < AppComponent
     )
     case action
     when :new
-      @action_label  = t(component: [ :actions, :save_draft ])
+      @action_label  = t("actions.save_draft")
       @form_action   = NewDraftAdrForm.routing
       @go_back_label = t(:nevermind)
       @ajax_submit   = false
     when :edit
       @external_id   = external_id_required!(external_id:,action:)
-      @action_label  = t(component: [ :actions, :update_draft ])
+      @action_label  = t("actions.update_draft")
       @form_action   = EditDraftAdrWithExternalIdForm.routing(external_id: @external_id)
       @go_back_label = t(:back)
       @ajax_submit   = true
     when :replace
-      @action_label  = t(component: [ :actions, :save_replacement_draft ])
+      @action_label  = t("actions.save_replacement_draft")
       @form_action   = NewDraftAdrHandler.routing
       @go_back_label = t(:nevermind)
       @ajax_submit   = false
     when :refine
-      @action_label  = t(component: [ :actions, :save_refining_draft ])
+      @action_label  = t("actions.save_refining_draft")
       @form_action   = NewDraftAdrHandler.routing
       @go_back_label = t(:nevermind)
       @ajax_submit   = false
@@ -47,8 +47,8 @@ class Adrs::FormComponent < AppComponent
       Adrs::TextareaComponent.new(
         form: @form,
         input_name: name,
-        label: t(component: [ :fields, name, :label ]),
-        context: t(component: [ :fields, name, :context ])
+        label: t([ :fields, name, :label ]),
+        context: t([ :fields, name, :context ])
       )
     )
   end
@@ -60,7 +60,7 @@ class Adrs::FormComponent < AppComponent
           formaction: RejectedAdrsWithExternalIdHandler.routing(external_id: @external_id),
           size: "small",
           color: "red",
-          label: t(component: [ :actions, :reject ]),
+          label: t("actions.reject"),
           icon: "recycle-bin-line-icon",
           confirm: "You can't bring this back other than re-creating it by hand"
         )
@@ -75,7 +75,7 @@ class Adrs::FormComponent < AppComponent
           formaction: AcceptedAdrsWithExternalIdForm.routing(external_id: @external_id),
           size: "small",
           color: "green",
-          label: t(component: [ :actions, :accept ]),
+          label: t("actions.accept"),
           icon: "quality-badge-checkmark-icon",
           confirm: "You won't be able to change this ADR after you accept it"
         )
@@ -96,10 +96,10 @@ class Adrs::FormComponent < AppComponent
         end
         render(
           TextFieldComponent.new(
-            label: t(component: :adr_title),
+            label: t(:adr_title),
             form: form,
             input_name: "title",
-            placeholder: t(component: :adr_title_placeholder),
+            placeholder: t(:adr_title_placeholder),
             autofocus: true
           )
         )

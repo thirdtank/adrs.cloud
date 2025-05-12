@@ -9,7 +9,7 @@ class NewProjectPage < AppPage
     global_component(AnnouncementBannerComponent)
     header do
       h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") do
-        t(page: :new_project)
+        t(:new_project)
       end
     end
     section(class: "pa-3") do

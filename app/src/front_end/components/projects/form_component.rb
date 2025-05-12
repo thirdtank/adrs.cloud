@@ -7,12 +7,12 @@ class Projects::FormComponent < AppComponent
 
     case action
     when :new
-      @action_label  = t(component: [ :actions, :new ])
+      @action_label  = t("actions.new")
       @form_action   = NewProjectForm.routing
       @go_back_label = t(:nevermind)
     when :edit
       @external_id   = external_id_required!(external_id:,action:)
-      @action_label  = t(component: [ :actions, :edit ])
+      @action_label  = t("actions.edit")
       @form_action   = EditProjectByExternalIdPage.routing(external_id: external_id)
       @go_back_label = t(:back)
     else
@@ -29,25 +29,25 @@ class Projects::FormComponent < AppComponent
       ) do
         render(
           TextFieldComponent.new(
-            label: t(component: [ :name, :label ]),
+            label: t("name.label"),
             form: form,
             input_name: "name",
-            placeholder: t(component: [ :name, :placeholder ]),
+            placeholder: t("name.placeholder"),
             autofocus: true
           )
         )
         render(
           TextareaComponent.new(
-            label: t(component: [ :description, :label ]),
+            label: t("description.label"),
             form: form,
             input_name: "description",
-            placeholder: t(component: [ :description, :placeholder ]),
+            placeholder: t("description.placeholder"),
             autofocus: false
           )
         )
         render(
           CheckboxComponent.new(
-            label: t(component: [ :adrs_shared_by_default, :label ]),
+            label: t("adrs_shared_by_default.label"),
             form: form,
             input_name: "adrs_shared_by_default"
           )

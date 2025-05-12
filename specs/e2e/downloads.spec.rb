@@ -18,13 +18,13 @@ RSpec.describe "Download all data", e2e_timeout: 30_000 do
     download_tab = page.locator("a", hasText: t("pages.AccountByExternalIdPage.tabs.download.title"))
     download_tab.click
 
-    download_button = page.locator("#download-panel button", hasText: t("pages.AccountByExternalIdPage.download.create_download"))
+    download_button = page.locator("#download-panel button", hasText: t("pages.AccountByExternalIdPage.downloads.create_download"))
     download_button.click
 
     expect(page).to be_page_for(AccountByExternalIdPage)
     selected_tab = page.locator("brut-tabs [aria-selected=true]")
     expect(selected_tab).to have_text("Download")
-    download_link = page.locator("#download-panel a", hasText: t("pages.AccountByExternalIdPage.download.download"))
+    download_link = page.locator("#download-panel a", hasText: t("components.AccountByExternalIdPage::DownloadProgressComponent.download"))
     download = page.expect_download do
       download_link.click
     end

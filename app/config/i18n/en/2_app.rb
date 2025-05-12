@@ -2,54 +2,52 @@
 {
   # en: must be the first entry, thus indicating this is the EN translations
   en: {
-    general: {
-      nevermind: "Nevermind",
-      cv: { # short for "constraint violations" to avoid having to type that out
-        be: { # short for "back-end", again not to have to type it out
-          # These are snake case, which is idiomatic for Ruby.  The values
-          # here are all based on DataObjectValidator's behavior
-          not_enough_words: "%{field} must have at least %{minwords} words",
-          account_exists: "That account already exists",
-          taken: "%{field}'s value is already taken",
-        },
+    nevermind: "Nevermind",
+    cv: { # short for "constraint violations" to avoid having to type that out
+      be: { # short for "back-end", again not to have to type it out
+        # These are snake case, which is idiomatic for Ruby.  The values
+        # here are all based on DataObjectValidator's behavior
+        not_enough_words: "%{field} must have at least %{minwords} words",
+        account_exists: "That account already exists",
+        taken: "%{field}'s value is already taken",
       },
-      logout: "Logout",
-      help: "Help and Support",
-      adrscloud: "ADRs.cloud",
-      default_site_announcement: "ADRs.Cloud is working properly",
-      current_site_announcement: "ADRs.Cloud is working properly as of %{time}",
-      adr_rejected: "ADR Rejected",
-      page_title: "Welcome to ADRs.cloud!",
-      view_all: "View All",
-      sharing_stopped: "ADR no longer shared",
-      adr_shared: "ADR now shared",
-      adr_accepted: "ADR Accepted",
-      adr_created: "ADR Created",
-      project_archived: "Project Archived",
-      new_project_created: "Project Created",
-      project_updated: "Project Updated",
-      adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
-      new_adr_invalid: "ADR cannot be created. See below.",
-      new_project_invalid: "Project cannot be created. See below.",
-      save_project_invalid: "Project cannot be saved. See below.",
-      tags_updated: "ADR's tags updated",
-      draft: "DRAFT",
-      back: "Back",
-      edit: "Edit",
-      view: "View",
-      none: "None",
-      aria: {
-        external_link_icon: "external link icon",
-      },
-      add_new_limit_exceeded: "You've reached your limit",
-      adrs_remaining_counts: "%{num} of %{max} ADRs Remaining",
-      project_limit_exceeded: "You've reached your limit",
-      projects_remaining_counts: "%{num} of %{max} Projects Remaining",
-      contact_support_for_limit_increase: "Reject some ADRs or <a href='mailto:support@adrgp' class='blue-700'>contact support</a> for a limit increase",
-      auth: {
-        no_account: "No account with that email",
-        logged_out: "You have been logged out",
-      }
+    },
+    logout: "Logout",
+    help: "Help and Support",
+    adrscloud: "ADRs.cloud",
+    default_site_announcement: "ADRs.Cloud is working properly",
+    current_site_announcement: "ADRs.Cloud is working properly as of %{time}",
+    adr_rejected: "ADR Rejected",
+    page_title: "Welcome to ADRs.cloud!",
+    view_all: "View All",
+    sharing_stopped: "ADR no longer shared",
+    adr_shared: "ADR now shared",
+    adr_accepted: "ADR Accepted",
+    adr_created: "ADR Created",
+    project_archived: "Project Archived",
+    new_project_created: "Project Created",
+    project_updated: "Project Updated",
+    adr_cannot_be_accepted: "ADR cannot be accepted. See below.",
+    new_adr_invalid: "ADR cannot be created. See below.",
+    new_project_invalid: "Project cannot be created. See below.",
+    save_project_invalid: "Project cannot be saved. See below.",
+    tags_updated: "ADR's tags updated",
+    draft: "DRAFT",
+    back: "Back",
+    edit: "Edit",
+    view: "View",
+    none: "None",
+    aria: {
+      external_link_icon: "external link icon",
+    },
+    add_new_limit_exceeded: "You've reached your limit",
+    adrs_remaining_counts: "%{num} of %{max} ADRs Remaining",
+    project_limit_exceeded: "You've reached your limit",
+    projects_remaining_counts: "%{num} of %{max} Projects Remaining",
+    contact_support_for_limit_increase: "Reject some ADRs or <a href='mailto:support@adrgp' class='blue-700'>contact support</a> for a limit increase",
+    auth: {
+      no_account: "No account with that email",
+      logged_out: "You have been logged out",
     },
     pages: {
       HelpPage: {
@@ -191,10 +189,9 @@
             actions: "Actions",
           },
         },
-        download: {
+        downloads: {
           create_download: "Create Download",
-          create_download_explanation: "We'll assemble all your data into a single download. Check back here to see when it's done. Should be just a few minutes.",
-          download: "Download",
+          create_download_explanation: "We'll assemble all your data into a single download. Check back here to see when it's done. Should be just a few minutes."
         },
         info: {
           personal: {

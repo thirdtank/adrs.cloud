@@ -13,7 +13,7 @@ RSpec.describe EditDraftAdrByExternalIdPage do
       rendered_html = render_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
       alert = html_locator.element!("[role='alert']")
-      expect(alert.text.to_s.strip).to include(t(:adr_cannot_be_accepted))
+      expect(alert.text.to_s.strip).to include(t("adr_cannot_be_accepted"))
     end
   end
   context "form with errors" do
@@ -43,7 +43,7 @@ RSpec.describe EditDraftAdrByExternalIdPage do
       page = described_class.new(authenticated_account:, external_id: adr.external_id)
 
       rendered_html = render_and_parse(page)
-      expect(rendered_html.text).to include(t(page: :proposed_replacement, block: adr_to_replace.title))
+      expect(rendered_html.text).to include(t("pages.EditDraftAdrByExternalIdPage.proposed_replacement", block: adr_to_replace.title))
     end
   end
   context "refining an ADR" do
@@ -56,7 +56,7 @@ RSpec.describe EditDraftAdrByExternalIdPage do
       page = described_class.new(authenticated_account:, external_id: adr.external_id)
 
       rendered_html = render_and_parse(page)
-      expect(rendered_html.text).to include(t(page: :refines, block: adr_being_refined.title))
+      expect(rendered_html.text).to include(t("pages.EditDraftAdrByExternalIdPage.refines", block: adr_being_refined.title))
     end
   end
 end

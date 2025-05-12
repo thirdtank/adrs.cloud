@@ -64,45 +64,43 @@
         "December",
       ],
     },
-    general: {
-      cv: { # short for "constraint violations" to avoid having to type that out
-        this_field: "this field",
-        fe: { # short for "front-end", again to not have to type it out
-          # These keys use camel-case because that is how the browser defines
-          # these values, based on ValidityState
-          badInput: "%{field} is the wrong type of data",
-          patternMismatch: "%{field} isn't in the right format",
-          rangeOverflow: "%{field} is too big",
-          rangeUnderflow: "%{field} is too small",
-          stepMismatch: "%{field} is not a valid value in the range",
-          tooLong: "%{field} is too long",
-          tooShort: "%{field} is too short",
-          typeMismatch: "%{field} is the wrong type",
-          valueMissing: "%{field} is required",
-          general: "Form is invalid",
-        },
-        be: { # short for "back-end", again not to have to type it out
-          # These are snake case, which is idiomatic for Ruby.  The values
-          # here are all based on DataObjectValidator's behavior
-          required: "%{field} is required",
-          too_short: "%{field} is too short; must be at least %{minlength} characters",
-        },
+    cv: { # short for "constraint violations" to avoid having to type that out
+      this_field: "this field",
+      fe: { # short for "front-end", again to not have to type it out
+        # These keys use camel-case because that is how the browser defines
+        # these values, based on ValidityState
+        badInput: "%{field} is the wrong type of data",
+        patternMismatch: "%{field} isn't in the right format",
+        rangeOverflow: "%{field} is too big",
+        rangeUnderflow: "%{field} is too small",
+        stepMismatch: "%{field} is not a valid value in the range",
+        tooLong: "%{field} is too long",
+        tooShort: "%{field} is too short",
+        typeMismatch: "%{field} is the wrong type",
+        valueMissing: "%{field} is required",
+        general: "Form is invalid",
       },
-      diagnostics: { # This is to help diagnose issues with the translation system and is not
-                     # intended to store real strings to be used by your app
-        has_interpolations: "Test %{interp} Test",
-        has_pluralizations: {
-          one: "Once!",
-          other: "More than once!"
-        },
-        has_pluralizations_and_zero: {
-          zero: "ZERO",
-          one: "ONE",
-          other: "MORE",
-        },
-        simple1: "SIMPLE1",
-        simple2: "SIMPLE2",
-      }
-    }
+      be: { # short for "back-end", again not to have to type it out
+        # These are snake case, which is idiomatic for Ruby.  The values
+        # here are all based on DataObjectValidator's behavior
+        required: "%{field} is required",
+        too_short: "%{field} is too short; must be at least %{minlength} characters",
+      },
+    },
+    diagnostics: { # This is to help diagnose issues with the translation system and is not
+                   # intended to store real strings to be used by your app
+      has_interpolations: "Test %{interp} Test",
+      has_pluralizations: {
+        one: "Once!",
+        other: "More than once!"
+      },
+      has_pluralizations_and_zero: {
+        zero: "ZERO",
+        one: "ONE",
+        other: "MORE",
+      },
+      simple1: "SIMPLE1",
+      simple2: "SIMPLE2",
+    },
   },
 }

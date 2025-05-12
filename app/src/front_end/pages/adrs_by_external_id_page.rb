@@ -14,7 +14,7 @@ class AdrsByExternalIdPage < AppPage
   def field(name, label_additional_clases: "")
     section(aria_label: name, class: "flex flex-column gap-2 ph-3") {
       h4(class: "ma-0 f-1 ttu fw-6 #{label_additional_clases}") {
-        t(page: [ :fields, name ])
+        t([ :fields, name ])
       }
       div(class: "measure-wide rendered-markdown") {
         render(MarkdownStringComponent.new(adr.send(name)))
@@ -64,7 +64,7 @@ class AdrsByExternalIdPage < AppPage
             div(class: "flex flex-column gap-3 items-end mt-1 pb-3 bb bc-gray-600") do
               if editable?
                 a(class: "db mt-3 w-100 tc pv-2 ba br-1 bc-blue-500 f-2 fw-5 blue-400", href: "EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id)") do
-                  t(page: :edit_adr)
+                  t(:edit_adr)
                 end
               elsif accepted?
                 form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2 w-100") do
@@ -75,11 +75,11 @@ class AdrsByExternalIdPage < AppPage
                       ButtonComponent.new(
                         size: "tiny",
                         formaction: SharedAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
-                        disabled: shared? ? t(page: :already_shared) : false,
+                        disabled: shared? ? t(:already_shared) : false,
                         color: "orange",
                         variant: :left,
-                        label: t(page: :share),
-                        confirm: t(page: :share_confirm),
+                        label: t(:share),
+                        confirm: t(:share_confirm),
                         width: :full,
                         icon: "globe-network-icon")
                     )
@@ -88,12 +88,12 @@ class AdrsByExternalIdPage < AppPage
                       ButtonComponent.new(
                         size: "tiny",
                         formaction: PrivateAdrsWithExternalIdHandler.routing(external_id: adr.external_id),
-                        disabled: private? ? t(page: :not_shared) : false,
+                        disabled: private? ? t(:not_shared) : false,
                         color: "blue",
                         variant: :right,
-                        label: t(page: :stop_sharing_short),
-                        aria_label: t(page: :stop_sharing),
-                        confirm: t(page: :stop_share_confirm),
+                        label: t(:stop_sharing_short),
+                        aria_label: t(:stop_sharing),
+                        confirm: t(:stop_share_confirm),
                         width: :full,
                         icon: "lock-icon")
                     )
@@ -106,7 +106,7 @@ class AdrsByExternalIdPage < AppPage
                       href: SharedAdrsByShareableIdPage.routing(shareable_id: adr.shareable_id)
                     ) do
                       span { inline_svg("external-link-icon") }
-                      span { t(page: :view_share_page) }
+                      span { t(:view_share_page) }
                     end
                   end
                 end
@@ -121,7 +121,7 @@ class AdrsByExternalIdPage < AppPage
                         disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
                         color: "red",
                         width: :full,
-                        label: t(page: :replace),
+                        label: t(:replace),
                         icon: "change-icon"
                       )
                     )
@@ -133,7 +133,7 @@ class AdrsByExternalIdPage < AppPage
                         disabled: can_add_new? ? false : t(:add_new_limit_exceeded),
                         color: "purple",
                         width: :full,
-                        label: t(page: :refine),
+                        label: t(:refine),
                         icon: "adjust-control-icon"
                       )
                     )
@@ -152,7 +152,7 @@ class AdrsByExternalIdPage < AppPage
                           render(Adrs::TagComponent.new(tag: tag))
                         end
                       else
-                        span(class: "f-1 gray-400 i") { t(page: :no_tags) }
+                        span(class: "f-1 gray-400 i") { t(:no_tags) }
                       end
                     end
                   end
@@ -160,9 +160,9 @@ class AdrsByExternalIdPage < AppPage
                     render(
                       ButtonComponent.new(
                         size: "tiny",
-                        color: adr.tags.any? ? "white"             : "purple",
-                        label: adr.tags.any? ? t(page: :edit_tags) : t(page: :add_tags),
-                        icon:  adr.tags.any? ? "edit-list-icon"    : "plus-round-line-icon"
+                        color: adr.tags.any? ? "white"          : "purple",
+                        label: adr.tags.any? ? t(:edit_tags)    : t(:add_tags),
+                        icon:  adr.tags.any? ? "edit-list-icon" : "plus-round-line-icon"
                       )
                     )
                   end
@@ -193,7 +193,7 @@ class AdrsByExternalIdPage < AppPage
                                                  icon:  "close-line-icon"))
                       render(ButtonComponent.new(size: "tiny",
                                                  color: "blue",
-                                                 label: t(page: :save_tags),
+                                                 label: t(:save_tags),
                                                  icon:  "tag-line-icon"))
                     end
                   end
@@ -234,7 +234,7 @@ class AdrsByExternalIdPage < AppPage
                        div(class: "flex flex-column gap-2") do
                          div do
                            raw(
-                             t(page: :replaced_by) {
+                             t(:replaced_by) {
                                a(
                                  class: "red-900",
                                  href: adr_path(adr.replaced_by_adr)
@@ -246,7 +246,7 @@ class AdrsByExternalIdPage < AppPage
                          end
                          div(class: "f-1") do
                            raw(
-                             t(page: :replaced_on) {
+                             t(:replaced_on) {
                                time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
                              }
                            )
@@ -267,7 +267,7 @@ class AdrsByExternalIdPage < AppPage
                if !adr.replaced_adr.nil?
                  banner(color: "green-200", background_color: "bg-green-900", font_size: "f-1") do
                    raw(
-                     t(page: :replaces) {
+                     t(:replaces) {
                        a(
                          class: "green-300",
                          href: adr_path(adr.replaced_adr)
@@ -286,7 +286,7 @@ class AdrsByExternalIdPage < AppPage
                      end
                      div(class: "tl f-1") do
                        raw(
-                         t(page: :refines) {
+                         t(:refines) {
                            a(
                              class: "blue-300",
                              href: adr_path(adr.refines_adr)

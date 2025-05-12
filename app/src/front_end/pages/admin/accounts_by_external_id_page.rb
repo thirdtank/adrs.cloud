@@ -27,7 +27,7 @@ class Admin::AccountsByExternalIdPage < Admin::BasePage
         role: "status",
       class: "ba bc-blue-600 bg-blue-900 blue-300 tc pa-3 br-3 w-50 mh-auto mb-3"
       ) do
-        t(page: flash.notice)
+        t(flash.notice)
       end
     end
     if flash.alert?
@@ -35,7 +35,7 @@ class Admin::AccountsByExternalIdPage < Admin::BasePage
         role:"status",
         class: "ba bc-red-600 bg-red-900 red-300 tc pa-3 br-3 w-50 mh-auto mb-3"
       ) do
-        t(page: flash.alert)
+        t(flash.alert)
       end
     end
     section(class:"mh-auto w-two-thirds") do
