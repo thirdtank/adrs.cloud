@@ -31,11 +31,11 @@ class AdrsPage < AppPage
   def can_add_new? = @entitlements.can_add_new?
 
   def project_select
-    Inputs::Select(
+    Inputs::SelectTagWithOptions(
       name: "project_external_id",
       include_blank: { value: "ALL", text_content: "All" },
       options: authenticated_account.projects,
-      selected_value: project&.external_id,
+      selected_option: project,
       value_attribute: :external_id,
       option_text_attribute: :name,
       html_attributes: { class: "w-6" }
@@ -93,7 +93,7 @@ class AdrsPage < AppPage
         end
       end
       section(class:"bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start") do
-        global_component(AnnouncementBannerComponent)
+        render global_component(AnnouncementBannerComponent)
         div(class:"overflow-y-scroll w-100") do
           div(class:"mh-3 mt-3 shadow-1 dib bg-purple-900 br-2") do
             adr_include_query_params do

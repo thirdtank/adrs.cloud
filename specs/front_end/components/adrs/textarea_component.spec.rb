@@ -16,7 +16,7 @@ RSpec.describe Adrs::TextareaComponent do
         context: "Some context",
       )
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
       violations = html.css("brut-cv-messages[input-name='foo'] brut-cv")
       expect(violations.size).to eq(1)
 

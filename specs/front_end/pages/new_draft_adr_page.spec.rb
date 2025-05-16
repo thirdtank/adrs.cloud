@@ -14,7 +14,7 @@ RSpec.describe NewDraftAdrPage do
 
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash:)
 
-      result = render(page)
+      result = generate_result(page)
       expect(result.kind_of?(URI)).to eq(true)
       expect(result).to be_routing_for(AdrsPage)
       expect(flash.alert).to eq("add_new_limit_exceeded")
@@ -29,7 +29,7 @@ RSpec.describe NewDraftAdrPage do
 
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: flash)
 
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       element = html_locator.element!("[role='alert']")
@@ -43,7 +43,7 @@ RSpec.describe NewDraftAdrPage do
 
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
     end
   end
@@ -55,7 +55,7 @@ RSpec.describe NewDraftAdrPage do
 
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
       expect(rendered_html.text).to include(CGI.escapeHTML(adr_being_refined.title))
     end
@@ -68,7 +68,7 @@ RSpec.describe NewDraftAdrPage do
 
       page = described_class.new(form:, authenticated_account: AuthenticatedAccount.new(account:), flash: empty_flash)
 
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       expect(rendered_html.css("[role='alert']")).to have_html_attribute(:hidden)
       expect(rendered_html.text).to include(CGI.escapeHTML(adr_being_replaced.title))
     end

@@ -12,12 +12,17 @@ class AccountByExternalIdPage::DownloadProgressComponent < AppComponent
           span { t(:download_ready) }
         end
         p(class: "p i") do
-          t(:download_ready_text, created: time_tag(timestamp: download.created_at, format: :full_with_tz), deleted: time_tag(timestamp: download.delete_at, format: :full_with_tz))
+          t([:download_ready_text, :created]) do
+            render time_tag(timestamp: download.created_at, format: :full_with_tz)
+          end
+          t([:download_ready_text, :available]) do
+            render time_tag(timestamp: download.delete_at, format: :full_with_tz)
+          end
         end
         a(href: DownloadsWithExternalIdHandler.routing(external_id: download.external_id), class:"f-3 green-200 db") do
           t(:download)
         end
-        form_tag(for: DownloadsHandler, class: "mt-4") do
+        FormTag(for: DownloadsHandler, class: "mt-4") do
           render(ButtonComponent.new(
             size: :tiny,
             color: :blue,

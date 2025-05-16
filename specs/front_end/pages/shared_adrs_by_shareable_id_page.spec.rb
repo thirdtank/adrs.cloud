@@ -17,7 +17,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         page = described_class.new(shareable_id: replaced_adr.shareable_id)
 
 
-        parsed_html = render_and_parse(page)
+        parsed_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
 
         expect(parsed_html.text).to include(t("pages.SharedAdrsByShareableIdPage.originally_accepted", block: ""))
@@ -42,7 +42,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
         page = described_class.new(shareable_id: replaced_adr.shareable_id)
 
 
-        parsed_html = render_and_parse(page)
+        parsed_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
 
         expect(parsed_html.text).to match(/Replaced on\s+#{Regexp.escape(replacing_adr.accepted_at.strftime("%a, %b %e"))}/)
@@ -65,7 +65,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
 
         page = described_class.new(shareable_id: refining_adr.shareable_id)
 
-        parsed_html = render_and_parse(page)
+        parsed_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
 
         link = html_locator.element("a[href='#{routing_for(described_class, shareable_id: refined_adr.shareable_id)}']")
@@ -84,7 +84,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
 
         page = described_class.new(shareable_id: refining_adr.shareable_id)
 
-        parsed_html = render_and_parse(page)
+        parsed_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(parsed_html)
 
         link = html_locator.element!("a[href='#{routing_for(described_class, shareable_id: refined_adr.shareable_id)}']")
@@ -98,7 +98,7 @@ RSpec.describe SharedAdrsByShareableIdPage do
 
       page = described_class.new(shareable_id: adr.shareable_id)
 
-      parsed_html = render_and_parse(page)
+      parsed_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
       expect(parsed_html.text).to include("Accepted")

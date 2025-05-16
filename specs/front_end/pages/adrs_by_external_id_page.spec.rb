@@ -10,7 +10,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id)
 
-      html_locator = Support::HtmlLocator.new(render_and_parse(page))
+      html_locator = Support::HtmlLocator.new(generate_and_parse(page))
       expect(html_locator.element!("[role='status']").text).to include(t(:adr_accepted).to_s)
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id)
 
-      html_locator = Support::HtmlLocator.new(render_and_parse(page))
+      html_locator = Support::HtmlLocator.new(generate_and_parse(page))
       expect(html_locator.element!("aside[role='note']").text.to_s.strip).to eq("DRAFT")
       expect(html_locator.element!("[aria-label='because']").inner_html).to include("Because <em>this</em> is a test of <code>markdown</code>")
     end
@@ -41,7 +41,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: replaced_adr.external_id)
 
-      parsed_html = render_and_parse(page)
+      parsed_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
       timestamp = html_locator.element!("time[datetime='#{replacing_adr.accepted_at.strftime("%Y-%m-%d %H:%M:%S.%6N %Z")}']")
@@ -62,7 +62,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: refining_adr.external_id)
 
-      parsed_html = render_and_parse(page)
+      parsed_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
       link = html_locator.element!("a[href='#{routing_for(AdrsByExternalIdPage,external_id: refined_adr.external_id)}']")
@@ -85,7 +85,7 @@ RSpec.describe AdrsByExternalIdPage do
         page = described_class.new(authenticated_account:,
                                    external_id: adr.external_id)
 
-        parsed_html = render_and_parse(page)
+        parsed_html = generate_and_parse(page)
 
         expect(parsed_html.text).to include("Accepted")
 
@@ -106,7 +106,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id)
 
-      parsed_html = render_and_parse(page)
+      parsed_html = generate_and_parse(page)
 
       accept_text = t("pages.AdrsByExternalIdPage.accepted", block: "")
       originally_accept_text = t("pages.AdrsByExternalIdPage.originally_accepted", block: "")
@@ -126,7 +126,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id)
 
-      parsed_html = render_and_parse(page)
+      parsed_html = generate_and_parse(page)
 
       expect(parsed_html.text).not_to include(t("pages.AdrsByExternalIdPage.accepted", block: ""))
       expect(parsed_html.text).to     include(t("pages.AdrsByExternalIdPage.rejected", block: ""))
@@ -147,7 +147,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id)
 
-      parsed_html = render_and_parse(page)
+      parsed_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
       expect(parsed_html.text).to     include(t("pages.AdrsByExternalIdPage.accepted", block: ""))
@@ -170,7 +170,7 @@ RSpec.describe AdrsByExternalIdPage do
       page = described_class.new(authenticated_account:,
                                  external_id: adr.external_id)
 
-      parsed_html = render_and_parse(page)
+      parsed_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(parsed_html)
 
       expect(parsed_html.text).to     include(t("pages.AdrsByExternalIdPage.accepted", block: ""))

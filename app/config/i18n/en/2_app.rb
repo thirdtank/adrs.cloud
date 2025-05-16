@@ -286,7 +286,10 @@
       "AccountByExternalIdPage::DownloadProgressComponent": {
         download_ready: "Download Ready",
         download_being_assembled: "Download Being Assembled",
-        download_ready_text: "Your data as of %{created} is ready to download. It'll be available here until %{deleted}.",
+        download_ready_text: {
+          created: "Your data as of %{block} is ready to download.",
+          available: "It'll be available here until %{block}.",
+        },
         download: "Download",
         create_new: "Create New Download",
         create_new_confirmation: "This will delete your existing download",

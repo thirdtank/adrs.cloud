@@ -12,7 +12,7 @@ RSpec.describe CheckboxComponent do
         input_name: :foo,
       )
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
       expect(html.name).to eq("label")
       expect(html.text).to include("The Foo?")
       checkbox = html.css("input[type=checkbox]").first
@@ -36,7 +36,7 @@ RSpec.describe CheckboxComponent do
         input_name: :foo,
       )
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
       expect(html.name).to eq("label")
       expect(html.text).to include("The Foo?")
       checkbox = html.css("input[type=checkbox]").first

@@ -6,7 +6,7 @@ class NewProjectPage < AppPage
   end
 
   def page_template
-    global_component(AnnouncementBannerComponent)
+    render global_component(AnnouncementBannerComponent)
     header do
       h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") do
         t(:new_project)

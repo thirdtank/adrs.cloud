@@ -20,13 +20,13 @@ class HomePage < AppPage
             end
           end
         end
-        form_tag(action: "/auth/github", method: :post, class: "ph-3") do
+        FormTag(action: "/auth/github", method: :post, class: "ph-3") do
           button(type: "submit", class: "button button--size--large button--color--blue") do
             raw(safe( "Login with GitHub &rarr;"))
           end
         end
         if !Brut.container.project_env.production?
-          form_tag(action: "/auth/developer", method: :post, class: "ph-3 mt-2") do
+          FormTag(action: "/auth/developer", method: :post, class: "ph-3 mt-2") do
             button(type: "submit", class: "button button--size--small button--color--orange") do
               "Dev login"
             end

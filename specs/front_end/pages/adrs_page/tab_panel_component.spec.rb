@@ -13,7 +13,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       project: adr.project,
                                       action: :edit)
 
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
       h2 = parsed_html.css("h2")
       expect(h2.text).to include("blah")
       expect(h2.text).to include(adr.project.name)
@@ -31,7 +31,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       project: nil,
                                       action: :edit)
 
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
       links = parsed_html.css("a[href='#{EditDraftAdrByExternalIdPage.routing(external_id: adr.external_id)}']")
       expect(links.length).to eq(1)
     end
@@ -47,7 +47,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       project: nil,
                                       action: :view)
 
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
       links = parsed_html.css("a[href='#{AdrsByExternalIdPage.routing(external_id: adr.external_id)}']")
       expect(links.length).to eq(1)
     end
@@ -63,7 +63,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tag: nil,
                                       project: nil,
                                       action: :view)
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
       expect(parsed_html).to have_html_attribute(role: :tabpanel)
       expect(parsed_html).not_to have_html_attribute(:hidden)
     end
@@ -77,7 +77,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tag: nil,
                                       project: nil,
                                       action: :view)
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
       expect(parsed_html).to have_html_attribute(role: :tabpanel)
       expect(parsed_html).to have_html_attribute(:hidden)
     end
@@ -94,7 +94,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       project: nil,
                                       action: :view)
 
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
 
       tds = parsed_html.css("tbody tr td")
       expect(tds.length).to eq(2)
@@ -110,7 +110,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tag: nil,
                                       project: nil,
                                       action: :view)
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
       expect(parsed_html.text).to include("foo")
       expect(parsed_html.text).to include("bar")
       expect(parsed_html.text).to include(adr.title)
@@ -126,7 +126,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       tag: nil,
                                       project: nil,
                                       action: :view)
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
       expect(parsed_html.text).to include(adr.project.name)
     end
 
@@ -141,7 +141,7 @@ RSpec.describe AdrsPage::TabPanelComponent do
                                       selected: false,
                                       action: :view)
 
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
 
       tds = parsed_html.css("tbody tr td")
       expect(tds.length).to eq(2)

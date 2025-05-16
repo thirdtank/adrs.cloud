@@ -67,7 +67,7 @@ class AdrsByExternalIdPage < AppPage
                   t(:edit_adr)
                 end
               elsif accepted?
-                form_tag(method: "post", class: "flex flex-column items-start gap-2 mb-2 w-100") do
+                FormTag(method: "post", class: "flex flex-column items-start gap-2 mb-2 w-100") do
                   input(type:"hidden", name:"external_id", value: adr.external_id)
                   fieldset(class: "bn pa-0 ma-0 flex w-100 items-center") do
 
@@ -111,7 +111,7 @@ class AdrsByExternalIdPage < AppPage
                   end
                 end
                 if !adr.replaced?
-                  form_tag(method: "post", class:"flex items-center w-100") do
+                  FormTag(method: "post", class:"flex items-center w-100") do
                     input(type: "hidden", name: "external_id", value: "adr.external_id")
                     render(
                       ButtonComponent.new(
@@ -170,7 +170,7 @@ class AdrsByExternalIdPage < AppPage
               end
               if can_edit_tags?
                 adr_tag_editor_edit(class: "dn pos-absolute z-2") do
-                  form_tag(
+                  FormTag(
                     action: AdrTagsWithExternalIdForm.routing(external_id: adr.external_id),
                     method: "post",
                     class: "flex flex-column items-end gap-2 mt-2 pa-3 shadow-3 ba bc-gray-700 z-3 bg-white"
@@ -208,7 +208,7 @@ class AdrsByExternalIdPage < AppPage
         end
       end
       section(class: "bg-gray-900 gray-100 w-100 h-100vh flex flex-column items-start shadow-1") do
-        global_component(AnnouncementBannerComponent)
+        render global_component(AnnouncementBannerComponent)
         article(class: "overflow-y-scroll w-100 bg-white #{adr.replaced? ? 'gray-600' : 'black'} pos-relative") do
           if draft?
             div(class: "measure-wide pos-relative") do
@@ -247,7 +247,7 @@ class AdrsByExternalIdPage < AppPage
                          div(class: "f-1") do
                            raw(
                              t(:replaced_on) {
-                               time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
+                               render time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
                              }
                            )
                          end

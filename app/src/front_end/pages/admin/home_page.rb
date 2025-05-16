@@ -29,7 +29,7 @@ class Admin::HomePage < Admin::BasePage
       h1 { "Admin" }
       div(class: "flex justify-between gap-3") do
         brut_form(class: "flex-grow-1") do
-          form_tag(
+          FormTag(
             for: new_account_form.class,
             class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns"
           ) do
@@ -54,7 +54,7 @@ class Admin::HomePage < Admin::BasePage
           end
         end
         brut_form(class: "flex-grow-1") do
-          form_tag(for: Admin::AccountsPage,
+          FormTag(for: Admin::AccountsPage,
                        class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns") do
             render TextFieldComponent.new(
               label: "Email Address or Fragment",

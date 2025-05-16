@@ -78,7 +78,7 @@ RSpec.describe AdrsPage do
 
       page = described_class.new(authenticated_account:)
 
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       locator = Support::HtmlLocator.new(rendered_html)
       aggregate_failures do
         expect(locator.element("[id=drafts-panel]").text).to include("None")
@@ -103,7 +103,7 @@ RSpec.describe AdrsPage do
 
       page = described_class.new(authenticated_account:)
 
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
       status = html_locator.element!("[role='status']")
       expect(status.text).to include(t(:adr_created))
@@ -120,7 +120,7 @@ RSpec.describe AdrsPage do
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
       page = described_class.new(authenticated_account:)
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       expect(rendered_html).to     have_selected_tab("accepted-tab")
@@ -138,7 +138,7 @@ RSpec.describe AdrsPage do
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
       page = described_class.new(authenticated_account:, tab: "accepted")
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       expect(rendered_html).to     have_selected_tab("accepted-tab")
@@ -156,7 +156,7 @@ RSpec.describe AdrsPage do
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
       page = described_class.new(authenticated_account:, tab: "drafts")
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       expect(rendered_html).not_to have_selected_tab("accepted-tab")
@@ -174,7 +174,7 @@ RSpec.describe AdrsPage do
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
       page = described_class.new(authenticated_account:, tab: "replaced")
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       expect(rendered_html).not_to have_selected_tab("accepted-tab")
@@ -192,7 +192,7 @@ RSpec.describe AdrsPage do
              replaced_by_adr: create(:adr, :accepted, account: authenticated_account.account))
 
       page = described_class.new(authenticated_account:, tab: "rejected")
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       expect(rendered_html).not_to have_selected_tab("accepted-tab")
@@ -211,7 +211,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         side_nav = html_locator.element!("nav")
         expect(side_nav.css("a[href='#{NewDraftAdrPage.routing}']")).not_to eq(nil)
@@ -227,7 +227,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         side_nav = html_locator.element!("nav")
         expect(side_nav.css("a[href='#{NewDraftAdrPage.routing}']").length).to eq(0)
@@ -244,7 +244,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=drafts-panel] table")
         rows = table.css("tbody tr")
@@ -260,7 +260,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=accepted-panel] table")
         rows = table.css("tbody tr")
@@ -276,7 +276,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=rejected-panel] table")
         rows = table.css("tbody tr")
@@ -295,7 +295,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=replaced-panel] table")
         rows = table.css("tbody tr")
@@ -314,7 +314,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:, tag: "blah")
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=drafts-panel] table")
         rows = table.css("tbody tr")
@@ -332,7 +332,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:, tag: "blah")
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=accepted-panel] table")
         rows = table.css("tbody tr")
@@ -350,7 +350,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:, tag: "blah")
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=rejected-panel] table")
         rows = table.css("tbody tr")
@@ -376,7 +376,7 @@ RSpec.describe AdrsPage do
 
         page = described_class.new(authenticated_account:, tag: "blah")
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         html_locator = Support::HtmlLocator.new(rendered_html)
         table = html_locator.element!("[id=replaced-panel] table")
         rows = table.css("tbody tr")

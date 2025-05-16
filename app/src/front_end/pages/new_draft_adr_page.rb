@@ -14,7 +14,7 @@ class NewDraftAdrPage < AppPage
     end
   end
 
-  def before_render
+  def before_generate
     if !@account_entitlements.can_add_new?
       @flash.alert = :add_new_limit_exceeded
       return redirect_to(AdrsPage)
@@ -22,7 +22,7 @@ class NewDraftAdrPage < AppPage
   end
 
   def page_template
-    global_component(AnnouncementBannerComponent)
+    render global_component(AnnouncementBannerComponent)
     header do
       h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") do
         t(:draft_new)

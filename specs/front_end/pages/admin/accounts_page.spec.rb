@@ -19,7 +19,7 @@ RSpec.describe Admin::AccountsPage do
 
       page = described_class.new(search_string: "", authenticated_account:)
 
-      rendered_html = render_and_parse(page)
+      rendered_html = generate_and_parse(page)
       expect(rendered_html.text).to include(authenticated_account.account.email)
       expect(rendered_html.text).to include(pat.email)
       expect(rendered_html.text).to include(chris.email)
@@ -34,7 +34,7 @@ RSpec.describe Admin::AccountsPage do
 
         page = described_class.new(search_string: "example.com", authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         expect(rendered_html.text).to     include(pat.email)
         expect(rendered_html.text).to     include(chris.email)
         expect(rendered_html.text).not_to include(cameron.email)
@@ -45,7 +45,7 @@ RSpec.describe Admin::AccountsPage do
         create(:account)
         page = described_class.new(search_string: "@gmail.com", authenticated_account:)
 
-        rendered_html = render_and_parse(page)
+        rendered_html = generate_and_parse(page)
         expect(rendered_html.text).to include("Nothing Matched")
       end
     end

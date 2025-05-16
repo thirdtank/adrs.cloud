@@ -5,7 +5,7 @@ RSpec.describe Admin::AccountsByExternalIdPage do
       authenticated_account = create(:authenticated_account)
       account = create(:account)
 
-      result = render(described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:))
+      result = generate_result(described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:))
       expect(result).to have_returned_http_status(404)
     end
   end
@@ -15,7 +15,7 @@ RSpec.describe Admin::AccountsByExternalIdPage do
       account = create(:account)
       account.entitlement.update(max_non_rejected_adrs: nil)
 
-      rendered_html = render_and_parse(described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:))
+      rendered_html = generate_and_parse(described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:))
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       label = html_locator.element!("table tr label[for='max_non_rejected_adrs']")
@@ -36,7 +36,7 @@ RSpec.describe Admin::AccountsByExternalIdPage do
       max_non_rejected_adrs = account.entitlement.entitlement_default.max_non_rejected_adrs + 1
       account.entitlement.update(max_non_rejected_adrs: max_non_rejected_adrs)
 
-      rendered_html = render_and_parse(described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:))
+      rendered_html = generate_and_parse(described_class.new(external_id: account.external_id, flash: empty_flash, authenticated_account:))
       html_locator = Support::HtmlLocator.new(rendered_html)
 
       label = html_locator.element!("table tr label[for='max_non_rejected_adrs']")

@@ -3,7 +3,7 @@ require "spec_helper"
 RSpec.describe AdrsByExternalIdPage::BannerComponent do
   it "uses the yielded block" do
     component = described_class.new(color: "", background_color: "")
-    parsed_html = render_and_parse(component) do
+    parsed_html = generate_and_parse(component) do
       "<p>block!</p>"
     end
 
@@ -14,7 +14,7 @@ RSpec.describe AdrsByExternalIdPage::BannerComponent do
   it "uses the timestamp and i18n key when no block given" do
     now = Time.now
     component = described_class.new(timestamp: now, i18n_key: :accepted, color: "", background_color: "")
-    parsed_html = render_and_parse(component)
+    parsed_html = generate_and_parse(component)
 
     time = parsed_html.css("time")[0]
     expect(time).not_to eq(nil)

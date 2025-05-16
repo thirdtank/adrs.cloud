@@ -1,18 +1,10 @@
 class Adrs::FormComponent < AppComponent
 
-  attr_reader :form, :action_label, :form_action, :go_back_label, :projects_input
+  attr_reader :form, :action_label, :form_action, :go_back_label
 
   def initialize(form, action:, external_id: nil, projects: [])
     @form = form
-    @projects_input = Brut::FrontEnd::Components::Inputs::Select.for_form_input(
-      form: form,
-      input_name: :project_external_id,
-      html_attributes: { class: "w-100 f-3" },
-      options: projects,
-      selected_value: form.project_external_id,
-      value_attribute: :external_id,
-      option_text_attribute: :name,
-    )
+    @projects = projects
     case action
     when :new
       @action_label  = t("actions.save_draft")
@@ -85,14 +77,21 @@ class Adrs::FormComponent < AppComponent
 
   def view_template
     brut_form(show_warnings: true) do
-      form_tag(
+      FormTag(
         action: form_action.to_s,
         method:"post",
         class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-60-ns"
       ) do
         label(class: "flex items-center gap-2 mb-3") do
           span { "Project" }
-          render projects_input
+          render select_tag_with_options(
+            form: form,
+            input_name: :project_external_id,
+            html_attributes: { class: "w-100 f-3" },
+            options: @projects,
+            value_attribute: :external_id,
+            option_text_attribute: :name,
+          )
         end
         render(
           TextFieldComponent.new(

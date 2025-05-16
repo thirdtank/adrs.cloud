@@ -47,7 +47,7 @@ class SharedAdrsByShareableIdPage < AppPage
                 div(class: "f-2") do
                   raw(
                     t(:replaced_on) { 
-                      time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
+                      render time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
                     }
                   )
                   if adr.replaced_by_adr.shared?
@@ -70,11 +70,11 @@ class SharedAdrsByShareableIdPage < AppPage
           h3(class: "lh-title fw-5 pa-2 mh-3 ba br-2 #{ adr.replaced? ? 'bc-gray-300 gray-700 bg-gray-400' : 'text-glow bc-green-200 green-800 bg-green-200' }") do
             if adr.replaced?
               raw(t(:originally_accepted) do
-                time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
+                render time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
               end)
             else
               raw(t(:accepted) do
-                time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
+                render time_tag(timestamp: adr.accepted_at, class: "fw-6", format: :date)
               end)
             end
           end
@@ -93,7 +93,7 @@ class SharedAdrsByShareableIdPage < AppPage
             end
           end
           raw(t(:created) do
-            time_tag(timestamp: adr.created_at, class: "fw-5", format: :date)
+            render time_tag(timestamp: adr.created_at, class: "fw-5", format: :date)
           end)
         end
         section(class: "pt-3 adr-content") do

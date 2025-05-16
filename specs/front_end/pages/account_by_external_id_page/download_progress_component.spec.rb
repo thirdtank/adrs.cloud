@@ -7,7 +7,7 @@ RSpec.describe AccountByExternalIdPage::DownloadProgressComponent do
 
       component = described_class.new(download:)
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
 
       expect(html.text).to include(t("components.#{described_class}.download_ready"))
     end
@@ -18,7 +18,7 @@ RSpec.describe AccountByExternalIdPage::DownloadProgressComponent do
 
       component = described_class.new(download:)
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
 
       expect(html.text).to include(t("components.#{described_class}.download_being_assembled"))
     end

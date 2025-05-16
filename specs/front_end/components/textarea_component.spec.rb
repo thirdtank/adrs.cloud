@@ -12,7 +12,7 @@ RSpec.describe TextareaComponent do
         input_name: :foo,
       )
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
       expect(html.name).to eq("label")
       expect(html.text).to include("The Foo Field")
     end
@@ -26,7 +26,7 @@ RSpec.describe TextareaComponent do
         input_name: :foo,
       )
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
       expect(html.name).to eq("div")
       inputs = html.css("textarea[id='foobar']") # <-- this line is different in TextFieldComponent
       expect(inputs.size).to eq(1)
@@ -49,7 +49,7 @@ RSpec.describe TextareaComponent do
         input_name: :foo,
       )
 
-      html = render_and_parse(component)
+      html = generate_and_parse(component)
       violations = html.css("brut-cv-messages[input-name='foo'] brut-cv")
       expect(violations.size).to eq(1)
 

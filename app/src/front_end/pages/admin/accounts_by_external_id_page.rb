@@ -51,7 +51,7 @@ class Admin::AccountsByExternalIdPage < Admin::BasePage
         "Entitlements - #{account.entitlement.entitlement_default.internal_name}"
       }
       brut_form do
-        form_tag(
+        FormTag(
           action: form.class.routing(external_id: account.external_id),
           method: :post
         ) do

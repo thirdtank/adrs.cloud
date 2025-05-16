@@ -30,7 +30,7 @@ class AdrsPage::TabPanelComponent < AppComponent
     if column.to_s =~ /_at$/
       value = adr.send(column)
       span(class: "ws-nowrap gray-400 fw-5") {
-        time_tag(timestamp: value, format: :date)
+        render time_tag(timestamp: value, format: :date)
       }
     elsif column == :title
       render(AdrsPage::AdrTitleComponent.new(adr:))

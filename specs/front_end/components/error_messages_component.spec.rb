@@ -9,7 +9,7 @@ RSpec.describe ErrorMessagesComponent do
 
     component = described_class.new(form:form)
 
-    html = render_and_parse(component)
+    html = generate_and_parse(component)
     locator = Support::HtmlLocator.new(html)
     expect(html.name).to eq("brut-cv")
     expect(html).to have_html_attribute("input-name" => "foo")

@@ -7,7 +7,7 @@ RSpec.describe Adrs::FormComponent, component: true do
       form = EditDraftAdrWithExternalIdForm.new(params: { title: adr.title })
       component = described_class.new(form,action: :edit, external_id: adr.external_id)
 
-      parsed_html = render_and_parse(component)
+      parsed_html = generate_and_parse(component)
 
       expect(parsed_html.css("button[title='Reject ADR']").length).to eq(1)
       expect(parsed_html.css("button[title='Accept ADR']").length).to eq(1)
@@ -20,7 +20,7 @@ RSpec.describe Adrs::FormComponent, component: true do
         form = NewDraftAdrForm.new
         component = described_class.new(form,action: :new)
 
-        parsed_html = render_and_parse(component)
+        parsed_html = generate_and_parse(component)
 
         expect(parsed_html.css("button[title='Reject ADR']").length).to eq(0)
         expect(parsed_html.css("button[title='Accept ADR']").length).to eq(0)
@@ -34,7 +34,7 @@ RSpec.describe Adrs::FormComponent, component: true do
         form = NewDraftAdrForm.new(params: { replaced_adr_external_id: replaced_adr_external_id })
         component = described_class.new(form,action: :replace)
 
-        parsed_html = render_and_parse(component)
+        parsed_html = generate_and_parse(component)
 
         expect(parsed_html.css("button[title='Reject ADR']").length).to eq(0)
         expect(parsed_html.css("button[title='Accept ADR']").length).to eq(0)
@@ -49,7 +49,7 @@ RSpec.describe Adrs::FormComponent, component: true do
         form = NewDraftAdrForm.new(params: { refines_adr_external_id: refines_adr_external_id })
         component = described_class.new(form,action: :refine)
 
-        parsed_html = render_and_parse(component)
+        parsed_html = generate_and_parse(component)
 
         expect(parsed_html.css("button[title='Reject ADR']").length).to eq(0)
         expect(parsed_html.css("button[title='Accept ADR']").length).to eq(0)

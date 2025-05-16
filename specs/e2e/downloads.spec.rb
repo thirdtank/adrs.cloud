@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe "Download all data", e2e_timeout: 30_000 do
   include Support::E2E::Login
-  it "can add, edit, and archive projects" do
+  it "can download all data, waiting for the background job" do
     account = create(:account)
     create(:adr, account: account)
     create(:adr, :accepted, account: account)
@@ -37,7 +37,7 @@ RSpec.describe "Download all data", e2e_timeout: 30_000 do
                         fail "Could not parse '#{contents}' as HTML: #{ex.message}"
                       end
     expect(parsed_contents.css("section[title='adrs'] section").length).to eq(2)
-    expect(parsed_contents.css("section[title='projects'] section").length).to eq(1)
+    expect(parsed_contents.css("section[title='projects'] section").length).to eq(3)
   end
 
 end

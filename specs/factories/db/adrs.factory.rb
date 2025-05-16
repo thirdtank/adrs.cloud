@@ -3,7 +3,7 @@ FactoryBot.define do
     account
     sequence(:title) { |n| (Faker::Book.title + ", Part #{n}").gsub(/'/,"") }
     rejected_at { nil }
-    project
+    project { association :project, account: account }
 
     trait :accepted do
       context   { Faker::Hipster.paragraph }

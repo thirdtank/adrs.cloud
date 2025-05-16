@@ -22,7 +22,7 @@ class Projects::FormComponent < AppComponent
 
   def view_template
     brut_form do
-      form_tag(
+      FormTag(
         action: @form_action.to_s,
         method:"post",
         class:"flex flex-column gap-2 shadow-2-ns mh-auto pa-4-ns br-1 bg-white-ish-ns w-60-ns"

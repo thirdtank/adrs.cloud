@@ -67,7 +67,7 @@ class AccountByExternalIdPage < AppPage
         end
       end
       section(class: "bg-gray-900 gray-100 w-100 h-100vh pb-3 flex flex-column items-start") do
-        global_component(AnnouncementBannerComponent)
+        render global_component(AnnouncementBannerComponent)
         div(class: "overflow-y-scroll w-100") do
           render(AccountByExternalIdPage::TabPanelComponent.new(tab_name: "projects", selected_name: selected_tab.name)) do
             table(class: "collapse mv-3 striped w-100") do
@@ -128,7 +128,7 @@ class AccountByExternalIdPage < AppPage
                           t(:edit) 
                         }
                         if project.active?
-                          form_tag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id), method: :post) do
+                          FormTag(action: ArchivedProjectsWithExternalIdHandler.routing(external_id: project.external_id), method: :post) do
                             brut_confirm_submit(
                               message: t("projects.archive_confirmation")
                             ) do
@@ -171,7 +171,7 @@ class AccountByExternalIdPage < AppPage
                 render(AccountByExternalIdPage::DownloadProgressComponent.new(download: authenticated_account.download))
               end
             else
-              form_tag(for: DownloadsHandler) do
+              FormTag(for: DownloadsHandler) do
                 render(ButtonComponent.new(
                   size: :large,
                   color: :green,
