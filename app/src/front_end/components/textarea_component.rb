@@ -18,7 +18,7 @@ private
     if input_id
       input_html_attributes.merge!(id: input_id)
     end
-    Brut::FrontEnd::Components::Inputs::Textarea.for_form_input(
+    Inputs::TextareaTag.for_form_input(
       form: form,
       input_name: @input_name,
       html_attributes: input_html_attributes,

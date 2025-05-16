@@ -71,11 +71,11 @@ class Adrs::GetRefinementsComponent < AppComponent
               end
               td(class:"pv-2 pr-2") do
                 if refining_adr.accepted?
-                  render time_tag(timestamp: refining_adr.accepted_at).to_s
+                  TimeTag(timestamp: refining_adr.accepted_at).to_s
                 elsif refining_adr.rejected?
-                  render time_tag(timestamp: refining_adr.rejected_at).to_s
+                  TimeTag(timestamp: refining_adr.rejected_at).to_s
                 else
-                  render time_tag(timestamp: refining_adr.created_at).to_s
+                  TimeTag(timestamp: refining_adr.created_at).to_s
                 end
               end
             end

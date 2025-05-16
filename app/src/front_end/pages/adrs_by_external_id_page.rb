@@ -247,7 +247,7 @@ class AdrsByExternalIdPage < AppPage
                          div(class: "f-1") do
                            raw(
                              t(:replaced_on) {
-                               render time_tag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
+                               TimeTag(timestamp: adr.replaced_by_adr.accepted_at, class: "fw-6", format: :date)
                              }
                            )
                          end

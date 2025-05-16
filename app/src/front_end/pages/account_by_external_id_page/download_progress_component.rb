@@ -13,10 +13,10 @@ class AccountByExternalIdPage::DownloadProgressComponent < AppComponent
         end
         p(class: "p i") do
           t([:download_ready_text, :created]) do
-            render time_tag(timestamp: download.created_at, format: :full_with_tz)
+            TimeTag(timestamp: download.created_at, format: :full_with_tz)
           end
           t([:download_ready_text, :available]) do
-            render time_tag(timestamp: download.delete_at, format: :full_with_tz)
+            TimeTag(timestamp: download.delete_at, format: :full_with_tz)
           end
         end
         a(href: DownloadsWithExternalIdHandler.routing(external_id: download.external_id), class:"f-3 green-200 db") do
