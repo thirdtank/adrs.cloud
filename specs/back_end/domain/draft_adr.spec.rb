@@ -140,7 +140,7 @@ RSpec.describe DraftAdr do
         result = described_class.find!(account:, external_id: adr.external_id).accept(form:)
         expect(result).to be(form)
         expect(form.constraint_violations?).to eq(true)
-        expect(form).to have_constraint_violation(:title, key: :value_missing)
+        expect(form).to have_constraint_violation(:title, key: :valueMissing)
       end
     end
     context "form has server-side constraint violations" do
@@ -337,7 +337,7 @@ RSpec.describe DraftAdr do
           result = described_class.create(authenticated_account: AuthenticatedAccount.new(account:)).save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(true)
-          expect(form).to have_constraint_violation(:title, key: :value_missing)
+          expect(form).to have_constraint_violation(:title, key: :valueMissing)
         end
       end
       context "form has server-side constraint violations" do
@@ -481,7 +481,7 @@ RSpec.describe DraftAdr do
           result = described_class.find!(account:,external_id: adr.external_id).save(form:)
           expect(result).to be(form)
           expect(form.constraint_violations?).to eq(true)
-          expect(form).to have_constraint_violation(:title, key: :value_missing)
+          expect(form).to have_constraint_violation(:title, key: :valueMissing)
         end
       end
       context "form has server-side constraint violations" do

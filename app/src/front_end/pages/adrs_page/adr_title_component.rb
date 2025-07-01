@@ -40,27 +40,27 @@ class AdrsPage::AdrTitleComponent < AppComponent
             a(href:AdrsByExternalIdPage.routing(external_id: replaced_by_adr.external_id), class:"blue-300") do
               replaced_by_adr.title
             end
-          end.to_s
+          end
         end
         if refines_adr
           t([ :title_additions, :refines ]) do
             a(href: AdrsByExternalIdPage.routing(external_id: refines_adr.external_id), class: "blue-300") do
               refines_adr.title
             end
-          end.to_s
+          end
         end
         if replaced_adr
           t([ :title_additions, :replaces ]) do
             a(href: AdrsByExternalIdPage.routing(external_id: replaced_adr.external_id), class: "blue-300") do
               replaced_adr.title
             end
-          end.to_s
+          end
         elsif proposed_to_replace_adr
           t([ :title_additions, :proposed_replacement ]) do
             a(href: AdrsByExternalIdPage.routing(external_id: proposed_to_replace_adr.external_id), class:"blue-300") do
               proposed_to_replace_adr.title
             end
-          end.to_s
+          end
         end
       end
     end

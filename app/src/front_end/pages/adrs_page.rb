@@ -1,5 +1,10 @@
 class AdrsPage < AppPage
 
+  class SearchForm < Brut::FrontEnd::Form
+    select :project_external_id, required: false
+    input :tax, required: false
+  end
+
   attr_reader :tag, :tab, :entitlements, :authenticated_account, :project
 
   def initialize(authenticated_account:, tag: nil, tab: "accepted", project_external_id: nil)
@@ -17,6 +22,10 @@ class AdrsPage < AppPage
 
     @entitlements = @authenticated_account.entitlements
     @tab          = tab.to_sym
+    @search_form  = SearchForm.new(params: {
+      project_external_id: @project&.external_id,
+      tag: @tag
+    })
   end
 
   def filtered? = !!@tag || !!@project
@@ -30,17 +39,6 @@ class AdrsPage < AppPage
 
   def can_add_new? = @entitlements.can_add_new?
 
-  def project_select
-    Inputs::SelectTagWithOptions(
-      name: "project_external_id",
-      include_blank: { value: "ALL", text_content: "All" },
-      options: authenticated_account.projects,
-      selected_option: project,
-      value_attribute: :external_id,
-      option_text_attribute: :name,
-      html_attributes: { class: "w-6" }
-    )
-  end
 
   def page_template
     section(class:"flex w-100") do
@@ -100,7 +98,17 @@ class AdrsPage < AppPage
               form(class:"pa-3 flex items-center gap-3 bb bc-gray-700") do
                 label(class:"flex items-center gap-2") do
                   span(class:"f-1 fw-6") { "Project:" }
-                  brut_autosubmit { project_select }
+                  brut_autosubmit do
+                    Inputs::SelectTagWithOptions(
+                      form: @search_form,
+                      input_name: "project_external_id",
+                      include_blank: { value: "ALL", text_content: "All" },
+                      options: authenticated_account.projects,
+                      value_attribute: :external_id,
+                      option_text_attribute: :name,
+                      html_attributes: { class: "w-6" }
+                    )
+                  end
                 end
                 label(class:"flex items-center gap-2") do
                   span(class:"f-1 fw-6") { "Tag:" }

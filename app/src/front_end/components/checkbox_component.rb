@@ -7,7 +7,7 @@ class CheckboxComponent < AppComponent
 
   def view_template
     label(class:"flex items-center gap-3") do
-      render Inputs::InputTag.for_form_input(
+      Inputs::InputTag(
         form: @form,
         input_name: @input_name,
       )

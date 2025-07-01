@@ -67,7 +67,7 @@ private
     if input_id
       input_html_attributes.merge!(id: input_id)
     end
-    Inputs::InputTag.for_form_input(
+    Inputs::InputTag.new(
       form: form,
       input_name: @input_name,
       **input_html_attributes,

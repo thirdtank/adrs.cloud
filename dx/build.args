@@ -1,5 +1,5 @@
 # This is generated - see build.pre
-PLAYWRIGHT_VERSION=1.51.0
+PLAYWRIGHT_VERSION=1.52.0
 user_uid=501
 user_gid=20
 docker_gid=1

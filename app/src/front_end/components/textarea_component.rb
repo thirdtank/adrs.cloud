@@ -18,10 +18,10 @@ private
     if input_id
       input_html_attributes.merge!(id: input_id)
     end
-    Inputs::TextareaTag.for_form_input(
+    Inputs::TextareaTag.new(
       form: form,
       input_name: @input_name,
-      html_attributes: input_html_attributes,
+      **input_html_attributes,
     )
   end
 end

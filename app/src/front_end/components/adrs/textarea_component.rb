@@ -4,10 +4,11 @@ class Adrs::TextareaComponent < AppComponent
     @context = context.to_s
     @input_name = input_name
     @form = form
-    @input_component = Inputs::TextareaTag.for_form_input(
+    @input_component = Inputs::TextareaTag.new(
       form: @form,
       input_name: @input_name,
-      html_attributes: { class: "textarea", rows: 5, }
+      class: "textarea",
+      rows: 5
     )
   end
 
