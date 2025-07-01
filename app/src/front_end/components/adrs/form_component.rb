@@ -84,7 +84,7 @@ class Adrs::FormComponent < AppComponent
       ) do
         label(class: "flex items-center gap-2 mb-3") do
           span { "Project" }
-          render select_tag_with_options(
+          render Inputs::SelectTagWithOptions.for_form_input(
             form: form,
             input_name: :project_external_id,
             html_attributes: { class: "w-100 f-3" },
