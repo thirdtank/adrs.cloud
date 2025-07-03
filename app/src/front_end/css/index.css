@@ -1,4 +1,4 @@
-@import "melange-css/melange.css";
+@import "brut-css/dist/brut.css";
 @import "textarea.css";
 @import "button.css";
 @import "svgs.css";
@@ -8,13 +8,6 @@
   font-family: "Monaspace Xenon";
   src: url("../fonts/monaspace-xenon.ttf") format("truetype");
   font-display: swap;
-}
-
-html {
-  box-sizing: border-box;
-}
-*, *:before, *:after {
-  box-sizing: inherit;
 }
 
 [hidden] {
