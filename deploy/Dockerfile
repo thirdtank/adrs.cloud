@@ -1,4 +1,30 @@
-FROM docker.io/library/ruby:3.3-slim as base
+# This is a multi-stage build, meaning one image will be built that
+# has necessarily dev tools in it, and that image is used to create artifacts
+# that will be copied into the second build, which will create the image
+# you deploy to production.
+#
+# # Maintaing this file
+#
+# You own this file now.  While there could be a way to create it from
+# the Dockerfile.dx, for now, you'll need to stay on top of it:
+#
+# 1 - ensure the versions of Ruby match
+# 2 - ensure the versions of NodeJS match
+# 3 - ensure that anything you installed in Dockerfile.dx to make 
+#     the app work or to pre-generate assets is set up here as well.
+#     You are advised to make that setup identical.
+#
+# You can test this locally but using the `--plaform` flag to `bin/deploy deploy`
+# and running a container locally.  You'll need all infrastructure available
+# but it can be done to test things before you deploy. If you need to.
+
+# Use Ruby 3.4 as a base.
+FROM docker.io/library/ruby:3.4 AS base
+
+# bin/deploy will inject this value so that your app's GIT SHA1
+# is in the environment in production, thus allowing you to be more
+# sure of what's actually running.
+ARG app_git_sha1
 
 WORKDIR /brut-app
 
@@ -23,12 +49,10 @@ RUN apt-get update --quiet --yes && \
 		rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install the PostgreSQL client.  The latest version is not available
-# from Debian, so we set up our own.
+# from Debian, so we set up our own. This should match what's in Dockerfile.dx
+# and ideally the version of Postgres used in production.
 #
-# - lsb-release is needed to generalize the command to set up the new APT repo that contains Postgres
-# - gnupg is needed to assert
-#
-# Based on: https://www.postgresql.org/download/linux/debian/
+# Incancation is based on: https://www.postgresql.org/download/linux/debian/
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update && \
@@ -40,11 +64,17 @@ ENV RACK_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development" \
-    BRUT_BIN_KIT_DEBUG="true"
+    APP_GIT_SHA1="${app_git_sha1}"
 
-# Throw-away build stage to reduce size of final image
+# This makes a new image that we'll throw away after building
+# needed artifacts.
 FROM base AS build
 
+# - build-essential is needed for almost any build tool we have to install
+# - git is needed to install some things
+# - libpq-dev is needed by postgres
+# - pkg-config is, I guess, not considered "essential" (as in build-essential),
+#   but still needed to install downstream stuff
 RUN apt-get update --quiet --yes && \
     apt-get install --no-install-recommends --quiet --yes \
 			build-essential \
@@ -52,26 +82,34 @@ RUN apt-get update --quiet --yes && \
       libpq-dev \
 			pkg-config
 
-# Install Node and NPM
-# https://github.com/nodesource/distributions#using-debian-as-root-nodejs-20
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x -o nodesource_setup.sh && \
-    bash nodesource_setup.sh && \
-    apt-get install -y nodejs
+# Install NodeJS, per https://nodejs.org/en/download
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
+    \. "$HOME/.nvm/nvm.sh" && \
+    nvm install 22 && \
+    node -v && nvm current && npm -v
 
-# Copy the app
+# Copy the app into the file, excluding the contents of .dockerignore
 COPY . .
-# Install RubyGems
+
+# Install RubyGems from app's Gemfile
 RUN bundle install --verbose && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
-# Install Node Modules
-RUN npm clean-install --no-audit --no-fund --verbose
+# Install Node Modules from package.json
+RUN \. "$HOME/.nvm/nvm.sh" && \
+    nvm use default && \
+    npm clean-install --no-audit --no-fund --verbose
 
 # Build all assets
-RUN bundle exec bin/build-assets && rm -rf node_modules
+RUN \. "$HOME/.nvm/nvm.sh" && \
+    nvm use default && \
+    bin/build-assets && \
+    rm -rf node_modules
+
+# We are now switching back to building the image that will be deployed.
 
 FROM base
-# Copy built artifacts: gems, application
+# Copy built artifacts from the throwaway image: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /brut-app /brut-app
 
@@ -81,7 +119,7 @@ RUN groupadd --system --gid 1000 brut && \
     chown -R brut:brut logs tmp
 USER 1000:1000
 
+# This is used to execute other commands.  When the app is run in production,
+# this script is used to run it.
 ENTRYPOINT ["/brut-app/deploy/docker-entrypoint"]
 
-
-# vim: ft=Dockerfile
