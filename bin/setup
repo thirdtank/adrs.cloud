@@ -121,18 +121,6 @@ def setup(update_gems:,update_node:)
   log "Checking that you are set up with Heroku"
 
   log "All set up."
-  if system("heroku whoami")
-    log "You are logged in to Heroku"
-  else
-    log "You are not logged into Heroku."
-    log "Please run the following:"
-    log ""
-    log "heroku auth:login"
-    log "heroku container:login"
-    log ""
-    log "Then, re-run this"
-    exit 1
-  end
   help
 end
 

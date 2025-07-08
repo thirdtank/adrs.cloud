@@ -10,13 +10,6 @@ class App < Brut::Framework::App
     end
     Brut.container.override("session_class",AppSession)
     Brut.container.override("external_id_prefix","ad")
-    Brut.container.override("fallback_host") do |project_env|
-      if project_env.production?
-        raise "this must be set"
-      else
-        URI("http://localhost:6502")
-      end
-    end
     Brut.container.store(
       "flush_spans_in_sidekiq?",
       "Boolean",
@@ -33,6 +26,8 @@ class App < Brut::Framework::App
   end
 
   def boot!
+    # Brut does not yet have a consistent way to configure Sidekiw.
+    # Everything below here does work, but is a bit messy.
     Sidekiq.configure_server do |config|
       config.redis = {
         # Per https://devcenter.heroku.com/articles/connecting-heroku-redis#connecting-in-ruby

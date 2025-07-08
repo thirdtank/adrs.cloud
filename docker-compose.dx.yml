@@ -5,19 +5,17 @@ services:
     init: true
     volumes:
       - type: bind
-        source: "./"
-        target: "/home/appuser/work"
-        consistency: "consistent"
-      - type: bind
-        source: "../brut"
-        target: "/home/appuser/local-gems/brut"
+        source: ${PWD}
+        target: ${PWD}
         consistency: "consistent"
       # This allows docker build commands run inside Docker to work
       - type: bind
         source: "/var/run/docker.sock"
         target: "/var/run/docker.sock"
-    entrypoint: /home/appuser/show-help-in-app-container-then-wait.sh
-    working_dir: /home/appuser/work
+    command: /home/appuser/show-help-in-app-container-then-wait.sh
+    working_dir: ${PWD}
+    environment:
+      PROJECT_ROOT: ${PWD}
     ports:
       - "6504:6502"
       - "6505:6503"
@@ -31,4 +29,4 @@ services:
   otel-desktop-viewer:
     image: davetron5000/otel-desktop-viewer:alpine-3
     ports:
-      - "8001:8000"
+      - "6506:8000"

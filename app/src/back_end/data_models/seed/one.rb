@@ -4,7 +4,7 @@ end
 class Seed::One < Brut::BackEnd::SeedData
   include FactoryBot::Syntax::Methods
   def seed!
-    account             = create(:account, :without_entitlement, email: "davec@naildrivin5.com")
+    account             = create(:account, :without_entitlement, email: "pat@example.com")
     project             = account.projects.first
                           create(:project, account: account)
                           create(:project, account: account)

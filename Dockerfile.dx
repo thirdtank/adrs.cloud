@@ -92,6 +92,11 @@ RUN echo "gem: --no-document" >> ~/.gemrc && \
     gem update --system && \
     gem install bundler
 
+# Per Heroku docs at 
+# https://devcenter.heroku.com/articles/heroku-cli#install-with-ubuntu-debian-apt-get
+# Hopefully this works
+RUN curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
 # Setup a non-root user
 
 # Their user id, which ideally matches their user id on the host
@@ -108,8 +113,11 @@ ARG sadly_user_must_be_added_to_root=
 RUN getent group ${user_gid} || groupadd --gid ${user_gid} appgroup
 # Create the docker group id if it does not exist
 RUN getent group ${docker_gid} || groupadd --gid ${docker_gid} hostdocker
-# Create the user
+# Create the user. Note that we put bash_customizations in both .profile and .bashrc
+# to increase the chances they are used when running bash in various configurations
 RUN useradd --uid ${user_uid} --gid ${user_gid} --groups ${sadly_user_must_be_added_to_root}${docker_gid} --create-home --home-dir /home/appuser appuser && \
+    echo ". ~/.bash_customizations" >> /home/appuser/.profile && \
+    echo ". ~/.bash_customizations.local" >> /home/appuser/.profile && \
     echo ". ~/.bash_customizations" >> /home/appuser/.bashrc && \
     echo ". ~/.bash_customizations.local" >> /home/appuser/.bashrc
 
@@ -121,23 +129,13 @@ COPY --chown=appuser:${user_gid} dx/bash_customizations.local /home/appuser/.bas
 # ONLY in that group and not in all the groups in which they are a part.
 USER appuser
 
-# Setup a place to install gems locally. See bash_customizations for
-# where this is used in the PATH. Setting PATH here seems fraught:
-# https://stackoverflow.com/questions/27093612/in-a-dockerfile-how-to-update-path-environment-variable
-RUN mkdir -p /home/appuser/local-gems/gem-home
-ENV GEM_HOME=/home/appuser/local-gems/gem-home
-
 # Install NodeJS, per https://nodejs.org/en/download
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
     \. "$HOME/.nvm/nvm.sh" && \
-    nvm install 20 && \
+    nvm install 22 && \
     node -v && nvm current && npm -v
 
 
-# Per Heroku docs at https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli
-# ARM must use this method of install
-RUN \. "$HOME/.nvm/nvm.sh" && nvm use default  && \
-    npm install -g heroku
 
 # Install the version of playwright that matches Gemfile.lock
 ARG PLAYWRIGHT_VERSION
