@@ -32,3 +32,5 @@
 
 # RubyGems are installed here - we don't want to check those in.
 /local-gems
+# Used when working against in-development Brut
+/local-repos
