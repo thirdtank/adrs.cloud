@@ -49,7 +49,9 @@ class Admin::AccountsPage < Admin::BasePage
         end
       end
       a(href: Admin::HomePage.routing, class: "db mt-3") do
-        raw(safe("&larr; Back"))
+        entity("larr")
+        whitespace
+        plain("Back")
       end
     end
   end

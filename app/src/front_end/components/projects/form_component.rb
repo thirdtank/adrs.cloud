@@ -59,7 +59,7 @@ class Projects::FormComponent < AppComponent
           href: AccountByExternalIdPage.routing(external_id: account_external_id, tab: :projects),
           class: "red-300"
         ) do
-          span(role:"none") { raw(safe("&larr;")) }
+          span(role:"none") { entity("larr") }
           whitespace
           plain(go_back_label.to_s)
         end

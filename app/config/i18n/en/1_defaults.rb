@@ -66,7 +66,7 @@
     },
     cv: { # short for "constraint violations" to avoid having to type that out
       this_field: "this field",
-      fe: { # short for "front-end", again to not have to type it out
+      cs: { # short for "client-side", again to not have to type it out
         # These keys use camel-case because that is how the browser defines
         # these values, based on ValidityState
         badInput: "%{field} is the wrong type of data",
@@ -80,9 +80,8 @@
         valueMissing: "%{field} is required",
         general: "Form is invalid",
       },
-      be: { # short for "back-end", again not to have to type it out
-        # These are snake case, which is idiomatic for Ruby.  The values
-        # here are all based on DataObjectValidator's behavior
+      ss: { # short for "server-side", again not to have to type it out
+        # These are snake case, which is idiomatic for Ruby.
         required: "%{field} is required",
         too_short: "%{field} is too short; must be at least %{minlength} characters",
       },

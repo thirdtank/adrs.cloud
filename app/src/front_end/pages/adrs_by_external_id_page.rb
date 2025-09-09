@@ -57,7 +57,9 @@ class AdrsByExternalIdPage < AppPage
             a(class: "f-2 fw-5 blue-800 db pt-3",
               href:AdrsPage.routing
              ) do
-               raw(safe("&larr; #{t(:view_all)}"))
+               entity("larr")
+               whitespace
+               t(:view_all)
              end
           end
           div(class: "ph-3 bt bc-gray-500 pv-2") do

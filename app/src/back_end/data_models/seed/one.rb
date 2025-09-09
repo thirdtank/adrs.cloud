@@ -9,7 +9,7 @@ class Seed::One < Brut::BackEnd::SeedData
                           create(:project, account: account)
                           create(:project, account: account)
     entitlement_default = create(:entitlement_default, internal_name: "basic", max_non_rejected_adrs: 20)
-    entitlement         = create(:entitlement, max_non_rejected_adrs: nil, entitlement_default: entitlement_default, account: account)
+    entitlement         = create(:entitlement, max_non_rejected_adrs: nil, admin: true, entitlement_default: entitlement_default, account: account)
 
     postgres = create(:adr, account: account, project: project,
            "title": "Choosing PostgreSQL Over MySQL",

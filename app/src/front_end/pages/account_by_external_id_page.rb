@@ -190,31 +190,31 @@ class AccountByExternalIdPage < AppPage
               dt(class: "b") { t("info.personal.email.title") }
               dd { 
                 plain(authenticated_account.account.email)
-                sup { raw(safe("&dagger;")) }
+                sup { entity("dagger") }
               }
               if timezone_from_browser
                 dt(class: "b") { t("info.personal.timezone.title") }
                 dd {
                   plain(timezone_from_browser.to_s)
-                  sup { raw(safe("&ddagger;")) }
+                  sup { entity("ddagger") }
                 }
               end
               dt(class: "b") { t("info.personal.locale.title") }
               if http_accept_language.known?
                 dd { 
                   plain(http_accept_language.weighted_locales.map(&:locale).join(", "))
-                  sup { raw(safe("&ddagger;")) }
+                  sup { entity("ddagger") }
                 }
               else
                 dd { t("info.personal.locale.unknown") }
               end
             end
             p(class: "i f-1 p ml-3 mb-0 gray-400") do
-              sup { raw(safe("&dagger;")) }
+              sup { entity("dagger") }
               raw(t("info.personal.email.note"))
             end
             p(class: "i f-1 p ml-3 mt-0 gray-400") do
-              sup { raw(safe("&ddagger;")) }
+              sup { entity("ddagger") }
               raw(t("info.personal.timezone.note"))
             end
             h3(class: "f-3 ma-0 mt-4" ) { t("info.limits.title") }

@@ -4,9 +4,8 @@
   en: {
     nevermind: "Nevermind",
     cv: { # short for "constraint violations" to avoid having to type that out
-      be: { # short for "back-end", again not to have to type it out
-        # These are snake case, which is idiomatic for Ruby.  The values
-        # here are all based on DataObjectValidator's behavior
+      ss: { # short for "server-side", again not to have to type it out
+        # These are snake case, which is idiomatic for Ruby.
         not_enough_words: "%{field} must have at least %{minwords} words",
         account_exists: "That account already exists",
         taken: "%{field}'s value is already taken",

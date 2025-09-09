@@ -1,3 +1,7 @@
+# Base class for accounts that exist and have been successfully authenticated
+# to the system.  In practice, you'd have a GithubLinkedAccount, but this allows
+# for other account access such as development env accounts and future
+# accounts powered by OmniAuth
 class AuthenticatedAccount < Account
 
   include Brut::Framework::Errors
@@ -7,7 +11,7 @@ class AuthenticatedAccount < Account
   def self.find(session_id:)
     account = DB::Account.find(external_id: session_id)
     if account.nil?
-      nil
+      NoAccount.new
     elsif account.deactivated?
       DeactivatedAccount.new(account:)
     else
@@ -25,10 +29,10 @@ class AuthenticatedAccount < Account
 
   def external_id = @session_id
 
-  def active? = true
-  def error?  = false
+  def active?       =  true
+  def error?        =  false
   def has_download? = !self.download.nil?
-  def download = Download.for_account(account: @account)
+  def download      =  Download.for_account(account: @account)
 
   class Findable
     def initialize(klass,**args)

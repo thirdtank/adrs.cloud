@@ -7,6 +7,7 @@ class HomePage < AppPage
     div(class: "HomePage w-100 flex items-center") do
       main(class: "w-third h-100vh bg-purple-800 purple-100 flex flex-column items-end justify-center br bc-purple-700") do
         header(class: "ph-3 mb-5") do
+          # XXX: Localize
           h2(class: "f-6 mv-1 tr") { "All Your Decisions, All Together" }
           h1(class: "f-4 mb-0 tr") { "ADrs.Cloud" }
         end
@@ -22,7 +23,9 @@ class HomePage < AppPage
         end
         FormTag(action: "/auth/github", method: :post, class: "ph-3") do
           button(type: "submit", class: "button button--size--large button--color--blue") do
-            raw(safe( "Login with GitHub &rarr;"))
+            # XXX: Localize
+            plain( "Login with GitHub ")
+            entity("rarr")
           end
         end
         if !Brut.container.project_env.production?
@@ -33,6 +36,7 @@ class HomePage < AppPage
           end
         end
         p(class: "p mh-auto mb-6 f-2 pl-4 measure-narrow pr-3 mt-2 tr") do
+          # XXX: Localize
           strong { "No credit card required." }
           plain(" Create up to ")
           strong(class: "dib") { "20 free ADRs" }

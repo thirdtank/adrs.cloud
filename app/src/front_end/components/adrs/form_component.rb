@@ -203,7 +203,7 @@ class Adrs::FormComponent < AppComponent
           href: AdrsPage.routing,
           class: "red-300"
         ) do
-          span(role: "none") { raw(safe("&larr;")) }
+          span(role: "none") { entity("larr") }
           raw(go_back_label)
         end
       end

@@ -9,9 +9,10 @@ class NewDraftAdrHandler < AppHandler
     if !@authenticated_account.entitlements.can_add_new?
       return http_status(403)
     end
-
-    draft_adr = DraftAdr.create(authenticated_account: @authenticated_account)
-    @form = draft_adr.save(form: @form)
+    if @form.valid?
+      draft_adr = DraftAdr.create(authenticated_account: @authenticated_account)
+      @form = draft_adr.save(form: @form)
+    end
 
     if @form.constraint_violations?
       @flash.alert = :new_adr_invalid

@@ -41,7 +41,9 @@ class Admin::AccountsByExternalIdPage < Admin::BasePage
     section(class:"mh-auto w-two-thirds") do
       nav(class: "w-100 flex items-center pa-3") do
         a(href: Admin::HomePage.routing) do
-          raw(safe("&larr; #{t(:back)}"))
+          entity("larr")
+          whitespace
+          t(:back)
         end
       end
       h1 {

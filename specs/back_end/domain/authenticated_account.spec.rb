@@ -2,10 +2,10 @@ require "spec_helper"
 RSpec.describe AuthenticatedAccount do
   describe "::find" do
     context "session id is not in the database" do
-      it "returns nil" do
+      it "returns no account" do
         result = AuthenticatedAccount.find(session_id: "blah")
 
-        expect(result).to eq(nil)
+        expect(result.exists?).to eq(false)
       end
     end
     context "session id is in the database" do

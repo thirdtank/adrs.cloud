@@ -17,7 +17,7 @@ class HelpPage < AppPage
         class: "db mt-4 blue-300 tc",
         href: AdrsPage.routing,
       ) do
-        raw(safe("&;larr"))
+        entity("larr")
         whitespace
         t(:back)
       end

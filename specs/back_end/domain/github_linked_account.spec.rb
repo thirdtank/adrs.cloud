@@ -135,7 +135,8 @@ RSpec.describe GithubLinkedAccount do
         }
 
         github_linked_account = GithubLinkedAccount.find_from_omniauth_hash(omniauth_hash:)
-        expect(github_linked_account).to eq(nil)
+        expect(github_linked_account.active?).to eq(false)
+        expect(github_linked_account.exists?).to eq(false)
       end
     end
     context "email exists, but is deactivated" do
@@ -159,7 +160,8 @@ RSpec.describe GithubLinkedAccount do
     context "email is not in the database" do
       it "returns that it does not exist" do
         linked_account = GithubLinkedAccount.find(email: "nope@nope.nope")
-          expect(linked_account).to eq(nil)
+        expect(linked_account.active?).to eq(false)
+        expect(linked_account.exists?).to eq(false)
       end
     end
     context "email is in the database" do

@@ -4,6 +4,8 @@ class Account
     @account = account
   end
 
-  def active? = raise "Subclass must implement"
-  def error?  = raise "Subclass must implement"
+  def active?   =  raise "Subclass must implement"
+  def inactive? = !active?
+  def error?    =  raise "Subclass must implement"
+  def exists?   =  true
 end

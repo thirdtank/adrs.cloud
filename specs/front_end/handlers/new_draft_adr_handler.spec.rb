@@ -20,19 +20,37 @@ RSpec.describe NewDraftAdrHandler do
       end
     end
     context "there are constraint violations" do
-      it "has violations on the form, an error message in the flash, and re-renders the page" do
-        authenticated_account = create(:authenticated_account)
-        form = NewDraftAdrForm.new(params: { title: "aaaaaaaaa"})
-        flash = empty_flash
-        handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
+      context "client-side only" do
+        it "has violations on the form, an error message in the flash, and re-renders the page" do
+          authenticated_account = create(:authenticated_account)
+          form = NewDraftAdrForm.new(params: { title: ""})
+          flash = empty_flash
+          handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
 
-        result = handler.handle!
+          result = handler.handle!
 
-        expect(form.constraint_violations?).to eq(true)
-        expect(form).to have_constraint_violation(:title, key: :not_enough_words)
-        expect(flash.alert).to eq("new_adr_invalid")
-        expect(result.class).to eq(NewDraftAdrPage)
-        expect(result.form).to eq(form)
+          expect(form.constraint_violations?).to eq(true)
+          expect(form).to have_constraint_violation(:title, key: :valueMissing)
+          expect(flash.alert).to eq("new_adr_invalid")
+          expect(result.class).to eq(NewDraftAdrPage)
+          expect(result.form).to eq(form)
+        end
+      end
+      context "server-side only" do
+        it "has violations on the form, an error message in the flash, and re-renders the page" do
+          authenticated_account = create(:authenticated_account)
+          form = NewDraftAdrForm.new(params: { title: "aaaaaaaaa", project_external_id: SecureRandom.uuid })
+          flash = empty_flash
+          handler = described_class.new(form: form, authenticated_account: authenticated_account, flash: flash)
+
+          result = handler.handle!
+
+          expect(form.constraint_violations?).to eq(true)
+          expect(form).to have_constraint_violation(:title, key: :not_enough_words)
+          expect(flash.alert).to eq("new_adr_invalid")
+          expect(result.class).to eq(NewDraftAdrPage)
+          expect(result.form).to eq(form)
+        end
       end
     end
     context "there are no constraint violations" do

@@ -30,7 +30,7 @@ RSpec.describe "Manage Projects" do
     name_field.fill(account.projects.first.name)
 
     submit_button.click
-    expect(name_field).to have_text(t("cv.be.taken", field: t("cv.this_field")))
+    expect(name_field).to have_text(t("cv.ss.taken", field: t("cv.this_field")))
 
     name_field.fill("Some New Project")
     submit_button.click
@@ -52,7 +52,7 @@ RSpec.describe "Manage Projects" do
     submit_button = page.locator("form button[title='#{t("components.Projects::FormComponent.actions.edit")}']")
 
     submit_button.click
-    expect(name_field).to have_text(t("cv.be.taken", field: t("cv.this_field")))
+    expect(name_field).to have_text(t("cv.ss.taken", field: t("cv.this_field")))
 
     name_field.fill("Some Changed Project")
     description_field = page.locator("textarea[name='description']")

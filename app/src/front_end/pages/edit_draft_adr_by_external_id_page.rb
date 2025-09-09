@@ -12,7 +12,7 @@ class EditDraftAdrByExternalIdPage < AppPage
     adr_edit_draft_by_external_id_page(show_warnings: true) do
       I18nTranslations("pages.EditDraftAdrByExternalIdPage.adr_updated")
       I18nTranslations("pages.EditDraftAdrByExternalIdPage.adr_not_updated")
-      render global_component(AnnouncementBannerComponent)
+      global_component(AnnouncementBannerComponent)
       header do
         h2(class: "tc ma-0 mt-3 ttu tracked-tight f-5") { t(:edit) }
         if draft_adr.refining?
