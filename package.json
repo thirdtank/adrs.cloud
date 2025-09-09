@@ -4,8 +4,8 @@
   "type": "module",
   "license": "UNLICENSED",
   "dependencies": {
-    "brut-css": "^0.0.1",
-    "brut-js": "^0.0.20"
+    "brut-css": "^0.14.0",
+    "brut-js": "^0.14.0"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",

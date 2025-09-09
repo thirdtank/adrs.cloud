@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (8.0.2)
+    activesupport (8.0.2.1)
       base64
       benchmark (>= 0.3)
       bigdecimal
@@ -16,8 +16,8 @@ GEM
       uri (>= 0.13.1)
     base64 (0.3.0)
     benchmark (0.4.1)
-    bigdecimal (3.2.2)
-    brut (0.0.29)
+    bigdecimal (3.2.3)
+    brut (0.14.0)
       concurrent-ruby
       i18n
       irb
@@ -40,93 +40,93 @@ GEM
       thor (~> 1.0)
     concurrent-ruby (1.3.5)
     confidence-check (1.0.1)
-    connection_pool (2.5.3)
+    connection_pool (2.5.4)
     date (3.4.1)
     diff-lcs (1.6.2)
     dotenv (3.1.8)
     drb (2.2.3)
-    erb (5.0.1)
-    factory_bot (6.5.4)
+    erb (5.0.2)
+    factory_bot (6.5.5)
       activesupport (>= 6.1.0)
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
-    faraday (2.13.2)
+    faraday (2.13.4)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
     faraday-net_http (3.4.1)
       net-http (>= 0.5.0)
-    google-protobuf (4.31.1)
+    google-protobuf (4.32.0)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-aarch64-linux-gnu)
+    google-protobuf (4.32.0-aarch64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-aarch64-linux-musl)
+    google-protobuf (4.32.0-aarch64-linux-musl)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-arm64-darwin)
+    google-protobuf (4.32.0-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-darwin)
+    google-protobuf (4.32.0-x86_64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-linux-gnu)
+    google-protobuf (4.32.0-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-linux-musl)
+    google-protobuf (4.32.0-x86_64-linux-musl)
       bigdecimal
       rake (>= 13)
-    googleapis-common-protos-types (1.20.0)
-      google-protobuf (>= 3.18, < 5.a)
+    googleapis-common-protos-types (1.21.0)
+      google-protobuf (~> 4.26)
     hashie (5.0.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    io-console (0.8.0)
+    io-console (0.8.1)
     irb (1.15.2)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.12.2)
+    json (2.13.2)
     jwt (3.1.2)
       base64
     logger (1.7.0)
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0701)
+    mime-types-data (3.2025.0902)
     minitest (5.25.5)
     multi_xml (0.7.2)
       bigdecimal (~> 3.1)
-    mustermann (3.0.3)
+    mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
     net-http (0.6.0)
       uri
     nio4r (2.7.4)
-    nokogiri (1.18.8-aarch64-linux-gnu)
+    nokogiri (1.18.9-aarch64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.8-aarch64-linux-musl)
+    nokogiri (1.18.9-aarch64-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.18.8-arm-linux-gnu)
+    nokogiri (1.18.9-arm-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.8-arm-linux-musl)
+    nokogiri (1.18.9-arm-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.18.8-arm64-darwin)
+    nokogiri (1.18.9-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.8-x86_64-darwin)
+    nokogiri (1.18.9-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.8-x86_64-linux-gnu)
+    nokogiri (1.18.9-x86_64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.18.8-x86_64-linux-musl)
+    nokogiri (1.18.9-x86_64-linux-musl)
       racc (~> 1.4)
-    oauth2 (2.0.12)
+    oauth2 (2.0.15)
       faraday (>= 0.17.3, < 4.0)
       jwt (>= 1.0, < 4.0)
       logger (~> 1.2)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
       snaky_hash (~> 2.0, >= 2.0.3)
-      version_gem (>= 1.1.8, < 3)
+      version_gem (~> 1.1, >= 1.1.8)
     omniauth (2.1.3)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
@@ -137,7 +137,7 @@ GEM
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
-    opentelemetry-api (1.5.0)
+    opentelemetry-api (1.6.0)
     opentelemetry-common (0.22.0)
       opentelemetry-api (~> 1.0)
     opentelemetry-exporter-otlp (0.30.0)
@@ -156,15 +156,21 @@ GEM
       opentelemetry-instrumentation-base (~> 0.23.0)
     opentelemetry-registry (0.4.0)
       opentelemetry-api (~> 1.1)
-    opentelemetry-sdk (1.8.0)
+    opentelemetry-sdk (1.8.1)
       opentelemetry-api (~> 1.1)
       opentelemetry-common (~> 0.20)
       opentelemetry-registry (~> 0.2)
       opentelemetry-semantic_conventions
     opentelemetry-semantic_conventions (1.11.0)
       opentelemetry-api (~> 1.0)
-    ostruct (0.6.2)
-    pg (1.5.9)
+    ostruct (0.6.3)
+    pg (1.6.2)
+    pg (1.6.2-aarch64-linux)
+    pg (1.6.2-aarch64-linux-musl)
+    pg (1.6.2-arm64-darwin)
+    pg (1.6.2-x86_64-darwin)
+    pg (1.6.2-x86_64-linux)
+    pg (1.6.2-x86_64-linux-musl)
     phlex (2.3.1)
       zeitwerk (~> 2.7)
     playwright-ruby-client (1.52.0)
@@ -177,10 +183,10 @@ GEM
     psych (5.2.6)
       date
       stringio
-    puma (6.6.0)
+    puma (7.0.2)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.1.16)
+    rack (3.2.1)
     rack-protection (4.1.1)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
@@ -195,11 +201,11 @@ GEM
       erb
       psych (>= 4.0.0)
     redcarpet (3.6.1)
-    redis-client (0.25.0)
+    redis-client (0.25.2)
       connection_pool
-    reline (0.6.1)
+    reline (0.6.2)
       io-console (~> 0.5)
-    rexml (3.4.1)
+    rexml (3.4.3)
     rspec (3.13.1)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -212,14 +218,14 @@ GEM
     rspec-mocks (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-support (3.13.4)
+    rspec-support (3.13.5)
     ruby2_keywords (0.0.5)
     securerandom (0.4.1)
-    semantic_logger (4.16.1)
+    semantic_logger (4.17.0)
       concurrent-ruby (~> 1.0)
-    sequel (5.94.0)
+    sequel (5.96.0)
       bigdecimal
-    sidekiq (8.0.5)
+    sidekiq (8.0.7)
       connection_pool (>= 2.5.0)
       json (>= 2.9.0)
       logger (>= 1.6.2)
@@ -236,14 +242,14 @@ GEM
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
     stringio (3.1.7)
-    thor (1.3.2)
-    tilt (2.6.0)
+    thor (1.4.0)
+    tilt (2.6.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2025.2)
       tzinfo (>= 1.0.0)
     uri (1.0.3)
-    version_gem (1.1.8)
+    version_gem (1.1.9)
     with_clues (1.3.0)
     zeitwerk (2.7.3)
 
@@ -258,7 +264,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  brut (~> 0.0.28)
+  brut
   bundler-audit
   confidence-check
   dotenv
@@ -268,7 +274,7 @@ DEPENDENCIES
   omniauth-github (~> 2.0.0)
   opentelemetry-instrumentation-sidekiq
   pg
-  playwright-ruby-client
+  playwright-ruby-client (= 1.52.0)
   puma
   redcarpet
   rexml

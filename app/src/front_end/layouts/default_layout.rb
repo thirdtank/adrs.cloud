@@ -7,10 +7,6 @@ class DefaultLayout < Brut::FrontEnd::Layout
   register_element :adr_include_query_params
   register_element :adr_tag_editor
 
-  def initialize(page_name:)
-    @page_name = page_name
-  end
-
   def view_template
     doctype
     html(lang: "en") do
@@ -21,10 +17,10 @@ class DefaultLayout < Brut::FrontEnd::Layout
           t(:page_title)
         end
         meta(content: "website", property:"og:type")
-        PageIdentifier(@page_name)
+        PageIdentifier(page)
         link(rel: "stylesheet", href: asset_path("/css/styles.css"))
         script(defer: true, src: asset_path("/js/app.js"))
-        I18nTranslations("cv.fe")
+        I18nTranslations("cv.cs")
         I18nTranslations("cv.this_field")
         Traceparent()
         render(

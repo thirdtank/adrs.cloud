@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
-#gem "brut", path: "/home/appuser/local-gems/brut"
-gem "brut", "~> 0.0.28"
+#gem "brut", path: "local-repos/brut"
+gem "brut"
 
 # dotenv manages environment variables for our development and test environments
 gem "dotenv", groups: [ :development, :test ]
@@ -34,7 +34,7 @@ gem "opentelemetry-instrumentation-sidekiq"
 gem "pg"
 
 # Allows using Playwright from Ruby.
-gem "playwright-ruby-client", groups: [ :test ]
+gem "playwright-ruby-client", "1.52.0", groups: [ :test ]
 
 # Sinatra needs a webserver and puma is the best
 gem "puma"
