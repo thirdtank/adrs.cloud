@@ -44,20 +44,19 @@ RUN apt-get update --quiet --yes && \
       gnupg \
       libjemalloc2 \
       lsb-release \
+      postgresql-common \
       rsync \
-      wget && \
-		rm -rf /var/lib/apt/lists /var/cache/apt/archives
+      wget
 
 # Install the PostgreSQL client.  The latest version is not available
 # from Debian, so we set up our own. This should match what's in Dockerfile.dx
 # and ideally the version of Postgres used in production.
 #
 # Incancation is based on: https://www.postgresql.org/download/linux/debian/
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    apt-get update && \
-    apt-get --yes --quiet install postgresql-client-16 && \
-		rm -rf /var/lib/apt/lists /var/cache/apt/archives
+# NOTE: postgresql-common is installed above.
+RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y && \
+    apt-get update --quiet --yes && \
+    apt-get -y --no-install-recommends install postgresql-client-16
 
 # Set basic env vars for production
 ENV RACK_ENV="production" \
@@ -65,6 +64,8 @@ ENV RACK_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development" \
     APP_GIT_SHA1="${app_git_sha1}"
+
+RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # This makes a new image that we'll throw away after building
 # needed artifacts.
@@ -122,4 +123,3 @@ USER 1000:1000
 # This is used to execute other commands.  When the app is run in production,
 # this script is used to run it.
 ENTRYPOINT ["/brut-app/deploy/docker-entrypoint"]
-
