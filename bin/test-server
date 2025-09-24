@@ -9,5 +9,5 @@ export RACK_ENV
 "${SCRIPT_DIR}"/build-assets
 
 PORT=6503 bin/run &
-bin/run-sidekiq &
+bin/run sidekiq &
 wait

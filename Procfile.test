@@ -1,2 +1,2 @@
 web:    PORT=6503 bin/run
-sidekiq:          bin/run-sidekiq
+sidekiq:          bin/run sidekiq
