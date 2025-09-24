@@ -7,12 +7,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 # These packages are needed to set up other repos to install other
 # packages and/or are useful in installing other software
 #
-# - ca-certificates  - needed by Postgres client
-# - curl             - needed by various installation instructions
-# - gnupg            - needed to install Docker
-# - lsb-release      - needed by Postgres install instructions
-# - rsync            - needed by Brut's build_assets command
-# - vim              - needed when we want to edit files inside container
+# - ca-certificates   - needed by Postgres client
+# - curl              - needed by various installation instructions
+# - gnupg             - needed to install Docker
+# - lsb-release       - needed by Postgres install instructions
+# - rsync             - needed by Brut's build_assets command
+# - postgresql-common - needed to install the Postgres client
+# - vim               - needed when we want to edit files inside container
 RUN apt-get -y clean && \
     apt-get -y update && \
     apt-get install --quiet --yes \
@@ -21,6 +22,7 @@ RUN apt-get -y clean && \
       gnupg \
       lsb-release \
       rsync \
+      postgresql-common \
       vim
 
 # These are dependencies needed to install Chromium via Playright. You can check this list via
@@ -80,12 +82,11 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
                        docker-compose-plugin
 
 
-# Install Postgres Client, per https://www.postgresql.org/download/linux/debian/
-# Note that ca-certificates and curl are installed above
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    apt-get update && \
-    apt-get -y install postgresql-client-16
+# Incancation is based on: https://www.postgresql.org/download/linux/debian/
+# NOTE: postgresql-common is installed above.
+RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y && \
+    apt-get update --quiet --yes && \
+    apt-get -y --no-install-recommends install postgresql-client-16
 
 # Update RubyGems and Bundler
 RUN echo "gem: --no-document" >> ~/.gemrc && \
