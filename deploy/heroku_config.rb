@@ -24,7 +24,7 @@ class HerokuConfig
   def self.additional_images
     {
       "sidekiq" => {
-        cmd: "bin/run-sidekiq",
+        cmd: "bin/run sidekiq",
       },
     }
   end
