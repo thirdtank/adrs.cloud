@@ -88,6 +88,8 @@ RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y && \
     apt-get update --quiet --yes && \
     apt-get -y --no-install-recommends install postgresql-client-16
 
+COPY --from=node:22-slim /usr/local /usr/local
+
 # Update RubyGems and Bundler
 RUN echo "gem: --no-document" >> ~/.gemrc && \
     gem update --system && \
@@ -130,17 +132,9 @@ COPY --chown=appuser:${user_gid} dx/bash_customizations.local /home/appuser/.bas
 # ONLY in that group and not in all the groups in which they are a part.
 USER appuser
 
-# Install NodeJS, per https://nodejs.org/en/download
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
-    \. "$HOME/.nvm/nvm.sh" && \
-    nvm install 22 && \
-    node -v && nvm current && npm -v
-
-
-
 # Install the version of playwright that matches Gemfile.lock
 ARG PLAYWRIGHT_VERSION
-RUN \. "$HOME/.nvm/nvm.sh" && \
-    nvm use default && \
-    npm install -g playwright@$PLAYWRIGHT_VERSION && \
+ENV NPM_CONFIG_PREFIX=/home/appuser/.npm-global
+ENV PATH=/home/appuser/.npm-global/bin:$PATH
+RUN npm --version && npm install -g playwright@$PLAYWRIGHT_VERSION && \
     npx playwright install chromium
