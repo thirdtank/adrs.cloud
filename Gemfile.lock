@@ -17,7 +17,7 @@ GEM
     base64 (0.3.0)
     benchmark (0.4.1)
     bigdecimal (3.2.3)
-    brut (0.14.0)
+    brut (0.16.0.pre.pre)
       concurrent-ruby
       i18n
       irb
@@ -264,7 +264,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  brut
+  brut (= 0.16.0.pre.pre)
   bundler-audit
   confidence-check
   dotenv

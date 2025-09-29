@@ -37,7 +37,8 @@ WORKDIR /brut-app
 # - lsb-release is used to generically access information for this OS's version
 # - wget allows us to copy/paste commands from vendors about how to install
 #   software even though it does the same thing as curl
-RUN apt-get update --quiet --yes && \
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update --quiet --yes && \
     apt-get install --no-install-recommends --quiet --yes \
       ca-certificates \
       curl \
@@ -53,17 +54,16 @@ RUN apt-get update --quiet --yes && \
 # and ideally the version of Postgres used in production.
 #
 # Incancation is based on: https://www.postgresql.org/download/linux/debian/
-# NOTE: postgresql-common is installed above.
 RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y && \
     apt-get update --quiet --yes && \
-    apt-get -y --no-install-recommends install postgresql-client-16
+    apt-get --yes --quiet --no-install-recommends install postgresql-client-16 && \
+		rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # Set basic env vars for production
 ENV RACK_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
-    APP_GIT_SHA1="${app_git_sha1}"
+    BUNDLE_WITHOUT="development"
 
 RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
@@ -76,35 +76,34 @@ FROM base AS build
 # - libpq-dev is needed by postgres
 # - pkg-config is, I guess, not considered "essential" (as in build-essential),
 #   but still needed to install downstream stuff
-RUN apt-get update --quiet --yes && \
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update --quiet --yes && \
     apt-get install --no-install-recommends --quiet --yes \
 			build-essential \
 			git \
       libpq-dev \
 			pkg-config
 
-# Install NodeJS, per https://nodejs.org/en/download
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
-    \. "$HOME/.nvm/nvm.sh" && \
-    nvm install 22 && \
-    node -v && nvm current && npm -v
+# Copy NodeJS from the official image. This should be faster than
+# installing it via e.g. nvm
+COPY --from=node:22-slim /usr/local /usr/local
 
-# Copy the app into the file, excluding the contents of .dockerignore
-COPY . .
+# Copy Gemfile only as it may not change between deploys
+COPY Gemfile Gemfile.lock .
 
 # Install RubyGems from app's Gemfile
-RUN bundle install --verbose && \
+RUN --mount=type=cache,target=${BUNDLE_PATH}/cache \
+    bundle install --verbose && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
+COPY package.json package-lock.json ./
 # Install Node Modules from package.json
-RUN \. "$HOME/.nvm/nvm.sh" && \
-    nvm use default && \
-    npm clean-install --no-audit --no-fund --verbose
+RUN npm clean-install --no-audit --no-fund --verbose
+
+COPY . .
 
 # Build all assets
-RUN \. "$HOME/.nvm/nvm.sh" && \
-    nvm use default && \
-    bin/build-assets && \
+RUN bin/build-assets && \
     rm -rf node_modules
 
 # We are now switching back to building the image that will be deployed.
@@ -119,6 +118,8 @@ RUN groupadd --system --gid 1000 brut && \
     useradd brut --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
     chown -R brut:brut logs tmp
 USER 1000:1000
+
+ENV APP_GIT_SHA1="${app_git_sha1}"
 
 # This is used to execute other commands.  When the app is run in production,
 # this script is used to run it.
