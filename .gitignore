@@ -18,6 +18,8 @@
 # This contains actual secrets and should not be checked in
 /.env.development.local
 
+/dx/bash_customizations.local
+
 # These are generated artifacts
 /deploy/Dockerfile.*
 /deploy/docker-compose.yml
