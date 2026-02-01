@@ -103,7 +103,7 @@ RUN npm clean-install --no-audit --no-fund --verbose
 COPY . .
 
 # Build all assets
-RUN bin/build-assets && \
+RUN brut build-assets all && \
     rm -rf node_modules
 
 # We are now switching back to building the image that will be deployed.

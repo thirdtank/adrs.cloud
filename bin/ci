@@ -11,18 +11,18 @@ class CIScript < Brut::TUI::Script
   def execute
     phase "Preparing environment" do
       step "Building Assets",
-           exec: "bin/build-assets"
+           exec: "brut build-assets all"
     end
 
     phase "Running tests" do
       step "Running non E2E tests",
-           exec: "bin/test run --rebuild"
+           exec: "brut test run --rebuild"
 
       step "Running JS tests",
-           exec: "bin/test js"
+           exec: "brut test js"
 
       step "Running E2E tests",
-           exec: "bin/test e2e --rebuild --rebuild-after"
+           exec: "brut test e2e --rebuild --rebuild-after"
     end
 
     phase "Performing code and security audits" do
@@ -30,7 +30,7 @@ class CIScript < Brut::TUI::Script
            exec: "bundle exec bundle audit check --update"
 
       step "Checking to see that all classes have tests",
-           exec: "bin/test audit "
+           exec: "brut test audit "
     end
     done "All quality and auditing checks complete"
   end

@@ -29,6 +29,7 @@ class SetupScript < Brut::TUI::Script
   def execute
     phase "Installing dependencies" do
       step "Installing gems", exec: "bundle check --no-color || bundle install --no-color --quiet"
+      step "Installing binstubs", exec: "bundle binstub puma rspec-core"
 
       # https://github.com/ddollar/foreman/wiki/Don't-Bundle-Foreman
       step "Installing foreman", exec: "gem install foreman"
@@ -128,11 +129,11 @@ class SetupScript < Brut::TUI::Script
     end
     phase "Setting up databases" do
 
-      step "Re-creating development database", exec: "bin/db rebuild --env=development"
-      step "Re-creating test database",        exec: "bin/db rebuild --env=test"
+      step "Re-creating development database", exec: "brut db rebuild --env=development"
+      step "Re-creating test database",        exec: "brut db rebuild --env=test"
 
       step "Loading seed data into the development database",
-        exec: "bin/db seed --env=development"
+        exec: "brut db seed --env=development"
     end
     done "Setup complete - Run `bin/setup help` to see useful commands"
   end

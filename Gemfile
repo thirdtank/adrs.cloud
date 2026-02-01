@@ -16,10 +16,10 @@ gem "bundler-audit", groups: [ :test ]
 gem "confidence-check", groups: [ :test ]
 
 # FactoryBot manages test and seed data
-gem "factory_bot", groups: [ :test ]
+gem "factory_bot", groups: [ :test, :development ]
 
 # Faker is used to create realistic data for test and seed data.
-gem "faker", groups: [ :test ]
+gem "faker", groups: [ :test, :development ]
 
 # Omniauth handles user login et. al.
 gem "omniauth"

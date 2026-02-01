@@ -1,4 +1,6 @@
+require "dotenv"
 ENV["RACK_ENV"] = "test"
+Dotenv.load(".env.test.local", ".env.test")
 require_relative "../app/bootstrap"
 Bootstrap.new.bootstrap!
 
