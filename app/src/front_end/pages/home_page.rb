@@ -14,7 +14,7 @@ class HomePage < AppPage
         if !@error_message.nil?
           p(class: "ba br-0 pa-3 bg-red-800 red-300 bc-red-700 mr-3 flex items-center gap-3 shadow-4", role: "alert") do
             span(class: "w-3") do
-              svg("exclamation-triangle-icon")
+              inline_svg("exclamation-triangle-icon")
             end
             span do
               t(@error_message)
