@@ -1,7 +1,4 @@
-# This contains settings for your Heroku setup.
-# You own and maintain this file.  It is required by
-# build/deploy
-class HerokuConfig
+class DockerConfig
 
   # Return a Hash oif additional images to run, beyond "web" and "release".
   #
@@ -21,7 +18,7 @@ class HerokuConfig
   #     cmd: "bin/run-sidekiq",
   #   }
   # }
-  def self.additional_images
+  def additional_images
     {
       "sidekiq" => {
         cmd: "bin/run sidekiq",
