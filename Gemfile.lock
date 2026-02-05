@@ -1,3 +1,27 @@
+PATH
+  remote: local-repos/brut
+  specs:
+    brut (0.18.2)
+      concurrent-ruby
+      i18n
+      irb
+      lipgloss
+      nokogiri
+      opentelemetry-exporter-otlp
+      opentelemetry-sdk
+      ostruct
+      phlex
+      prism
+      rack-protection
+      rackup
+      semantic_logger
+      sequel
+      sinatra
+      tzinfo
+      tzinfo-data
+      unicode-display_width
+      zeitwerk
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -16,25 +40,6 @@ GEM
       uri (>= 0.13.1)
     base64 (0.3.0)
     bigdecimal (4.0.1)
-    brut (0.18.2)
-      concurrent-ruby
-      i18n
-      irb
-      nokogiri
-      opentelemetry-exporter-otlp
-      opentelemetry-sdk
-      ostruct
-      phlex
-      prism
-      rack-protection
-      rackup
-      semantic_logger
-      sequel
-      sinatra
-      tzinfo
-      tzinfo-data
-      unicode-display_width
-      zeitwerk
     bundler-audit (0.9.3)
       bundler (>= 1.2.0)
       thor (~> 1.0)
@@ -90,6 +95,14 @@ GEM
     json (2.16.0)
     jwt (3.1.2)
       base64
+    lipgloss (0.2.0-aarch64-linux-gnu)
+    lipgloss (0.2.0-aarch64-linux-musl)
+    lipgloss (0.2.0-arm-linux-gnu)
+    lipgloss (0.2.0-arm-linux-musl)
+    lipgloss (0.2.0-arm64-darwin)
+    lipgloss (0.2.0-x86_64-darwin)
+    lipgloss (0.2.0-x86_64-linux-gnu)
+    lipgloss (0.2.0-x86_64-linux-musl)
     logger (1.7.0)
     mime-types (3.7.0)
       logger
@@ -263,6 +276,7 @@ GEM
     zeitwerk (2.7.4)
 
 PLATFORMS
+  aarch64-linux
   aarch64-linux-gnu
   aarch64-linux-musl
   arm-linux-gnu
@@ -273,7 +287,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  brut
+  brut!
   bundler-audit
   confidence-check
   dotenv
