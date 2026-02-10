@@ -16,7 +16,7 @@ GEM
       uri (>= 0.13.1)
     base64 (0.3.0)
     bigdecimal (4.0.1)
-    brut (0.19.0)
+    brut (0.19.1)
       concurrent-ruby
       i18n
       irb
