@@ -1,14 +1,18 @@
 #!/usr/bin/env ruby
 
-require "bundler"
-Bundler.require
-require "pathname"
-
-require "brut/cli"
-
+require "fileutils"
+require "brut"
 APP_PATH = File.join(File.dirname($0),"..","app","src")
 $: << APP_PATH
 require "cli/downloads"
 
-exit Brut::CLI.app(DownloadsCLI,project_root: Pathname($0).dirname / "..")
+runner = Brut::CLI::Runner.new(
+  DownloadsCLI.new,
+  stdout: $stdout,
+  stderr: $stderr,
+  stdin: $stdin,
+  project_root: Pathname(FileUtils.pwd),
+)
+exit runner.run!(ARGV,ENV)
+
 

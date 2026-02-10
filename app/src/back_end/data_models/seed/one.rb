@@ -90,5 +90,7 @@ class Seed::One < Brut::BackEnd::SeedData
            "because": "Choosing a framework that aligns with our team’s expertise and project requirements is essential for success. By avoiding Rails, we can select a more suitable technology stack that ensures flexibility, performance, and easier onboarding for new developers.",
           )
 
+    create(:download, :ready, account: account)
+    create(:download, :ready, delete_at: Time.now - (60 * 60 * 24 * 2))
   end
 end
