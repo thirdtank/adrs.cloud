@@ -46,6 +46,7 @@ class App < Brut::Framework::App
     form "/adr_tags/:external_id"
 
     form "/accepted_adrs/:external_id"
+
     action "/rejected_adrs/:external_id"
     action "/replaced_adrs/:existing_external_id"
     action "/refined_adrs/:existing_external_id"
@@ -69,6 +70,6 @@ class App < Brut::Framework::App
     form "/admin/account_entitlements/:external_id"
     action "/admin/deactivated_accounts/:external_id"
     page "/help"
+    page "/accepted_adrs/:project_external_id"
   end
 end
-

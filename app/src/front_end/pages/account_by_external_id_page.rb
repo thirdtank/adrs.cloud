@@ -154,6 +154,7 @@ class AccountByExternalIdPage < AppPage
             else
               p(class: "p i gray-400") do
                 raw(t(:project_limit_exceeded))
+                whitespace
                 raw(t(:contact_support_for_limit_increase))
               end
             end

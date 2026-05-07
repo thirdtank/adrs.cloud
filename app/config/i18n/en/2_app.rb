@@ -43,12 +43,24 @@
     adrs_remaining_counts: "%{num} of %{max} ADRs Remaining",
     project_limit_exceeded: "You've reached your limit",
     projects_remaining_counts: "%{num} of %{max} Projects Remaining",
-    contact_support_for_limit_increase: "Reject some ADRs or <a href='mailto:support@adrgp' class='blue-700'>contact support</a> for a limit increase",
+    contact_support_for_limit_increase: "Reject some ADRs or <a href='mailto:support@adrs.cloud' class='blue-700'>contact support</a> for a limit increase",
     auth: {
       no_account: "No account with that email",
       logged_out: "You have been logged out",
     },
     pages: {
+      "AcceptedAdrsByProjectExternalIdPage": {
+        title: "Accepted adrs by project external id page",
+        fields: {
+          context: "Context",
+          facing: "Concerns or Issues",
+          decision: "Decision",
+          neglected: "Options Considered, but Not Chosen",
+          achieve: "System Qualities or Desired Consequences",
+          accepting: "Downsides",
+          because: "Additional Rationale",
+        },
+      },
       HelpPage: {
         support_message: "We'll take care of whatever you need, including <strong>plan limits</strong>, <strong>how to</strong> use the app, or even <strong>account &amp; data deletion</strong>.",
       },
@@ -91,6 +103,7 @@
         edit: "Edit",
         none: "None",
         your_account: "Your Account and Projects",
+        view_shared: "View All Shared on One Page",
       },
       AdrsByExternalIdPage: {
         accepted: "Accepted %{block}",
@@ -157,7 +170,7 @@
         },
       },
       AccountByExternalIdPage: {
-        contact_support_for_limit_increase: "<a href='mailto:support@adrgp' class='blue-300'>Contact support</a> for a limit increase.",
+        contact_support_for_limit_increase: "<a href='mailto:support@adrs.cloud' class='blue-300'>Contact support</a> for a limit increase.",
         project_limit_exceeded: "You've reached your limit on number of projects.",
         your_adrs: "Your ADRs",
         tabs: {

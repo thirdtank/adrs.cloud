@@ -57,8 +57,13 @@ class AdrsPage::TabPanelComponent < AppComponent
         end
       end
       if !project.nil?
-        span(class:"f-1") { "Project:" }
-        span(class:"i f-1 fw-3") { project.name }
+        div(class: "flex items-baseline gap-2") do
+          span(class:"f-1") { "Project:" }
+          span(class:"i f-1 fw-3") { project.name }
+          if tab == :accepted
+            a(class: "f-1 blue-400", href: AcceptedAdrsByProjectExternalIdPage.routing(project_external_id: project.external_id)) { t("view_shared") }
+          end
+        end
       end
     end
   if adrs.any?
