@@ -1,5 +1,6 @@
-web:     PORT=6502 bin/run
-sidekiq:           bin/run sidekiq
-css:               bin/watch-and-build-assets css
-js:                bin/watch-and-build-assets js
-images:            bin/watch-and-build-assets images
+web:               PORT=6502 bin/run
+sidekiq:                     bin/run sidekiq
+css:                         bin/watch-and-build-assets css
+js:                          bin/watch-and-build-assets js
+images:                      bin/watch-and-build-assets images
+startup_message:   PORT=6502 bin/startup-message

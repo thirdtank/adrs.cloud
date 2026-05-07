@@ -6,6 +6,6 @@ ROOT_DIR="${SCRIPT_DIR}/.."
 
 RACK_ENV="development"
 export RACK_ENV
-"${SCRIPT_DIR}"/build-assets
+brut build-assets
 foreman start --procfile "${ROOT_DIR}/Procfile.${RACK_ENV}" --root "${ROOT_DIR}"
 

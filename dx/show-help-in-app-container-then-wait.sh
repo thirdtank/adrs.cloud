@@ -3,7 +3,7 @@
 set -e
 
 # Ideally, the message below is shown after everything starts up. We can't
-# achieve this using healtchecks because the interval for a healtcheck is
+# achieve this using healthchecks because the interval for a healtcheck is
 # also an initial delay, and we don't really want to do healthchecks on 
 # our DB or Redis every 2 seconds.  So, we sleep just a bit to let
 # the other containers start up and vomit out their output first.
