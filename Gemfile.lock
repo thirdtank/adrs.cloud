@@ -18,7 +18,7 @@ GEM
       version_gem (~> 1.1, >= 1.1.9)
     base64 (0.3.0)
     bigdecimal (4.1.2)
-    brut (0.20.2)
+    brut (0.21.0.pre.4)
       concurrent-ruby
       i18n
       irb
@@ -290,7 +290,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  brut
+  brut (~> 0.21.0.pre.4)
   bundler-audit
   confidence-check
   dotenv
