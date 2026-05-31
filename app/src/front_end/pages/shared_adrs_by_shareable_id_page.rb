@@ -34,7 +34,7 @@ class SharedAdrsByShareableIdPage < AppPage
 
   def page_template
     div(class: "flex-ns items-start gap-3 justify-center") do
-      div(role: "none", class:"w-quarter db-ns db")
+      div(role: "none", class:"w-25 db-ns db")
       article(class: "w-50-ns ph-0 bg-white #{ adr.replaced? ? 'gray-600' : 'black' } ba-ns bc-gray-600 br-2 mv-3 shadow-3-ns pos-relative") do
         h2(class: "tc measure-narrow ph-1 mh-auto lh-title fs-5 mt-3 mb-1 #{ adr.replaced? ? 'tds' : '' }") { adr.title }
         div(class: "tc f-1 mb-3") do
@@ -130,7 +130,7 @@ class SharedAdrsByShareableIdPage < AppPage
         end
         render(Adrs::GetRefinementsComponent.new(refined_by_adrs: shareable_refined_by_adrs, shareable_paths: true, gradient: false, constrain_width: false))
       end
-      div(role:"none", class:"w-quarter db-ns dn")
+      div(role:"none", class:"w-25 db-ns dn")
     end
   end
 end

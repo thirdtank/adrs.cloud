@@ -132,7 +132,7 @@ class AccountByExternalIdPage < AppPage
                             brut_confirm_submit(
                               message: t("projects.archive_confirmation")
                             ) do
-                              button(class: "tdu pointer blue-400 bn bg-none") {
+                              button(class: "tdu pointer blue-400 bn bg-transparent") {
                                 t("projects.archive")
                               }
                             end
